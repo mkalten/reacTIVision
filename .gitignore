@@ -1,16 +1,17 @@
+macosx/legacy.xcodeproj/xcuserdata
 
-*.mode1v3
+macosx/reacTIVision.xcodeproj/xcuserdata
+
+build
+
+Debug
+
+Release
 
 *.pbxuser
 
-*.xcscheme
+*.mode1v3
 
-*.xcuserstate
+macosx/legacy.xcodeproj/project.xcworkspace
 
-*.xcsettings
-
-*.xcbkptlist
-
-macosx/legacy.xcodeproj/xcuserdata/mkalten.xcuserdatad/xcschemes/xcschememanagement.plist
-
-macosx/reacTIVision.xcodeproj/xcuserdata/mkalten.xcuserdatad/xcschemes/xcschememanagement.plist
+macosx/reacTIVision.xcodeproj/project.xcworkspace
