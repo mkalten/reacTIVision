@@ -121,6 +121,12 @@ bool MacVdigCamera::initCamera() {
 	int max_height = (*vdImageDesc)->height;
 	
 	if (config.frame) {
+		if (config.frame_width<=0) config.frame_width = max_width;
+		if (config.frame_height<=0) config.frame_height = max_height;
+
+		if ((config.frame_xoff+config.frame_width)>max_width) config.frame_xoff = max_width-config.frame_width;
+		if ((config.frame_yoff+config.frame_height)>max_height) config.frame_yoff = max_height-config.frame_height;
+		
 		dstPortBounds.left = config.frame_xoff;
 		dstPortBounds.right = config.frame_xoff+config.frame_width;
 		dstPortBounds.top = config.frame_yoff;
