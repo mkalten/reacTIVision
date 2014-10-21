@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<reactivision>
+    <!--
+these are all the possible configuration tags and their default values.
+you only need to specify parameters you want to change from their default setting.
+
+please note that active tags need to be placed outside of this commented area!
+
+ <tuio host="127.0.0.1" port="3333" />
+ <midi config="midi.xml" />
+ <camera config="camera.xml" />
+ <finger size="12" sensitivity="100" />
+ <fiducial engine="amoeba" tree="small.trees" />
+ <image display="dest" equalize="false" fullscreen="false" />
+ <threshold gradient="16" tile="10" threads="max" />
+ <calibration file="default.grid" invert="xya" />
+
+ -->
+    <finger size="0" sensitivity="75" />
+    <image display="dest" equalize="false" fullscreen="false" />
+    <threshold gradient="32" tile="10" threads="max" />
+    <calibration file="default.grid" invert=" " />
+</reactivision>

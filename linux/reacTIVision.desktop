@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=reacTIVision
+GenericName=Tangible Interaction Framework
+Exec=reacTIVision
+Icon=reacTIVision
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=SDL;Development;

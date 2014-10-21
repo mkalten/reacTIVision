@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+
+<!-- 
+reacTIVision MIDI mapping configuration file
+using MIDI each dimension needs to be mapped to an individual control number.
+possible dimensions are: x-position, y-position and rotation angle
+additionaly the fiducial presence can be mapped to note on/off events.
+
+each mapping tag contains at least the following attributes:
+fiducial:	the ID number of the fiducial tag
+type: 		the control type
+			hfader=xpos, vfader=ypos, knob=angle, note=presence
+control:	the control number (for the hfader, vfader & knob types)
+note:		the note number (for the note type)
+
+optional attributes:
+channel:	the MIDI channel (defaults to 0)
+min:		minimum range (defaults to 0)
+max:		maximum range (defaults to 1)
+
+the min/max attribute allow the selection of a subregion in the desired dimension.
+for example min=0.1 and max 0.9 will ignore 10% on each side of the image
+for the knob type max=1 will map to a full rotation from 0 to 127 in MIDI values.
+-->
+
+<midi device="1">
+<!-- four vertical faders -->
+<map fiducial="0" type="vfader" control="0" min="0.1" max="0.9"/>
+<map fiducial="1" type="vfader" control="1" min="0.1" max="0.9"/>
+<map fiducial="2" type="vfader" control="2" min="0.1" max="0.9"/>
+<map fiducial="3" type="vfader" control="3" min="0.1" max="0.9"/>
+
+<!-- one horizontal fader -->
+<map fiducial="4" type="hfader" control="4" min="0.1" max="0.9"/>
+
+<!-- six knobs -->
+<map fiducial="5" type="knob" control="5"/>
+<map fiducial="6" type="knob" control="6"/>
+<map fiducial="7" type="knob" control="7"/>
+<map fiducial="8" type="knob" control="8"/>
+<map fiducial="9" type="knob" control="9"/>
+<map fiducial="10" type="knob" control="10"/>
+
+<!-- one 3DOF object + note on/off -->
+<map fiducial="11" type="hfader" channel="0" control="11" min="0.3" max="0.6"/>
+<map fiducial="11" type="vfader" channel="0" control="12" min="0.3" max="0.6"/>
+<map fiducial="11" type="knob" channel="0" control="13" min="0.0" max="1.0"/>
+<map fiducial="11" type="note" channel="0" note="70"/>
+</midi>

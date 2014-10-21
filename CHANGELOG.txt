@@ -1,0 +1,28 @@
+reacTIVision 1.5
+————————————————
+
+* new AVFoundation camera driver for MacOS X (including controls)
+* new videoInput camera driver for Windows (including controls)
+* improved Video4Linux2 camera driver for Linux (including controls)
+* list all available cameras and formats (via -l startup argument)
+* support MJPEG decompression for higher USB camera frame rates 
+* support IIDC-over-USB cameras through libdc1394
+* added frame cropping configuration (xoffset,yoffset,xwidth,yheight)
+* multithreaded thresholder for reduced latency on multicore CPUs
+* allow the adjustment of the threshold tile size
+* updated FrameEqualizer for faster background subtracion 
+* sending correct TUIO 1.1 source messages
+* added a quicker and less tideous calibration mode
+* migrated the user interface to SDL 2.0 (less CPU overhead)
+* fixed a MIDI configuration file location bug on MacOS X
+* added fullscreen toggle (via F1 key)
+* added a headless mode (via -n startup argument)
+* improved Linux desktop integration
+* updated oscpack, tinyxml, portmidi and dc1394 libraries
+* added x86_64 and dropped PPC architecture on MacOS X
+* provide x86_64 and i686 binaries for Mac OS X and Linux
+* updated XCode and Visual Studio 2012 projects
+* added a project for the Codeblocks IDE on Linux
+* removed the dtouch fiducial tracker
+* removed the now outdated VdigGrab, DSVideolib and Video4Linux drivers
+* new application icon

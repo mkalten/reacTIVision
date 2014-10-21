@@ -1,0 +1,369 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\portvideo">
+      <UniqueIdentifier>{6f55194b-5516-4d48-a8d5-8f717a5c7434}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\libfidtrack">
+      <UniqueIdentifier>{d6745c06-e997-4a00-9793-0a864af6da91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\oscpack">
+      <UniqueIdentifier>{edae634e-9d5c-4570-9742-81a400e9f847}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\portmidi">
+      <UniqueIdentifier>{c3a43e42-96d1-4f37-9248-b25f242355b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tinyxml">
+      <UniqueIdentifier>{b71606fd-c388-4219-a46c-c19f4cadb7af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\portvideo">
+      <UniqueIdentifier>{508b7d00-358d-4931-b160-427994ef7644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\oscpack">
+      <UniqueIdentifier>{95b06b5a-00f0-445a-b58e-e5102fdd3fd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\libfidtrack">
+      <UniqueIdentifier>{ac11bf9b-296a-4c64-b3f3-c7b283390d77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\portmidi">
+      <UniqueIdentifier>{8f122898-9b38-41b7-8e85-e7fe243fa920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\tinyxml">
+      <UniqueIdentifier>{bff1ea5b-65f7-4bcf-a303-074636ab146b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\common\CalibrationEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\CalibrationGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FidtrackFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FidtrackFinderClassic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FiducialFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FiducialObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FingerObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FrameThresholder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\MidiServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\Resources.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\RingBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\SFont.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\TuioServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\CameraEngine.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\CameraTool.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FileCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FolderCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FontTool.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\dump_graph.c">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\fidtrack120.c">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\fidtrackX.c">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\segment.c">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\threshold.c">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\tiled_bernsen_threshold.c">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\topologysearch.c">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\libfidtrack\treeidmap.cpp">
+      <Filter>Source Files\libfidtrack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\oscpack\ip\IpEndpointName.cpp">
+      <Filter>Source Files\oscpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\oscpack\ip\win32\NetworkingUtils.cpp">
+      <Filter>Source Files\oscpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\oscpack\osc\OscOutboundPacketStream.cpp">
+      <Filter>Source Files\oscpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\oscpack\osc\OscPrintReceivedElements.cpp">
+      <Filter>Source Files\oscpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\oscpack\osc\OscReceivedElements.cpp">
+      <Filter>Source Files\oscpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\oscpack\osc\OscTypes.cpp">
+      <Filter>Source Files\oscpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\oscpack\ip\win32\UdpSocket.cpp">
+      <Filter>Source Files\oscpack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portmidi\pm_common\pmutil.c">
+      <Filter>Source Files\portmidi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portmidi\pm_win\pmwin.c">
+      <Filter>Source Files\portmidi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portmidi\pm_win\pmwinmm.c">
+      <Filter>Source Files\portmidi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portmidi\pm_common\portmidi.c">
+      <Filter>Source Files\portmidi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portmidi\porttime\porttime.c">
+      <Filter>Source Files\portmidi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portmidi\porttime\ptwinmm.c">
+      <Filter>Source Files\portmidi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tinyxml\tinystr.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tinyxml\tinyxml.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tinyxml\tinyxmlerror.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tinyxml\tinyxmlparser.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="videoInputCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\FrameEqualizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\SDLinterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\common\CalibrationEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\CalibrationGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FidtrackFinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FidtrackFinderClassic.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FiducialFinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FiducialObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FingerObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FrameProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FrameThresholder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\MidiServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\RegionProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\RingBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\SFont.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\TuioServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\CameraEngine.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\CameraTool.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FileCamera.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FolderCamera.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FontTool.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\ip\IpEndpointName.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\MessageMappingOscPacketListener.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\ip\NetworkingUtils.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\OscException.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\OscHostEndianness.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\OscOutboundPacketStream.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\OscPacketListener.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\OscPrintReceivedElements.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\OscReceivedElements.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\osc\OscTypes.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\ip\PacketListener.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\ip\TimerListener.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\oscpack\ip\UdpSocket.h">
+      <Filter>Header Files\oscpack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\default_trees.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\dump_graph.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\fidtrack120.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\fidtrackX.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\floatpoint.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\segment.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\threshold.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\tiled_bernsen_threshold.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\topologysearch.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\libfidtrack\treeidmap.h">
+      <Filter>Header Files\libfidtrack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portmidi\pm_common\pminternal.h">
+      <Filter>Header Files\portmidi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portmidi\pm_common\pmutil.h">
+      <Filter>Header Files\portmidi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portmidi\pm_win\pmwinmm.h">
+      <Filter>Header Files\portmidi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portmidi\pm_common\portmidi.h">
+      <Filter>Header Files\portmidi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portmidi\porttime\porttime.h">
+      <Filter>Header Files\portmidi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tinyxml\tinystr.h">
+      <Filter>Header Files\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tinyxml\tinyxml.h">
+      <Filter>Header Files\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="videoInputCamera.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\FrameEqualizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\SDLinterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="camera.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+    <Xml Include="reacTIVision.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="reacTIVision.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="reacTIVision.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

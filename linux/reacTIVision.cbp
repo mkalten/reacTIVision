@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="reacTIVision" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="build/Debug/reacTIVision" prefix_auto="1" extension_auto="1" />
+				<Option object_output="build/Debug/obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-Wextra" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-DLINUX" />
+					<Add option="-DOSC_LITTLE_ENDIAN" />
+					<Add directory="/usr/include/SDL2" />
+					<Add directory="../ext/oscpack" />
+					<Add directory="../ext/tinyxml" />
+					<Add directory="../ext/portmidi/pm_common" />
+					<Add directory="../ext/portmidi/pm_linux" />
+					<Add directory="../ext/portmidi/porttime" />
+					<Add directory="../common" />
+					<Add directory="../ext/libfidtrack" />
+				</Compiler>
+				<Linker>
+					<Add library="SDL2" />
+					<Add library="dc1394" />
+					<Add library="pthread" />
+					<Add library="asound" />
+					<Add library="turbojpeg" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="build/Release/reacTIVision" prefix_auto="1" extension_auto="1" />
+				<Option object_output="build/Release/obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-w" />
+					<Add option="-DLINUX" />
+					<Add option="-DOSC_LITTLE_ENDIAN" />
+					<Add option="-DNDEBUG" />
+					<Add directory="/usr/include/SDL2" />
+					<Add directory="../ext/oscpack" />
+					<Add directory="../ext/tinyxml" />
+					<Add directory="../ext/portmidi/pm_common" />
+					<Add directory="../ext/portmidi/pm_linux" />
+					<Add directory="../ext/portmidi/porttime" />
+					<Add directory="../common" />
+					<Add directory="../ext/libfidtrack" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="SDL2" />
+					<Add library="pthread" />
+					<Add library="dc1394" />
+					<Add library="asound" />
+					<Add library="turbojpeg" />
+				</Linker>
+			</Target>
+			<Target title="Profile">
+				<Option output="build/Debug/reacTIVision" prefix_auto="1" extension_auto="1" />
+				<Option object_output="build/Debug/obj/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-pg" />
+					<Add option="-g" />
+					<Add option="-DLINUX" />
+					<Add option="-DOSC_LITTLE_ENDIAN" />
+					<Add directory="/usr/include/SDL2" />
+					<Add directory="../ext/oscpack" />
+					<Add directory="../ext/tinyxml" />
+					<Add directory="../ext/portmidi/pm_common" />
+					<Add directory="../ext/portmidi/pm_linux" />
+					<Add directory="../ext/portmidi/porttime" />
+					<Add directory="../common" />
+					<Add directory="../ext/libfidtrack" />
+				</Compiler>
+				<Linker>
+					<Add option="-pg" />
+					<Add library="SDL2" />
+					<Add library="dc1394" />
+					<Add library="pthread" />
+					<Add library="asound" />
+					<Add library="turbojpeg" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../common/CalibrationEngine.cpp" />
+		<Unit filename="../common/CalibrationEngine.h" />
+		<Unit filename="../common/CalibrationGrid.cpp" />
+		<Unit filename="../common/CalibrationGrid.h" />
+		<Unit filename="../common/CameraEngine.cpp" />
+		<Unit filename="../common/CameraEngine.h" />
+		<Unit filename="../common/CameraTool.cpp" />
+		<Unit filename="../common/CameraTool.h" />
+		<Unit filename="../common/FidtrackFinder.cpp" />
+		<Unit filename="../common/FidtrackFinder.h" />
+		<Unit filename="../common/FidtrackFinderClassic.cpp" />
+		<Unit filename="../common/FidtrackFinderClassic.h" />
+		<Unit filename="../common/FiducialFinder.cpp" />
+		<Unit filename="../common/FiducialFinder.h" />
+		<Unit filename="../common/FiducialObject.cpp" />
+		<Unit filename="../common/FiducialObject.h" />
+		<Unit filename="../common/FileCamera.cpp" />
+		<Unit filename="../common/FileCamera.h" />
+		<Unit filename="../common/FingerObject.cpp" />
+		<Unit filename="../common/FingerObject.h" />
+		<Unit filename="../common/FolderCamera.cpp" />
+		<Unit filename="../common/FolderCamera.h" />
+		<Unit filename="../common/FontTool.cpp" />
+		<Unit filename="../common/FontTool.h" />
+		<Unit filename="../common/FrameEqualizer.cpp" />
+		<Unit filename="../common/FrameEqualizer.h" />
+		<Unit filename="../common/FrameProcessor.h" />
+		<Unit filename="../common/FrameThresholder.cpp" />
+		<Unit filename="../common/FrameThresholder.h" />
+		<Unit filename="../common/Main.cpp" />
+		<Unit filename="../common/Main.h" />
+		<Unit filename="../common/MessageServer.h" />
+		<Unit filename="../common/MidiServer.cpp" />
+		<Unit filename="../common/MidiServer.h" />
+		<Unit filename="../common/RegionProcessor.h" />
+		<Unit filename="../common/Resources.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../common/Resources.h" />
+		<Unit filename="../common/RingBuffer.cpp" />
+		<Unit filename="../common/RingBuffer.h" />
+		<Unit filename="../common/SDLinterface.cpp" />
+		<Unit filename="../common/SDLinterface.h" />
+		<Unit filename="../common/SFont.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../common/SFont.h" />
+		<Unit filename="../common/TuioServer.cpp" />
+		<Unit filename="../common/TuioServer.h" />
+		<Unit filename="../ext/libfidtrack/default_trees.h" />
+		<Unit filename="../ext/libfidtrack/dump_graph.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/dump_graph.h" />
+		<Unit filename="../ext/libfidtrack/fidtrack120.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/fidtrack120.h" />
+		<Unit filename="../ext/libfidtrack/fidtrackX.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/fidtrackX.h" />
+		<Unit filename="../ext/libfidtrack/floatpoint.h" />
+		<Unit filename="../ext/libfidtrack/segment.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/segment.h" />
+		<Unit filename="../ext/libfidtrack/threshold.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/threshold.h" />
+		<Unit filename="../ext/libfidtrack/tiled_bernsen_threshold.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/tiled_bernsen_threshold.h" />
+		<Unit filename="../ext/libfidtrack/topologysearch.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/topologysearch.h" />
+		<Unit filename="../ext/libfidtrack/treeidmap.cpp" />
+		<Unit filename="../ext/libfidtrack/treeidmap.h" />
+		<Unit filename="../ext/oscpack/ip/IpEndpointName.cpp" />
+		<Unit filename="../ext/oscpack/ip/IpEndpointName.h" />
+		<Unit filename="../ext/oscpack/ip/NetworkingUtils.h" />
+		<Unit filename="../ext/oscpack/ip/PacketListener.h" />
+		<Unit filename="../ext/oscpack/ip/TimerListener.h" />
+		<Unit filename="../ext/oscpack/ip/UdpSocket.h" />
+		<Unit filename="../ext/oscpack/ip/posix/NetworkingUtils.cpp" />
+		<Unit filename="../ext/oscpack/ip/posix/UdpSocket.cpp" />
+		<Unit filename="../ext/oscpack/osc/MessageMappingOscPacketListener.h" />
+		<Unit filename="../ext/oscpack/osc/OscException.h" />
+		<Unit filename="../ext/oscpack/osc/OscHostEndianness.h" />
+		<Unit filename="../ext/oscpack/osc/OscOutboundPacketStream.cpp" />
+		<Unit filename="../ext/oscpack/osc/OscOutboundPacketStream.h" />
+		<Unit filename="../ext/oscpack/osc/OscPacketListener.h" />
+		<Unit filename="../ext/oscpack/osc/OscPrintReceivedElements.cpp" />
+		<Unit filename="../ext/oscpack/osc/OscPrintReceivedElements.h" />
+		<Unit filename="../ext/oscpack/osc/OscReceivedElements.cpp" />
+		<Unit filename="../ext/oscpack/osc/OscReceivedElements.h" />
+		<Unit filename="../ext/oscpack/osc/OscTypes.cpp" />
+		<Unit filename="../ext/oscpack/osc/OscTypes.h" />
+		<Unit filename="../ext/portmidi/pm_common/pminternal.h" />
+		<Unit filename="../ext/portmidi/pm_common/pmutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/portmidi/pm_common/pmutil.h" />
+		<Unit filename="../ext/portmidi/pm_common/portmidi.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/portmidi/pm_common/portmidi.h" />
+		<Unit filename="../ext/portmidi/pm_linux/finddefault.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/portmidi/pm_linux/pmlinux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/portmidi/pm_linux/pmlinux.h" />
+		<Unit filename="../ext/portmidi/pm_linux/pmlinuxalsa.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/portmidi/pm_linux/pmlinuxalsa.h" />
+		<Unit filename="../ext/portmidi/porttime/porttime.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/portmidi/porttime/porttime.h" />
+		<Unit filename="../ext/portmidi/porttime/ptlinux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/tinyxml/tinystr.cpp" />
+		<Unit filename="../ext/tinyxml/tinystr.h" />
+		<Unit filename="../ext/tinyxml/tinyxml.cpp" />
+		<Unit filename="../ext/tinyxml/tinyxml.h" />
+		<Unit filename="../ext/tinyxml/tinyxmlerror.cpp" />
+		<Unit filename="../ext/tinyxml/tinyxmlparser.cpp" />
+		<Unit filename="DC1394Camera.cpp" />
+		<Unit filename="DC1394Camera.h" />
+		<Unit filename="V4Linux2Camera.cpp" />
+		<Unit filename="V4Linux2Camera.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,38 @@
+The reacTIVision software and the the TUIO example clients 
+are free software licensed under the GPL license. 
+You can freely use this software for any private, academic 
+or commercial purpose, provided that you are willing 
+to publish the source code of your derived work upon request. 
+
+* the reacTIVision framework (c) by Martin Kaltenbrunner
+  is licensed under the GPL v2.0 license
+  see the file GPL.txt for the detailled license terms
+  http://github.com/mkalten/reacTIVision
+
+* the fidtrack library (c) by Ross Bencina & Martin Kaltenbrunner
+  is licensed under the LGPL license
+  see LICENSE.txt in the project folder for its terms
+  http://github.com/mkalten/reacTIVision
+
+* the oscpack library (c) by Ross Bencina
+  is licensed under a BSD style license
+  see LICENSE in the project folder for its terms
+  http://code.google.com/p/oscpack/
+
+* the videoInput library (c) by Theo Watson et al.
+  is licensed under a BSD style license
+  http://github.com/ofTheo/videoInput
+
+* the TinyXML library (c) by Lee Thomason et al.
+  is licensed under the ZLib license
+  see README.txt in the project folder for its terms
+  http://www.sourceforge.net/projects/tinyxml
+
+* the PortMidi library (c) by Roger B. Dannenberg et al.
+  is licensed under a BSD style license
+  see README.txt in the project folder for its terms
+  http://portmedia.sourceforge.net/portmidi/
+
+* the VVUVCKit framework
+  is licensed under the MIT license
+  http://github.com/mrRay/VVUVCKit
