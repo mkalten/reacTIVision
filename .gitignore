@@ -1,0 +1,16 @@
+
+*.mode1v3
+
+*.pbxuser
+
+*.xcscheme
+
+*.xcuserstate
+
+*.xcsettings
+
+*.xcbkptlist
+
+macosx/legacy.xcodeproj/xcuserdata/mkalten.xcuserdatad/xcschemes/xcschememanagement.plist
+
+macosx/reacTIVision.xcodeproj/xcuserdata/mkalten.xcuserdatad/xcschemes/xcschememanagement.plist

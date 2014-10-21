@@ -21,7 +21,6 @@ and multi-touch events from a tabletop surface. As an alternative
 to TUIO, the application is also capabable of sending MIDI messages.
 http://www.tuio.org/
 
-
 The TUIO framework includes a set of example client projects
 for various programming languages, which serve as a base for
 the easy development of tangible user interface or multi-touch
@@ -43,7 +42,6 @@ markers. You will find the default "amoeba" set of 216 fiducials in
 the document "default.pdf" within the symbols folder. Print this
 document and attach the labels to any object you want to track.
 The default fiducial tracking engine is based on the included fidtrack
-
 library, which also provides an alternative "classic“ fiducial set,
 which are a reimplementation of Enrico Costanza’s d-touch concept.
 See below how to configure the application to use these symbol sets.
