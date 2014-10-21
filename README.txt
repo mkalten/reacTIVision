@@ -19,6 +19,8 @@ client application. It implements the TUIO protocol, which has been
 specially designed for transmitting the state of tangible objects
 and multi-touch events from a tabletop surface. As an alternative 
 to TUIO, the application is also capabable of sending MIDI messages.
+http://www.tuio.org/
+
 
 The TUIO framework includes a set of example client projects
 for various programming languages, which serve as a base for
@@ -145,9 +147,7 @@ as a convenience alternative to TUIO in some application scenarios.
 
 Adding <midi config="midi_demo.xml" /> to reacTIVision.xml switches to
 MIDI mode and specifies the MIDI configuration file that contains the
-
 mappings and MIDI device selection. An example configuration file along
-
 with a simple PD patch example can be found in the midi folder.
 
 You can list all available MIDI devices with the "-l" startup option.
