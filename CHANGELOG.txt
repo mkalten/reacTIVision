@@ -12,7 +12,7 @@ reacTIVision 1.5
 * allow the adjustment of the threshold tile size
 * updated FrameEqualizer for faster background subtracion 
 * sending correct TUIO 1.1 source messages
-* added a quicker and less tideous calibration mode
+* added a quicker and less tedious calibration mode
 * migrated the user interface to SDL 2.0 (less CPU overhead)
 * fixed a MIDI configuration file location bug on MacOS X
 * added fullscreen toggle (via F1 key)

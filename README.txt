@@ -31,7 +31,7 @@ The reacTIVision application currently runs under the
 following operating systems: Windows, Mac OS X and Linux
 Under Windows it supports any camera with a proper WDM driver,
 such as most USB, FireWire and DV cameras. Under Mac OS X most
-UVC campliant USB as well as Firewire cameras should work.
+UVC compliant USB as well as Firewire cameras should work.
 Under Linux FireWire cameras are as well supported as many 
 Video4Linux2 compliant USB cameras.
 
@@ -123,7 +123,7 @@ and fiducial tracking. Within the running application you can toggle
 this with the 'E' key or recalculate the background subtraction 
 by hitting the SPACE bar.
 
-The overall camera and imageesettings can be configured within the
+The overall camera and imagee settings can be configured within the
 "camera.xml" configuration file. On Mac OS X this file is as well 
 located in the Resources folder within the application bundle.
 You can select the camera ID and specify its dimension and framerate,
