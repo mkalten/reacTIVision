@@ -140,10 +140,10 @@ the mapping of any object dimension (xpos, ypos, angle) to a MIDI
 control message through an XML configuration file. Adding and removing
 objects can also be mapped to simple note ON/OFF events.
 Keep in mind though that MIDI has less bandwidth and data resolution
-compared to Open Sound Control, so the new MIDI feature is only meant
+compared to Open Sound Control, so the MIDI feature is only meant
 as a convenience alternative to TUIO in some application scenarios.
 
-Adding <midi config="midi_demo.xml" /> to reacTIVision.xml switches to
+Adding <midi config="midi.xml" /> to reacTIVision.xml switches to
 MIDI mode and specifies the MIDI configuration file that contains the
 mappings and MIDI device selection. An example configuration file along
 with a simple PD patch example can be found in the midi folder.
