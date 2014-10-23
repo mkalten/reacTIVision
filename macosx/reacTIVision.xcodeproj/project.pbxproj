@@ -231,18 +231,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */,
 				B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */,
 				B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */,
+				B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */,
+				B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */,
+				B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */,
 				B206F53E19E3DD4A00B8E1DA /* CoreMedia.framework in Frameworks */,
 				B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */,
 				B2E9BB3B09D0D2C1005DF348 /* CoreMIDI.framework in Frameworks */,
 				B2E9BB4009D0D2E0005DF348 /* CoreAudio.framework in Frameworks */,
-				B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */,
 				B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */,
 				B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */,
 				B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */,
-				B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */,
 				B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
