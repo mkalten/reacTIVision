@@ -121,11 +121,14 @@ bool MacVdigCamera::initCamera() {
 	int max_height = (*vdImageDesc)->height;
 	
 	if (config.frame) {
-		if (config.frame_width<=0) config.frame_width = max_width;
-		if (config.frame_height<=0) config.frame_height = max_height;
+		if ((config.cam_width<=0) || (config.cam_width>max_width))  config.cam_width = max_width;
+		if ((config.cam_height<=0) || (config.cam_height>max_height)) config.cam_height = max_height;
+		
+		if ((config.frame_width<=0) || (config.frame_width>config.cam_width))  config.frame_width = config.cam_width;
+		if ((config.frame_height<=0) || (config.frame_height>config.cam_height)) config.frame_height = config.cam_height;
 
-		if ((config.frame_xoff+config.frame_width)>max_width) config.frame_xoff = max_width-config.frame_width;
-		if ((config.frame_yoff+config.frame_height)>max_height) config.frame_yoff = max_height-config.frame_height;
+		if ((config.frame_xoff+config.frame_width)>config.cam_width) config.frame_xoff = config.cam_width-config.frame_width;
+		if ((config.frame_yoff+config.frame_height)>config.cam_height) config.frame_yoff = config.cam_height-config.frame_height;
 		
 		dstPortBounds.left = config.frame_xoff;
 		dstPortBounds.right = config.frame_xoff+config.frame_width;
@@ -133,20 +136,17 @@ bool MacVdigCamera::initCamera() {
 		dstPortBounds.bottom = config.frame_yoff+config.frame_height;
 		
 		if (dstPortBounds.left<0) dstPortBounds.left = 0;
-		if (dstPortBounds.right>max_width) dstPortBounds.right = max_width;
+		if (dstPortBounds.right>max_width) dstPortBounds.right = config.cam_width;
 		if (dstPortBounds.top<0) dstPortBounds.top = 0;
-		if (dstPortBounds.bottom>max_height) dstPortBounds.bottom = max_height;
-		
-		frame_width = config.frame_width;
-		frame_height = config.frame_height;
+		if (dstPortBounds.bottom>max_height) dstPortBounds.bottom = config.cam_height;		
 	} else {
-		dstPortBounds.left = 0;
-		dstPortBounds.right = max_width;
-		dstPortBounds.top = 0;
-		dstPortBounds.bottom = max_height;
+		if ((config.cam_width<=0) || (config.cam_width>max_width))  config.cam_width = max_width;
+		if ((config.cam_height<=0) || (config.cam_height>max_height)) config.cam_height = max_height;
 		
-		frame_width = config.cam_width;
-		frame_height = config.cam_height;
+		dstPortBounds.left = 0;
+		dstPortBounds.right = config.cam_width;
+		dstPortBounds.top = 0;
+		dstPortBounds.bottom = config.cam_height;
 	}
 	
 	if (err = createOffscreenGWorld(	&dstPort,
@@ -173,10 +173,13 @@ bool MacVdigCamera::initCamera() {
 		return false;
 	}
 
-	this->cam_width =dstPortBounds.right - dstPortBounds.left;
-	this->cam_height = dstPortBounds.bottom - dstPortBounds.top;
+	cam_width = dstPortBounds.right - dstPortBounds.left;
+	cam_height = dstPortBounds.bottom - dstPortBounds.top;
 	
-	cam_buffer = new unsigned char[this->cam_width*this->cam_height*bytes];
+	frame_width = cam_width;
+	frame_height = cam_height;
+	
+	cam_buffer = new unsigned char[cam_width*cam_height*bytes];
 	return true;
 }
 
