@@ -340,7 +340,7 @@ bool AVfoundationCamera::initCamera() {
     [selectedVideoDevice lockForConfiguration:&error];
     [selectedVideoDevice setActiveFormat:lastFormat];
     if ([[[selectedVideoDevice activeFormat] videoSupportedFrameRateRanges] containsObject:selectedFrameRateRange]) {
-        [selectedVideoDevice setActiveVideoMaxFrameDuration:[selectedFrameRateRange maxFrameDuration]];
+        //[selectedVideoDevice setActiveVideoMaxFrameDuration:[selectedFrameRateRange maxFrameDuration]];
         [selectedVideoDevice setActiveVideoMinFrameDuration:[selectedFrameRateRange minFrameDuration]];
     }
     [selectedVideoDevice unlockForConfiguration];
