@@ -326,7 +326,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				B297D3EC097536E3004AB0FE /* Info.plist */,
 			);
 			name = visionEngineNT;
 			sourceTree = "<group>";
@@ -334,6 +333,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B297D3EC097536E3004AB0FE /* Info.plist */,
 				B2CAC0B119CC3E94003AC356 /* reacTIVision.png */,
 				B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */,
 				B282A34C0CD756B500657CDA /* camera.xml */,
@@ -492,7 +492,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 0600;
+				LastUpgradeCheck = 0610;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
 			compatibilityVersion = "Xcode 3.2";

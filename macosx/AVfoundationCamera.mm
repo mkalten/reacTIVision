@@ -178,6 +178,7 @@ void AVfoundationCamera::listDevices() {
             int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
             if (codec!=last_codec) {
                 if ((codec=='yuvs') || (codec=='2vuy')) printf("\t\tformat: YUYV (%s)\n",FourCC2Str(codec));
+                else if ((codec=='420v') || (codec=='420f')) printf("\t\tformat: YUV420 (%s)\n",FourCC2Str(codec));
                 else if ((codec=='jpeg') || (codec=='dmb1')) printf("\t\tformat: JPEG (%s)\n",FourCC2Str(codec));
                 else if (codec=='avc1') printf("\t\tformat: H.264 (%s)\n",FourCC2Str(codec));
                 else if (codec=='h263') printf("\t\tformat: H.263 (%s)\n",FourCC2Str(codec));
