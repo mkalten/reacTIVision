@@ -8,6 +8,8 @@ Debug
 
 Release
 
+Frameworks
+
 *.pbxuser
 
 *.mode1v3

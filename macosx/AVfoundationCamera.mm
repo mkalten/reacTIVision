@@ -386,9 +386,8 @@ bool AVfoundationCamera::initCamera() {
     [videoOutput setSampleBufferDelegate:grabber queue:queue];
     dispatch_release(queue);
     
-    
     uvcController = [[VVUVCController alloc] initWithDeviceIDString:[selectedVideoDevice uniqueID]];
-    [uvcController resetParamsToDefaults];
+    if (uvcController) [uvcController resetParamsToDefaults];
     
     applyCameraSettings();
     return true;
@@ -450,12 +449,15 @@ bool AVfoundationCamera::closeCamera()
 
 void AVfoundationCamera::showSettingsDialog() {
     
+    if (uvcController) {
         [uvcController closeSettingsWindow];
         [uvcController openSettingsWindow];
+    }
 }
 
 bool AVfoundationCamera::getCameraSettingAuto(int mode) {
     
+    if (uvcController==NULL) return false;
     //printf("get auto %d\n",mode);
 
     switch (mode) {
@@ -470,6 +472,7 @@ bool AVfoundationCamera::getCameraSettingAuto(int mode) {
 
 bool AVfoundationCamera::setCameraSettingAuto(int mode, bool flag) {
     
+    if (uvcController==NULL) return false;
     //printf("set auto %d %d\n",mode,flag);
     
     switch (mode) {
@@ -488,7 +491,7 @@ bool AVfoundationCamera::setCameraSettingAuto(int mode, bool flag) {
 
 bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
     
-    
+    if (uvcController==NULL) return false;
    // int current_setting = getCameraSetting(mode);
    // if (setting==current_setting) return true;
     setCameraSettingAuto(mode,false);
@@ -510,6 +513,7 @@ bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
 
 int AVfoundationCamera::getCameraSetting(int mode) {
  
+    if (uvcController==NULL) return 0;
     //printf("get %d\n",mode);
     
     switch (mode) {
@@ -527,6 +531,7 @@ int AVfoundationCamera::getCameraSetting(int mode) {
 
 int AVfoundationCamera::getMaxCameraSetting(int mode) {
 
+    if (uvcController==NULL) return 0;
     //printf("max %d\n",mode);
 
     switch (mode) {
@@ -544,6 +549,7 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
 
 int AVfoundationCamera::getMinCameraSetting(int mode) {
  
+    if (uvcController==NULL) return 0;
     //printf("min %d\n",mode);
 
     switch (mode) {
@@ -561,6 +567,7 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
 
 bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
 
+    if (uvcController==NULL) return false;
     //printf("set default %d\n",mode);
 
     switch (mode) {
@@ -599,6 +606,7 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
 
 int AVfoundationCamera::getDefaultCameraSetting(int mode) {
     
+    if (uvcController==NULL) return 0;
     //printf("get default %d\n",mode);
     
     switch (mode) {
