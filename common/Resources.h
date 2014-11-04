@@ -22,7 +22,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#ifdef __APPLE__
+#include <SDL2/SDL.h>
+#else
 #include <SDL.h>
+#endif
 extern unsigned char icon[3126];
 extern unsigned char mask[1024];
 extern unsigned char camera[3910];

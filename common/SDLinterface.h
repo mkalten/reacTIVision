@@ -34,8 +34,13 @@
 
 #include <sys/stat.h>
 
+#ifdef __APPLE__
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_thread.h>
+#else
 #include <SDL.h>
 #include <SDL_thread.h>
+#endif
 #include <time.h>
 
 #define WIDTH 640
