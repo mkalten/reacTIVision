@@ -18,8 +18,13 @@
 */
 
 #include "FrameThresholder.h"
+#ifdef __APPLE__
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_thread.h>
+#else
 #include <SDL.h>
 #include <SDL_thread.h>
+#endif
 
 typedef struct threshold_data{
     TiledBernsenThresholder *thresholder;
