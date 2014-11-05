@@ -306,7 +306,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		29B97314FDCFA39411CA2CEA /* visionEngineNT */ = {
+		29B97314FDCFA39411CA2CEA /* reacTIVision */ = {
 			isa = PBXGroup;
 			children = (
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -315,7 +315,7 @@
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				B297D3EC097536E3004AB0FE /* Info.plist */,
 			);
-			name = visionEngineNT;
+			name = reacTIVision;
 			sourceTree = "<group>";
 		};
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
@@ -470,7 +470,7 @@
 			dependencies = (
 			);
 			name = reacTIVision;
-			productName = visionEngineNT;
+			productName = reacTIVision;
 			productReference = B297D3ED097536E3004AB0FE /* reacTIVision.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -493,7 +493,7 @@
 				French,
 				German,
 			);
-			mainGroup = 29B97314FDCFA39411CA2CEA /* visionEngineNT */;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* reacTIVision */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -611,7 +611,6 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					"$(LOCAL_LIBRARY_DIR)/Frameworks/SDL2.framework/Headers",
 					../macosx,
 					../ext/libfidtrack,
 					../ext/oscpack,
@@ -652,7 +651,6 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					"$(LOCAL_LIBRARY_DIR)/Frameworks/SDL2.framework/Headers",
 					../macosx,
 					../ext/libfidtrack,
 					../ext/oscpack,
@@ -691,7 +689,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					"$(LOCAL_LIBRARY_DIR)/Frameworks/SDL2.framework/Headers",
 					../macosx,
 					../ext/libfidtrack,
 					../ext/oscpack,
