@@ -155,20 +155,22 @@ void AVfoundationCamera::listDevices() {
     
     unsigned int camID = 0;
     for (AVCaptureDevice* device in dev_list0) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:1]);
+        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
         [captureDevices addObject:device];
         camID++;
     }
     
     for (AVCaptureDevice* device in dev_list1) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:1]);
+        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
         [captureDevices addObject:device];
         camID++;
     }
     
     camID = 0;
     for (AVCaptureDevice* device in captureDevices) {
-        printf("\t%d: %s\n",camID,[[device localizedName] cStringUsingEncoding:1]);
+        if ([device localizedName]!=NULL)
+            printf("\t%d: %s\n",camID,[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
+        else printf("\t%d: unknown\n",camID);
         
         NSArray *captureDeviceFormats = [device formats];
         
@@ -200,9 +202,7 @@ void AVfoundationCamera::listDevices() {
         camID++;
     }
     
-    
     [captureSession release];
-    
 }
 
 bool AVfoundationCamera::findCamera() {
@@ -228,10 +228,20 @@ bool AVfoundationCamera::findCamera() {
     
     readSettings();
     cameraID = config.device;
-    if ((cameraID<0) || (cameraID>=[videoDevices count])) cameraID = 0;
+    if (cameraID<0) cameraID = 0;
+    else if (cameraID>=[videoDevices count]) cameraID = [videoDevices count]-1;
 
     selectedVideoDevice = [videoDevices objectAtIndex:cameraID];
-    sprintf(cameraName,"%s",[[selectedVideoDevice localizedName] cStringUsingEncoding:1]);
+    if (selectedVideoDevice==NULL) {
+        cameraID = -1;
+        [session release];
+        return false;
+    }
+    
+    if ([selectedVideoDevice localizedName]!=NULL)
+        sprintf(cameraName,"%s",[[selectedVideoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
+    else sprintf(cameraName,"unknown");
+
     return true;
 }
 
@@ -242,7 +252,7 @@ bool AVfoundationCamera::initCamera() {
     if (videoDeviceInput == nil) {
         return false;
     }
-    
+   
     int max_width = 0;
     int max_height = 0;
     
@@ -385,9 +395,12 @@ bool AVfoundationCamera::initCamera() {
     }
     [videoOutput setSampleBufferDelegate:grabber queue:queue];
     dispatch_release(queue);
-    
-    uvcController = [[VVUVCController alloc] initWithDeviceIDString:[selectedVideoDevice uniqueID]];
-    if (uvcController) [uvcController resetParamsToDefaults];
+
+    NSString *uniqueID = [selectedVideoDevice uniqueID];
+    if (uniqueID!=NULL) {
+        uvcController = [[VVUVCController alloc] initWithDeviceIDString:[selectedVideoDevice uniqueID]];
+        if (uvcController) [uvcController resetParamsToDefaults];
+    } // else std::cout << "VVUVCController NULL" << std::endl;
     
     applyCameraSettings();
     return true;
