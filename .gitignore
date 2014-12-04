@@ -17,3 +17,5 @@ Frameworks
 macosx/legacy.xcodeproj/project.xcworkspace
 
 macosx/reacTIVision.xcodeproj/project.xcworkspace
+*.sdf
+*.suo
