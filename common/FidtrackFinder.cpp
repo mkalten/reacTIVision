@@ -1,6 +1,6 @@
 /*  reacTIVision tangible interaction framework
     FidtrackFinder.cpp
-    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -390,8 +390,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 					//printf("corrected invalid ID to %d (%ld)\n", fiducial->fiducial_id,fiducial->session_id);
 					
 					//two pixel threshold since missing/added leaf nodes result in a slightly different position
-					float dx = abs(fiducial->getX() - fiducials[i].x);
-					float dy = abs(fiducial->getY() - fiducials[i].y);
+					float dx = fabs(fiducial->getX() - fiducials[i].x);
+					float dy = fabs(fiducial->getY() - fiducials[i].y);
 					if ((dx<2.0f) && (dy<2.0f)) {
 						fiducials[i].x = (short int)fiducial->getX();
 						fiducials[i].y = (short int)fiducial->getY();
@@ -505,8 +505,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 				float angle = existing_fiducial->getAngle();
 
 				//two pixel threshold since root node blobs do not provide a precise position
-				float dx = abs(existing_fiducial->getX() - xpos);
-				float dy = abs(existing_fiducial->getY() - ypos);
+				float dx = fabs(existing_fiducial->getX() - xpos);
+				float dy = fabs(existing_fiducial->getY() - ypos);
 				if ((dx<2.0f) && (dy<2.0f)) {
 					xpos = existing_fiducial->getX();
 					ypos = existing_fiducial->getY();
