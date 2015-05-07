@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
  
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef SDLINTERFACE_H
-#define SDLINTERFACE_H
+#ifndef VISIONENGINE_H
+#define VISIONENGINE_H
 
 #include <iostream>
 #include <string>

@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,29 +16,45 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef FONTTOOL_H
-#define FONTTOOL_H
+#ifndef CAMERATOOL_H
+#define CAMERATOOL_H
+
+#ifdef WIN32
+#include <windows.h>
+#include "../win32/videoInputCamera.h"
+#endif
+
+#ifdef LINUX
+#include <stdio.h>
+#include <stdlib.h>
+#include "../linux/DC1394Camera.h"
+#include "../linux/V4Linux2Camera.h"
+#endif
 
 #ifdef __APPLE__
-#include <SDL2/SDL.h>
-#else
-#include <SDL.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "../linux/DC1394Camera.h"
+    #ifndef MAC_OS_X_VERSION_10_6
+    #include "../macosx/legacy/MacVdigCamera.h"
+	#else
+	#include "../macosx/AVfoundationCamera.h"
+    #endif
 #endif
-#include "Resources.h"
-#include "SFont.h"
 
-class FontTool {
+#ifndef NDEBUG
+#include "FileCamera.h"
+#include "FolderCamera.h"
+#endif
 
-public:	
-	static void init();
-	static void close();
+#include <iostream>
+
+class CameraTool
+{
+public:
 	
-	static void drawText(int xpos, int ypos, const char* text, SDL_Surface *display);
-	static int getFontHeight();
-	static int getTextWidth(const char *text);
-private:
-	static SFont_Font *sfont;
-	
+	static CameraEngine* findCamera(const char* config_file);
+	static void listDevices();
 };
 
 #endif

@@ -1,5 +1,6 @@
-/*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+/*  reacTIVision tangible interaction framework
+    Resources.h
+    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,28 +17,24 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <FontTool.h>
-
-
-	void FontTool::init() {
-		FontTool::sfont = SFont_InitDefaultFont();
-	}
-
-	void FontTool::close() {
-		SFont_FreeFont(FontTool::sfont);
-	}
-	
-	void FontTool::drawText(int xpos, int ypos, const char* text, SDL_Surface *display) {
-		if(sfont) SFont_Write(display, FontTool::sfont, xpos,ypos,text);
-	}
-	
-	int FontTool::getFontHeight() { 
-		return SFont_TextHeight(FontTool::sfont);
-	}
-	
-	int FontTool::getTextWidth(const char *text) {
-		return SFont_TextWidth(FontTool::sfont,text);
-	}
-
-	SFont_Font *FontTool::sfont = NULL;
-
+#ifndef _images_H_
+#define _images_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifdef __APPLE__
+#include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif
+//extern unsigned char icon[3126];
+//extern unsigned char mask[1024];
+extern unsigned char camera[3910];
+//extern Uint8 *getMask();
+//extern SDL_Surface *getIcon();
+extern SDL_Surface *getCamera();
+extern SDL_Rect camera_rect;
+#ifdef __cplusplus
+}
+#endif
+#endif

@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,45 +16,36 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef CAMERATOOL_H
-#define CAMERATOOL_H
+#ifndef RINGBUFFER_H
+#define RINGBUFFER_H
 
 #ifdef WIN32
 #include <windows.h>
-#include "../win32/videoInputCamera.h"
-#endif
-
-#ifdef LINUX
+#else
 #include <stdio.h>
 #include <stdlib.h>
-#include "../linux/DC1394Camera.h"
-#include "../linux/V4Linux2Camera.h"
 #endif
 
-#ifdef __APPLE__
-#include <stdio.h>
-#include <stdlib.h>
-#include "../linux/DC1394Camera.h"
-    #ifndef MAC_OS_X_VERSION_10_6
-    #include "../macosx/legacy/MacVdigCamera.h"
-	#else
-	#include "../macosx/AVfoundationCamera.h"
-    #endif
-#endif
-
-#ifndef NDEBUG
-#include "FileCamera.h"
-#include "FolderCamera.h"
-#endif
-
-#include <iostream>
-
-class CameraTool
+class RingBuffer
 {
 public:
+	RingBuffer(int size);
+	~RingBuffer();
 	
-	static CameraEngine* findCamera(const char* config_file);
-	static void listDevices();
+	int size();
+	
+	unsigned char* getNextBufferToWrite();
+	void writeFinished();
+	unsigned char* getNextBufferToRead();
+	void readFinished();
+
+private:
+	int nextIndex( int index );
+	int bufferSize;
+	
+	unsigned char* buffer[3];
+	volatile char readIndex;
+	volatile char writeIndex;
 };
 
 #endif

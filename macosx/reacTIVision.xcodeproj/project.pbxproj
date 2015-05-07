@@ -106,25 +106,25 @@
 		B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FrameThresholder.cpp; path = ../common/FrameThresholder.cpp; sourceTree = SOURCE_ROOT; };
 		B214E66D0959DA6F00A347C1 /* FrameThresholder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameThresholder.h; path = ../common/FrameThresholder.h; sourceTree = SOURCE_ROOT; };
 		B214E66E0959DA6F00A347C1 /* Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = Main.cpp; path = ../common/Main.cpp; sourceTree = SOURCE_ROOT; };
-		B21683D119F3962500F07F0D /* USBBusProber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = USBBusProber.framework; path = Frameworks/USBBusProber.framework; sourceTree = "<group>"; };
-		B21683D219F3962500F07F0D /* VVUVCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VVUVCKit.framework; path = Frameworks/VVUVCKit.framework; sourceTree = "<group>"; };
-		B21D89E30CE7A0FE003B810C /* FileCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileCamera.cpp; path = ../common/FileCamera.cpp; sourceTree = SOURCE_ROOT; };
-		B21D89E40CE7A0FE003B810C /* FileCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCamera.h; path = ../common/FileCamera.h; sourceTree = SOURCE_ROOT; };
-		B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = CameraEngine.cpp; path = ../common/CameraEngine.cpp; sourceTree = SOURCE_ROOT; };
-		B2208511078AFC0A0047913B /* CameraTool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CameraTool.cpp; path = ../common/CameraTool.cpp; sourceTree = SOURCE_ROOT; };
-		B2208512078AFC0A0047913B /* CameraTool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CameraTool.h; path = ../common/CameraTool.h; sourceTree = SOURCE_ROOT; };
+		B21683D119F3962500F07F0D /* USBBusProber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = USBBusProber.framework; path = ../ext/portvideo/macosx/Frameworks/USBBusProber.framework; sourceTree = "<group>"; };
+		B21683D219F3962500F07F0D /* VVUVCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VVUVCKit.framework; path = ../ext/portvideo/macosx/Frameworks/VVUVCKit.framework; sourceTree = "<group>"; };
+		B21D89E30CE7A0FE003B810C /* FileCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileCamera.cpp; path = ../ext/portvideo/common/FileCamera.cpp; sourceTree = SOURCE_ROOT; };
+		B21D89E40CE7A0FE003B810C /* FileCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCamera.h; path = ../ext/portvideo/common/FileCamera.h; sourceTree = SOURCE_ROOT; };
+		B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = CameraEngine.cpp; path = ../ext/portvideo/common/CameraEngine.cpp; sourceTree = SOURCE_ROOT; };
+		B2208511078AFC0A0047913B /* CameraTool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CameraTool.cpp; path = ../ext/portvideo/common/CameraTool.cpp; sourceTree = SOURCE_ROOT; };
+		B2208512078AFC0A0047913B /* CameraTool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CameraTool.h; path = ../ext/portvideo/common/CameraTool.h; sourceTree = SOURCE_ROOT; };
 		B2208519078AFC3D0047913B /* FiducialFinder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FiducialFinder.cpp; path = ../common/FiducialFinder.cpp; sourceTree = SOURCE_ROOT; };
 		B220851A078AFC3D0047913B /* FiducialFinder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FiducialFinder.h; path = ../common/FiducialFinder.h; sourceTree = SOURCE_ROOT; };
-		B220851B078AFC3D0047913B /* FrameProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameProcessor.h; path = ../common/FrameProcessor.h; sourceTree = SOURCE_ROOT; };
+		B220851B078AFC3D0047913B /* FrameProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameProcessor.h; path = ../ext/portvideo/common/FrameProcessor.h; sourceTree = SOURCE_ROOT; };
 		B220851F078AFC4D0047913B /* SDLinterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = SDLinterface.cpp; path = ../common/SDLinterface.cpp; sourceTree = SOURCE_ROOT; };
 		B2208520078AFC4D0047913B /* SDLinterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDLinterface.h; path = ../common/SDLinterface.h; sourceTree = SOURCE_ROOT; };
-		B2208521078AFC4D0047913B /* RingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RingBuffer.cpp; path = ../common/RingBuffer.cpp; sourceTree = SOURCE_ROOT; };
-		B2208522078AFC4D0047913B /* RingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RingBuffer.h; path = ../common/RingBuffer.h; sourceTree = SOURCE_ROOT; };
-		B2375E210CCE125700DE086D /* FontTool.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontTool.h; path = ../common/FontTool.h; sourceTree = SOURCE_ROOT; };
-		B2375F3B0CCE305C00DE086D /* FontTool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FontTool.cpp; path = ../common/FontTool.cpp; sourceTree = SOURCE_ROOT; };
-		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DC1394Camera.cpp; path = ../linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
-		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
-		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
+		B2208521078AFC4D0047913B /* RingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RingBuffer.cpp; path = ../ext/portvideo/common/RingBuffer.cpp; sourceTree = SOURCE_ROOT; };
+		B2208522078AFC4D0047913B /* RingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RingBuffer.h; path = ../ext/portvideo/common/RingBuffer.h; sourceTree = SOURCE_ROOT; };
+		B2375E210CCE125700DE086D /* FontTool.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontTool.h; path = ../ext/portvideo/interface/FontTool.h; sourceTree = SOURCE_ROOT; };
+		B2375F3B0CCE305C00DE086D /* FontTool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FontTool.cpp; path = ../ext/portvideo/interface/FontTool.cpp; sourceTree = SOURCE_ROOT; };
+		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DC1394Camera.cpp; path = ../ext/portvideo/linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
+		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../ext/portvideo/linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
+		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = ../ext/portvideo/macosx/dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
 		B24EA4490015EAB600096D13 /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../ext/tinyxml/tinystr.cpp; sourceTree = SOURCE_ROOT; };
 		B24EA44A0015EAB600096D13 /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../ext/tinyxml/tinystr.h; sourceTree = SOURCE_ROOT; };
 		B24EA44B0015EAB600096D13 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../ext/tinyxml/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
@@ -182,24 +182,24 @@
 		B29302D519C5001300CA07E1 /* finddefault.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = finddefault.c; path = ../ext/portmidi/pm_mac/finddefault.c; sourceTree = SOURCE_ROOT; };
 		B29302E019C5003F00CA07E1 /* readbinaryplist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readbinaryplist.c; path = ../ext/portmidi/pm_mac/readbinaryplist.c; sourceTree = SOURCE_ROOT; };
 		B29302E119C5003F00CA07E1 /* readbinaryplist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = readbinaryplist.h; path = ../ext/portmidi/pm_mac/readbinaryplist.h; sourceTree = SOURCE_ROOT; };
-		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVfoundationCamera.h; sourceTree = "<group>"; };
-		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVfoundationCamera.mm; sourceTree = "<group>"; };
+		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVfoundationCamera.h; path = ../ext/portvideo/macosx/AVfoundationCamera.h; sourceTree = "<group>"; };
+		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AVfoundationCamera.mm; path = ../ext/portvideo/macosx/AVfoundationCamera.mm; sourceTree = "<group>"; };
 		B29545ED19E2FF80001111A6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = /System/Library/Frameworks/AVFoundation.framework; sourceTree = "<absolute>"; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B297D3ED097536E3004AB0FE /* reacTIVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reacTIVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../common/Main.h; sourceTree = "<group>"; };
 		B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = reacTIVision.xml; sourceTree = SOURCE_ROOT; };
 		B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		B2CA60030CD623FA00B46958 /* libdc1394.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdc1394.a; path = dc1394/libdc1394.a; sourceTree = SOURCE_ROOT; };
+		B2CA60030CD623FA00B46958 /* libdc1394.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdc1394.a; path = ../ext/portvideo/macosx/dc1394/libdc1394.a; sourceTree = SOURCE_ROOT; };
 		B2CAC0B119CC3E94003AC356 /* reacTIVision.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = reacTIVision.png; path = ../linux/reacTIVision.png; sourceTree = "<group>"; };
 		B2CB96BF0A33064800CF3287 /* FrameEqualizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FrameEqualizer.cpp; path = ../common/FrameEqualizer.cpp; sourceTree = SOURCE_ROOT; };
 		B2CB96C00A33064800CF3287 /* FrameEqualizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameEqualizer.h; path = ../common/FrameEqualizer.h; sourceTree = SOURCE_ROOT; };
-		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../ext/portvideo/macosx/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		B2E6096C08EAE57D00136A11 /* FiducialObject.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FiducialObject.cpp; path = ../common/FiducialObject.cpp; sourceTree = SOURCE_ROOT; };
 		B2E6096D08EAE57D00136A11 /* FiducialObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FiducialObject.h; path = ../common/FiducialObject.h; sourceTree = SOURCE_ROOT; };
-		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
-		B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FolderCamera.cpp; path = ../common/FolderCamera.cpp; sourceTree = SOURCE_ROOT; };
-		B2E644150D6C39EC0000ABD0 /* FolderCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FolderCamera.h; path = ../common/FolderCamera.h; sourceTree = SOURCE_ROOT; };
+		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../ext/portvideo/common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
+		B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FolderCamera.cpp; path = ../ext/portvideo/common/FolderCamera.cpp; sourceTree = SOURCE_ROOT; };
+		B2E644150D6C39EC0000ABD0 /* FolderCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FolderCamera.h; path = ../ext/portvideo/common/FolderCamera.h; sourceTree = SOURCE_ROOT; };
 		B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		B2E9BB0809D0D0F4005DF348 /* MidiServer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = MidiServer.cpp; path = ../common/MidiServer.cpp; sourceTree = SOURCE_ROOT; };
 		B2E9BB0909D0D0F4005DF348 /* MidiServer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MidiServer.h; path = ../common/MidiServer.h; sourceTree = SOURCE_ROOT; };
@@ -217,10 +217,10 @@
 		B2E9BB2209D0D18E005DF348 /* ptmacosx_mach.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = ptmacosx_mach.c; path = ../ext/portmidi/porttime/ptmacosx_mach.c; sourceTree = SOURCE_ROOT; };
 		B2E9BB3A09D0D2C1005DF348 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = /System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<absolute>"; };
 		B2E9BB3F09D0D2E0005DF348 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
-		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../common/Resources.c; sourceTree = SOURCE_ROOT; };
-		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../common/Resources.h; sourceTree = SOURCE_ROOT; };
-		B2F024DF0975394D00538C36 /* SFont.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SFont.c; path = ../common/SFont.c; sourceTree = SOURCE_ROOT; };
-		B2F024E00975394D00538C36 /* SFont.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SFont.h; path = ../common/SFont.h; sourceTree = SOURCE_ROOT; };
+		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../ext/portvideo/interface/Resources.c; sourceTree = SOURCE_ROOT; };
+		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../ext/portvideo/interface/Resources.h; sourceTree = SOURCE_ROOT; };
+		B2F024DF0975394D00538C36 /* SFont.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SFont.c; path = ../ext/portvideo/interface/SFont.c; sourceTree = SOURCE_ROOT; };
+		B2F024E00975394D00538C36 /* SFont.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SFont.h; path = ../ext/portvideo/interface/SFont.h; sourceTree = SOURCE_ROOT; };
 		B2F3467B095B506D00D300A5 /* default_trees.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = default_trees.h; path = ../ext/libfidtrack/default_trees.h; sourceTree = SOURCE_ROOT; };
 		B2F757AC07CA3EB40030DB83 /* TuioServer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TuioServer.cpp; path = ../common/TuioServer.cpp; sourceTree = SOURCE_ROOT; };
 		B2F757AD07CA3EB40030DB83 /* TuioServer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TuioServer.h; path = ../common/TuioServer.h; sourceTree = SOURCE_ROOT; };
@@ -280,8 +280,6 @@
 				B2E9BB0809D0D0F4005DF348 /* MidiServer.cpp */,
 				B2E9BB0909D0D0F4005DF348 /* MidiServer.h */,
 				B2884A7D0A2CF0FC00AFF79A /* MessageServer.h */,
-				B2F024DD0975394D00538C36 /* Resources.c */,
-				B2F024DE0975394D00538C36 /* Resources.h */,
 				B24EA4470015EA6F00096D13 /* tinyxml */,
 				B228811F073C2F33007CEA9B /* libfidtrack */,
 				B2E9BB0C09D0D0FE005DF348 /* portmidi */,
@@ -443,12 +441,14 @@
 			children = (
 				B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */,
 				B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */,
+				B239D6A30CC51682009708F3 /* DC1394Camera.cpp */,
+				B239D6A40CC51682009708F3 /* DC1394Camera.h */,
 				B2208511078AFC0A0047913B /* CameraTool.cpp */,
 				B2208512078AFC0A0047913B /* CameraTool.h */,
 				B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */,
 				B2E6097008EAE59400136A11 /* CameraEngine.h */,
-				B239D6A30CC51682009708F3 /* DC1394Camera.cpp */,
-				B239D6A40CC51682009708F3 /* DC1394Camera.h */,
+				B2208522078AFC4D0047913B /* RingBuffer.h */,
+				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
 				B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */,
 				B2E644150D6C39EC0000ABD0 /* FolderCamera.h */,
 				B21D89E30CE7A0FE003B810C /* FileCamera.cpp */,
@@ -458,8 +458,8 @@
 				B2375E210CCE125700DE086D /* FontTool.h */,
 				B2F024DF0975394D00538C36 /* SFont.c */,
 				B2F024E00975394D00538C36 /* SFont.h */,
-				B2208522078AFC4D0047913B /* RingBuffer.h */,
-				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
+				B2F024DD0975394D00538C36 /* Resources.c */,
+				B2F024DE0975394D00538C36 /* Resources.h */,
 			);
 			name = portvideo;
 			sourceTree = "<group>";
@@ -610,7 +610,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/../ext/portvideo/macosx/Frameworks",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -622,14 +622,14 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					../macosx,
+					../ext/portvideo/macosx,
 					../ext/libfidtrack,
 					../ext/oscpack,
 					../ext/tinyxml,
 					../common,
 				);
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = ./dc1394;
+				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -654,7 +654,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/../ext/portvideo/macosx/Frameworks",
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -663,14 +663,14 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					../macosx,
+					../ext/portvideo/macosx,
 					../ext/libfidtrack,
 					../ext/oscpack,
 					../ext/tinyxml,
 					../common,
 				);
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = ./dc1394;
+				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
@@ -695,21 +695,21 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
-					"$(PROJECT_DIR)/Frameworks",
+					"$(PROJECT_DIR)/../ext/portvideo/macosx/Frameworks",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					../macosx,
+					../ext/portvideo/macosx,
 					../ext/libfidtrack,
 					../ext/oscpack,
 					../ext/tinyxml,
 					../common,
 				);
 				INFOPLIST_FILE = Info.plist;
-				LIBRARY_SEARCH_PATHS = ./dc1394;
+				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -743,7 +743,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -768,7 +768,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_LDFLAGS = "";
@@ -794,7 +794,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				STRIP_STYLE = debugging;

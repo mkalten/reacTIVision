@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,6 +49,42 @@ int getFrameFromCamera(void *obj) {
 			} else SDL_Delay(5);
 		}
 		return(0);
+}
+
+CameraEngine* VisionEngine::setupCamera(char *camera_config) {
+    
+    CameraEngine *camera = CameraTool::findCamera(camera_config);
+    if (camera == NULL) return NULL;
+    
+    bool success = camera->initCamera();
+    
+    if(success) {
+        int width = camera->getWidth();
+        int height = camera->getHeight();
+        float fps = camera->getFps();
+        
+        printf("camera: %s\n",camera->getName());
+        if (fps>0) {
+            if (int(fps)==fps) printf("format: %dx%d, %dfps\n",width,height,int(fps));
+            else printf("format: %dx%d, %'.1f fps\n",width,height,fps);
+        } else printf("format: %dx%d\n",width,height);
+        
+        return camera;
+    } else {
+        printf("could not initialize camera\n");
+        camera->closeCamera();
+        delete camera;
+        return NULL;
+    }
+}
+
+void VisionEngine::teardownCamera(CameraEngine *camera)
+{
+    if (camera!=NULL) {
+        camera->stopCamera();
+        camera->closeCamera();
+        delete camera;
+    }
 }
 
 #ifndef NDEBUG

@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,36 +16,28 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef RINGBUFFER_H
-#define RINGBUFFER_H
+#include <FontTool.h>
 
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <stdio.h>
-#include <stdlib.h>
-#endif
 
-class RingBuffer
-{
-public:
-	RingBuffer(int size);
-	~RingBuffer();
+	void FontTool::init() {
+		FontTool::sfont = SFont_InitDefaultFont();
+	}
+
+	void FontTool::close() {
+		SFont_FreeFont(FontTool::sfont);
+	}
 	
-	int size();
+	void FontTool::drawText(int xpos, int ypos, const char* text, SDL_Surface *display) {
+		if(sfont) SFont_Write(display, FontTool::sfont, xpos,ypos,text);
+	}
 	
-	unsigned char* getNextBufferToWrite();
-	void writeFinished();
-	unsigned char* getNextBufferToRead();
-	void readFinished();
-
-private:
-	int nextIndex( int index );
-	int bufferSize;
+	int FontTool::getFontHeight() { 
+		return SFont_TextHeight(FontTool::sfont);
+	}
 	
-	unsigned char* buffer[3];
-	volatile char readIndex;
-	volatile char writeIndex;
-};
+	int FontTool::getTextWidth(const char *text) {
+		return SFont_TextWidth(FontTool::sfont,text);
+	}
 
-#endif
+	SFont_Font *FontTool::sfont = NULL;
+

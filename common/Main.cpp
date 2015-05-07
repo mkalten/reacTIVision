@@ -1,6 +1,6 @@
 /*  reacTIVision tangible interaction framework
     Main.cpp
-    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -362,7 +362,7 @@ int main(int argc, char* argv[]) {
 	sprintf(config.file,"none");
 
 	const char *app_name = "reacTIVision";
-	const char *version_no = "1.5";
+	const char *version_no = "1.6";
 
 	bool headless = false;
 
