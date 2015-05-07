@@ -25,6 +25,8 @@
 		B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2505B710ACC635B007C21BB /* CalibrationEngine.cpp */; };
 		B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B26725ED0C5E3FD100D7FD74 /* IOKit.framework */; };
 		B269752819DFEC2200B46119 /* threshold.c in Sources */ = {isa = PBXBuildFile; fileRef = B269752619DFEC2200B46119 /* threshold.c */; };
+		B27E02F11AFB6EDB00FB2DB6 /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27E02EF1AFB6EDB00FB2DB6 /* PS3EyeCamera.cpp */; };
+		B27E02F41AFB6FCA00FB2DB6 /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27E02F21AFB6FCA00FB2DB6 /* ps3eye.cpp */; };
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */; };
 		B2884A7E0A2CF0FC00AFF79A /* FingerObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A7B0A2CF0FC00AFF79A /* FingerObject.cpp */; };
@@ -173,6 +175,10 @@
 		B26725ED0C5E3FD100D7FD74 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = SOURCE_ROOT; };
 		B269752619DFEC2200B46119 /* threshold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = threshold.c; path = ../ext/libfidtrack/threshold.c; sourceTree = "<group>"; };
 		B269752719DFEC2200B46119 /* threshold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = threshold.h; path = ../ext/libfidtrack/threshold.h; sourceTree = "<group>"; };
+		B27E02EF1AFB6EDB00FB2DB6 /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PS3EyeCamera.cpp; sourceTree = "<group>"; };
+		B27E02F01AFB6EDB00FB2DB6 /* PS3EyeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PS3EyeCamera.h; sourceTree = "<group>"; };
+		B27E02F21AFB6FCA00FB2DB6 /* ps3eye.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ps3eye.cpp; path = ps3eye/ps3eye.cpp; sourceTree = "<group>"; };
+		B27E02F31AFB6FCA00FB2DB6 /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ps3eye/ps3eye.h; sourceTree = "<group>"; };
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CalibrationGrid.cpp; path = ../common/CalibrationGrid.cpp; sourceTree = SOURCE_ROOT; };
 		B2884A780A2CF0E800AFF79A /* CalibrationGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CalibrationGrid.h; path = ../common/CalibrationGrid.h; sourceTree = SOURCE_ROOT; };
@@ -449,6 +455,10 @@
 				B2E6097008EAE59400136A11 /* CameraEngine.h */,
 				B239D6A30CC51682009708F3 /* DC1394Camera.cpp */,
 				B239D6A40CC51682009708F3 /* DC1394Camera.h */,
+				B27E02EF1AFB6EDB00FB2DB6 /* PS3EyeCamera.cpp */,
+				B27E02F01AFB6EDB00FB2DB6 /* PS3EyeCamera.h */,
+				B27E02F21AFB6FCA00FB2DB6 /* ps3eye.cpp */,
+				B27E02F31AFB6FCA00FB2DB6 /* ps3eye.h */,
 				B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */,
 				B2E644150D6C39EC0000ABD0 /* FolderCamera.h */,
 				B21D89E30CE7A0FE003B810C /* FileCamera.cpp */,
@@ -561,6 +571,7 @@
 				B2F024E30975394D00538C36 /* SFont.c in Sources */,
 				B2E9BB0A09D0D0F4005DF348 /* MidiServer.cpp in Sources */,
 				B2E9BB1309D0D136005DF348 /* pmutil.c in Sources */,
+				B27E02F41AFB6FCA00FB2DB6 /* ps3eye.cpp in Sources */,
 				B2E9BB1509D0D136005DF348 /* portmidi.c in Sources */,
 				B2E9BB1B09D0D14E005DF348 /* pmmac.c in Sources */,
 				B2E9BB1D09D0D14E005DF348 /* pmmacosxcm.c in Sources */,
@@ -569,6 +580,7 @@
 				B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */,
 				B2884A7E0A2CF0FC00AFF79A /* FingerObject.cpp in Sources */,
 				B2CB96C10A33064800CF3287 /* FrameEqualizer.cpp in Sources */,
+				B27E02F11AFB6EDB00FB2DB6 /* PS3EyeCamera.cpp in Sources */,
 				B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */,
 				B24EA44F0015EAB600096D13 /* tinystr.cpp in Sources */,
 				B24EA4510015EAB600096D13 /* tinyxml.cpp in Sources */,

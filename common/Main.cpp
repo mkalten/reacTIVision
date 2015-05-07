@@ -362,7 +362,7 @@ int main(int argc, char* argv[]) {
 	sprintf(config.file,"none");
 
 	const char *app_name = "reacTIVision";
-	const char *version_no = "1.5";
+	const char *version_no = "1.5.1";
 
 	bool headless = false;
 
