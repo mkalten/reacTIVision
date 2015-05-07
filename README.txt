@@ -186,8 +186,8 @@ right away without any additional configuration.
 
 Mac OS X:
 An Xcode project for Xcode version 3.2 or later is included.
-The build will require an installed SDL2 and VVUVCKit frameworks
-in order to compile properly, unzip the included Frameworks.zip
+The build will require the SDL2 and VVUVCKit frameworks, in order 
+to compile properly, just unzip the included Frameworks.zip
 
 Linux:
 Call make to build the application, the distribution also
