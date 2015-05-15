@@ -419,22 +419,23 @@ unsigned char* V4Linux2Camera::getFrame()  {
             else if (pixelformat==V4L2_PIX_FMT_UYVY) uyvy2gray(cam_width, cam_height, raw_buffer, cam_buffer);
             else if (pixelformat==V4L2_PIX_FMT_YUV420) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
             else if (pixelformat==V4L2_PIX_FMT_YUV410) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
-            else if (pixelformat==V4L2_PIX_FMT_GREY) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
+           //else if (pixelformat==V4L2_PIX_FMT_GREY) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
             else if (pixelformat==V4L2_PIX_FMT_MJPEG)  {
-                
+
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
                 tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
             }
         }
     }
-    
+
     if (-1 == ioctl (cameraID, VIDIOC_QBUF, &v4l2_buf)) {
         printf("cannot unqueue buffer: %s\n", strerror(errno));
         return NULL;
     }
-    
+
     if (config.frame) return crop_buffer;
+    else if (pixelformat==V4L2_PIX_FMT_GREY) return raw_buffer;
     else return cam_buffer;
 }
 
