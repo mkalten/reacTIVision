@@ -173,7 +173,7 @@ bool DC1394Camera::initCamera() {
     bool force_FW800 = false;
     bool force_FW400 = false;
     
-    if (std::string(camera->model).find("Firefly MV FFMV")!=std::string::npos) force_FW800 = true;
+    if (std::string(camera->model).find("Firefly MV FFMV")!=std::string::npos) force_FW400 = true;
     if (std::string(camera->model).find("Chameleon")!=std::string::npos) force_FW400 = true;
     
 	if ( ((!force_FW400) && (camera->bmode_capable==DC1394_TRUE)) || (force_FW800))  {
