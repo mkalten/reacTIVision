@@ -325,7 +325,7 @@ namespace ps3eye {
 #endif
     }
     
-    static double getTickFrequency()
+    /*static double getTickFrequency()
     {
 #if defined WIN32 || defined _WIN32 || defined WINCE
         LARGE_INTEGER freq;
@@ -341,7 +341,7 @@ namespace ps3eye {
         }
         return freq;
 #endif
-    }
+    }*/
     //
     
     
