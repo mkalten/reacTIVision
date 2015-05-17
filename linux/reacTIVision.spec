@@ -17,10 +17,10 @@ BuildRequires: gcc
 BuildRequires: gcc-c++
 BuildRequires: SDL2-devel >= 2.0
 BuildRequires: libdc1394-devel >= 2.0
-BuildRequires: libjpeg-turbo-devel
+BuildRequires: turbojpeg-devel >= 1.3
 Requires: SDL2 >= 2.0
 Requires: libdc1394 >= 2.0
-Requires: libjpeg-turbo
+Requires: turbojpeg >= 1.3
 
 %description
 reacTIVision is an open source, cross-platform computer vision
