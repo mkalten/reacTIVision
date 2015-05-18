@@ -1,8 +1,7 @@
 /*  portVideo, a cross platform camera framework
     Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-    Copyright (C) 2007 Peter Eschler <peschler@gmail.com>
 
-    This program is free software; you can redistribute it and/or modify
+ This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
@@ -57,9 +56,9 @@ public:
 	int getDefaultCameraSetting(int mode);
 	bool setDefaultCameraSetting(int mode);
 	bool setCameraSetting(int mode, int value);
-        int getCameraSetting(int mode);
-        int getMaxCameraSetting(int mode);
-        int getMinCameraSetting(int mode);
+    int getCameraSetting(int mode);
+    int getMaxCameraSetting(int mode);
+    int getMinCameraSetting(int mode);
 
 protected:
     bool requestBuffers();
