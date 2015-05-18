@@ -39,6 +39,7 @@
     #include "../macosx/legacy/MacVdigCamera.h"
 	#else
 	#include "../macosx/AVfoundationCamera.h"
+    #include "../macosx/PS3EyeCamera.h"
     #endif
 #endif
 

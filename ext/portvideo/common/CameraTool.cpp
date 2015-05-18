@@ -30,6 +30,7 @@ void CameraTool::listDevices() {
 #ifndef MAC_OS_X_VERSION_10_6
     MacVdigCamera::listDevices();
 #else
+    PS3EyeCamera::listDevices();
     AVfoundationCamera::listDevices();
 #endif
     
@@ -72,9 +73,13 @@ CameraEngine* CameraTool::findCamera(const char* config_file) {
 		if( !camera->findCamera()) delete camera;
 		else return camera;	
 	#else
+        camera = new PS3EyeCamera(config_file);
+        if( !camera->findCamera()) delete camera;
+        else return camera;
+    
 		camera = new AVfoundationCamera(config_file);
 		if( !camera->findCamera()) delete camera;
-		else return camera;	
+		else return camera;
 	#endif
 
 	#endif		
