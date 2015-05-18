@@ -1,4 +1,4 @@
-%define version 1.5
+%define version 1.6
 %define release 1
 
 Summary:      tangible interaction framework
@@ -15,12 +15,12 @@ Packager:     Martin Kaltenbrunner
 Requires: SDL libdc1394
 BuildRequires: gcc
 BuildRequires: gcc-c++
-BuildRequires: SDL-devel >= 1.2
+BuildRequires: SDL2-devel >= 2.0
 BuildRequires: libdc1394-devel >= 2.0
-BuildRequires: libjpeg-turbo8-devel
-Requires: SDL >= 1.2
+BuildRequires: turbojpeg-devel >= 1.3
+Requires: SDL2 >= 2.0
 Requires: libdc1394 >= 2.0
-Requires: libjpeg-turbo8
+Requires: turbojpeg >= 1.3
 
 %description
 reacTIVision is an open source, cross-platform computer vision
