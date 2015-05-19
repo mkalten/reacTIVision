@@ -57,7 +57,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\porttime;..\ext\portmidi\pm_common;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;.\videoInput;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\porttime;..\ext\portmidi\pm_common;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -69,7 +69,7 @@
     <Link>
       <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)reacTIVision.exe</OutputFile>
-      <AdditionalLibraryDirectories>.\videoInput;.\sdl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)reacTIVision.pdb</ProgramDatabaseFile>
@@ -86,7 +86,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\pm_common;..\ext\portmidi\porttime;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;.\videoInput;.\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\pm_common;..\ext\portmidi\porttime;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -102,9 +102,9 @@
     <Link>
       <AdditionalDependencies>videoInput.lib;SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>./reacTIVision.exe</OutputFile>
-      <Version>1.5</Version>
+      <Version>1.6</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>.\videoInput;.\sdl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)reacTIVision.pdb</ProgramDatabaseFile>
@@ -129,17 +129,17 @@
     <ClCompile Include="..\common\FrameThresholder.cpp" />
     <ClCompile Include="..\common\Main.cpp" />
     <ClCompile Include="..\common\MidiServer.cpp" />
-    <ClCompile Include="..\common\Resources.c" />
-    <ClCompile Include="..\common\RingBuffer.cpp" />
-    <ClCompile Include="..\common\SDLinterface.cpp" />
-    <ClCompile Include="..\common\SFont.c" />
     <ClCompile Include="..\common\TuioServer.cpp" />
-    <ClCompile Include="..\common\CameraEngine.cpp" />
-    <ClCompile Include="..\common\CameraTool.cpp" />
-    <ClCompile Include="videoInputCamera.cpp" />
-    <ClCompile Include="..\common\FileCamera.cpp" />
-    <ClCompile Include="..\common\FolderCamera.cpp" />
-    <ClCompile Include="..\common\FontTool.cpp" />
+    <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp" />
+    <ClCompile Include="..\ext\portvideo\interface\Resources.c" />
+    <ClCompile Include="..\ext\portvideo\interface\SDLinterface.cpp" />
+    <ClCompile Include="..\ext\portvideo\interface\SFont.c" />
+    <ClCompile Include="..\ext\portvideo\interface\FontTool.cpp" />
+    <ClCompile Include="..\ext\portvideo\common\RingBuffer.cpp" />
+    <ClCompile Include="..\ext\portvideo\common\CameraEngine.cpp" />
+    <ClCompile Include="..\ext\portvideo\common\CameraTool.cpp" />
+    <ClCompile Include="..\ext\portvideo\common\FileCamera.cpp" />
+    <ClCompile Include="..\ext\portvideo\common\FolderCamera.cpp" />
     <ClCompile Include="..\ext\libfidtrack\dump_graph.c" />
     <ClCompile Include="..\ext\libfidtrack\fidtrack120.c" />
     <ClCompile Include="..\ext\libfidtrack\fidtrackX.c" />
@@ -175,21 +175,20 @@
     <ClInclude Include="..\common\FiducialObject.h" />
     <ClInclude Include="..\common\FingerObject.h" />
     <ClInclude Include="..\common\FrameEqualizer.h" />
-    <ClInclude Include="..\common\FrameProcessor.h" />
     <ClInclude Include="..\common\FrameThresholder.h" />
-    <ClInclude Include="..\common\MidiServer.h" />
-    <ClInclude Include="..\common\RegionProcessor.h" />
-    <ClInclude Include="..\common\Resources.h" />
-    <ClInclude Include="..\common\RingBuffer.h" />
-    <ClInclude Include="..\common\SDLinterface.h" />
-    <ClInclude Include="..\common\SFont.h" />
     <ClInclude Include="..\common\TuioServer.h" />
-    <ClInclude Include="..\common\CameraEngine.h" />
-    <ClInclude Include="..\common\CameraTool.h" />
-    <ClInclude Include="videoInputCamera.h" />
-    <ClInclude Include="..\common\FileCamera.h" />
-    <ClInclude Include="..\common\FolderCamera.h" />
-    <ClInclude Include="..\common\FontTool.h" />
+    <ClInclude Include="..\common\MidiServer.h" />
+    <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h" />
+    <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h" />
+    <ClInclude Include="..\ext\portvideo\interface\SFont.h" />
+    <ClInclude Include="..\ext\portvideo\interface\FontTool.h" />
+    <ClInclude Include="..\ext\portvideo\interface\Resources.h" />
+    <ClInclude Include="..\ext\portvideo\common\FrameProcessor.h" />
+    <ClInclude Include="..\ext\portvideo\common\RingBuffer.h" />
+    <ClInclude Include="..\ext\portvideo\common\CameraEngine.h" />
+    <ClInclude Include="..\ext\portvideo\common\CameraTool.h" />
+    <ClInclude Include="..\ext\portvideo\common\FileCamera.h" />
+    <ClInclude Include="..\ext\portvideo\common\FolderCamera.h" />
     <ClInclude Include="..\ext\oscpack\ip\IpEndpointName.h" />
     <ClInclude Include="..\ext\oscpack\osc\MessageMappingOscPacketListener.h" />
     <ClInclude Include="..\ext\oscpack\ip\NetworkingUtils.h" />

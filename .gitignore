@@ -18,4 +18,6 @@ project.xcworkspace
 
 *.suo
 
-libfidtrack.new
+*.exe
+
+*.opensdf

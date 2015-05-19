@@ -56,7 +56,7 @@ public:
 	void updateSettings();
 
 	void control(int key);
-	void showSettingsDialog();
+	bool showSettingsDialog(bool lock);
 
 private:
 

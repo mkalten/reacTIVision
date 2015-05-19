@@ -407,7 +407,7 @@ void SDLinterface::process_events()
 					if (recording_) {
 						recording_ = false;
 						char caption[24] = "";
-						sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+						sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
 						SDL_SetWindowTitle( window_, caption);
 					} else {
 						struct stat info;

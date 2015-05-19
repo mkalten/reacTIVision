@@ -188,8 +188,9 @@ void videoInputCamera::control(int key) {
 	 return;
 }
 
-void videoInputCamera::showSettingsDialog() {
+bool videoInputCamera::showSettingsDialog(bool lock) {
 	if (running) VI->showSettingsWindow(cameraID);
+	return lock;
 }
 
 bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {

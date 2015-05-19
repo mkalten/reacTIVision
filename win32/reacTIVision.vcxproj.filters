@@ -75,32 +75,8 @@
     <ClCompile Include="..\common\MidiServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\Resources.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\RingBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\SFont.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\TuioServer.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\CameraEngine.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\CameraTool.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\FileCamera.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\FolderCamera.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\FontTool.cpp">
-      <Filter>Source Files\portvideo</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\libfidtrack\dump_graph.c">
       <Filter>Source Files\libfidtrack</Filter>
@@ -177,14 +153,38 @@
     <ClCompile Include="..\ext\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="videoInputCamera.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\FrameEqualizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\SDLinterface.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\ext\portvideo\common\CameraTool.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\common\CameraEngine.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\common\FileCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\common\FolderCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\interface\FontTool.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\interface\SFont.c">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\interface\Resources.c">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\common\RingBuffer.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\interface\SDLinterface.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -209,44 +209,14 @@
     <ClInclude Include="..\common\FingerObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\FrameProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\FrameThresholder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\MidiServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\RegionProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\Resources.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\RingBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\SFont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\TuioServer.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\CameraEngine.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\CameraTool.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\FileCamera.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\FolderCamera.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\FontTool.h">
-      <Filter>Header Files\portvideo</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\oscpack\ip\IpEndpointName.h">
       <Filter>Header Files\oscpack</Filter>
@@ -338,14 +308,41 @@
     <ClInclude Include="..\ext\tinyxml\tinyxml.h">
       <Filter>Header Files\tinyxml</Filter>
     </ClInclude>
-    <ClInclude Include="videoInputCamera.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\FrameEqualizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\SDLinterface.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\ext\portvideo\common\CameraEngine.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\CameraTool.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\FolderCamera.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\interface\FontTool.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\interface\Resources.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\RingBuffer.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\interface\SFont.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\FileCamera.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\FrameProcessor.h">
+      <Filter>Header Files\portvideo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
