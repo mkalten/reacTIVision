@@ -28,7 +28,7 @@
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */; };
 		B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29545ED19E2FF80001111A6 /* AVFoundation.framework */; };
-		B297D3B8097536E2004AB0FE /* portVideoSDL.icns in Resources */ = {isa = PBXBuildFile; fileRef = B260492208E9BF4B0095D4C8 /* portVideoSDL.icns */; };
+		B297D3B8097536E2004AB0FE /* SportVideo.icns in Resources */ = {isa = PBXBuildFile; fileRef = B260492208E9BF4B0095D4C8 /* SportVideo.icns */; };
 		B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208511078AFC0A0047913B /* CameraTool.cpp */; };
 		B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B220851F078AFC4D0047913B /* SDLinterface.cpp */; };
 		B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208521078AFC4D0047913B /* RingBuffer.cpp */; };
@@ -88,7 +88,7 @@
 		B24EA44D0015EAB600096D13 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../tinyxml/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
 		B24EA44E0015EAB600096D13 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../tinyxml/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
 		B24EA4F20015EB5000096D13 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		B260492208E9BF4B0095D4C8 /* portVideoSDL.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = portVideoSDL.icns; sourceTree = SOURCE_ROOT; };
+		B260492208E9BF4B0095D4C8 /* SportVideo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SportVideo.icns; sourceTree = SOURCE_ROOT; };
 		B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PS3EyeCamera.cpp; sourceTree = "<group>"; };
 		B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PS3EyeCamera.h; sourceTree = "<group>"; };
 		B260A1F01B0A624E0053F53D /* ps3eye.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ps3eye.cpp; path = ps3eye/ps3eye.cpp; sourceTree = "<group>"; };
@@ -99,7 +99,7 @@
 		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVfoundationCamera.mm; sourceTree = "<group>"; };
 		B29545ED19E2FF80001111A6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = /System/Library/Frameworks/AVFoundation.framework; sourceTree = "<absolute>"; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B297D3ED097536E3004AB0FE /* portVideoSDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = portVideoSDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B297D3ED097536E3004AB0FE /* SportVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B29AE05A1B0A95050046E462 /* FrameInverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameInverter.cpp; path = ../sdldemo/FrameInverter.cpp; sourceTree = "<group>"; };
 		B29AE05B1B0A95050046E462 /* FrameInverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameInverter.h; path = ../sdldemo/FrameInverter.h; sourceTree = "<group>"; };
 		B29AE05D1B0A999C0046E462 /* portvideo.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = portvideo.xml; sourceTree = "<group>"; };
@@ -177,12 +177,12 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B297D3ED097536E3004AB0FE /* portVideoSDL.app */,
+				B297D3ED097536E3004AB0FE /* SportVideo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		29B97314FDCFA39411CA2CEA /* portVideoSDL */ = {
+		29B97314FDCFA39411CA2CEA /* SportVideo */ = {
 			isa = PBXGroup;
 			children = (
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -190,7 +190,7 @@
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
-			name = portVideoSDL;
+			name = SportVideo;
 			sourceTree = "<group>";
 		};
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
@@ -199,7 +199,7 @@
 				B29AE05D1B0A999C0046E462 /* portvideo.xml */,
 				B297D3EC097536E3004AB0FE /* Info.plist */,
 				B282A34C0CD756B500657CDA /* camera.xml */,
-				B260492208E9BF4B0095D4C8 /* portVideoSDL.icns */,
+				B260492208E9BF4B0095D4C8 /* SportVideo.icns */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -275,9 +275,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B297D37B097536E2004AB0FE /* portVideoSDL */ = {
+		B297D37B097536E2004AB0FE /* SportVideo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B297D3E8097536E2004AB0FE /* Build configuration list for PBXNativeTarget "portVideoSDL" */;
+			buildConfigurationList = B297D3E8097536E2004AB0FE /* Build configuration list for PBXNativeTarget "SportVideo" */;
 			buildPhases = (
 				B297D3B6097536E2004AB0FE /* Resources */,
 				B297D3B9097536E2004AB0FE /* Sources */,
@@ -288,9 +288,9 @@
 			);
 			dependencies = (
 			);
-			name = portVideoSDL;
-			productName = portVideoSDL;
-			productReference = B297D3ED097536E3004AB0FE /* portVideoSDL.app */;
+			name = SportVideo;
+			productName = SportVideo;
+			productReference = B297D3ED097536E3004AB0FE /* SportVideo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -302,7 +302,7 @@
 				BuildIndependentTargetsInParallel = NO;
 				LastUpgradeCheck = 0630;
 			};
-			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "portVideoSDL" */;
+			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "SportVideo" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -312,11 +312,11 @@
 				French,
 				German,
 			);
-			mainGroup = 29B97314FDCFA39411CA2CEA /* portVideoSDL */;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* SportVideo */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B297D37B097536E2004AB0FE /* portVideoSDL */,
+				B297D37B097536E2004AB0FE /* SportVideo */,
 			);
 		};
 /* End PBXProject section */
@@ -326,7 +326,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B297D3B8097536E2004AB0FE /* portVideoSDL.icns in Resources */,
+				B297D3B8097536E2004AB0FE /* SportVideo.icns in Resources */,
 				B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */,
 				B282A34D0CD756B500657CDA /* camera.xml in Resources */,
 			);
@@ -396,7 +396,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = portVideoSDL;
+				PRODUCT_NAME = SportVideo;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -436,7 +436,7 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = portVideoSDL;
+				PRODUCT_NAME = SportVideo;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -471,7 +471,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = portVideoSDL;
+				PRODUCT_NAME = SportVideo;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -562,7 +562,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B297D3E8097536E2004AB0FE /* Build configuration list for PBXNativeTarget "portVideoSDL" */ = {
+		B297D3E8097536E2004AB0FE /* Build configuration list for PBXNativeTarget "SportVideo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B297D3E9097536E2004AB0FE /* Development */,
@@ -572,7 +572,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "portVideoSDL" */ = {
+		B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "SportVideo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B2BCA3A40859B28700B9378C /* Development */,
