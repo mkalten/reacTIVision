@@ -25,7 +25,7 @@ videoInputCamera::videoInputCamera(const char *cfg) : CameraEngine (cfg)
 	cam_buffer = NULL;
 	running = false;
 
-	timeout= 1000;
+	timeout= 2000;
 	lost_frames=0;
 	disconnect = false;
 }
@@ -86,11 +86,12 @@ bool videoInputCamera::initCamera() {
 		this->fps = config.cam_fps;
 	} else return false;
 
-
 	applyCameraSettings();
 	setupFrame();
-	if (config.frame) cam_buffer = new unsigned char[this->cam_width*this->cam_height];
-	else cam_buffer = new unsigned char[this->cam_width*this->cam_height];
+	
+	if (config.frame) cam_buffer = new unsigned char[this->cam_width*this->cam_height*bytes];
+	else cam_buffer = new unsigned char[this->cam_width*this->cam_height*bytes];
+
 	return true;
 }
 
@@ -116,7 +117,8 @@ unsigned char* videoInputCamera::getFrame()
 			return NULL;
 		}
 
-		unsigned char *dest = cam_buffer;
+	unsigned char *dest = cam_buffer;
+	if (!colour) {
 		unsigned char r,g,b;
 
 		if (config.frame) {
@@ -145,6 +147,28 @@ unsigned char* videoInputCamera::getFrame()
 				*dest-- = hibyte(r * 77 + g * 151 + b * 28);
 			}
 		}
+	} else {
+		if (config.frame) {
+			    src += 3*config.frame_yoff*cam_width;
+				dest += 3*frame_width*frame_height-1;
+                int xend = (cam_width-(frame_width+config.frame_xoff));
+
+                for (int i=0;i<frame_height;i++) {
+
+                    src +=  3*config.frame_xoff;
+                    for (int j=3*frame_width;j>0;j--) {
+ 						*dest-- = *src++;
+	                }
+                    src +=  3*xend;
+                }
+		} else {
+			int size = bytes*cam_width*cam_height;
+			dest += size-1;
+			for(int i=size;i>0;i--) {
+				*dest-- = *src++;
+			}
+		}
+	}
 
 		lost_frames = 0;
 		return cam_buffer;
