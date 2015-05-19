@@ -1,29 +1,24 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef FRAMEPROCESSOR_H
 #define FRAMEPROCESSOR_H
 
-#ifdef __APPLE__
-#include <SDL2/SDL.h>
-#else
-#include <SDL.h>
-#endif
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -31,6 +26,39 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
+
+#define KEY_A 4
+#define KEY_B 5
+#define KEY_C 6
+#define KEY_D 7
+#define KEY_E 8
+#define KEY_F 9
+#define KEY_G 10
+#define KEY_H 11
+#define KEY_I 12
+#define KEY_J 13
+#define KEY_K 14
+#define KEY_L 15
+#define KEY_M 16
+#define KEY_N 17
+#define KEY_O 18
+#define KEY_P 19
+#define KEY_Q 20
+#define KEY_R 21
+#define KEY_S 22
+#define KEY_T 23
+#define KEY_U 24
+#define KEY_V 25
+#define KEY_W 26
+#define KEY_X 27
+#define KEY_Y 28
+#define KEY_Z 29
+
+#define KEY_SPACE 44
+#define KEY_RIGHT 79
+#define KEY_LEFT 80
+#define KEY_DOWN 81
+#define KEY_UP 82
 
 class MessageListener
 {
@@ -42,6 +70,7 @@ public:
 	virtual DisplayMode getDisplayMode() = 0;
 	virtual void setMessage(std::string message) = 0;
 	virtual void displayMessage(const char *message) = 0;
+    virtual void displayControl(const char *title, int min, int max, int value) = 0;
 protected:
 	bool verbose_;
 };
@@ -76,13 +105,14 @@ public:
 		return true;
 	};
 
-	virtual void process(unsigned char *src, unsigned char *dest, SDL_Surface *display) = 0;
+    //virtual void process(unsigned char *src, unsigned char *dest, SDL_Surface *display) = 0;
+    virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
 
 	virtual void addMessageListener(MessageListener *listener) { msg_listener=listener; };
 	virtual void removeMessageListener(MessageListener *listener) { msg_listener=NULL; };
 	virtual void finish() {};
-	virtual void setFlag(int flag, bool value) {};
-	virtual void toggleFlag(int flag) {};
+    virtual bool setFlag(unsigned char flag, bool value, bool lock) { return lock; };
+    virtual bool toggleFlag(unsigned char flag, bool lock) { return lock; };
 	std::vector<std::string> getOptions() { return help_text; }
 
 protected:

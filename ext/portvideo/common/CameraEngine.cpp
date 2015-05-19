@@ -1,41 +1,41 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "CameraEngine.h"
-#include "SDLinterface.h"
 
-	void CameraEngine::showSettingsDialog() {
+	bool CameraEngine::showSettingsDialog(bool lock) {
 		if (settingsDialog) {
 			settingsDialog = false;
 			saveSettings();
-			SDLinterface::display_lock = false;
-		} else if (!SDLinterface::display_lock) {
+			return false;
+		} else if (lock) {
 			currentCameraSetting = BRIGHTNESS;
 			settingsDialog = true;
-			SDLinterface::display_lock = true;
-		}
+			return true;
+        } else return lock;
 	}
 
-	void CameraEngine::control(int key) {
+	void CameraEngine::control(unsigned char key) {
 		if(!settingsDialog) return;
-		int value,min,max,step = 0;
+
+        int value,min,max,step = 0;
 		switch(key) {
-			case SDLK_LEFT:
+			case VALUE_DOWN:
 				value = getCameraSetting(currentCameraSetting);
 				min = getMinCameraSetting(currentCameraSetting);
 				max = getMaxCameraSetting(currentCameraSetting);
@@ -46,7 +46,7 @@
 				if (value<min) value=min;
 				setCameraSetting(currentCameraSetting,value);
 				break;
-			case SDLK_RIGHT:
+			case VALUE_UP:
 				value = getCameraSetting(currentCameraSetting);
 				min = getMinCameraSetting(currentCameraSetting);
 				max = getMaxCameraSetting(currentCameraSetting);
@@ -57,11 +57,11 @@
 				if (value>max) value=max;
 				setCameraSetting(currentCameraSetting,value);
 				break;
-			case SDLK_UP:
+			case SETTING_PREVIOUS:
 				currentCameraSetting--;
 				if(currentCameraSetting<0) currentCameraSetting=GAMMA;
 				break;
-			case SDLK_DOWN:
+			case SETTING_NEXT:
 				currentCameraSetting++;
 				if(currentCameraSetting>GAMMA) currentCameraSetting=0;
 				break;
@@ -69,14 +69,14 @@
 
 	}
 
-	void CameraEngine::drawGUI(SDL_Surface *display) {
+//	void CameraEngine::drawGUI(SDL_Surface *display) {
+    void CameraEngine::drawGUI(MessageListener *display) {
 		if(!settingsDialog) return;
-		unsigned char* disp = (unsigned char*)(display->pixels);
+		//unsigned char* disp = (unsigned char*)(display->pixels);
 
 		int settingValue = getCameraSetting(currentCameraSetting);
 		int maxValue =  getMaxCameraSetting(currentCameraSetting);
 		int minValue =  getMinCameraSetting(currentCameraSetting);
-		int valueRange = maxValue - minValue;
 
 		const char *settingText = NULL;
 		switch (currentCameraSetting) {
@@ -90,35 +90,10 @@
 			case GAMMA:         settingText = "Gamma";      break;
 		}
 
-		int x_offset=frame_width/2-128;
-		int y_offset=frame_height-100;
-
 		char displayText[256];
 		sprintf(displayText,"%s %d",settingText,settingValue);
-		FontTool::drawText(x_offset+128-(FontTool::getTextWidth(displayText)/2),y_offset-FontTool::getFontHeight(),displayText,display);
-
-		// draw the border
-		for (int i=x_offset;i<(x_offset+256);i++) {
-			int pixel=(frame_width*y_offset+i)*4+1;
-			disp[pixel]=disp[pixel+2]=255;
-			pixel=(frame_width*(y_offset+25)+i)*4+1;
-			disp[pixel]=disp[pixel+2]=255;
-		}
-		for (int i=y_offset;i<(y_offset+25);i++) {
-			int pixel=(frame_width*i+x_offset)*4+1;
-			disp[pixel]=disp[pixel+2]=255;
-			pixel=(frame_width*i+x_offset+256)*4+1;
-			disp[pixel]=disp[pixel+2]=255;
-		}
-
-		// draw the bar
-		int xpos = (int)(254*(((float)settingValue-(float)minValue)/(float)valueRange));
-		for (int i=x_offset+2;i<=(x_offset+xpos);i++) {
-			for (int j=y_offset+2;j<=(y_offset+23);j++) {
-				int pixel=(frame_width*j+i)*4+1;
-				disp[pixel]=disp[pixel+2]=255;
-			}
-		}
+    
+        display->displayControl(displayText, minValue, maxValue, settingValue);
 	}
 
 	void CameraEngine::readSettings() {

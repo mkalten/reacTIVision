@@ -1,20 +1,21 @@
-/*  reacTIVision tangible interaction framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+/*  portVideo, a cross platform camera framework
+ Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 
 #include "SDLinterface.h"
 
@@ -160,8 +161,8 @@ void SDLinterface::showError(const char* error)
 	delete image_rect;
 
 	std::string error_message = "Press any key to exit "+app_name_+" ...";
-	FontTool::drawText((width_- FontTool::getTextWidth(error))/2,height_/2+60,error,displayImage_);
-	FontTool::drawText((width_- FontTool::getTextWidth(error_message.c_str()))/2,height_/2+80,error_message.c_str(),displayImage_);
+	FontTool::drawText((width_- FontTool::getTextWidth(error))/2,height_/2+60,error);
+	FontTool::drawText((width_- FontTool::getTextWidth(error_message.c_str()))/2,height_/2+80,error_message.c_str());
 	SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
 	SDL_RenderCopy(renderer_, display_, NULL, NULL);
  	SDL_RenderPresent(renderer_);
@@ -180,7 +181,7 @@ void SDLinterface::drawHelp(unsigned char* buffer)
 	for(std::vector<std::string>::iterator help_line = help_text.begin(); help_line!=help_text.end(); help_line++) {
 		if (strcmp(help_line->c_str(), "") == 0) y+=5;
 		else {
-			FontTool::drawText(FontTool::getFontHeight(),y,help_line->c_str(),displayImage_);
+			FontTool::drawText(FontTool::getFontHeight(),y,help_line->c_str());
 			y+=FontTool::getFontHeight()-3;
 		}
 	}
@@ -214,7 +215,7 @@ void SDLinterface::mainLoop()
 
 		// do the actual image processing job
 		for (frame = processorList.begin(); frame!=processorList.end(); frame++)
-			(*frame)->process(cameraReadBuffer,destBuffer_,displayImage_);
+			(*frame)->process(cameraReadBuffer,destBuffer_,(unsigned char*)displayImage_->pixels);
 		long processing_time = currentTime();
 
 		// update display
@@ -226,7 +227,7 @@ void SDLinterface::mainLoop()
 				SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_);
 				SDL_RenderCopy(renderer_, texture_, NULL, NULL);
 				if (help_) drawHelp(sourceBuffer_);
-				camera_->drawGUI(displayImage_);
+				camera_->drawGUI(this);
 				SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
 				SDL_RenderCopy(renderer_, display_, NULL, NULL);
 				SDL_FillRect(displayImage_, NULL, 0 );
@@ -236,7 +237,7 @@ void SDLinterface::mainLoop()
 			case DEST_DISPLAY: {
 				SDL_UpdateTexture(texture_,NULL,destBuffer_,width_);
  				SDL_RenderCopy(renderer_, texture_, NULL, NULL);
-				camera_->drawGUI(displayImage_);
+				camera_->drawGUI(this);
 				if (help_) drawHelp(destBuffer_);
                 		SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
 				SDL_RenderCopy(renderer_, display_, NULL, NULL);
@@ -283,16 +284,16 @@ void SDLinterface::frameStatistics(long cameraTime, long processingTime, long to
     
     if ((fullscreen_) && (!calibrate_)) {
         char caption[24] = "";
-        sprintf(caption,"%d FPS",current_fps);
-        FontTool::drawText(width_-(FontTool::getTextWidth(caption)+FontTool::getFontHeight()),FontTool::getFontHeight(),caption,displayImage_);
+        sprintf(caption,"%d FPS",current_fps_);
+        FontTool::drawText(width_-(FontTool::getTextWidth(caption)+FontTool::getFontHeight()),FontTool::getFontHeight(),caption);
     }
     
 	if (diffTime >= 1) {
-		current_fps = (int)floor( (frames_ / diffTime) + 0.5 );
+		current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
 		
 		if (!calibrate_) {
             char caption[24] = "";
-            sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+            sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
             SDL_SetWindowTitle( window_, caption);
 		}
 
@@ -358,7 +359,6 @@ bool SDLinterface::setupWindow() {
 	SDL_SetWindowIcon(window_, iconImage_);
 	#endif*/
 
-	FontTool::init();
 	return true;
 }
 
@@ -394,7 +394,7 @@ void SDLinterface::process_events()
 				SDL_FillRect(displayImage_, NULL, 0 );
 				displayMode_ = DEST_DISPLAY;
 			} else if( event.key.keysym.sym == SDLK_o ){
-				camera_->showSettingsDialog(); 
+				display_lock_ = camera_->showSettingsDialog(display_lock_);
 			} else if( event.key.keysym.sym == SDLK_v ){
 				if (verbose_) {
 					verbose_=false;
@@ -443,7 +443,7 @@ void SDLinterface::process_events()
 				if (pause_) {
 					pause_=false;
 					char caption[24] = "";
-					sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+					sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
 					SDL_SetWindowTitle( window_, caption);
 					
 				} else {
@@ -458,7 +458,7 @@ void SDLinterface::process_events()
 				if (calibrate_) {
 					calibrate_=false;
 					char caption[24] = "";
-					sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+					sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
                     //if (!fullscreen_) SDL_SetWindowFullscreen(window_, 0);
                     SDL_SetWindowTitle( window_, caption);
 				} else {
@@ -477,9 +477,9 @@ void SDLinterface::process_events()
                 help_ = false;
             }
 
-			for (frame = processorList.begin(); frame!=processorList.end(); frame++)
-				(*frame)->toggleFlag(event.key.keysym.sym);
-			camera_->control(event.key.keysym.sym);
+            for (frame = processorList.begin(); frame!=processorList.end(); frame++)
+				display_lock_ = (*frame)->toggleFlag(event.key.keysym.scancode,display_lock_);
+			camera_->control(event.key.keysym.scancode);
 
 			break;
 		case SDL_QUIT:
@@ -525,6 +525,8 @@ void SDLinterface::allocateBuffers()
 		SDL_FillRect(displayImage_, NULL, 0 );
        	SDL_RenderClear(renderer_);
        	SDL_RenderPresent(renderer_);
+        
+        FontTool::init(displayImage_);
     }
 }
 
@@ -587,11 +589,47 @@ void SDLinterface::displayMessage(const char *message)
 {
 	SDL_RenderClear(renderer_);
 	SDL_FillRect(displayImage_, NULL, 0 );
-	FontTool::drawText((width_- FontTool::getTextWidth(message))/2,height_/2,message,displayImage_);
+	FontTool::drawText((width_- FontTool::getTextWidth(message))/2,height_/2,message);
 	SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
     SDL_RenderCopy(renderer_, display_, NULL, NULL);
     SDL_FillRect(displayImage_, NULL, 0 );
     SDL_RenderPresent(renderer_);
+}
+
+void SDLinterface::displayControl(const char *title, int min, int max, int value)
+{
+
+    unsigned char* disp = (unsigned char*)(displayImage_->pixels);
+    
+    int x_offset=width_/2-128;
+    int y_offset=height_-100;
+    int range = max - min;
+
+    FontTool::drawText(x_offset+128-(FontTool::getTextWidth(title)/2),y_offset-FontTool::getFontHeight(),title);
+    
+    // draw the border
+    for (int i=x_offset;i<(x_offset+256);i++) {
+        int pixel=(width_*y_offset+i)*4+1;
+        disp[pixel]=disp[pixel+2]=255;
+        pixel=(width_*(y_offset+25)+i)*4+1;
+        disp[pixel]=disp[pixel+2]=255;
+    }
+    for (int i=y_offset;i<(y_offset+25);i++) {
+        int pixel=(width_*i+x_offset)*4+1;
+        disp[pixel]=disp[pixel+2]=255;
+        pixel=(width_*i+x_offset+256)*4+1;
+        disp[pixel]=disp[pixel+2]=255;
+    }
+    
+    // draw the bar
+    int xpos = (int)(254*(((float)value-(float)min)/(float)range));
+    for (int i=x_offset+2;i<=(x_offset+xpos);i++) {
+        for (int j=y_offset+2;j<=(y_offset+23);j++) {
+            int pixel=(width_*j+i)*4+1;
+            disp[pixel]=disp[pixel+2]=255;
+        }
+    }
+    
 }
 
 void SDLinterface::setDisplayMode(DisplayMode mode) {
@@ -612,14 +650,15 @@ void SDLinterface::initFrameProcessors() {
 	}
 }
 
-unsigned int SDLinterface::current_fps = 0;
-bool SDLinterface::display_lock = false;
+//unsigned int SDLinterface::current_fps = 0;
 
-SDLinterface::SDLinterface(const char* name, CameraEngine *camera, reactivision_settings *config)
+SDLinterface::SDLinterface(const char* name, CameraEngine *camera, application_settings *config)
 	: error_( false )
 	, pause_( false )
 	, calibrate_( false )
 	, help_( false )
+    , display_lock_( false )
+    , current_fps_( 0 )
 	, framenumber_( 0 )
 	, frames_( 0 )
 	, recording_( false )

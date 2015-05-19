@@ -1,20 +1,20 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef CAMERAENGINE_H
 #define CAMERAENGINE_H
@@ -24,12 +24,7 @@
 #include <limits.h>
 #include "tinyxml.h"
 #include <math.h>
-#ifdef __APPLE__
-#include <SDL2/SDL.h>
-#else
-#include <SDL.h>
-#endif
-#include "FontTool.h"
+#include "FrameProcessor.h"
 
 #ifdef __APPLE__
 #include <CoreFoundation/CFBundle.h>
@@ -41,6 +36,11 @@
 #define SETTING_AUTO -2
 #define SETTING_MIN -3
 #define SETTING_MAX -4
+
+#define VALUE_UP 79
+#define VALUE_DOWN 80
+#define SETTING_NEXT 81
+#define SETTING_PREVIOUS 82
 
 class CameraEngine
 {
@@ -75,9 +75,10 @@ public:
 	virtual bool setDefaultCameraSetting(int mode) = 0;
 	virtual int getDefaultCameraSetting(int mode) = 0;
 
-	virtual void showSettingsDialog();
-	virtual void control(int key);
-	virtual void drawGUI(SDL_Surface *display);
+	virtual bool showSettingsDialog(bool lock);
+	virtual void control(unsigned char key);
+	//virtual void drawGUI(SDL_Surface *display);
+    virtual void drawGUI(MessageListener *display);
 
 	int getId() { return cameraID; }
 	int getFps() { return (int)floor(fps+0.5f); }

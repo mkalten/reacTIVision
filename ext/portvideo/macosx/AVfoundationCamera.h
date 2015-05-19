@@ -24,7 +24,6 @@
 #import <VVUVCKit/VVUVCKit.h>
 
 #include "../common/cameraEngine.h"
-#include "../common/SDLinterface.h"
 
 @interface FrameGrabber : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
@@ -34,6 +33,7 @@
     int xoff, yoff;
     unsigned char *buffer;
     bool crop;
+    bool color;
 }
 - (id) initWithCameraSize:(int)w :(int)h;
 - (id) initWithCropSize:(int)cw :(int)ch :(int)fw :(int)fh :(int)xo :(int)yo;
@@ -71,7 +71,7 @@ public:
     int getMinCameraSetting(int mode);
     bool setDefaultCameraSetting(int mode);
     int getDefaultCameraSetting(int mode);
-	void showSettingsDialog();
+	bool showSettingsDialog(bool lock);
     
 private:
     

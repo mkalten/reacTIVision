@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<portvideo>
+
+<!--
+these are all the possible configuration tags and their default values.
+you only need to specify parameters you want to change from their default setting.
+
+please note that active tags need to be placed outside of this commented area!
+
+ <camera config="camera.xml" />
+ <image display="dest" fullscreen="true" />
+ -->
+
+ <image display="src" fullscreen="false" />
+
+</portvideo>

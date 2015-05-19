@@ -1,0 +1,588 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B206F53E19E3DD4A00B8E1DA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */; };
+		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; };
+		B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; };
+		B21683D519F3965500F07F0D /* VVUVCKit.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B21683D619F3965500F07F0D /* USBBusProber.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B21D89E30CE7A0FE003B810C /* FileCamera.cpp */; };
+		B21D8A0D0CE7A34A003B810C /* CameraEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */; };
+		B2375F3C0CCE305C00DE086D /* FontTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2375F3B0CCE305C00DE086D /* FontTool.cpp */; };
+		B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B239D6A30CC51682009708F3 /* DC1394Camera.cpp */; };
+		B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B244E81519C6D4DC008ADD32 /* libusb.a */; };
+		B24EA44F0015EAB600096D13 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA4490015EAB600096D13 /* tinystr.cpp */; };
+		B24EA4510015EAB600096D13 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA44B0015EAB600096D13 /* tinyxml.cpp */; };
+		B24EA4530015EAB600096D13 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA44D0015EAB600096D13 /* tinyxmlerror.cpp */; };
+		B24EA4540015EAB600096D13 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA44E0015EAB600096D13 /* tinyxmlparser.cpp */; };
+		B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B24EA4F20015EB5000096D13 /* Cocoa.framework */; };
+		B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */; };
+		B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260A1F01B0A624E0053F53D /* ps3eye.cpp */; };
+		B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B26725ED0C5E3FD100D7FD74 /* IOKit.framework */; };
+		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
+		B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */; };
+		B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29545ED19E2FF80001111A6 /* AVFoundation.framework */; };
+		B297D3B8097536E2004AB0FE /* portVideoSDL.icns in Resources */ = {isa = PBXBuildFile; fileRef = B260492208E9BF4B0095D4C8 /* portVideoSDL.icns */; };
+		B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208511078AFC0A0047913B /* CameraTool.cpp */; };
+		B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B220851F078AFC4D0047913B /* SDLinterface.cpp */; };
+		B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208521078AFC4D0047913B /* RingBuffer.cpp */; };
+		B297D3E2097536E2004AB0FE /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E66E0959DA6F00A347C1 /* Main.cpp */; };
+		B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29AE05A1B0A95050046E462 /* FrameInverter.cpp */; };
+		B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */ = {isa = PBXBuildFile; fileRef = B29AE05D1B0A999C0046E462 /* portvideo.xml */; };
+		B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */; };
+		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
+		B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; };
+		B2DEC9DA19F65370006CAD09 /* SDL2.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */; };
+		B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */; };
+		B2F024E10975394D00538C36 /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DD0975394D00538C36 /* Resources.c */; };
+		B2F024E30975394D00538C36 /* SFont.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DF0975394D00538C36 /* SFont.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B2E7620A0DD39B19008A46C0 /* Copy Frameworks Into .app Bundle */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B2DEC9DA19F65370006CAD09 /* SDL2.framework in Copy Frameworks Into .app Bundle */,
+				B21683D519F3965500F07F0D /* VVUVCKit.framework in Copy Frameworks Into .app Bundle */,
+				B21683D619F3965500F07F0D /* USBBusProber.framework in Copy Frameworks Into .app Bundle */,
+			);
+			name = "Copy Frameworks Into .app Bundle";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = /System/Library/Frameworks/CoreMedia.framework; sourceTree = "<absolute>"; };
+		B214E66E0959DA6F00A347C1 /* Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = Main.cpp; path = ../sdldemo/Main.cpp; sourceTree = SOURCE_ROOT; };
+		B21683D119F3962500F07F0D /* USBBusProber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = USBBusProber.framework; path = Frameworks/USBBusProber.framework; sourceTree = "<group>"; };
+		B21683D219F3962500F07F0D /* VVUVCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VVUVCKit.framework; path = Frameworks/VVUVCKit.framework; sourceTree = "<group>"; };
+		B21D89E30CE7A0FE003B810C /* FileCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileCamera.cpp; path = ../common/FileCamera.cpp; sourceTree = SOURCE_ROOT; };
+		B21D89E40CE7A0FE003B810C /* FileCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCamera.h; path = ../common/FileCamera.h; sourceTree = SOURCE_ROOT; };
+		B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = CameraEngine.cpp; path = ../common/CameraEngine.cpp; sourceTree = SOURCE_ROOT; };
+		B2208511078AFC0A0047913B /* CameraTool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CameraTool.cpp; path = ../common/CameraTool.cpp; sourceTree = SOURCE_ROOT; };
+		B2208512078AFC0A0047913B /* CameraTool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CameraTool.h; path = ../common/CameraTool.h; sourceTree = SOURCE_ROOT; };
+		B220851B078AFC3D0047913B /* FrameProcessor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameProcessor.h; path = ../common/FrameProcessor.h; sourceTree = SOURCE_ROOT; };
+		B220851F078AFC4D0047913B /* SDLinterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = SDLinterface.cpp; path = ../interface/SDLinterface.cpp; sourceTree = SOURCE_ROOT; };
+		B2208520078AFC4D0047913B /* SDLinterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDLinterface.h; path = ../interface/SDLinterface.h; sourceTree = SOURCE_ROOT; };
+		B2208521078AFC4D0047913B /* RingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RingBuffer.cpp; path = ../common/RingBuffer.cpp; sourceTree = SOURCE_ROOT; };
+		B2208522078AFC4D0047913B /* RingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RingBuffer.h; path = ../common/RingBuffer.h; sourceTree = SOURCE_ROOT; };
+		B2375E210CCE125700DE086D /* FontTool.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontTool.h; path = ../interface/FontTool.h; sourceTree = SOURCE_ROOT; };
+		B2375F3B0CCE305C00DE086D /* FontTool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FontTool.cpp; path = ../interface/FontTool.cpp; sourceTree = SOURCE_ROOT; };
+		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DC1394Camera.cpp; path = ../linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
+		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
+		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
+		B24EA4490015EAB600096D13 /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../../tinyxml/tinystr.cpp; sourceTree = SOURCE_ROOT; };
+		B24EA44A0015EAB600096D13 /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../../tinyxml/tinystr.h; sourceTree = SOURCE_ROOT; };
+		B24EA44B0015EAB600096D13 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../tinyxml/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
+		B24EA44C0015EAB600096D13 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../tinyxml/tinyxml.h; sourceTree = SOURCE_ROOT; };
+		B24EA44D0015EAB600096D13 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../tinyxml/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
+		B24EA44E0015EAB600096D13 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../tinyxml/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
+		B24EA4F20015EB5000096D13 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		B260492208E9BF4B0095D4C8 /* portVideoSDL.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = portVideoSDL.icns; sourceTree = SOURCE_ROOT; };
+		B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PS3EyeCamera.cpp; sourceTree = "<group>"; };
+		B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PS3EyeCamera.h; sourceTree = "<group>"; };
+		B260A1F01B0A624E0053F53D /* ps3eye.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ps3eye.cpp; path = ps3eye/ps3eye.cpp; sourceTree = "<group>"; };
+		B260A1F11B0A624E0053F53D /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ps3eye/ps3eye.h; sourceTree = "<group>"; };
+		B26725ED0C5E3FD100D7FD74 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
+		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVfoundationCamera.h; sourceTree = "<group>"; };
+		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVfoundationCamera.mm; sourceTree = "<group>"; };
+		B29545ED19E2FF80001111A6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = /System/Library/Frameworks/AVFoundation.framework; sourceTree = "<absolute>"; };
+		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B297D3ED097536E3004AB0FE /* portVideoSDL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = portVideoSDL.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B29AE05A1B0A95050046E462 /* FrameInverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameInverter.cpp; path = ../sdldemo/FrameInverter.cpp; sourceTree = "<group>"; };
+		B29AE05B1B0A95050046E462 /* FrameInverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameInverter.h; path = ../sdldemo/FrameInverter.h; sourceTree = "<group>"; };
+		B29AE05D1B0A999C0046E462 /* portvideo.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = portvideo.xml; sourceTree = "<group>"; };
+		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../sdldemo/Main.h; sourceTree = "<group>"; };
+		B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B2CA60030CD623FA00B46958 /* libdc1394.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdc1394.a; path = dc1394/libdc1394.a; sourceTree = SOURCE_ROOT; };
+		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
+		B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FolderCamera.cpp; path = ../common/FolderCamera.cpp; sourceTree = SOURCE_ROOT; };
+		B2E644150D6C39EC0000ABD0 /* FolderCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FolderCamera.h; path = ../common/FolderCamera.h; sourceTree = SOURCE_ROOT; };
+		B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../interface/Resources.c; sourceTree = SOURCE_ROOT; };
+		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../interface/Resources.h; sourceTree = SOURCE_ROOT; };
+		B2F024DF0975394D00538C36 /* SFont.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SFont.c; path = ../interface/SFont.c; sourceTree = SOURCE_ROOT; };
+		B2F024E00975394D00538C36 /* SFont.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SFont.h; path = ../interface/SFont.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B297D3E3097536E2004AB0FE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */,
+				B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */,
+				B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */,
+				B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */,
+				B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */,
+				B206F53E19E3DD4A00B8E1DA /* CoreMedia.framework in Frameworks */,
+				B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */,
+				B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */,
+				B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */,
+				B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */,
+				B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				B214E66E0959DA6F00A347C1 /* Main.cpp */,
+				B2A8A0C919ECF6EE00D8D4FA /* Main.h */,
+				B220851F078AFC4D0047913B /* SDLinterface.cpp */,
+				B2208520078AFC4D0047913B /* SDLinterface.h */,
+				B29AE05A1B0A95050046E462 /* FrameInverter.cpp */,
+				B29AE05B1B0A95050046E462 /* FrameInverter.h */,
+				B24EA4470015EA6F00096D13 /* tinyxml */,
+				B267A21D1B0A8CB9003CA930 /* common */,
+				B267A21E1B0A8D9F003CA930 /* interface */,
+				B2F486A407788A9A00370074 /* drivers */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B244E81519C6D4DC008ADD32 /* libusb.a */,
+				B2CA60030CD623FA00B46958 /* libdc1394.a */,
+				B2DEC9D819F65354006CAD09 /* SDL2.framework */,
+				B21683D219F3962500F07F0D /* VVUVCKit.framework */,
+				B21683D119F3962500F07F0D /* USBBusProber.framework */,
+				B26725ED0C5E3FD100D7FD74 /* IOKit.framework */,
+				B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */,
+				B29545ED19E2FF80001111A6 /* AVFoundation.framework */,
+				B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */,
+				B24EA4F20015EB5000096D13 /* Cocoa.framework */,
+				B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B297D3ED097536E3004AB0FE /* portVideoSDL.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* portVideoSDL */ = {
+			isa = PBXGroup;
+			children = (
+				080E96DDFE201D6D7F000001 /* Classes */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = portVideoSDL;
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B29AE05D1B0A999C0046E462 /* portvideo.xml */,
+				B297D3EC097536E3004AB0FE /* Info.plist */,
+				B282A34C0CD756B500657CDA /* camera.xml */,
+				B260492208E9BF4B0095D4C8 /* portVideoSDL.icns */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B24EA4470015EA6F00096D13 /* tinyxml */ = {
+			isa = PBXGroup;
+			children = (
+				B24EA4490015EAB600096D13 /* tinystr.cpp */,
+				B24EA44A0015EAB600096D13 /* tinystr.h */,
+				B24EA44B0015EAB600096D13 /* tinyxml.cpp */,
+				B24EA44C0015EAB600096D13 /* tinyxml.h */,
+				B24EA44D0015EAB600096D13 /* tinyxmlerror.cpp */,
+				B24EA44E0015EAB600096D13 /* tinyxmlparser.cpp */,
+			);
+			name = tinyxml;
+			path = ../../tinyxml;
+			sourceTree = "<group>";
+		};
+		B267A21D1B0A8CB9003CA930 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				B2208511078AFC0A0047913B /* CameraTool.cpp */,
+				B2208512078AFC0A0047913B /* CameraTool.h */,
+				B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */,
+				B2E6097008EAE59400136A11 /* CameraEngine.h */,
+				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
+				B2208522078AFC4D0047913B /* RingBuffer.h */,
+				B220851B078AFC3D0047913B /* FrameProcessor.h */,
+			);
+			name = common;
+			sourceTree = "<group>";
+		};
+		B267A21E1B0A8D9F003CA930 /* interface */ = {
+			isa = PBXGroup;
+			children = (
+				B2375F3B0CCE305C00DE086D /* FontTool.cpp */,
+				B2375E210CCE125700DE086D /* FontTool.h */,
+				B2F024DF0975394D00538C36 /* SFont.c */,
+				B2F024E00975394D00538C36 /* SFont.h */,
+				B2F024DD0975394D00538C36 /* Resources.c */,
+				B2F024DE0975394D00538C36 /* Resources.h */,
+			);
+			name = interface;
+			sourceTree = "<group>";
+		};
+		B2F486A407788A9A00370074 /* drivers */ = {
+			isa = PBXGroup;
+			children = (
+				B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */,
+				B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */,
+				B239D6A30CC51682009708F3 /* DC1394Camera.cpp */,
+				B239D6A40CC51682009708F3 /* DC1394Camera.h */,
+				B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */,
+				B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */,
+				B260A1F01B0A624E0053F53D /* ps3eye.cpp */,
+				B260A1F11B0A624E0053F53D /* ps3eye.h */,
+				B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */,
+				B2E644150D6C39EC0000ABD0 /* FolderCamera.h */,
+				B21D89E30CE7A0FE003B810C /* FileCamera.cpp */,
+				B21D89E40CE7A0FE003B810C /* FileCamera.h */,
+			);
+			name = drivers;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B297D37B097536E2004AB0FE /* portVideoSDL */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B297D3E8097536E2004AB0FE /* Build configuration list for PBXNativeTarget "portVideoSDL" */;
+			buildPhases = (
+				B297D3B6097536E2004AB0FE /* Resources */,
+				B297D3B9097536E2004AB0FE /* Sources */,
+				B297D3E3097536E2004AB0FE /* Frameworks */,
+				B2E7620A0DD39B19008A46C0 /* Copy Frameworks Into .app Bundle */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = portVideoSDL;
+			productName = portVideoSDL;
+			productReference = B297D3ED097536E3004AB0FE /* portVideoSDL.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = NO;
+				LastUpgradeCheck = 0610;
+			};
+			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "portVideoSDL" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* portVideoSDL */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B297D37B097536E2004AB0FE /* portVideoSDL */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B297D3B6097536E2004AB0FE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B297D3B8097536E2004AB0FE /* portVideoSDL.icns in Resources */,
+				B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */,
+				B282A34D0CD756B500657CDA /* camera.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B297D3B9097536E2004AB0FE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */,
+				B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */,
+				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
+				B297D3E2097536E2004AB0FE /* Main.cpp in Sources */,
+				B2F024E10975394D00538C36 /* Resources.c in Sources */,
+				B2F024E30975394D00538C36 /* SFont.c in Sources */,
+				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
+				B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */,
+				B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */,
+				B24EA44F0015EAB600096D13 /* tinystr.cpp in Sources */,
+				B24EA4510015EAB600096D13 /* tinyxml.cpp in Sources */,
+				B24EA4530015EAB600096D13 /* tinyxmlerror.cpp in Sources */,
+				B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */,
+				B24EA4540015EAB600096D13 /* tinyxmlparser.cpp in Sources */,
+				B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */,
+				B2375F3C0CCE305C00DE086D /* FontTool.cpp in Sources */,
+				B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */,
+				B21D8A0D0CE7A34A003B810C /* CameraEngine.cpp in Sources */,
+				B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B297D3E9097536E2004AB0FE /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = (
+					../../tinyxml,
+					../macosx,
+					../common,
+				);
+				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = ./dc1394;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = portVideoSDL;
+				SDKROOT = macosx;
+				SECTORDER_FLAGS = "";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Development;
+		};
+		B297D3EA097536E2004AB0FE /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_STRICT_ALIASING = YES;
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = (
+					../../tinyxml,
+					../macosx,
+					../common,
+				);
+				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = ./dc1394;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = portVideoSDL;
+				SDKROOT = macosx;
+				SECTORDER_FLAGS = "";
+				STRIP_INSTALLED_PRODUCT = YES;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Deployment;
+		};
+		B297D3EB097536E2004AB0FE /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks,
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = (
+					../../tinyxml,
+					../macosx,
+					../common,
+				);
+				INFOPLIST_FILE = Info.plist;
+				LIBRARY_SEARCH_PATHS = ./dc1394;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = portVideoSDL;
+				SDKROOT = macosx;
+				SECTORDER_FLAGS = "";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+		B2BCA3A40859B28700B9378C /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_X86_VECTOR_INSTRUCTIONS = default;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_CW_ASM_SYNTAX = NO;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
+				STRIP_STYLE = "non-global";
+			};
+			name = Development;
+		};
+		B2BCA3A50859B28700B9378C /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_X86_VECTOR_INSTRUCTIONS = default;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_CW_ASM_SYNTAX = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_LDFLAGS = "";
+				SDKROOT = macosx;
+				STRIP_STYLE = all;
+				USER_HEADER_SEARCH_PATHS = "";
+			};
+			name = Deployment;
+		};
+		B2BCA3A60859B28700B9378C /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_X86_VECTOR_INSTRUCTIONS = default;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_CW_ASM_SYNTAX = NO;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_VERSION = "";
+				HEADER_SEARCH_PATHS = "";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = macosx;
+				STRIP_STYLE = debugging;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B297D3E8097536E2004AB0FE /* Build configuration list for PBXNativeTarget "portVideoSDL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B297D3E9097536E2004AB0FE /* Development */,
+				B297D3EA097536E2004AB0FE /* Deployment */,
+				B297D3EB097536E2004AB0FE /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "portVideoSDL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B2BCA3A40859B28700B9378C /* Development */,
+				B2BCA3A50859B28700B9378C /* Deployment */,
+				B2BCA3A60859B28700B9378C /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}

@@ -460,12 +460,14 @@ bool AVfoundationCamera::closeCamera()
 	return true;
 }
 
-void AVfoundationCamera::showSettingsDialog() {
+bool AVfoundationCamera::showSettingsDialog(bool lock) {
     
     if (uvcController) {
         [uvcController closeSettingsWindow];
         [uvcController openSettingsWindow];
     }
+    
+    return lock;
 }
 
 bool AVfoundationCamera::getCameraSettingAuto(int mode) {

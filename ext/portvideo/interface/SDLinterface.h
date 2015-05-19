@@ -1,20 +1,21 @@
-/*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+/*  portVideo, a cross platform camera framework
+ Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
  
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 
 #ifndef SDLINTERFACE_H
 #define SDLINTERFACE_H
@@ -58,7 +59,7 @@ class SDLinterface: public MessageListener
 {
 
 public:
-	SDLinterface(const char* name, CameraEngine *camera, reactivision_settings *config);
+	SDLinterface(const char* name, CameraEngine *camera, application_settings *config);
 	~SDLinterface() {};
 
 	void run();
@@ -72,6 +73,8 @@ public:
 	bool pause_;
 	bool calibrate_;
 	bool help_;
+    bool display_lock_;
+    unsigned int current_fps_;
 
 	RingBuffer *ringBuffer;
 
@@ -79,14 +82,14 @@ public:
 	void removeFrameProcessor(FrameProcessor *fp);
 	void setMessage(std::string message);
 	void displayMessage(const char *message);
+    void displayControl(const char *title, int min, int max, int value);
 
 	long framenumber_;
 
 	void setDisplayMode(DisplayMode mode);
 	DisplayMode getDisplayMode() { return displayMode_; }
 
-	static unsigned int current_fps;
-	static bool display_lock;
+	
 
 	static long currentTime() {
 #ifdef WIN32
