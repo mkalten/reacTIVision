@@ -67,7 +67,7 @@ void readSettings(application_settings *config) {
 	CFRelease( cfStringRef);
 	sprintf(config->file,"%s/Contents/Resources/portvideo.xml",app_path);
 #elif !defined WIN32
-        if (access ("./portVideoSDL.xml", F_OK )==0) sprintf(config->file,"./portvideo.xml");
+        if (access ("./portvideo.xml", F_OK )==0) sprintf(config->file,"./portvideo.xml");
         else if (access ("/usr/share/portvideo/portvideo.xml", F_OK )==0) sprintf(config->file,"/usr/share/portvideo/portvideo.xml");
         else if (access ("/usr/local/share/portvideo/portvideo.xml", F_OK )==0) sprintf(config->file,"/usr/local/share/portvideo/portvideo.xml");
         else if (access ("/opt/share/portvideo/portvideo.xml", F_OK )==0) sprintf(config->file,"/opt/share/portvideo/portvideo.xml");
