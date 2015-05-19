@@ -1,4 +1,4 @@
-TARGET = portVideoSDL
+TARGET = SportVideo
 CSOURCES = $(shell ls ../interface/*.c)  
 COBJECTS = $(CSOURCES:.c=.o)
 CPPSOURCES = $(shell ls ./*.cpp ../sdldemo/*.cpp ../common/*.cpp ../interface/*.cpp ../../tinyxml/*.cpp) 
@@ -10,8 +10,8 @@ SDL_LDFLAGS := $(shell sdl2-config --libs)
 INCLUDES = -I../common -I../sdldemo -I../interface -I../../tinyxml
 COPTS  = -Ofast -w
 CDEBUG = -Wall -g
-CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
-#CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX
+#CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
+CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX
 CXXFLAGS = $(CFLAGS)
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
