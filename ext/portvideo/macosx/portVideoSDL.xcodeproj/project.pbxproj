@@ -300,7 +300,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0630;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "portVideoSDL" */;
 			compatibilityVersion = "Xcode 3.2";
