@@ -492,13 +492,12 @@ void SDLinterface::process_events()
 
 void SDLinterface::allocateBuffers()
 {
+	bytesPerSourcePixel_ = 1;
+	bytesPerDestPixel_ = 1;
 
-	if (camera_->getColour()) {
+	if ((camera_!=NULL) && (camera_->getColour())) {
 		bytesPerSourcePixel_ = 3;
 		bytesPerDestPixel_ = 3;
-	} else {
-		bytesPerSourcePixel_ = 1;
-		bytesPerDestPixel_ = 1;
 	}
 
 	sourceBuffer_  = new unsigned char[3*width_*height_];
