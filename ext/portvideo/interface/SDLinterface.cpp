@@ -493,7 +493,7 @@ void SDLinterface::process_events()
 void SDLinterface::allocateBuffers()
 {
 
-	if (camera_->getColor()) {
+	if (camera_->getColour()) {
 		bytesPerSourcePixel_ = 3;
 		bytesPerDestPixel_ = 3;
 	} else {
