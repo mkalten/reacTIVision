@@ -33,7 +33,7 @@ bool FidtrackFinderClassic::init(int w, int h, int sb, int db) {
 	return true;
 }
 
-void FidtrackFinderClassic::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
+void FidtrackFinderClassic::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
 	// segmentation
 	step_segmenter( &segmenter, dest );
@@ -114,7 +114,7 @@ void FidtrackFinderClassic::process(unsigned char *src, unsigned char *dest, SDL
 	if (tuio_server) sendTuioMessages();
 	if (midi_server) sendMidiMessages();
 	if (show_grid) drawGrid(src,dest,display);
-	if (show_settings) drawGUI(display);
+	if (show_settings) displayControl();
 }
 
 

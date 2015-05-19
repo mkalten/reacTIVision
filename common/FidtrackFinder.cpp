@@ -185,24 +185,24 @@ void FidtrackFinder::reset() {
 	fingerList.clear();
 }
 
-void FidtrackFinder::toggleFlag(int flag) {
+bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 	
-	FiducialFinder::toggleFlag(flag);
-	
-	if (flag=='f') {
+	lock = FiducialFinder::toggleFlag(flag,lock);
+ 	
+	if (flag==KEY_F) {
 			if (setFingerSize || setFingerSensitivity) {
 				setFingerSize = false;
 				setFingerSensitivity = false;
 				show_settings = false;
-				SDLinterface::display_lock = false;
-			} else if (!SDLinterface::display_lock) {
+				return false;
+			} else if (!lock) {
 				setFingerSize = true;
 				show_settings = true;
-				SDLinterface::display_lock = true;
-			}
+				return true;
+            } else return lock;
 	} else if (setFingerSize || setFingerSensitivity) {
 		switch(flag) {
-			case SDLK_LEFT: 
+			case KEY_LEFT:
 				if (setFingerSize) {
 					average_finger_size--;
 					if (average_finger_size<0) average_finger_size=0;
@@ -212,7 +212,7 @@ void FidtrackFinder::toggleFlag(int flag) {
 					if (finger_sensitivity<0) finger_sensitivity=0;
 				}
 			break;
-			case SDLK_RIGHT:
+			case KEY_RIGHT:
 				if (setFingerSize) {
 					average_finger_size++;
 					if (average_finger_size>64) average_finger_size=64;
@@ -222,8 +222,8 @@ void FidtrackFinder::toggleFlag(int flag) {
 					if (finger_sensitivity>2) finger_sensitivity=2.0f;
 				}
 				break;
-			case SDLK_UP: 
-			case SDLK_DOWN:
+			case KEY_UP:
+			case KEY_DOWN:
 				if (setFingerSize) {
 					setFingerSize=false;
 					setFingerSensitivity=true;
@@ -234,14 +234,12 @@ void FidtrackFinder::toggleFlag(int flag) {
 				break;
 		}
 	}
-	
+    return lock;
 }
 
-void FidtrackFinder::drawGUI(SDL_Surface *display) {
-	
-	FiducialFinder::drawGUI(display);
+void FidtrackFinder::drawDisplay(unsigned char *disp) {
 
-	unsigned char* disp = (unsigned char*)(display->pixels);
+	FiducialFinder::displayControl();
 
 	char displayText[64]; 
 	int settingValue = 0;
@@ -274,37 +272,10 @@ void FidtrackFinder::drawGUI(SDL_Surface *display) {
 		maxValue = 200;
 	} else return;
 	
-	int x_offset=width/2-128;
-	int y_offset=height-100;
-	
-	FontTool::drawText(x_offset+128-(FontTool::getTextWidth(displayText)/2),y_offset-FontTool::getFontHeight(),displayText,display);
-	
-	// draw the border
-	for (int i=x_offset;i<(x_offset+256);i++) {
-		int pixel=(width*y_offset+i)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-		pixel=(width*(y_offset+25)+i)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-	}
-	for (int i=y_offset;i<(y_offset+25);i++) {
-		int pixel=(width*i+x_offset)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-		pixel=(width*i+x_offset+256)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-	}
-	
-	// draw the bar
-	int xpos = (int)(254*((float)settingValue/(float)maxValue));
-	for (int i=x_offset+2;i<=(x_offset+xpos);i++) {
-		for (int j=y_offset+2;j<=(y_offset+23);j++) {
-			int pixel=(width*j+i)*4+1;
-			disp[pixel]=disp[pixel+2]=255;
-		}
-	}
-
+    msg_listener->displayControl(displayText, 0, maxValue, settingValue);
 }
 
-void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
+void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
 /*
 	#ifdef WIN32
@@ -525,7 +496,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 
 			//check first if the finger is valid
 			//printf("candidate: %d %d\n", regions[j].width, regions[j].height);
-			int finger_match = check_finger(&regions[j],dest,(unsigned char*)(display->pixels));
+			int finger_match = check_finger(&regions[j],dest,display);
 			if(finger_match<0) continue;//goto plain_analysis;
 			//printf("finger: %d %d\n", regions[j].width, regions[j].height);
 
@@ -608,7 +579,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 	} else if (midi_server!=NULL) sendMidiMessages();
 	
 	if (show_grid) drawGrid(src,dest,display);
-	if (show_settings) drawGUI(display);
+	if (show_settings) drawDisplay(display);
 	//printStatistics(start_time);
     
     //long fiducial_time = SDLinterface::currentTime() - start_time;

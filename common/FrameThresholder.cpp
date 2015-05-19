@@ -138,7 +138,8 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 	return true;
 }
 
-void FrameThresholder::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
+//void FrameThresholder::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
+void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
 
     //long start_time = SDLinterface::currentTime();
@@ -165,7 +166,7 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, SDL_Surf
 		tthreads[i] = SDL_CreateThread(threshold_thread_function,NULL,&tdata[i]);
     }
 
-    if (setGradient || setTilesize) drawGUI(display);
+    if (setGradient || setTilesize) displayControl();
 
     for (int i=0;i<thread_count;i++) {
         SDL_WaitThread(tthreads[i],NULL);
@@ -176,25 +177,26 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, SDL_Surf
     std::cout << "threshold latency: " << latency << "ms" << std::endl;*/
 }
 
-void FrameThresholder::setFlag(int flag, bool value) {
-	if (flag=='g') setGradient=value;
+bool FrameThresholder::setFlag(unsigned char flag, bool value, bool lock) {
+	if (flag==KEY_G) setGradient=value;
+    return false;
 }
 
-void FrameThresholder::toggleFlag(int flag) {
+bool FrameThresholder::toggleFlag(unsigned char flag, bool lock) {
 
-	if (flag=='g') {
+	if (flag==KEY_G) {
 		if ((setGradient) || (setTilesize)) {
 			setGradient=false;
             setTilesize=false;
-			SDLinterface::display_lock=false;
-		} else if (!SDLinterface::display_lock) {
+            return false;
+		} else if (!lock) {
 			setGradient=true;
             setTilesize=false;
-			SDLinterface::display_lock=true;
-		}
+            return true;
+        } else return false;
 	} else if ((setGradient) || (setTilesize)) {
 		switch(flag) {
-			case SDLK_LEFT:
+			case KEY_LEFT:
                 if (setGradient) {
                     gradient--;
                     if (gradient<0) gradient=0;
@@ -204,7 +206,7 @@ void FrameThresholder::toggleFlag(int flag) {
                     tile_size = tile_sizes[tile_index];
                }
 				break;
-			case SDLK_RIGHT:
+			case KEY_RIGHT:
                 if (setGradient) {
                     gradient++;
                     if (gradient>64) gradient=64;
@@ -214,8 +216,8 @@ void FrameThresholder::toggleFlag(int flag) {
                     tile_size = tile_sizes[tile_index];
                 }
                 break;
-            case SDLK_UP:
-            case SDLK_DOWN:
+            case KEY_UP:
+            case KEY_DOWN:
                 if (setGradient) {
                     setGradient=false;
                     setTilesize=true;
@@ -227,17 +229,15 @@ void FrameThresholder::toggleFlag(int flag) {
 
 		}
 	}
+    
+    return lock;
 }
 
-void FrameThresholder::drawGUI(SDL_Surface *display) {
-	unsigned char* disp = (unsigned char*)(display->pixels);
+void FrameThresholder::displayControl() {
 
     char displayText[64];
-	int settingValue ;
-	int maxValue;
-	
-    int x_offset=width/2-128;
-    int y_offset=height-100;
+	int settingValue = 0;
+	int maxValue = 0;
 
     if (setGradient) {
 
@@ -252,31 +252,6 @@ void FrameThresholder::drawGUI(SDL_Surface *display) {
         sprintf(displayText,"tile size %d",settingValue);
     }
   
-    FontTool::drawText(x_offset+128-(FontTool::getTextWidth(displayText)/2),y_offset-FontTool::getFontHeight(),displayText,display);
-    
-	// draw the border
-	for (int i=x_offset;i<(x_offset+256);i++) {
-		int pixel=(width*y_offset+i)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-		pixel=(width*(y_offset+25)+i)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-	}
-	for (int i=y_offset;i<(y_offset+25);i++) {
-		int pixel=(width*i+x_offset)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-		pixel=(width*i+x_offset+256)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-	}
-	
-	// draw the bar
-	int xpos = (int)(254*((float)settingValue/(float)maxValue));
-	for (int i=x_offset+2;i<=(x_offset+xpos);i++) {
-		for (int j=y_offset+2;j<=(y_offset+23);j++) {
-			int pixel=(width*j+i)*4+1;
-			disp[pixel]=disp[pixel+2]=255;
-		}
-	}
-	
-	
+    msg_listener->displayControl(displayText, 0, maxValue, settingValue);
 }
 

@@ -88,9 +88,9 @@ void FiducialFinder::computeGrid() {
 
 }
 
-void FiducialFinder::toggleFlag(int flag) {
+bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 
-	if ((flag=='r') && (!calibration) && (!empty_grid)) {
+	if ((flag==KEY_R) && (!calibration) && (!empty_grid)) {
 		if (!show_grid) {
 			show_grid = true;
 			if(msg_listener) {
@@ -101,7 +101,7 @@ void FiducialFinder::toggleFlag(int flag) {
 			show_grid = false;
 			if(msg_listener) msg_listener->setDisplayMode(prevMode);
 		}
-	} else if (flag=='c') {
+	} else if (flag==KEY_C) {
 		if(!calibration) {
 			calibration=true;
 			show_grid=false;
@@ -116,43 +116,42 @@ void FiducialFinder::toggleFlag(int flag) {
 			calibration = false;
 			computeGrid();
 		}
-	} else if (flag=='i') {
+	} else if (flag==KEY_I) {
 		if (currentSetting != INV_NONE) {
 			currentSetting = INV_NONE;
 			show_settings = false;
-			SDLinterface::display_lock = false;
-		} else if (!SDLinterface::display_lock) { 
+			return false;
+		} else if (!lock) {
 			currentSetting = INV_XPOS;
 			show_settings = true;
-			SDLinterface::display_lock = true;
-		}
+			return true;
+        } else return lock;
 	} else if ( currentSetting != INV_NONE ) {
 		switch(flag) {
-			case SDLK_LEFT: 
+			case KEY_LEFT:
 				if (currentSetting==INV_XPOS) message_server->setInvertX(false);
 				else if (currentSetting==INV_YPOS) message_server->setInvertY(false);
 				else if (currentSetting==INV_ANGLE) message_server->setInvertA(false);
 				break;
-			case SDLK_RIGHT:
+			case KEY_RIGHT:
 				if (currentSetting==INV_XPOS) message_server->setInvertX(true);
 				else if (currentSetting==INV_YPOS) message_server->setInvertY(true);
 				else if (currentSetting==INV_ANGLE) message_server->setInvertA(true);
 				break;
-			case SDLK_UP: 
+			case KEY_UP:
 				currentSetting--;
 				if (currentSetting == INV_NONE) currentSetting = INV_ANGLE;
 				break;
-			case SDLK_DOWN:
+			case KEY_DOWN:
 				currentSetting++;
 				if (currentSetting > INV_ANGLE) currentSetting = INV_XPOS;
 				break;
 		}
 	}
-	
+    return lock;
 }
 
-void FiducialFinder::drawGUI(SDL_Surface *display) {
-	unsigned char* disp = (unsigned char*)(display->pixels);
+void FiducialFinder::displayControl() {
 	
 	char displayText[64];
 	int maxValue = 1;
@@ -176,35 +175,8 @@ void FiducialFinder::drawGUI(SDL_Surface *display) {
 			break;
 		}			
 	}
-	
-	int x_offset=width/2-128;
-	int y_offset=height-100;
-	
-	FontTool::drawText(x_offset+128-(FontTool::getTextWidth(displayText)/2),y_offset-FontTool::getFontHeight(),displayText,display);
-	
-	// draw the border
-	for (int i=x_offset;i<(x_offset+256);i++) {
-		int pixel=(width*y_offset+i)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-		pixel=(width*(y_offset+25)+i)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-	}
-	for (int i=y_offset;i<(y_offset+25);i++) {
-		int pixel=(width*i+x_offset)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-		pixel=(width*i+x_offset+256)*4+1;
-		disp[pixel]=disp[pixel+2]=255;
-	}
-	
-	// draw the bar
-	int xpos = (int)(254*((float)settingValue/(float)maxValue));
-	for (int i=x_offset+2;i<=(x_offset+xpos);i++) {
-		for (int j=y_offset+2;j<=(y_offset+23);j++) {
-			int pixel=(width*j+i)*4+1;
-			disp[pixel]=disp[pixel+2]=255;
-		}
-	}
-	
+    
+    msg_listener->displayControl(displayText, 0, maxValue, settingValue);
 }
 
 void FiducialFinder::sendTuioMessages() {
@@ -314,17 +286,16 @@ void FiducialFinder::finish() {
 	}
 }
 
-
-void FiducialFinder::drawObject(int id, int xpos, int ypos, SDL_Surface *display, int state)
+void FiducialFinder::drawObject(int id, int xpos, int ypos, unsigned char *disp, int state)
 {
-	if (msg_listener->getDisplayMode()==SDLinterface::NO_DISPLAY) return;
+	if (msg_listener->getDisplayMode()==msg_listener->NO_DISPLAY) return;
 	char id_str[8];
 	if(id>=0) sprintf(id_str,"%d",id);
 	else sprintf(id_str,"F");
-	FontTool::drawText(xpos,ypos,id_str,display);
+	FontTool::drawText(xpos,ypos,id_str);
 	
 	int pixel = 0;
-	unsigned char* disp = (unsigned char*)(display->pixels);
+	//unsigned char* disp = (unsigned char*)(display->pixels);
 	for (int i=1;i<3;i++) {
 		pixel=4*(ypos*width+(xpos+i));
 		if ((pixel>=0) && (pixel<width*height*3)) disp[pixel+state]=disp[pixel+3]=255;
@@ -337,9 +308,9 @@ void FiducialFinder::drawObject(int id, int xpos, int ypos, SDL_Surface *display
 	}
 }
 
-void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
+void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest, unsigned char *disp) {
 
-	unsigned char* disp = (unsigned char*)(display->pixels);
+	//unsigned char* disp = (unsigned char*)(display->pixels);
 	int length = width*height;
 	int offset = (width-height)/2;
 	int half = height/2;

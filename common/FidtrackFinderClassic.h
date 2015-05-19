@@ -31,7 +31,8 @@ public:
 	FidtrackFinderClassic(MessageServer *server, const char* grid_cfg) : FiducialFinder (server,grid_cfg) {};
 	~FidtrackFinderClassic() {};
 	
-	void process(unsigned char *src, unsigned char *dest, SDL_Surface *display);
+	//void process(unsigned char *src, unsigned char *dest, SDL_Surface *display);
+    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
 	bool init(int w ,int h, int sb, int db);
 	
 private:

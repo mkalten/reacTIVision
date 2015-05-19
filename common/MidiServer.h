@@ -25,7 +25,10 @@
 #include <iostream>
 
 #include "MessageServer.h"
-#include "SDLinterface.h"
+
+#ifdef __APPLE__
+#include <CoreFoundation/CFBundle.h>
+#endif
 
 #include "portmidi.h"
 #include "porttime.h"

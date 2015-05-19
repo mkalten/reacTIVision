@@ -29,12 +29,13 @@
 #include "TuioServer.h"
 #include "MidiServer.h"
 #include "FiducialObject.h"
-#include "SDLinterface.h"
 #include "floatpoint.h"
 
 #ifdef __APPLE__
 #include <CoreFoundation/CFBundle.h>
 #endif
+
+#include "../ext/portvideo/interface/FontTool.h"
 
 class FiducialFinder: public FrameProcessor
 {
@@ -78,10 +79,11 @@ public:
 		 if (initialized) delete dmap;
 	}
 
-	virtual void process(unsigned char *src, unsigned char *dest, SDL_Surface *display) = 0;
+	//virtual void process(unsigned char *src, unsigned char *dest, SDL_Surface *display) = 0;
+    virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
 
 	bool init(int w, int h, int sb ,int db);
-	void toggleFlag(int flag);
+	bool toggleFlag(unsigned char flag, bool lock);
 	void finish();
 
 protected:
@@ -100,9 +102,9 @@ protected:
 	bool calibration, show_grid, empty_grid;
 	ShortPoint* dmap;
 
-	void drawObject(int id, int xpos, int ypos, SDL_Surface *display,int state);
-	void drawGrid(unsigned char *src, unsigned char *dest, SDL_Surface *display);
-	void drawGUI(SDL_Surface *display);
+    void drawObject(int id, int xpos, int ypos, unsigned char *display, int state);
+    void drawGrid(unsigned char *src, unsigned char *dest, unsigned char *display);
+    void displayControl();
 	void computeGrid();
 
 	TuioServer *tuio_server;

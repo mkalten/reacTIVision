@@ -38,7 +38,7 @@ bool FrameEqualizer::init(int w, int h, int sb, int db) {
 	return true;
 }
 
-void FrameEqualizer::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
+void FrameEqualizer::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
     
     //long start_time = SDLinterface::currentTime();
@@ -104,18 +104,19 @@ void FrameEqualizer::process(unsigned char *src, unsigned char *dest, SDL_Surfac
      std::cout << "equalizer latency: " << latency << "ms" << std::endl;*/
 }
 
-void FrameEqualizer::toggleFlag(int flag) {
+bool FrameEqualizer::toggleFlag(unsigned char flag, bool lock) {
 
-	if (flag=='e') {
+	if (flag==KEY_E) {
 		equalize=!equalize;
 		calibrate=false;
 	}
 
-	if (flag==' ') {
+	if (flag==KEY_SPACE) {
 		equalize=false;
 		calibrate=true;
 	}
 
+    return lock;
 }
 
 

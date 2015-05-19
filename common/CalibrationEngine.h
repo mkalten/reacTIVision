@@ -38,12 +38,12 @@ public:
 	CalibrationEngine(const char* out);
 	~CalibrationEngine();
 
-	void process(unsigned char *src, unsigned char *dest, SDL_Surface *display);
+    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
 	void drawDisplay(unsigned char* display);
 	bool init(int w ,int h, int sb, int db);
 
-	void setFlag(int flag, bool value);
-	void toggleFlag(int flag);
+	bool setFlag(unsigned char flag, bool value, bool lock);
+	bool toggleFlag(unsigned char flag, bool lock);
 
 private:
 	CalibrationGrid *grid;

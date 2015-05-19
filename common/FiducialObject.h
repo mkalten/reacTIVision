@@ -28,7 +28,6 @@
 
 #include "TuioServer.h"
 #include "MidiServer.h"
-#include "SDLinterface.h"
 #include "floatpoint.h"
 #include "math.h"
 #include "stdio.h"

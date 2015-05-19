@@ -21,8 +21,6 @@
 #define FRAMETHRESHOLDER_H
 
 #include "FrameProcessor.h"
-#include "FontTool.h"
-#include "SDLinterface.h"
 #include "tiled_bernsen_threshold.h"
 #include "threshold.h"
 
@@ -58,12 +56,12 @@ public:
 		}
 	};
 
-	void process(unsigned char *src, unsigned char *dest, SDL_Surface *display);
+    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
 	bool init(int w ,int h, int sb, int db);
-	void drawGUI(SDL_Surface *display);
+    void displayControl();
 
-	void setFlag(int flag, bool value);
-	void toggleFlag(int flag);
+	bool setFlag(unsigned char flag, bool value, bool lock);
+	bool toggleFlag(unsigned char flag, bool lock);
 
 	int getGradientGate() { return gradient; };
     int getTileSize() { return tile_size; };

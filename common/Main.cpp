@@ -24,7 +24,7 @@
 #else
 #include "SDL.h"
 #endif
-#include "SDLinterface.h"
+#include "../ext/portvideo/interface/SDLinterface.h"
 #include "FrameEqualizer.h"
 #include "FrameThresholder.h"
 #include "FidtrackFinder.h"
@@ -43,16 +43,16 @@ static void terminate (int param)
 	if (engine!=NULL) engine->stop();
 }
 
-void printUsage() {
-	std::cout << "usage: reacTIVision -c [config_file]" << std::endl;
-	std::cout << "the default configuration file is reacTIVision.xml" << std::endl;
-	std::cout << "\t -n starts reacTIVision without GUI" << std::endl;
+void printUsage(const char* app_name) {
+	std::cout << "usage: " << app_name << " -c [config_file]" << std::endl;
+	std::cout << "the default configuration file is " << app_name << ".xml" << std::endl;
+	std::cout << "\t -n starts " << app_name << " without GUI" << std::endl;
 	std::cout << "\t -l lists all available cameras and MIDI devices" << std::endl;
 	std::cout << "\t -h shows this help message" << std::endl;
 	std::cout << std::endl;
 }
 
-void readSettings(reactivision_settings *config) {
+void readSettings(application_settings *config) {
 
 	config->port = 3333;
 	sprintf(config->host,"localhost");
@@ -208,7 +208,7 @@ void readSettings(reactivision_settings *config) {
 }
 
 
-void writeSettings(reactivision_settings *config) {
+void writeSettings(application_settings *config) {
 
 	TiXmlDocument xml_settings( config->file );
 	xml_settings.LoadFile();
@@ -358,7 +358,7 @@ void teardownCamera(CameraEngine *camera)
 
 int main(int argc, char* argv[]) {
 
-	reactivision_settings config;
+	application_settings config;
 	sprintf(config.file,"none");
 
 	const char *app_name = "reacTIVision";
@@ -370,12 +370,12 @@ int main(int argc, char* argv[]) {
 
 	if (argc>1) {
 		if (strcmp( argv[1], "-h" ) == 0 ) {
-			printUsage();
+			printUsage(app_name);
 			return 0;
 		} else if( strcmp( argv[1], "-c" ) == 0 ) {
 			if (argc==3) sprintf(config.file,"%s",argv[2]);
 			else {
-				printUsage();
+				printUsage(app_name);
 				return 0;
 			}
         } else if( strcmp( argv[1], "-n" ) == 0 ) {
@@ -387,7 +387,7 @@ int main(int argc, char* argv[]) {
         } else if ( (std::string(argv[1]).find("-NSDocumentRevisionsDebugMode")==0 ) || (std::string(argv[1]).find("-psn_")==0) ){
             // ignore mac specific arguments
         } else {
- 			printUsage();
+ 			printUsage(app_name);
 		}
 	}
 
@@ -425,7 +425,7 @@ int main(int argc, char* argv[]) {
 
     equalizer = new FrameEqualizer();
     engine->addFrameProcessor(equalizer);
-    if (config.background) equalizer->toggleFlag(' ');
+    if (config.background) equalizer->toggleFlag(' ',false);
 
     thresholder = new FrameThresholder(config.gradient_gate, config.tile_size, config.thread_count);
     engine->addFrameProcessor(thresholder);

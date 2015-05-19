@@ -108,13 +108,13 @@ bool CalibrationEngine::init(int w, int h, int sb, int db) {
 }
 
 
-void CalibrationEngine::setFlag(int flag, bool value) {
-	toggleFlag(flag);
+bool CalibrationEngine::setFlag(unsigned char flag, bool value, bool lock) {
+	return toggleFlag(flag,lock);
 }
 
-void CalibrationEngine::toggleFlag(int flag) {
+bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 
-	if (flag=='c') {
+	if (flag==KEY_C) {
 		if (calibration) {
 			calibration = false;
 			if(msg_listener) msg_listener->setDisplayMode(prevMode);
@@ -131,38 +131,38 @@ void CalibrationEngine::toggleFlag(int flag) {
 		}
 	}
 
-	if(!calibration) return;
+	if(!calibration) return lock;
 
-	if ((flag=='t') || (flag=='n'))  {
+	if ((flag==KEY_T) || (flag==KEY_N))  {
 		msg_listener->setDisplayMode(msg_listener->SOURCE_DISPLAY);
 	}
 
-    if (flag=='q') {
+    if (flag==KEY_Q) {
 	quick_mode=!quick_mode;
         grid_xpos=4;
         grid_ypos=3;
-    } else if (flag=='j') {
+    } else if (flag==KEY_J) {
         grid->Reset();
-    } else if (flag=='k') {
+    } else if (flag==KEY_K) {
         grid->Set(grid_xpos,grid_ypos,0.0,0.0);
-    } else if (flag=='l') {
+    } else if (flag==KEY_L) {
         if (file_exists) grid->Load(calib_bak);
     }
 
     if (quick_mode) {
-        if (flag=='a') {
+        if (flag==KEY_A) {
             grid_xpos-=center_x;
             if (grid_xpos<0) grid_xpos=0;
             if (grid_ypos!=center_y) grid_xpos=center_x;
-        } else if (flag=='d') {
+        } else if (flag==KEY_D) {
             grid_xpos+=center_x;
             if (grid_xpos>field_count_x) grid_xpos=field_count_x;
             if (grid_ypos!=center_y) grid_xpos=center_x;
-        } if (flag=='w') {
+        } if (flag==KEY_W) {
             grid_ypos-=center_y;
             if (grid_ypos<0) grid_ypos=0;
             if (grid_ypos!=center_y) grid_xpos=center_x;
-        } else if (flag=='x') {
+        } else if (flag==KEY_X) {
             grid_ypos+=center_y;
             if (grid_ypos>field_count_y) grid_ypos=field_count_y;
             if (grid_ypos!=center_y) grid_xpos=center_x;
@@ -172,16 +172,16 @@ void CalibrationEngine::toggleFlag(int flag) {
         if ((grid_xpos==center_x) && (grid_ypos==center_y)) {
             for (int gxp=0;gxp<grid_size_x;gxp++) {
                 for (int gyp=0;gyp<grid_size_y;gyp++) {
-                   if (flag==SDLK_LEFT) {
+                   if (flag==KEY_LEFT) {
                         GridPoint p = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,p.x-0.01,p.y);
-                    } else if (flag==SDLK_RIGHT)  {
+                    } else if (flag==KEY_RIGHT)  {
                         GridPoint p = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,p.x+0.01,p.y);
-                    } else if (flag==SDLK_UP) {
+                    } else if (flag==KEY_UP) {
                         GridPoint p = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,p.x,p.y-0.01);
-                    } else if (flag==SDLK_DOWN) {
+                    } else if (flag==KEY_DOWN) {
                         GridPoint p = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,p.x,p.y+0.01);
                     }
@@ -194,12 +194,12 @@ void CalibrationEngine::toggleFlag(int flag) {
                     float step = 0.01*(center_x-gxp);
                     if (grid_xpos==field_count_x) step=step*-1;
                     
-                    if (flag==SDLK_LEFT) {
+                    if (flag==KEY_LEFT) {
                         GridPoint pl = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,pl.x-step,pl.y);
                         GridPoint pr = grid->GetInterpolated(field_count_x-gxp,gyp);
                         grid->Set(field_count_x-gxp,gyp,pr.x+step,pr.y);
-                    } else if (flag==SDLK_RIGHT) {
+                    } else if (flag==KEY_RIGHT) {
                         GridPoint pu = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,pu.x+step,pu.y);
                         GridPoint pr = grid->GetInterpolated(field_count_x-gxp,gyp);
@@ -214,12 +214,12 @@ void CalibrationEngine::toggleFlag(int flag) {
                     float step = 0.01*(center_y-gyp);
                     if (grid_ypos==field_count_y) step=step*-1;
                     
-                   if (flag==SDLK_UP) {
+                   if (flag==KEY_UP) {
                         GridPoint pu = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,pu.x,pu.y-step);
                         GridPoint pd = grid->GetInterpolated(gxp,field_count_y-gyp);
                         grid->Set(gxp,field_count_y-gyp,pd.x,pd.y+step);
-                    } else if (flag==SDLK_DOWN) {
+                    } else if (flag==KEY_DOWN) {
                         GridPoint pu = grid->GetInterpolated(gxp,gyp);
                         grid->Set(gxp,gyp,pu.x,pu.y+step);
                         GridPoint pd = grid->GetInterpolated(gxp,field_count_y-gyp);
@@ -230,40 +230,40 @@ void CalibrationEngine::toggleFlag(int flag) {
         }
        
     } else {
-        if (flag=='a') {
+        if (flag==KEY_A) {
             grid_xpos--;
             if (grid_xpos<0) grid_xpos=0;
-        } else if (flag=='d') {
+        } else if (flag==KEY_D) {
             grid_xpos++;
             if (grid_xpos>field_count_x) grid_xpos=field_count_x;
-        } if (flag=='w') {
+        } if (flag==KEY_W) {
             grid_ypos--;
             if (grid_ypos<0) grid_ypos=0;
-        } else if (flag=='x') {
+        } else if (flag==KEY_X) {
             grid_ypos++;
             if (grid_ypos>field_count_y) grid_ypos=field_count_y;
-        } else if (flag==SDLK_LEFT) {
+        } else if (flag==KEY_LEFT) {
             GridPoint p = grid->GetInterpolated(grid_xpos,grid_ypos);
             grid->Set(grid_xpos,grid_ypos,p.x-0.01,p.y);
-        } else if (flag==SDLK_RIGHT)  {
+        } else if (flag==KEY_RIGHT)  {
             GridPoint p = grid->GetInterpolated(grid_xpos,grid_ypos);
             grid->Set(grid_xpos,grid_ypos,p.x+0.01,p.y);
-        } else if (flag==SDLK_UP) {
+        } else if (flag==KEY_UP) {
             GridPoint p = grid->GetInterpolated(grid_xpos,grid_ypos);
             grid->Set(grid_xpos,grid_ypos,p.x,p.y-0.01);
-        } else if (flag==SDLK_DOWN) {
+        } else if (flag==KEY_DOWN) {
             GridPoint p = grid->GetInterpolated(grid_xpos,grid_ypos);
             grid->Set(grid_xpos,grid_ypos,p.x,p.y+0.01);
         }
     }
 
 	grid->Store(calib_out);
+    return lock;
 }
 
-void CalibrationEngine::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
+void CalibrationEngine::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
-	if(!calibration) return;
-	drawDisplay( (unsigned char*)(display->pixels));
+	if(calibration) drawDisplay(display);
 }
 
 void CalibrationEngine::drawDisplay(unsigned char* display) {

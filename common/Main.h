@@ -20,7 +20,7 @@
 #ifndef REACTIVISION_H
 #define REACTIVISION_H
 
-struct reactivision_settings {
+struct application_settings {
 	char file[1024];
 	int port;
 	char host[1024];

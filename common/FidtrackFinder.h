@@ -66,10 +66,10 @@ public:
 		}
 	};
 
-	void process(unsigned char *src, unsigned char *dest, SDL_Surface *display);
+    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
 	bool init(int w ,int h, int sb, int db);
-	void drawGUI(SDL_Surface *display);
-	void toggleFlag(int flag);
+	void drawDisplay(unsigned char *display);
+	bool toggleFlag(unsigned char flag, bool lock);
 
 	int getFingerSize() { return average_finger_size; };
 	int getFingerSensitivity() { return (int)(finger_sensitivity*100); };

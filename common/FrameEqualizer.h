@@ -21,8 +21,6 @@
 #define FRAMEEQUALIZER_H
 
 #include "FrameProcessor.h"
-#include "SDLinterface.h"
-
 
 class FrameEqualizer: public FrameProcessor
 {
@@ -38,9 +36,9 @@ public:
 		}
 	};
 	
-	void process(unsigned char *src, unsigned char *dest, SDL_Surface *display);
+    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
 	bool init(int w ,int h, int sb, int db);
-	void toggleFlag(int flag);
+	bool toggleFlag(unsigned char flag, bool lock);
 	bool getState() { return equalize; };
 	
 private:
