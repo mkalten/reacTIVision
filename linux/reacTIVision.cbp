@@ -25,6 +25,9 @@
 					<Add directory="../ext/portmidi/porttime" />
 					<Add directory="../common" />
 					<Add directory="../ext/libfidtrack" />
+					<Add directory="../ext/portvideo/common" />
+					<Add directory="../ext/portvideo/interface" />
+					<Add directory="../ext/portvideo/linux" />
 				</Compiler>
 				<Linker>
 					<Add library="SDL2" />
@@ -40,7 +43,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O3" />
+					<Add option="-Ofast" />
 					<Add option="-w" />
 					<Add option="-DLINUX" />
 					<Add option="-DOSC_LITTLE_ENDIAN" />
@@ -53,6 +56,9 @@
 					<Add directory="../ext/portmidi/porttime" />
 					<Add directory="../common" />
 					<Add directory="../ext/libfidtrack" />
+					<Add directory="../ext/portvideo/common" />
+					<Add directory="../ext/portvideo/interface" />
+					<Add directory="../ext/portvideo/linux" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -81,6 +87,9 @@
 					<Add directory="../ext/portmidi/porttime" />
 					<Add directory="../common" />
 					<Add directory="../ext/libfidtrack" />
+					<Add directory="../ext/portvideo/common" />
+					<Add directory="../ext/portvideo/interface" />
+					<Add directory="../ext/portvideo/linux" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg" />
@@ -99,10 +108,10 @@
 		<Unit filename="../common/CalibrationEngine.h" />
 		<Unit filename="../common/CalibrationGrid.cpp" />
 		<Unit filename="../common/CalibrationGrid.h" />
-		<Unit filename="../common/CameraEngine.cpp" />
-		<Unit filename="../common/CameraEngine.h" />
-		<Unit filename="../common/CameraTool.cpp" />
-		<Unit filename="../common/CameraTool.h" />
+		<Unit filename="../ext/portvideo/common/CameraEngine.cpp" />
+		<Unit filename="../ext/portvideo/common/CameraEngine.h" />
+		<Unit filename="../ext/portvideo/common/CameraTool.cpp" />
+		<Unit filename="../ext/portvideo/common/CameraTool.h" />
 		<Unit filename="../common/FidtrackFinder.cpp" />
 		<Unit filename="../common/FidtrackFinder.h" />
 		<Unit filename="../common/FidtrackFinderClassic.cpp" />
@@ -111,14 +120,14 @@
 		<Unit filename="../common/FiducialFinder.h" />
 		<Unit filename="../common/FiducialObject.cpp" />
 		<Unit filename="../common/FiducialObject.h" />
-		<Unit filename="../common/FileCamera.cpp" />
-		<Unit filename="../common/FileCamera.h" />
+		<Unit filename="../ext/portvideo/common/FileCamera.cpp" />
+		<Unit filename="../ext/portvideo/common/FileCamera.h" />
 		<Unit filename="../common/FingerObject.cpp" />
 		<Unit filename="../common/FingerObject.h" />
-		<Unit filename="../common/FolderCamera.cpp" />
-		<Unit filename="../common/FolderCamera.h" />
-		<Unit filename="../common/FontTool.cpp" />
-		<Unit filename="../common/FontTool.h" />
+		<Unit filename="../ext/portvideo/common/FolderCamera.cpp" />
+		<Unit filename="../ext/portvideo/common/FolderCamera.h" />
+		<Unit filename="../ext/portvideo/interface/FontTool.cpp" />
+		<Unit filename="../ext/portvideo/interface/FontTool.h" />
 		<Unit filename="../common/FrameEqualizer.cpp" />
 		<Unit filename="../common/FrameEqualizer.h" />
 		<Unit filename="../common/FrameProcessor.h" />
@@ -130,18 +139,18 @@
 		<Unit filename="../common/MidiServer.cpp" />
 		<Unit filename="../common/MidiServer.h" />
 		<Unit filename="../common/RegionProcessor.h" />
-		<Unit filename="../common/Resources.c">
+		<Unit filename="../ext/portvideo/interface/Resources.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../common/Resources.h" />
-		<Unit filename="../common/RingBuffer.cpp" />
-		<Unit filename="../common/RingBuffer.h" />
-		<Unit filename="../common/SDLinterface.cpp" />
-		<Unit filename="../common/SDLinterface.h" />
-		<Unit filename="../common/SFont.c">
+		<Unit filename="../ext/portvideo/interfce/Resources.h" />
+		<Unit filename="../ext/portvideo/common/RingBuffer.cpp" />
+		<Unit filename="../ext/portvideo/common/RingBuffer.h" />
+		<Unit filename="../ext/portvideo/interface/SDLinterface.cpp" />
+		<Unit filename="../ext/portvideo/interface/SDLinterface.h" />
+		<Unit filename="../ext/portvideo/interface/SFont.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../common/SFont.h" />
+		<Unit filename="../ext/portvideo/interface/SFont.h" />
 		<Unit filename="../common/TuioServer.cpp" />
 		<Unit filename="../common/TuioServer.h" />
 		<Unit filename="../ext/libfidtrack/default_trees.h" />
@@ -229,10 +238,10 @@
 		<Unit filename="../ext/tinyxml/tinyxml.h" />
 		<Unit filename="../ext/tinyxml/tinyxmlerror.cpp" />
 		<Unit filename="../ext/tinyxml/tinyxmlparser.cpp" />
-		<Unit filename="DC1394Camera.cpp" />
-		<Unit filename="DC1394Camera.h" />
-		<Unit filename="V4Linux2Camera.cpp" />
-		<Unit filename="V4Linux2Camera.h" />
+		<Unit filename="../ext/portvideo/linux/DC1394Camera.cpp" />
+		<Unit filename="../ext/portvideo/linux/DC1394Camera.h" />
+		<Unit filename="../ext/portvideo/linux/V4Linux2Camera.cpp" />
+		<Unit filename="../ext/portvideo/linux/V4Linux2Camera.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
