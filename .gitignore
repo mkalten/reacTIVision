@@ -21,3 +21,5 @@ project.xcworkspace
 *.exe
 
 *.opensdf
+
+*.vcxproj.user

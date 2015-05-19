@@ -35,14 +35,14 @@ SDLinterface *engine;
 
 static void terminate (int param)
 {
-	printf("terminating portVideoSDL ...\n");
+	printf("terminating SportVideo ...\n");
 	if (engine!=NULL) engine->stop();
 }
 
-void printUsage() {
-	std::cout << "usage: portVideoSDL -c [config_file]" << std::endl;
+void printUsage(const char *app_name) {
+	std::cout << "usage: " << app_name << " -c [config_file]" << std::endl;
 	std::cout << "the default configuration file is camera.xml" << std::endl;
-	std::cout << "\t -n starts portVideoSDL without GUI" << std::endl;
+	std::cout << "\t -n starts " << app_name << " without GUI" << std::endl;
 	std::cout << "\t -l lists all available cameras" << std::endl;
 	std::cout << "\t -h shows this help message" << std::endl;
 	std::cout << std::endl;
@@ -200,7 +200,7 @@ int main(int argc, char* argv[]) {
 	application_settings config;
 	sprintf(config.file,"none");
 
-	const char *app_name = "portVideoSDL";
+	const char *app_name = "SportVideo";
 	const char *version_no = "0.5";
 
 	bool headless = false;
@@ -209,12 +209,12 @@ int main(int argc, char* argv[]) {
 
 	if (argc>1) {
 		if (strcmp( argv[1], "-h" ) == 0 ) {
-			printUsage();
+			printUsage(app_name);
 			return 0;
 		} else if( strcmp( argv[1], "-c" ) == 0 ) {
 			if (argc==3) sprintf(config.file,"%s",argv[2]);
 			else {
-				printUsage();
+				printUsage(app_name);
 				return 0;
 			}
         } else if( strcmp( argv[1], "-n" ) == 0 ) {
@@ -225,7 +225,7 @@ int main(int argc, char* argv[]) {
         } else if ( (std::string(argv[1]).find("-NSDocumentRevisionsDebugMode")==0 ) || (std::string(argv[1]).find("-psn_")==0) ){
             // ignore mac specific arguments
         } else {
- 			printUsage();
+ 			printUsage(app_name);
 		}
 	}
 
