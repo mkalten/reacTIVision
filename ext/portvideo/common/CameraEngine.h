@@ -86,7 +86,7 @@ public:
 	int getFps() { return (int)floor(fps+0.5f); }
 	int getWidth() { return frame_width; }
 	int getHeight() { return frame_height; }
-	bool getColor() { return colour; }
+	bool getColour() { return colour; }
 	char* getName() { return cameraName; }
 
 protected:
@@ -105,8 +105,8 @@ protected:
 			float cam_fps;
 			int frame_xoff;
 			int frame_yoff;
-            int frame_width;
-            int frame_height;
+            		int frame_width;
+            		int frame_height;
 			int brightness;
 			int gain;
 			int shutter;
@@ -123,15 +123,15 @@ protected:
 	char full_path[1024];
 	#endif
 
-    bool crop_frame;
-    unsigned char* crop_buffer;
-    int crop_xoff, crop_yoff;
+    	bool crop_frame;
+    	unsigned char* crop_buffer;
+    	int crop_xoff, crop_yoff;
 
 	unsigned char* cam_buffer;
 	int bytes;
 
 	int cam_width, cam_height;
-    int frame_width, frame_height;
+    	int frame_width, frame_height;
 	float fps;
 	bool colour;
 
@@ -145,7 +145,7 @@ protected:
 	void uyvy2gray(int width, int height, unsigned char *src, unsigned char *dest);
 	void yuyv2gray(int width, int height, unsigned char *src, unsigned char *dest);
 	void uyvy2rgb(int width, int height, unsigned char *src, unsigned char *dest);
-    void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
+	void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
 
     void readSettings();
     void saveSettings();

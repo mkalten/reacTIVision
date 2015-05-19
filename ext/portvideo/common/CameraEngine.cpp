@@ -107,8 +107,8 @@
 		config.frame = false;
 		config.frame_xoff = 0;
 		config.frame_yoff = 0;
-        config.frame_width = SETTING_MAX;
-        config.frame_height = SETTING_MAX;
+        	config.frame_width = SETTING_MAX;
+        	config.frame_height = SETTING_MAX;
 		sprintf(config.file,"none");
 		sprintf(config.folder,"none");
 		config.brightness = SETTING_DEFAULT;
