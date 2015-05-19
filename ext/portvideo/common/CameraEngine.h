@@ -86,6 +86,7 @@ public:
 	int getFps() { return (int)floor(fps+0.5f); }
 	int getWidth() { return frame_width; }
 	int getHeight() { return frame_height; }
+	bool getColor() { return colour; }
 	char* getName() { return cameraName; }
 
 protected:

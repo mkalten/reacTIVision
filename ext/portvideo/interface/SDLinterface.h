@@ -148,11 +148,9 @@ private:
 	int width_;
 	int height_;
 	int fps_;
-    bool fullscreen_;
-	int sourceDepth_;
-	int destDepth_;
 	int bytesPerSourcePixel_;
 	int bytesPerDestPixel_;
+	bool fullscreen_;
 
 	std::vector<FrameProcessor*> processorList;
 	std::vector<FrameProcessor*>::iterator frame;

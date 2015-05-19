@@ -224,7 +224,7 @@ void SDLinterface::mainLoop()
 				break;
 			case SOURCE_DISPLAY: {
 				memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
-				SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_);
+				SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_*bytesPerSourcePixel_);
 				SDL_RenderCopy(renderer_, texture_, NULL, NULL);
 				if (help_) drawHelp(sourceBuffer_);
 				camera_->drawGUI(this);
@@ -235,7 +235,7 @@ void SDLinterface::mainLoop()
 				break;
 			}
 			case DEST_DISPLAY: {
-				SDL_UpdateTexture(texture_,NULL,destBuffer_,width_);
+				SDL_UpdateTexture(texture_,NULL,destBuffer_,width_*bytesPerDestPixel_);
  				SDL_RenderCopy(renderer_, texture_, NULL, NULL);
 				camera_->drawGUI(this);
 				if (help_) drawHelp(destBuffer_);
@@ -492,8 +492,14 @@ void SDLinterface::process_events()
 
 void SDLinterface::allocateBuffers()
 {
-	bytesPerSourcePixel_ = sourceDepth_/8;
-	bytesPerDestPixel_ = destDepth_/8;
+
+	if (camera_->getColor()) {
+		bytesPerSourcePixel_ = 3;
+		bytesPerDestPixel_ = 3;
+	} else {
+		bytesPerSourcePixel_ = 1;
+		bytesPerDestPixel_ = 1;
+	}
 
 	sourceBuffer_  = new unsigned char[3*width_*height_];
 	destBuffer_    = new unsigned char[3*width_*height_];
@@ -517,7 +523,8 @@ void SDLinterface::allocateBuffers()
 #endif
 
     if(!headless_) {
-        texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
+        if (bytesPerSourcePixel_) texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STATIC,width_,height_);
+		else texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
         displayImage_ = SDL_CreateRGBSurface(0,width_,height_,32,rmask,gmask,bmask,amask);
         SDL_SetSurfaceBlendMode(displayImage_, SDL_BLENDMODE_BLEND);
         display_ = SDL_CreateTextureFromSurface(renderer_,displayImage_);
@@ -676,8 +683,6 @@ SDLinterface::SDLinterface(const char* name, CameraEngine *camera, application_s
 	lastTime_ = (long)start_time;
 
 	app_name_ = std::string(name);
-	sourceDepth_ = 8;
-	destDepth_   = 8;
 
 	window_ = NULL;
 	sourceBuffer_ = NULL;
