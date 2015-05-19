@@ -28,6 +28,8 @@
 
 #ifdef __APPLE__
 #include <CoreFoundation/CFBundle.h>
+#elif LINUX
+#include <unistd.h>
 #endif
 
 #define SAT(c) \

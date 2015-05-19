@@ -20,6 +20,8 @@
 #include "CalibrationEngine.h"
 #ifdef __APPLE__
 #include <CoreFoundation/CFBundle.h>
+#elif defined  LINUX
+#include <unistd.h>
 #endif
 
 CalibrationEngine::CalibrationEngine(const char* out) {
