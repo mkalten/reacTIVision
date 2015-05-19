@@ -1,0 +1,34 @@
+* Tue May 19 2015 Martin Kaltenbrunner <martin@tuio.org>
+		* updates from reacTIVision 1.5
+		* updated SDL library to 2.0
+		* removed internal SDL dependencies
+		* updated mac project to XCode 3.2
+* Tue Aug 11 2009 Martin Kaltenbrunner <modin@yuri.at>
+		* updates from reacTIVision 1.4 release
+		* added camera configuration file
+		* added on-screen camera settings
+		* improved Linux Firewire support
+		* improved Linux V4L support
+		* disabled initial camera dialog on Mac & Win
+		* updated SDL library to 1.2.13
+		* added fullscreen mode to demo
+* Tue Sep 20 2006 Martin Kaltenbrunner <mkalten@iua.upf.es>
+		* implemented disconnect detection
+		* Linux FORMAT7 Firewire support
+		* Mac Universal Binary Support
+		* updated mac project to XCode 2.4
+		* updated win32 project Visual Studio .NET 2005
+		* updated SDL library to 1.2.11
+* Tue Dec 20 2005 Martin Kaltenbrunner <mkalten@iua.upf.es>
+		* improved the win32 RGB to gray conversion
+		* allow saving of frames (RAW and BMP)
+		* added a finish method to the FrameProcessor
+		* updated DsVideoLib builds without DirectX SDK
+		* added V4L_DEVICE variable (thanks to Frank Barknecht)
+		* various bug fixes
+* Mon Jan 03 2005 Martin Kaltenbrunner <mkalten@iua.upf.es>
+           	* added cameraTool which returns a cameraEngine for any platform
+		* made the SDL demo more modular (FrameProcessor)
+		* fixed problem with video4linux cameras
+* Fri Dec 24 2004 Martin Kaltenbrunner <mkalten@iua.upf.es>
+                 * initial Release
