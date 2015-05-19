@@ -1,3 +1,11 @@
+reacTIVision 1.6
+————————————————
+
+* implement V4L2_PIX_FMT_GREY greyscale pixelformat for Linux
+* add PS3Eye driver for MacOS X (thanks to Sebestyén Gábor)
+* reduce SDL dependencies for all non-GUI classes
+* converted portVideo into an external LGPL library
+
 reacTIVision 1.5
 ————————————————
 
