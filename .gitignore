@@ -1,6 +1,4 @@
-macosx/legacy.xcodeproj/xcuserdata
-
-macosx/reacTIVision.xcodeproj/xcuserdata
+xcuserdata
 
 build
 
@@ -14,9 +12,7 @@ Frameworks
 
 *.mode1v3
 
-macosx/legacy.xcodeproj/project.xcworkspace
-
-macosx/reacTIVision.xcodeproj/project.xcworkspace
+project.xcworkspace
 
 *.sdf
 
