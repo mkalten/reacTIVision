@@ -1,6 +1,6 @@
-PortVideo is a cross-platform framework that provides uniform access to camera devices for video processing or display. It comes with a SDL demo application which compiles and runs on Win32, Linux and MacOS X systems and supports many USB, Firewire and DV cameras. This application has been developed by Martin Kaltenbrunner [martin@tuio.org] as a part of the reacTIVision framework.
+PortVideo is a cross-platform framework that provides uniform access to camera devices for video processing or display. It comes with a simple SDL demo application which compiles and runs on Windows, Linux and MacOS X systems and supports many USB, Firewire and DV cameras. This library has been developed by Martin Kaltenbrunner [martin@tuio.org] as a part of the reacTIVision framework.
 
-This Framework is still in its early stages and basically has been built out of spare parts found in other open-source projects and currently provides a reasonably working software for the task. Its design is quite rudimentary and will therefore see some major improvements and changes in the future.
+The API is still in its early stages and basically has been built out of spare parts found in other open-source projects and currently provides a reasonably working software for the task. Its design is quite rudimentary and will therefore see some major improvements and changes in the future.
 
 In general there is a simple wrapper class CameraEngine and various subclasses for each platform and camera type. The CameraTool simply returns the chosen or first available camera, initializes it with the desired width, height and color depth. Once started, a new image buffer (8bit grayscale or 24bit RGB in color mode) will be returned every time you call getFrame().
 
@@ -8,7 +8,7 @@ DEMO APPLICATION:
 -----------------
 There is a simple SDL2 demo application included, which shows the basic usage of this framework. If you want to start right away, simply implement and add a subclass of FrameProcessor. See the FrameInverter example source code for more information.
 
-Upon startup, the application is looking for the first available camera on the system. If a camera is found and correctly initialized, the live image from the camera is  displayed. Hitting 'T' will show the processed image, which in this demo is a simple imversion of the original. You can toggle the fullscreen mode by pressing the 'F' key. Hitting 'P' can pause the display and hitting 'ESC' will quit the application. You also can save a bitmap image by typing 'B' as well as a raw buffer image by typing 'R'. Alternative cameras and specific settings can be configured within the camera.xml file.
+Upon startup, the application is looking for the first available camera on the system. If a camera is found and correctly initialized, the live image from the camera is  displayed. Hitting 'T' will show the processed image, which in this demo is a simple imversion of the original. You can toggle the fullscreen mode by pressing the 'F1‘ key. Hitting 'P' can pause the display and hitting 'ESC' will quit the application. In Debug mode you also can save a bitmap image by typing 'B' as well as a raw buffer image by typing 'R'. Alternative cameras and specific settings can be configured within the provided camera.xml file (which on a Mac is found inside the application bundle).
 
 PLATFORM NOTES:
 ---------------
@@ -23,4 +23,3 @@ as well as turbojpeg libraries and headers installed.
 LICENSE:
 --------
 This framework is free software, licensed under the GNU Lesser General Public License, please read the file license.txt for the exact license terms of the LGPL.
-
