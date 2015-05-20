@@ -19,7 +19,7 @@ Win32: On this platform we are using the videoInput library by Theodore Watson a
 Mac OS X: The camera back-end for Mac OS X is using the AVFoundation components, which should allow to access any camera that is supported by MacOS 10.8 or later. Firewire (and IIDC over USB) cameras are handled by the DC1394 library which provides better performance than the native system drivers. The non-conventional PS3Eye camera is supported through a dedicated driver module.
 The SportVideo demo is provided as a Xcode 3.2 (or later) project, the build will require the SDL2 and VVUVCKit frameworks, in order to compile properly, just unzip the included Frameworks.zip
 
-Linux: On Linux we currently support Firewire cameras and USB cameras based on Video4Linux2, currently ther is no support for DV cameras. In order to compile the SportVideo demo type "make" in the "linux" folder". Make sure you have the libSDL 2.0 and libdc1394 2.0 (or later)  as well as turbojpeg libraries and headers installed. 
+Linux: On Linux we currently support Firewire (and IIDC over USB) cameras based on DC1394 as well as USB cameras and other devices based on Video4Linux2, currently ther is no support for DV cameras. In order to compile the SportVideo demo type "make" in the "linux" folder". Make sure you have the libSDL 2.0 and libdc1394 2.0 (or later)  as well as turbojpeg libraries and headers installed. 
 
 LICENSE:
 --------
