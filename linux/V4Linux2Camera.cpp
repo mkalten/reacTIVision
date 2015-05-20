@@ -179,11 +179,11 @@ void V4Linux2Camera::listDevices() {
     
     int device_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
     if (device_count==0) {
-        printf("no V4Linux2 devices found\n",device_count);
+        printf("no V4Linux2 devices found\n");
         return;
     }
     
-    if (device_count==1) printf("1 V4Linux2 device found:\n",device_count);
+    if (device_count==1) printf("1 V4Linux2 device found:\n");
     else printf("%d V4Linux2 devices found:\n",device_count);
     
     for (int i=0;i<device_count;i++) {
@@ -250,9 +250,9 @@ bool V4Linux2Camera::findCamera() {
     struct dirent **v4l2_devices;
     int device_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
     if (device_count==0) {
-        printf("no V4Linux2 devices found\n",device_count);
+        printf("no V4Linux2 devices found\n");
         return false;
-    } else if (device_count==1) printf("1 V4Linux2 device found\n",device_count);
+    } else if (device_count==1) printf("1 V4Linux2 device found\n");
     else printf("%d V4Linux2 devices found\n",device_count);
     
     char v4l2_device[128];
@@ -278,7 +278,7 @@ bool V4Linux2Camera::findCamera() {
     }
     
     if ((v4l2_caps.capabilities & V4L2_CAP_STREAMING) == 0) {
-        printf("% does not support memory streaming capture\n",v4l2_device);
+        printf("%s does not support memory streaming capture\n",v4l2_device);
         close(fd);
         return false;
     }
@@ -302,7 +302,7 @@ bool V4Linux2Camera::findCamera() {
     }
     
     if ((valid_uncompressed_format==false) && (valid_compressed_format==false)) {
-        printf("% does not support any valid pixel format\n",v4l2_device);
+        printf("%s does not support any valid pixel format\n",v4l2_device);
         close(fd);
         return false;
     }
