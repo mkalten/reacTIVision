@@ -1,4 +1,5 @@
-* Tue May 19 2015 Martin Kaltenbrunner <martin@tuio.org>
+* Wed May 20 2015 Martin Kaltenbrunner <martin@tuio.org>
+		* implement RGB color modes (Win & Mac)
 		* updates from reacTIVision 1.5
 		* updated SDL library to 2.0
 		* removed internal SDL dependencies
