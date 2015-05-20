@@ -1,5 +1,5 @@
 portVideo 0.5
-————————————-
+-------------
 https://github.com/mkalten/portVideo
 
 PortVideo is a cross-platform framework that provides uniform access to camera devices for video processing or display. It comes with a simple SDL demo application which compiles and runs on Windows, Linux and MacOS X systems and supports many USB, Firewire and DV cameras. This library has been developed by Martin Kaltenbrunner [martin@tuio.org] as a part of the reacTIVision framework.
