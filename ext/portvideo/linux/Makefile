@@ -10,8 +10,8 @@ SDL_LDFLAGS := $(shell sdl2-config --libs)
 INCLUDES = -I../common -I../sdldemo -I../interface -I../../tinyxml
 COPTS  = -Ofast -w
 CDEBUG = -Wall -g
-#CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
-CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX
+CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
+#CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX
 CXXFLAGS = $(CFLAGS)
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
@@ -30,9 +30,9 @@ run:	$(TARGET)
 install: $(TARGET)
 	install -d $(DESTDIR)$(BINDIR)
 	install -m 755 -c $(TARGET) $(DESTDIR)$(BINDIR)
-	install -m 644 -c ../README.txt $(DESTDIR)$(PREFIX)/share/$(TARGET)
-	install -m 644 -c ../LICENSE.txt $(DESTDIR)$(PREFIX)/share/$(TARGET)
-	install -m 644 -c ../CHANGELOG.txt $(DESTDIR)$(PREFIX)/share/$(TARGET)
+	install -m 644 -c ../readme.txt $(DESTDIR)$(PREFIX)/share/$(TARGET)
+	install -m 644 -c ../license.txt $(DESTDIR)$(PREFIX)/share/$(TARGET)
+	install -m 644 -c ../changelog.txt $(DESTDIR)$(PREFIX)/share/$(TARGET)
 	install -d $(DESTDIR)$(PREFIX)/share/applications/
 	install -m 666 -c *.desktop $(DESTDIR)$(PREFIX)/share/applications/
 	install -d $(DESTDIR)$(PREFIX)/share/pixmaps/
