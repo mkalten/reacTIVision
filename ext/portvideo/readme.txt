@@ -8,7 +8,7 @@ Although the API functionality is still quite rudimentary and its design is inte
 
 DEMO APPLICATION:
 -----------------
-There is a simple SportVideo demo application with SDL2 gui included, which shows the basic usage of this framework. If you want to extend this application, simply implement and add a subclass of FrameProcessor. See the FrameInverter example source code for more information.
+There is a simple SportVideo demo application with a SDL2 interface included, which shows the basic usage of this framework. If you want to extend this application, simply implement and add a subclass of a FrameProcessor, just see the simple FrameInverter example source code for more information.
 
 Upon startup, SportVideo is looking for the first available camera on the system. Alternative cameras and image settings can be configured within the provided camera.xml file (which on a Mac is found inside the application bundle). If a camera is found and correctly initialized, the live image from the camera is  displayed. Hitting 'T' will show the processed image, which in this demo is a simple imversion of the original. You can toggle the fullscreen mode by pressing the 'F1' key. Hitting 'P' can pause the display and hitting 'ESC' will quit the application. In Debug mode you also can save a bitmap image by typing 'B' as well as a raw buffer image by typing 'R'. 
 
