@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B200D5381B0CAEC400249D8B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B200D5361B0CAEC400249D8B /* InfoPlist.strings */; };
 		B206F53E19E3DD4A00B8E1DA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */; };
 		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; };
 		B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; };
@@ -62,6 +63,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B200D5371B0CAEC400249D8B /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
 		B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = /System/Library/Frameworks/CoreMedia.framework; sourceTree = "<absolute>"; };
 		B214E66E0959DA6F00A347C1 /* Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = Main.cpp; path = ../sdldemo/Main.cpp; sourceTree = SOURCE_ROOT; };
 		B21683D119F3962500F07F0D /* USBBusProber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = USBBusProber.framework; path = Frameworks/USBBusProber.framework; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B200D5351B0CAEC400249D8B /* English.lproj */,
 				B29AE05D1B0A999C0046E462 /* portvideo.xml */,
 				B297D3EC097536E3004AB0FE /* Info.plist */,
 				B282A34C0CD756B500657CDA /* camera.xml */,
@@ -210,6 +213,14 @@
 				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B200D5351B0CAEC400249D8B /* English.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				B200D5361B0CAEC400249D8B /* InfoPlist.strings */,
+			);
+			path = English.lproj;
 			sourceTree = "<group>";
 		};
 		B24EA4470015EA6F00096D13 /* tinyxml */ = {
@@ -327,6 +338,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B297D3B8097536E2004AB0FE /* SportVideo.icns in Resources */,
+				B200D5381B0CAEC400249D8B /* InfoPlist.strings in Resources */,
 				B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */,
 				B282A34D0CD756B500657CDA /* camera.xml in Resources */,
 			);
@@ -362,6 +374,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B200D5361B0CAEC400249D8B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B200D5371B0CAEC400249D8B /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		B297D3E9097536E2004AB0FE /* Development */ = {
