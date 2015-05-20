@@ -1,9 +1,9 @@
 * Wed May 20 2015 Martin Kaltenbrunner <martin@tuio.org>
 		* implement RGB color modes (Win & Mac)
+		* removed internal SDL dependencies
 		* updates from reacTIVision 1.5
 		* updated SDL library to 2.0
-		* removed internal SDL dependencies
-		* updated mac project to XCode 3.2
+		* projects for XCode 3.2 and Visual Studio 2012
 * Tue Aug 11 2009 Martin Kaltenbrunner <modin@yuri.at>
 		* updates from reacTIVision 1.4 release
 		* added camera configuration file
