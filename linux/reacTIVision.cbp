@@ -120,17 +120,10 @@
 		<Unit filename="../common/FiducialFinder.h" />
 		<Unit filename="../common/FiducialObject.cpp" />
 		<Unit filename="../common/FiducialObject.h" />
-		<Unit filename="../ext/portvideo/common/FileCamera.cpp" />
-		<Unit filename="../ext/portvideo/common/FileCamera.h" />
 		<Unit filename="../common/FingerObject.cpp" />
 		<Unit filename="../common/FingerObject.h" />
-		<Unit filename="../ext/portvideo/common/FolderCamera.cpp" />
-		<Unit filename="../ext/portvideo/common/FolderCamera.h" />
-		<Unit filename="../ext/portvideo/interface/FontTool.cpp" />
-		<Unit filename="../ext/portvideo/interface/FontTool.h" />
 		<Unit filename="../common/FrameEqualizer.cpp" />
 		<Unit filename="../common/FrameEqualizer.h" />
-		<Unit filename="../common/FrameProcessor.h" />
 		<Unit filename="../common/FrameThresholder.cpp" />
 		<Unit filename="../common/FrameThresholder.h" />
 		<Unit filename="../common/Main.cpp" />
@@ -138,11 +131,12 @@
 		<Unit filename="../common/MessageServer.h" />
 		<Unit filename="../common/MidiServer.cpp" />
 		<Unit filename="../common/MidiServer.h" />
-		<Unit filename="../common/RegionProcessor.h" />
+		<Unit filename="../common/TuioServer.cpp" />
+		<Unit filename="../common/TuioServer.h" />
 		<Unit filename="../ext/portvideo/interface/Resources.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../ext/portvideo/interfce/Resources.h" />
+		<Unit filename="../ext/portvideo/interface/Resources.h" />
 		<Unit filename="../ext/portvideo/common/RingBuffer.cpp" />
 		<Unit filename="../ext/portvideo/common/RingBuffer.h" />
 		<Unit filename="../ext/portvideo/interface/SDLinterface.cpp" />
@@ -151,8 +145,13 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../ext/portvideo/interface/SFont.h" />
-		<Unit filename="../common/TuioServer.cpp" />
-		<Unit filename="../common/TuioServer.h" />
+		<Unit filename="../ext/portvideo/common/FileCamera.cpp" />
+		<Unit filename="../ext/portvideo/common/FileCamera.h" />
+		<Unit filename="../ext/portvideo/common/FrameProcessor.h" />
+		<Unit filename="../ext/portvideo/common/FolderCamera.cpp" />
+		<Unit filename="../ext/portvideo/common/FolderCamera.h" />
+		<Unit filename="../ext/portvideo/interface/FontTool.cpp" />
+		<Unit filename="../ext/portvideo/interface/FontTool.h" />
 		<Unit filename="../ext/libfidtrack/default_trees.h" />
 		<Unit filename="../ext/libfidtrack/dump_graph.c">
 			<Option compilerVar="CC" />
