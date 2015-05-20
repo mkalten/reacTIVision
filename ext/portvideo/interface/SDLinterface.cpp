@@ -522,7 +522,7 @@ void SDLinterface::allocateBuffers()
 #endif
 
     if(!headless_) {
-        if (bytesPerSourcePixel_) texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STATIC,width_,height_);
+        if (bytesPerSourcePixel_==3) texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STATIC,width_,height_);
 		else texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
         displayImage_ = SDL_CreateRGBSurface(0,width_,height_,32,rmask,gmask,bmask,amask);
         SDL_SetSurfaceBlendMode(displayImage_, SDL_BLENDMODE_BLEND);
