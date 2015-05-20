@@ -14,12 +14,11 @@ Upon startup, SportVideo is looking for the first available camera on the system
 
 PLATFORM NOTES:
 ---------------
-Win32: On this platform we are using the videoInput library by Theodore Watson as a back-end to access the camera. This basically allows you to choose any WDM camera that is supported by Windows, which means you can hopefully use any USB, Firewire or DV camera.  A Visual Studio 2012 project including the necessary SDL2 library and headers provides the SportVideo demo project. 
+Win32: This platform is using the videoInput library by Theodore Watson as a back-end to access the camera. This basically allows you to choose any WDM camera that is supported by Windows, which means you can most probably use any USB, Firewire or DV camera. A Visual Studio 2012 project including the necessary SDL2 library and headers provides the SportVideo demo application. 
 
-Mac OS X: The camera back-end for Mac OS X is using the AVFoundation components, which should allow to access any camera that is supported by MacOS 10.8 or later. Firewire (and IIDC over USB) cameras are handled by the DC1394 library which provides better performance than the native system drivers. The non-conventional PS3Eye camera is supported through a dedicated driver module.
-The SportVideo demo is provided as a Xcode 3.2 (or later) project, the build will require the SDL2 and VVUVCKit frameworks, in order to compile properly, just unzip the included Frameworks.zip
+Mac OS X: The camera back-end for Mac OS X is using the AVFoundation components, which should allow to access any camera that is supported by MacOS 10.8 or later. Firewire (and IIDC over USB) cameras are handled by the DC1394 library which provides better performance than the native system drivers. The non-conventional PS3Eye camera is supported through a dedicated driver module. The SportVideo demo is provided as a Xcode 3.2 (or later) project, the build will require the SDL2 and VVUVCKit frameworks, in order to compile properly, just unzip the included Frameworks.zip
 
-Linux: On Linux we currently support Firewire (and IIDC over USB) cameras based on DC1394 as well as USB cameras and other devices based on Video4Linux2, currently ther is no support for DV cameras. In order to compile the SportVideo demo type "make" in the "linux" folder". Make sure you have the libSDL 2.0 and libdc1394 2.0 (or later)  as well as turbojpeg libraries and headers installed. 
+Linux: On Linux we currently support Firewire (and IIDC over USB) cameras based on DC1394 as well as USB cameras and other devices based on Video4Linux2, currently there is no support for DV cameras. In order to compile the SportVideo demo type "make" in the "linux" folder" or alternatively use the provided CodeBlocks project. Make sure you have the libSDL 2.0 and libdc1394 2.0 (or later) as well as turbojpeg 1.3 (or later) libraries and headers installed. 
 
 LICENSE:
 --------
