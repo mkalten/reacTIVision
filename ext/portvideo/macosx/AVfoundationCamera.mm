@@ -25,7 +25,7 @@
 #endif
 
 @implementation FrameGrabber
-- (id) initWithCameraSize:(int)cw :(int)ch
+- (id) initWithCameraSize:(int)cw :(int)ch :(int) bytes
 {
     self = [super init];
     cam_width = cw;
@@ -33,11 +33,14 @@
     new_frame = false;
     crop = false;
     
-    buffer = new unsigned char[cam_width*cam_height];
+    if(bytes==3) color = true;
+    else color = false;
+    
+    buffer = new unsigned char[cam_width*cam_height*bytes];
     return self;
 }
 
-- (id) initWithCropSize:(int)cw :(int)ch :(int)fw :(int)fh :(int)xo :(int)yo
+- (id) initWithCropSize:(int)cw :(int)ch :(int)bytes :(int)fw :(int)fh :(int)xo :(int)yo
 {
     self = [super init];
     cam_width = cw;
@@ -49,7 +52,10 @@
     new_frame = false;
     crop = true;
     
-    buffer = new unsigned char[frm_width*frm_height];
+    if(bytes==3) color = true;
+    else color = false;
+
+    buffer = new unsigned char[frm_width*frm_height*bytes];
     return self;
 }
 
@@ -66,34 +72,54 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(imageBuffer);
         unsigned char *dest = buffer;
         
-        if (crop) {
-            
-            src += 2*(yoff*cam_width);
-            int xend = (cam_width-(frm_width+xoff));
-            
-            for (int i=0;i<frm_height;i++) {
+        if (color) {
+
+            if (crop) {
+                unsigned char *src_buf = src + 3*(yoff*cam_width + xoff);
                 
-                src +=  2*xoff;
-                for (int j=frm_width/2;j>0;j--) {
+                for (int i=0;i<frm_height;i++) {
+                    memcpy(dest, src_buf, 3*frm_width);
+                    
+                    src_buf += 3*cam_width;
+                    dest += 3*frm_width;
+                }
+                
+            } else {
+                
+                memcpy(dest,src,cam_width*cam_height*3);
+            }
+            
+        } else {
+
+            if (crop) {
+                
+                src += 2*(yoff*cam_width);
+                int xend = (cam_width-(frm_width+xoff));
+                
+                for (int i=0;i<frm_height;i++) {
+                    
+                    src +=  2*xoff;
+                    for (int j=frm_width/2;j>0;j--) {
+                        *dest++ = *src++;
+                        src++;
+                        *dest++ = *src++;
+                        src++;
+                    }
+                    src +=  2*xend;
+                    
+                }
+                
+            } else {
+                
+                int size = cam_width*cam_height/2;
+                for (int i=size;i>0;i--) {
                     *dest++ = *src++;
                     src++;
                     *dest++ = *src++;
                     src++;
                 }
-                src +=  2*xend;
-
             }
-            
-        } else {
-            
-            int size = cam_width*cam_height/2;
-            for (int i=size;i>0;i--) {
-                *dest++ = *src++;
-                src++;
-                *dest++ = *src++;
-                src++;
-            }
-       }
+        }
         
         new_frame = true;
     }
@@ -284,7 +310,6 @@ bool AVfoundationCamera::initCamera() {
 
     if (config.cam_width<min_width) config.cam_width = min_width;
     if (config.cam_height<min_height) config.cam_height = min_height;
-
     
     AVCaptureDeviceFormat *lastFormat;
     for (AVCaptureDeviceFormat *format in videoDeviceFormats) {
@@ -373,12 +398,17 @@ bool AVfoundationCamera::initCamera() {
     
     videoOutput = [[AVCaptureVideoDataOutput alloc] init];
     
+    unsigned int pixelformat = kCVPixelFormatType_422YpCbCr8_yuvs;
+    if (colour) pixelformat = kCVPixelFormatType_24RGB;
+    
     NSDictionary *pixelBufferOptions = [NSDictionary dictionaryWithObjectsAndKeys:
                                         [NSNumber numberWithDouble:cam_width], (id)kCVPixelBufferWidthKey,
                                         [NSNumber numberWithDouble:cam_height], (id)kCVPixelBufferHeightKey,
-                                        [NSNumber numberWithUnsignedInt:kCVPixelFormatType_422YpCbCr8_yuvs ], (id)kCVPixelBufferPixelFormatTypeKey,
-                                        //[NSNumber numberWithUnsignedInt:kCVPixelFormatType_32BGRA ], (id)kCVPixelBufferPixelFormatTypeKey,
+                                        //[NSNumber numberWithUnsignedInt:kCVPixelFormatType_422YpCbCr8_yuvs ], (id)kCVPixelBufferPixelFormatTypeKey,
+                                        [NSNumber numberWithUnsignedInt: pixelformat ], (id)kCVPixelBufferPixelFormatTypeKey,
                                         nil];
+    
+    
     [videoOutput setVideoSettings:pixelBufferOptions];
     
     videoOutput.alwaysDiscardsLateVideoFrames = YES;
@@ -389,9 +419,9 @@ bool AVfoundationCamera::initCamera() {
     setupFrame();
     dispatch_queue_t queue = dispatch_queue_create("queue", NULL);
     if (config.frame) {
-        grabber = [[FrameGrabber alloc] initWithCropSize:cam_width :cam_height :frame_width :frame_height :config.frame_xoff :config.frame_yoff];
+        grabber = [[FrameGrabber alloc] initWithCropSize:cam_width :cam_height :bytes :frame_width :frame_height :config.frame_xoff :config.frame_yoff];
     } else {
-        grabber = [[FrameGrabber alloc] initWithCameraSize:cam_width :cam_height];
+        grabber = [[FrameGrabber alloc] initWithCameraSize:cam_width :cam_height: bytes];
     }
     [videoOutput setSampleBufferDelegate:grabber queue:queue];
     dispatch_release(queue);

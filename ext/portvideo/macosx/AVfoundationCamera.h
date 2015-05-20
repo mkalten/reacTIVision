@@ -35,8 +35,8 @@
     bool crop;
     bool color;
 }
-- (id) initWithCameraSize:(int)w :(int)h;
-- (id) initWithCropSize:(int)cw :(int)ch :(int)fw :(int)fh :(int)xo :(int)yo;
+- (id) initWithCameraSize:(int)w :(int)h :(int)b;
+- (id) initWithCropSize:(int)cw :(int)ch :(int)b :(int)fw :(int)fh :(int)xo :(int)yo;
 - (void)captureOutput:(AVCaptureOutput *)captureOutput
 didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
        fromConnection:(AVCaptureConnection *)connection;
