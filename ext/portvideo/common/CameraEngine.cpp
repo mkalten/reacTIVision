@@ -1,16 +1,16 @@
 /*  portVideo, a cross platform camera framework
  Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
- 
+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
  version 2.1 of the License, or (at your option) any later version.
- 
+
  This library is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -23,7 +23,7 @@
 			settingsDialog = false;
 			saveSettings();
 			return false;
-		} else if (lock) {
+		} else if (!lock) {
 			currentCameraSetting = BRIGHTNESS;
 			settingsDialog = true;
 			return true;
@@ -92,7 +92,7 @@
 
 		char displayText[256];
 		sprintf(displayText,"%s %d",settingText,settingValue);
-    
+
         display->displayControl(displayText, minValue, maxValue, settingValue);
 	}
 
@@ -488,6 +488,47 @@ void CameraEngine::saveSettings() {
 			}
 	}
 
+	void CameraEngine::yuyv2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
+
+			int R,G,B;
+			int Y1,Y2;
+			int cG,cR,cB;
+
+			for(int i=height*width/2;i>0;i--) {
+				Y1 = *src++;
+				cR = ((*src - 128) * 454) >> 8;
+				cG = (*src++ - 128) * 88;
+				Y2 = *src++;
+				cB = ((*src - 128) * 359) >> 8;
+				cG = (cG + (*src++ - 128) * 183) >> 8;
+
+				R = Y1 + cR;
+				G = Y1 + cG;
+				B = Y1 + cB;
+
+				SAT(R);
+				SAT(G);
+				SAT(B);
+
+				*dest++ = B;
+				*dest++ = G;
+				*dest++ = R;
+
+				R = Y2 + cR;
+				G = Y2 + cG;
+				B = Y2 + cB;
+
+				SAT(R);
+				SAT(G);
+				SAT(B);
+
+				*dest++ = B;
+				*dest++ = G;
+				*dest++ = R;
+			}
+	}
+
+
 void CameraEngine::rgb2gray(int width, int height, unsigned char *src, unsigned char *dest) {
 }
 
@@ -499,7 +540,7 @@ void CameraEngine::setupFrame() {
         frame_height = cam_height;
         return;
     }
-    
+
     // size sanity check
     if (config.frame_width%2!=0) config.frame_width--;
     if (config.frame_height%2!=0) config.frame_height--;
@@ -531,18 +572,18 @@ void CameraEngine::setupFrame() {
     frame_height = config.frame_height;
 }
 
-void CameraEngine::cropFrame(unsigned char *cambuf, unsigned char *cropbuf) {
+void CameraEngine::cropFrame(unsigned char *cambuf, unsigned char *cropbuf, int bytes) {
 
     if(!config.frame) return;
 
-    unsigned char *src = cambuf + (config.frame_yoff)*config.cam_width + config.frame_xoff;
+    unsigned char *src = cambuf + bytes*(config.frame_yoff*config.cam_width + config.frame_xoff);
     unsigned char *dest = cropbuf;
 
     for (int i=0;i<config.frame_height;i++) {
-        memcpy(dest, src, config.frame_width);
+        memcpy(dest, src, bytes*config.frame_width);
 
-        src += config.cam_width;
-        dest += config.frame_width;
+        src += bytes*config.cam_width;
+        dest += bytes*config.frame_width;
     }
 
 }
