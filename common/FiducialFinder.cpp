@@ -93,13 +93,13 @@ bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 	if ((flag==KEY_R) && (!calibration) && (!empty_grid)) {
 		if (!show_grid) {
 			show_grid = true;
-			if(interface) {
-				prevMode = interface->getDisplayMode();
-				interface->setDisplayMode(interface->DEST_DISPLAY);
+			if(interface_) {
+				prevMode = interface_->getDisplayMode();
+				interface_->setDisplayMode(interface_->DEST_DISPLAY);
 			}
 		} else {
 			show_grid = false;
-			if(interface) interface->setDisplayMode(prevMode);
+			if(interface_) interface_->setDisplayMode(prevMode);
 		}
 	} else if (flag==KEY_C) {
 		if(!calibration) {
@@ -176,7 +176,7 @@ void FiducialFinder::displayControl() {
 		}			
 	}
     
-    interface->displayControl(displayText, 0, maxValue, settingValue);
+    interface_->displayControl(displayText, 0, maxValue, settingValue);
 }
 
 void FiducialFinder::sendTuioMessages() {
@@ -192,7 +192,7 @@ void FiducialFinder::sendTuioMessages() {
 
 			std::string remove_message = fiducial->checkRemoved();
 			if (remove_message!="") {
-				if(interface) interface->printMessage(remove_message);
+				if(interface_) interface_->printMessage(remove_message);
 				
 				fiducial = fiducialList.erase(fiducial);
 				// send a single alive message if any
@@ -226,7 +226,7 @@ void FiducialFinder::sendTuioMessages() {
 				}
 				
 				std::string set_message = fiducial->addSetMessage(tuio_server);
-				if(set_message!="" && interface) interface->printMessage(set_message);
+				if(set_message!="" && interface_) interface_->printMessage(set_message);
 		
 				if (fiducial->unsent>unsent) unsent = fiducial->unsent;
 			}
@@ -269,20 +269,20 @@ void FiducialFinder::finish() {
 
 void FiducialFinder::drawObject(int id, int xpos, int ypos, unsigned char *disp, int state)
 {
-    if ((interface==NULL) || (disp==NULL)) return;
-	if (interface->getDisplayMode()==interface->NO_DISPLAY) return;
+    if ((interface_==NULL) || (disp==NULL)) return;
+	if (interface_->getDisplayMode()==interface_->NO_DISPLAY) return;
     
 	char id_str[8];
 	if(id>=0) sprintf(id_str,"%d",id);
 	else sprintf(id_str,"F");
     
-    interface->drawMark(xpos,ypos, id_str, state);
+    interface_->drawMark(xpos,ypos, id_str, state);
 }
 
 void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest, unsigned char *disp) {
 
-    if ((interface==NULL) || (disp==NULL)) return;
-    if (interface->getDisplayMode()==interface->NO_DISPLAY) return;
+    if ((interface_==NULL) || (disp==NULL)) return;
+    if (interface_->getDisplayMode()==interface_->NO_DISPLAY) return;
 
 	//unsigned char* disp = (unsigned char*)(display->pixels);
 	int length = width*height;

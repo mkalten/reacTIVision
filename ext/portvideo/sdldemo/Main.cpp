@@ -217,9 +217,5 @@ int main(int argc, char* argv[]) {
 
 	writeSettings(&config);
     delete engine;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/devel
 	return 0;
 }

@@ -119,16 +119,16 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 	if (flag==KEY_C) {
 		if (calibration) {
 			calibration = false;
-			if(interface) interface->setDisplayMode(prevMode);
+			if(interface_) interface_->setDisplayMode(prevMode);
 		} else {
 			calibration = true;
 
 			grid_xpos = (char)(grid_size_x/2);
 			grid_ypos = (char)(grid_size_y/2);
 
-			if(interface) {
-				prevMode = interface->getDisplayMode();
-				interface->setDisplayMode(interface->SOURCE_DISPLAY);
+			if(interface_) {
+				prevMode = interface_->getDisplayMode();
+				interface_->setDisplayMode(interface_->SOURCE_DISPLAY);
 			}
 		}
 	}
@@ -136,7 +136,7 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 	if(!calibration) return lock;
 
 	if ((flag==KEY_T) || (flag==KEY_N))  {
-		interface->setDisplayMode(interface->SOURCE_DISPLAY);
+		interface_->setDisplayMode(interface_->SOURCE_DISPLAY);
 	}
 
     if (flag==KEY_Q) {

@@ -94,7 +94,7 @@ void readSettings(application_settings *config) {
 #endif
 	}
 
-    XMLDocument xml_settings;
+    tinyxml2::XMLDocument xml_settings;
 	xml_settings.LoadFile(config->file);
 	if( xml_settings.Error() )
 	{
@@ -198,7 +198,7 @@ void readSettings(application_settings *config) {
 
 void writeSettings(application_settings *config) {
 
-	XMLDocument xml_settings;
+	tinyxml2::XMLDocument xml_settings;
 	xml_settings.LoadFile(config->file);
 	if( xml_settings.Error() )
 	{
@@ -344,17 +344,17 @@ int main(int argc, char* argv[]) {
 	readSettings(&config);
     config.headless = headless;
 
-    UserInterface *interface;
+    UserInterface *uiface;
 	engine = new VisionEngine(app_name,config.camera_config);
 
     if (!headless) {
-        interface = new SDLinterface(app_name,config.fullscreen);
+        uiface = new SDLinterface(app_name,config.fullscreen);
         switch (config.display_mode) {
-            case 0: interface->setDisplayMode(interface->NO_DISPLAY); break;
-            case 1: interface->setDisplayMode(interface->SOURCE_DISPLAY); break;
-            case 2: interface->setDisplayMode(interface->DEST_DISPLAY); break;
+            case 0: uiface->setDisplayMode(uiface->NO_DISPLAY); break;
+            case 1: uiface->setDisplayMode(uiface->SOURCE_DISPLAY); break;
+            case 2: uiface->setDisplayMode(uiface->DEST_DISPLAY); break;
         }
-        engine->setInterface(interface);
+        engine->setInterface(uiface);
     }
 
 	TuioServer     *server		= NULL;
@@ -382,8 +382,8 @@ int main(int argc, char* argv[]) {
 	engine->start();
 
     if (!headless) {
-        config.display_mode = interface->getDisplayMode();
-        delete interface;
+        config.display_mode = uiface->getDisplayMode();
+        delete uiface;
     }
     
 	engine->removeFrameProcessor(calibrator);

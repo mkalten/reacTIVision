@@ -33,6 +33,10 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #define DOUBLEPI 6.283185307179586
 
 #define FIDUCIAL_LOST 0
