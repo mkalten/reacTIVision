@@ -171,7 +171,7 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
 #else
         if( tthreads[i] ) pthread_detach(tthreads[i]);
 #endif
-        tthreads[i] = NULL;
+        //tthreads[i] = NULL;
     }
 
     /*long threshold_time = SDLinterface::currentTime() - start_time;

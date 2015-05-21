@@ -28,7 +28,7 @@
 #endif
 
 #include <Main.h>
-#include "SDLInterface.h"
+#include "SDLinterface.h"
 #include "VisionEngine.h"
 
 #include "FrameEqualizer.h"
