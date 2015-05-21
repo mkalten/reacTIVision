@@ -68,7 +68,7 @@ public:
     CameraEngine *camera_;
 	RingBuffer *ringBuffer;
 
-    void setInterface (UserInterface *interface);
+    void setInterface (UserInterface *uiface);
 	void addFrameProcessor(FrameProcessor *fp);
 	void removeFrameProcessor(FrameProcessor *fp);
 

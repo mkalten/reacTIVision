@@ -376,9 +376,9 @@ void VisionEngine::teardownCamera()
     }
 }
 
-void VisionEngine::setInterface(UserInterface *interface) {
-    if (interface!=NULL) {
-        interface_ = interface;
+void VisionEngine::setInterface(UserInterface *uiface) {
+    if (uiface!=NULL) {
+        interface_ = uiface;
         bool colour = false;
         if (camera_) colour = camera_->getColour();
         interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,colour);

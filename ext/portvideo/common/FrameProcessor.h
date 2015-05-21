@@ -91,7 +91,7 @@ public:
 		return true;
 	};
 
-    virtual void addUserInterface(UserInterface *iface) { interface=iface; };
+    virtual void addUserInterface(UserInterface *uiface) { interface_=uiface; };
     virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
 	virtual void finish() {};
     virtual bool setFlag(unsigned char flag, bool value, bool lock) { return lock; };
@@ -108,7 +108,7 @@ protected:
 	int dispSize;
 
 	bool initialized;
-	UserInterface *interface;
+	UserInterface *interface_;
 
 	std::vector<std::string> help_text;
 };

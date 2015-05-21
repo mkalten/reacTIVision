@@ -80,7 +80,7 @@ public:
     
     virtual bool showSettingsDialog(bool lock);
     virtual void control(unsigned char key);
-    virtual void showInterface(UserInterface *iface);
+    virtual void showInterface(UserInterface *uiface);
     
     int getId() { return cameraID; }
     int getFps() { return (int)floor(fps+0.5f); }

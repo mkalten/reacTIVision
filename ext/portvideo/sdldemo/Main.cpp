@@ -44,7 +44,7 @@ void printUsage(const char *app_name = "portvideo") {
 	std::cout << std::endl;
 }
 
-void readSettings(application_settings *config, const char *app_name) {
+void readSettings(application_settings *config) {
 
 	sprintf(config->camera_config,"none");
 	config->background = false;
@@ -72,7 +72,7 @@ void readSettings(application_settings *config, const char *app_name) {
 #endif
 	}
 
-	XMLDocument xml_settings;
+	tinyxml2::XMLDocument xml_settings;
 	xml_settings.LoadFile(config->file);
 	if(xml_settings.Error()) {
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
@@ -80,7 +80,7 @@ void readSettings(application_settings *config, const char *app_name) {
 	}
 
 	XMLHandle docHandle( &xml_settings );
-	XMLHandle config_root = docHandle.FirstChildElement(app_name);
+	XMLHandle config_root = docHandle.FirstChildElement("portvideo");
 
 	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if(camera_element!=NULL) {
@@ -106,9 +106,9 @@ void readSettings(application_settings *config, const char *app_name) {
 	}
 }
 
-void writeSettings(application_settings *config, const char *app_name) {
+void writeSettings(application_settings *config) {
 
-	XMLDocument xml_settings;
+	tinyxml2::XMLDocument xml_settings;
 	xml_settings.LoadFile(config->file);
 	if(xml_settings.Error()) {
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
@@ -116,7 +116,7 @@ void writeSettings(application_settings *config, const char *app_name) {
 	}
 
 	XMLHandle docHandle(&xml_settings);
-	XMLHandle config_root = docHandle.FirstChildElement(app_name);
+	XMLHandle config_root = docHandle.FirstChildElement("portvideo");
 
 	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL ) {
@@ -186,20 +186,20 @@ int main(int argc, char* argv[]) {
 	signal(SIGTERM,terminate);
 #endif
 
-	readSettings(&config,app_name);
+	readSettings(&config);
     config.headless = headless;
 
-    UserInterface *interface;
+    UserInterface *uiface;
 	engine = new VisionEngine(app_name, config.camera_config);
  
     if (!headless) {
-        interface = new SDLinterface(app_name,config.fullscreen);
+        uiface = new SDLinterface(app_name,config.fullscreen);
         switch (config.display_mode) {
-            case 0: interface->setDisplayMode(interface->NO_DISPLAY); break;
-            case 1: interface->setDisplayMode(interface->SOURCE_DISPLAY); break;
-            case 2: interface->setDisplayMode(interface->DEST_DISPLAY); break;
+            case 0: uiface->setDisplayMode(uiface->NO_DISPLAY); break;
+            case 1: uiface->setDisplayMode(uiface->SOURCE_DISPLAY); break;
+            case 2: uiface->setDisplayMode(uiface->DEST_DISPLAY); break;
         }
-        engine->setInterface(interface);
+        engine->setInterface(uiface);
     }
 
 	FrameProcessor *frameinverter = new FrameInverter();
@@ -208,16 +208,14 @@ int main(int argc, char* argv[]) {
 	engine->start();
 
     if (!headless) {
-        config.display_mode = interface->getDisplayMode();
-        delete interface;
+        config.display_mode = uiface->getDisplayMode();
+        delete uiface;
     }
     
 	engine->removeFrameProcessor(frameinverter);
 	delete frameinverter;
 
-	writeSettings(&config, app_name);
+	writeSettings(&config);
     delete engine;
-
-    printf("done\n");
 	return 0;
 }
