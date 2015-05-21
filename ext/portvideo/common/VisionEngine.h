@@ -49,7 +49,7 @@ class VisionEngine
 {
 
 public:
-	VisionEngine(const char* name, application_settings *config);
+	VisionEngine(const char* name, const char * camera_config);
 	~VisionEngine() {};
 
 	void start();
@@ -68,23 +68,13 @@ public:
     CameraEngine *camera_;
 	RingBuffer *ringBuffer;
 
-    void setupCamera(char *camera_config);
     void setInterface (UserInterface *interface);
 	void addFrameProcessor(FrameProcessor *fp);
 	void removeFrameProcessor(FrameProcessor *fp);
 
 	long framenumber_;
 
-	static long currentTime() {
-#ifdef WIN32
-		return GetTickCount();
-#else
-		struct timeval tv;
-		struct timezone tz;
-		gettimeofday(&tv,&tz);
-		return ((tv.tv_sec*1000000)+(tv.tv_usec));
-#endif
-	}
+
 
 protected:
 	void initFrameProcessors();
@@ -98,11 +88,18 @@ protected:
     void startThread();
     void stopThread();
     
+    void setupCamera(const char *camera_config);
     void teardownCamera();
 
 	unsigned char* sourceBuffer_;
 	unsigned char* destBuffer_;
     unsigned char* displayBuffer_;
+    
+    long currentTime() {
+        time_t currentTime;
+        time(&currentTime);
+        return (long) currentTime;
+    }
     
 #ifndef NDEBUG
     void saveBuffer(unsigned char* buffer);

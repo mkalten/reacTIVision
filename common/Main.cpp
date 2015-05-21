@@ -345,8 +345,7 @@ int main(int argc, char* argv[]) {
     config.headless = headless;
 
     UserInterface *interface;
-	engine = new VisionEngine(app_name,&config);
-    engine->setupCamera(config.camera_config);
+	engine = new VisionEngine(app_name,config.camera_config);
 
     if (!headless) {
         interface = new SDLinterface(app_name,config.fullscreen);

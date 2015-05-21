@@ -274,9 +274,8 @@ void SDLinterface::toggleFullScreen() {
 void SDLinterface::showFrameRate() {
     
     frames_++;
-    time_t currentTime;
-    time(&currentTime);
-    long diffTime = (long)( currentTime - lastTime_ );
+    long currentTime_ = currentTime();
+    long diffTime = currentTime_ - lastTime_;
     
     if (fullscreen_) {
         char caption[24] = "";
@@ -291,7 +290,7 @@ void SDLinterface::showFrameRate() {
         sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
         SDL_SetWindowTitle( window_, caption);
         
-        lastTime_ = (long)currentTime;
+        lastTime_ = currentTime_;
         frames_ = 0;
     }
 }
@@ -357,6 +356,7 @@ void SDLinterface::displayMessage(const char *message)
 
 void SDLinterface::displayControl(const char *title, int min, int max, int value)
 {
+    
     unsigned char* disp = (unsigned char*)(displayImage_->pixels);
     
     int x_offset=width_/2-128;
@@ -433,9 +433,7 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
     app_name_ = std::string(name);
     fullscreen_ = fullscreen;
     
-    time_t start_time;
-    time(&start_time);
-    lastTime_ = (long)start_time;
+    lastTime_ = currentTime();
     cameraTime_ = processingTime_ = totalTime_ = 0.0f;
     
     window_ = NULL;

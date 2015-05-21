@@ -86,15 +86,10 @@ protected:
 
 private:
     
-    static long currentTime() {
-#ifdef WIN32
-        return GetTickCount();
-#else
-        struct timeval tv;
-        struct timezone tz;
-        gettimeofday(&tv,&tz);
-        return ((tv.tv_sec*1000000)+(tv.tv_usec));
-#endif
+    long currentTime() {
+        time_t currentTime;
+        time(&currentTime);
+        return (long) currentTime;
     }
     
     SDL_Renderer *renderer_;

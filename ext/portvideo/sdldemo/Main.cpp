@@ -35,7 +35,7 @@ static void terminate (int param)
 	if (engine!=NULL) engine->stop();
 }
 
-void printUsage(const char *app_name) {
+void printUsage(const char *app_name = "portvideo") {
 	std::cout << "usage: " << app_name << " -c [config_file]" << std::endl;
 	std::cout << "the default configuration file is camera.xml" << std::endl;
 	std::cout << "\t -n starts " << app_name << " without GUI" << std::endl;
@@ -44,7 +44,7 @@ void printUsage(const char *app_name) {
 	std::cout << std::endl;
 }
 
-void readSettings(application_settings *config) {
+void readSettings(application_settings *config, const char *app_name) {
 
 	sprintf(config->camera_config,"none");
 	config->background = false;
@@ -74,25 +74,23 @@ void readSettings(application_settings *config) {
 
 	XMLDocument xml_settings;
 	xml_settings.LoadFile(config->file);
-	if( xml_settings.Error() )
-	{
+	if(xml_settings.Error()) {
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
 		return;
 	}
 
 	XMLHandle docHandle( &xml_settings );
-	XMLHandle config_root = docHandle.FirstChildElement("portvideo");
+	XMLHandle config_root = docHandle.FirstChildElement(app_name);
 
 	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
-	if( camera_element!=NULL )
-	{
+	if(camera_element!=NULL) {
 		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
 	}
 
 	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
-	if( image_element!=NULL )
+	if(image_element!=NULL)
 	{
-		if(image_element->Attribute("display")!=NULL)  {
+		if(image_element->Attribute("display")!=NULL) {
 			if ( strcmp( image_element->Attribute("display"), "none" ) == 0 ) config->display_mode = 0;
 			else if ( strcmp( image_element->Attribute("display"), "src" ) == 0 )  config->display_mode = 1;
 			else if ( strcmp( image_element->Attribute("display"), "dest" ) == 0 )  config->display_mode = 2;
@@ -105,34 +103,29 @@ void readSettings(application_settings *config) {
         if(image_element->Attribute("fullscreen")!=NULL) {
             if ((strcmp( image_element->Attribute("fullscreen"), "true" ) == 0) ||  atoi(image_element->Attribute("fullscreen"))==1) config->fullscreen = true;
         }
-
 	}
-
 }
 
-
-void writeSettings(application_settings *config) {
+void writeSettings(application_settings *config, const char *app_name) {
 
 	XMLDocument xml_settings;
 	xml_settings.LoadFile(config->file);
-	if( xml_settings.Error() )
-	{
+	if(xml_settings.Error()) {
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
 		return;
 	}
 
-	XMLHandle docHandle( &xml_settings );
-	XMLHandle config_root = docHandle.FirstChildElement("portivideo");
+	XMLHandle docHandle(&xml_settings);
+	XMLHandle config_root = docHandle.FirstChildElement(app_name);
 
 	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
-	if( camera_element!=NULL )
-	{
+	if( camera_element!=NULL ) {
 		if(camera_element->Attribute("config")!=NULL) camera_element->SetAttribute("config",config->camera_config);
 	}
 
 	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
-	if( image_element!=NULL )
-	{
+	if(image_element!=NULL)
+    {
 		if(image_element->Attribute("display")!=NULL)  {
 			if (config->display_mode == 0) image_element->SetAttribute("display","none");
 			else if (config->display_mode == 1) image_element->SetAttribute("display","src");
@@ -146,12 +139,10 @@ void writeSettings(application_settings *config) {
             if (config->fullscreen) image_element->SetAttribute("fullscreen","true");
             else image_element->SetAttribute("fullscreen","false");
         }
-
 	}
 
 	xml_settings.SaveFile(config->file);
 	if( xml_settings.Error() ) std::cout << "Error saving configuration file: "  << config->file << std::endl;
-
 }
 
 int main(int argc, char* argv[]) {
@@ -195,13 +186,12 @@ int main(int argc, char* argv[]) {
 	signal(SIGTERM,terminate);
 #endif
 
-	readSettings(&config);
+	readSettings(&config,app_name);
     config.headless = headless;
 
     UserInterface *interface;
-	engine = new VisionEngine(app_name, &config);
-    engine->setupCamera(config.camera_config);
-
+	engine = new VisionEngine(app_name, config.camera_config);
+ 
     if (!headless) {
         interface = new SDLinterface(app_name,config.fullscreen);
         switch (config.display_mode) {
@@ -225,7 +215,7 @@ int main(int argc, char* argv[]) {
 	engine->removeFrameProcessor(frameinverter);
 	delete frameinverter;
 
-	writeSettings(&config);
+	writeSettings(&config, app_name);
     delete engine;
 
     printf("done\n");

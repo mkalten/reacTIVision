@@ -338,18 +338,18 @@ void VisionEngine::initFrameProcessors() {
     }
 }
 
-void VisionEngine::setupCamera(char *camera_config) {
+void VisionEngine::setupCamera(const char *camera_config) {
     
     camera_ = CameraTool::findCamera(camera_config);
-    if (camera_ == NULL) return;
+    if (camera_ == NULL) {
+        allocateBuffers();
+        return;
+    }
     
-    bool success = camera_->initCamera();
-    
-    if(success) {
+    if(camera_->initCamera()) {
         width_ = camera_->getWidth();
         height_ = camera_->getHeight();
         fps_ = camera_->getFps();
-        allocateBuffers();
         
         printf("camera: %s\n",camera_->getName());
         if (fps_>0) printf("format: %dx%d, %dfps\n",width_,height_,fps_);
@@ -360,6 +360,8 @@ void VisionEngine::setupCamera(char *camera_config) {
         delete camera_;
         camera_ = NULL;
     }
+    
+     allocateBuffers();
 }
 
 void VisionEngine::teardownCamera()
@@ -380,7 +382,7 @@ void VisionEngine::setInterface(UserInterface *interface) {
     }
 }
 
-VisionEngine::VisionEngine(const char* name, application_settings *config)
+VisionEngine::VisionEngine(const char* name, const char *camera_config)
 : error_( false )
 , pause_( false )
 , calibrate_( false )
@@ -397,17 +399,13 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
 , width_( WIDTH )
 , height_( HEIGHT )
 {
-    cameraTime_ = processingTime_ = totalTime_ = 0.0f;
-    
-    time_t start_time;
-    time(&start_time);
-    lastTime_ = (long)start_time;
-    
-    app_name_ = std::string(name);
-    
-    sourceBuffer_ = NULL;
-    destBuffer_ = NULL;
+    setupCamera(camera_config);
     displayBuffer_ = NULL;
+
+    lastTime_ = currentTime();
+    cameraTime_ = processingTime_ = totalTime_ = 0.0f;
+
+    app_name_ = std::string(name);
     
     help_text.push_back("display:");
     help_text.push_back("   n - no image");
