@@ -169,7 +169,7 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
 #ifdef WIN32
         if( tthreads[i] ) CloseHandle( tthreads[i] );
 #else
-        if( tthreads[i] ) pthread_detach(tthreads[i]);
+        /*if( tthreads[i] )*/ pthread_join(tthreads[i],NULL);
 #endif
         //tthreads[i] = NULL;
     }
