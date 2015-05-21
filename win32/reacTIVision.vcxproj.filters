@@ -14,9 +14,6 @@
     <Filter Include="Source Files\oscpack">
       <UniqueIdentifier>{edae634e-9d5c-4570-9742-81a400e9f847}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\portmidi">
-      <UniqueIdentifier>{c3a43e42-96d1-4f37-9248-b25f242355b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\tinyxml">
       <UniqueIdentifier>{b71606fd-c388-4219-a46c-c19f4cadb7af}</UniqueIdentifier>
     </Filter>
@@ -32,9 +29,6 @@
     </Filter>
     <Filter Include="Header Files\libfidtrack">
       <UniqueIdentifier>{ac11bf9b-296a-4c64-b3f3-c7b283390d77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\portmidi">
-      <UniqueIdentifier>{8f122898-9b38-41b7-8e85-e7fe243fa920}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\tinyxml">
       <UniqueIdentifier>{bff1ea5b-65f7-4bcf-a303-074636ab146b}</UniqueIdentifier>
@@ -54,9 +48,6 @@
     <ClCompile Include="..\common\FidtrackFinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\FidtrackFinderClassic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\FiducialFinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -72,25 +63,16 @@
     <ClCompile Include="..\common\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\MidiServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\TuioServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\libfidtrack\dump_graph.c">
       <Filter>Source Files\libfidtrack</Filter>
     </ClCompile>
-    <ClCompile Include="..\ext\libfidtrack\fidtrack120.c">
-      <Filter>Source Files\libfidtrack</Filter>
-    </ClCompile>
     <ClCompile Include="..\ext\libfidtrack\fidtrackX.c">
       <Filter>Source Files\libfidtrack</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\libfidtrack\segment.c">
-      <Filter>Source Files\libfidtrack</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\libfidtrack\threshold.c">
       <Filter>Source Files\libfidtrack</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\libfidtrack\tiled_bernsen_threshold.c">
@@ -122,36 +104,6 @@
     </ClCompile>
     <ClCompile Include="..\ext\oscpack\ip\win32\UdpSocket.cpp">
       <Filter>Source Files\oscpack</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\portmidi\pm_common\pmutil.c">
-      <Filter>Source Files\portmidi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\portmidi\pm_win\pmwin.c">
-      <Filter>Source Files\portmidi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\portmidi\pm_win\pmwinmm.c">
-      <Filter>Source Files\portmidi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\portmidi\pm_common\portmidi.c">
-      <Filter>Source Files\portmidi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\portmidi\porttime\porttime.c">
-      <Filter>Source Files\portmidi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\portmidi\porttime\ptwinmm.c">
-      <Filter>Source Files\portmidi</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\tinyxml\tinystr.cpp">
-      <Filter>Source Files\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\tinyxml\tinyxml.cpp">
-      <Filter>Source Files\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\tinyxml\tinyxmlerror.cpp">
-      <Filter>Source Files\tinyxml</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\tinyxml\tinyxmlparser.cpp">
-      <Filter>Source Files\tinyxml</Filter>
     </ClCompile>
     <ClCompile Include="..\common\FrameEqualizer.cpp">
       <Filter>Source Files</Filter>
@@ -186,6 +138,12 @@
     <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
+    <ClCompile Include="..\ext\portvideo\common\VisionEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\tinyxml\tinyxml2.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\CalibrationEngine.h">
@@ -195,9 +153,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\FidtrackFinder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\FidtrackFinderClassic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\FiducialFinder.h">
@@ -210,9 +165,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\FrameThresholder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\MidiServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\TuioServer.h">
@@ -263,9 +215,6 @@
     <ClInclude Include="..\ext\libfidtrack\dump_graph.h">
       <Filter>Header Files\libfidtrack</Filter>
     </ClInclude>
-    <ClInclude Include="..\ext\libfidtrack\fidtrack120.h">
-      <Filter>Header Files\libfidtrack</Filter>
-    </ClInclude>
     <ClInclude Include="..\ext\libfidtrack\fidtrackX.h">
       <Filter>Header Files\libfidtrack</Filter>
     </ClInclude>
@@ -273,9 +222,6 @@
       <Filter>Header Files\libfidtrack</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\libfidtrack\segment.h">
-      <Filter>Header Files\libfidtrack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\libfidtrack\threshold.h">
       <Filter>Header Files\libfidtrack</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\libfidtrack\tiled_bernsen_threshold.h">
@@ -286,27 +232,6 @@
     </ClInclude>
     <ClInclude Include="..\ext\libfidtrack\treeidmap.h">
       <Filter>Header Files\libfidtrack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\portmidi\pm_common\pminternal.h">
-      <Filter>Header Files\portmidi</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\portmidi\pm_common\pmutil.h">
-      <Filter>Header Files\portmidi</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\portmidi\pm_win\pmwinmm.h">
-      <Filter>Header Files\portmidi</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\portmidi\pm_common\portmidi.h">
-      <Filter>Header Files\portmidi</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\portmidi\porttime\porttime.h">
-      <Filter>Header Files\portmidi</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\tinyxml\tinystr.h">
-      <Filter>Header Files\tinyxml</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\tinyxml\tinyxml.h">
-      <Filter>Header Files\tinyxml</Filter>
     </ClInclude>
     <ClInclude Include="..\common\FrameEqualizer.h">
       <Filter>Header Files</Filter>
@@ -343,6 +268,15 @@
     </ClInclude>
     <ClInclude Include="..\ext\portvideo\common\FrameProcessor.h">
       <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\VisionEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\UserInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\tinyxml\tinyxml2.h">
+      <Filter>Header Files\tinyxml</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

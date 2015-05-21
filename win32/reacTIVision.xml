@@ -16,8 +16,8 @@
 	<threshold gradient="32" tile="10" threads="max" />
 	<calibration file="default.grid" invert="xya" />
     -->
-    <finger size="0" sensitivity="75" />
-    <image display="dest" equalize="false" fullscreen="false" />
-    <threshold gradient="32" tile="10" threads="max" />
-    <calibration file="default.grid" invert=" " />
+    <finger size="0" sensitivity="75"/>
+    <image display="src" equalize="false" fullscreen="false"/>
+    <threshold gradient="32" tile="10" threads="max"/>
+    <calibration file="default.grid" invert=" "/>
 </reactivision>

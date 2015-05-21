@@ -57,7 +57,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\porttime;..\ext\portmidi\pm_common;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      
+<AdditionalIncludeDirectories>..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -86,7 +87,8 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\pm_common;..\ext\portmidi\porttime;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      
+<AdditionalIncludeDirectories>..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -121,14 +123,12 @@
     <ClCompile Include="..\common\CalibrationEngine.cpp" />
     <ClCompile Include="..\common\CalibrationGrid.cpp" />
     <ClCompile Include="..\common\FidtrackFinder.cpp" />
-    <ClCompile Include="..\common\FidtrackFinderClassic.cpp" />
     <ClCompile Include="..\common\FiducialFinder.cpp" />
     <ClCompile Include="..\common\FiducialObject.cpp" />
     <ClCompile Include="..\common\FingerObject.cpp" />
     <ClCompile Include="..\common\FrameEqualizer.cpp" />
     <ClCompile Include="..\common\FrameThresholder.cpp" />
     <ClCompile Include="..\common\Main.cpp" />
-    <ClCompile Include="..\common\MidiServer.cpp" />
     <ClCompile Include="..\common\TuioServer.cpp" />
     <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp" />
     <ClCompile Include="..\ext\portvideo\interface\Resources.c" />
@@ -137,14 +137,13 @@
     <ClCompile Include="..\ext\portvideo\interface\FontTool.cpp" />
     <ClCompile Include="..\ext\portvideo\common\RingBuffer.cpp" />
     <ClCompile Include="..\ext\portvideo\common\CameraEngine.cpp" />
+    <ClCompile Include="..\ext\portvideo\common\VisionEngine.cpp" />
     <ClCompile Include="..\ext\portvideo\common\CameraTool.cpp" />
     <ClCompile Include="..\ext\portvideo\common\FileCamera.cpp" />
     <ClCompile Include="..\ext\portvideo\common\FolderCamera.cpp" />
     <ClCompile Include="..\ext\libfidtrack\dump_graph.c" />
-    <ClCompile Include="..\ext\libfidtrack\fidtrack120.c" />
     <ClCompile Include="..\ext\libfidtrack\fidtrackX.c" />
     <ClCompile Include="..\ext\libfidtrack\segment.c" />
-    <ClCompile Include="..\ext\libfidtrack\threshold.c" />
     <ClCompile Include="..\ext\libfidtrack\tiled_bernsen_threshold.c" />
     <ClCompile Include="..\ext\libfidtrack\topologysearch.c" />
     <ClCompile Include="..\ext\libfidtrack\treeidmap.cpp" />
@@ -155,29 +154,18 @@
     <ClCompile Include="..\ext\oscpack\osc\OscReceivedElements.cpp" />
     <ClCompile Include="..\ext\oscpack\osc\OscTypes.cpp" />
     <ClCompile Include="..\ext\oscpack\ip\win32\UdpSocket.cpp" />
-    <ClCompile Include="..\ext\portmidi\pm_common\pmutil.c" />
-    <ClCompile Include="..\ext\portmidi\pm_win\pmwin.c" />
-    <ClCompile Include="..\ext\portmidi\pm_win\pmwinmm.c" />
-    <ClCompile Include="..\ext\portmidi\pm_common\portmidi.c" />
-    <ClCompile Include="..\ext\portmidi\porttime\porttime.c" />
-    <ClCompile Include="..\ext\portmidi\porttime\ptwinmm.c" />
-    <ClCompile Include="..\ext\tinyxml\tinystr.cpp" />
-    <ClCompile Include="..\ext\tinyxml\tinyxml.cpp" />
-    <ClCompile Include="..\ext\tinyxml\tinyxmlerror.cpp" />
-    <ClCompile Include="..\ext\tinyxml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\ext\portvideo\tinyxml\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\CalibrationEngine.h" />
     <ClInclude Include="..\common\CalibrationGrid.h" />
     <ClInclude Include="..\common\FidtrackFinder.h" />
-    <ClInclude Include="..\common\FidtrackFinderClassic.h" />
     <ClInclude Include="..\common\FiducialFinder.h" />
     <ClInclude Include="..\common\FiducialObject.h" />
     <ClInclude Include="..\common\FingerObject.h" />
     <ClInclude Include="..\common\FrameEqualizer.h" />
     <ClInclude Include="..\common\FrameThresholder.h" />
     <ClInclude Include="..\common\TuioServer.h" />
-    <ClInclude Include="..\common\MidiServer.h" />
     <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h" />
     <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h" />
     <ClInclude Include="..\ext\portvideo\interface\SFont.h" />
@@ -186,6 +174,8 @@
     <ClInclude Include="..\ext\portvideo\common\FrameProcessor.h" />
     <ClInclude Include="..\ext\portvideo\common\RingBuffer.h" />
     <ClInclude Include="..\ext\portvideo\common\CameraEngine.h" />
+    <ClInclude Include="..\ext\portvideo\common\VisionEngine.h" />
+    <ClInclude Include="..\ext\portvideo\common\UserInterface.h" />
     <ClInclude Include="..\ext\portvideo\common\CameraTool.h" />
     <ClInclude Include="..\ext\portvideo\common\FileCamera.h" />
     <ClInclude Include="..\ext\portvideo\common\FolderCamera.h" />
@@ -204,21 +194,13 @@
     <ClInclude Include="..\ext\oscpack\ip\UdpSocket.h" />
     <ClInclude Include="..\ext\libfidtrack\default_trees.h" />
     <ClInclude Include="..\ext\libfidtrack\dump_graph.h" />
-    <ClInclude Include="..\ext\libfidtrack\fidtrack120.h" />
     <ClInclude Include="..\ext\libfidtrack\fidtrackX.h" />
     <ClInclude Include="..\ext\libfidtrack\floatpoint.h" />
     <ClInclude Include="..\ext\libfidtrack\segment.h" />
-    <ClInclude Include="..\ext\libfidtrack\threshold.h" />
     <ClInclude Include="..\ext\libfidtrack\tiled_bernsen_threshold.h" />
     <ClInclude Include="..\ext\libfidtrack\topologysearch.h" />
     <ClInclude Include="..\ext\libfidtrack\treeidmap.h" />
-    <ClInclude Include="..\ext\portmidi\pm_common\pminternal.h" />
-    <ClInclude Include="..\ext\portmidi\pm_common\pmutil.h" />
-    <ClInclude Include="..\ext\portmidi\pm_win\pmwinmm.h" />
-    <ClInclude Include="..\ext\portmidi\pm_common\portmidi.h" />
-    <ClInclude Include="..\ext\portmidi\porttime\porttime.h" />
-    <ClInclude Include="..\ext\tinyxml\tinystr.h" />
-    <ClInclude Include="..\ext\tinyxml\tinyxml.h" />
+    <ClInclude Include="..\ext\portvideo\tinyxml\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="camera.xml" />
