@@ -1,9 +1,7 @@
 TARGET = reacTIVision
 CSOURCES = $(shell ls ../ext/libfidtrack/*.c ../ext/portvideo/interface/*.c)  
 COBJECTS = $(CSOURCES:.c=.o)
-PMSOURCES = $(shell ls ../ext/portmidi/pm_common/*.c ../ext/portmidi/pm_linux/*.c ../ext/portmidi/porttime/porttime.c ../ext/portmidi/porttime/ptlinux.c)
-PMOBJECTS = $(PMSOURCES:.c=.o)
-CPPSOURCES = $(shell ls ../common/*.cpp ../ext/libfidtrack/*.cpp ../ext/portvideo/linux/*.cpp ../ext/portvideo/common/*.cpp ../ext/portvideo/interface/*.cpp ../ext/tinyxml/*.cpp ) 
+CPPSOURCES = $(shell ls ../common/*.cpp ../ext/libfidtrack/*.cpp ../ext/portvideo/linux/*.cpp ../ext/portvideo/common/*.cpp ../ext/portvideo/interface/*.cpp ../ext/portvideo/tinyxml/*.cpp ) 
 CPPOBJECTS = $(CPPSOURCES:.cpp=.o)
 OSCSOURCES = $(shell ls ../ext/oscpack/ip/posix/*.cpp ../ext/oscpack/osc/*.cpp) 
 OSCOBJECTS = $(OSCSOURCES:.cpp=.o)
@@ -11,14 +9,14 @@ OSCOBJECTS = $(OSCSOURCES:.cpp=.o)
 SDL_CFLAGS  := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 
-INCLUDES = -I../ext/oscpack -I../ext/libfidtrack -I../ext/portvideo/common -I../ext/portvideo/interface -I../ext/tinyxml -I../common -I../ext/portmidi/pm_common -I../ext/portmidi/porttime
+INCLUDES = -I../ext/oscpack -I../ext/libfidtrack -I../ext/portvideo/common -I../ext/portvideo/interface -I../ext/portvideo/tinyxml -I../common
 COPTS  = -Ofast -w
 CDEBUG = -Wall -g
-CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG -DPMALSA 
-#CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DPMALSA
+CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG
+#CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN
 CXXFLAGS = $(CFLAGS)
 
-LIBS = $(SDL_LDFLAGS) -ldc1394 -lasound -lpthread -lturbojpeg
+LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
 
 all:	$(TARGET) 
 

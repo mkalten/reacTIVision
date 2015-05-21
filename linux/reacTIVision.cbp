@@ -19,10 +19,7 @@
 					<Add option="-DOSC_LITTLE_ENDIAN" />
 					<Add directory="/usr/include/SDL2" />
 					<Add directory="../ext/oscpack" />
-					<Add directory="../ext/tinyxml" />
-					<Add directory="../ext/portmidi/pm_common" />
-					<Add directory="../ext/portmidi/pm_linux" />
-					<Add directory="../ext/portmidi/porttime" />
+					<Add directory="../ext/portvideo/tinyxml" />
 					<Add directory="../common" />
 					<Add directory="../ext/libfidtrack" />
 					<Add directory="../ext/portvideo/common" />
@@ -50,10 +47,7 @@
 					<Add option="-DNDEBUG" />
 					<Add directory="/usr/include/SDL2" />
 					<Add directory="../ext/oscpack" />
-					<Add directory="../ext/tinyxml" />
-					<Add directory="../ext/portmidi/pm_common" />
-					<Add directory="../ext/portmidi/pm_linux" />
-					<Add directory="../ext/portmidi/porttime" />
+					<Add directory="../ext/portvideo/tinyxml" />
 					<Add directory="../common" />
 					<Add directory="../ext/libfidtrack" />
 					<Add directory="../ext/portvideo/common" />
@@ -81,10 +75,7 @@
 					<Add option="-DOSC_LITTLE_ENDIAN" />
 					<Add directory="/usr/include/SDL2" />
 					<Add directory="../ext/oscpack" />
-					<Add directory="../ext/tinyxml" />
-					<Add directory="../ext/portmidi/pm_common" />
-					<Add directory="../ext/portmidi/pm_linux" />
-					<Add directory="../ext/portmidi/porttime" />
+					<Add directory="../ext/portvideo/tinyxml" />
 					<Add directory="../common" />
 					<Add directory="../ext/libfidtrack" />
 					<Add directory="../ext/portvideo/common" />
@@ -114,8 +105,6 @@
 		<Unit filename="../ext/portvideo/common/CameraTool.h" />
 		<Unit filename="../common/FidtrackFinder.cpp" />
 		<Unit filename="../common/FidtrackFinder.h" />
-		<Unit filename="../common/FidtrackFinderClassic.cpp" />
-		<Unit filename="../common/FidtrackFinderClassic.h" />
 		<Unit filename="../common/FiducialFinder.cpp" />
 		<Unit filename="../common/FiducialFinder.h" />
 		<Unit filename="../common/FiducialObject.cpp" />
@@ -129,8 +118,6 @@
 		<Unit filename="../common/Main.cpp" />
 		<Unit filename="../common/Main.h" />
 		<Unit filename="../common/MessageServer.h" />
-		<Unit filename="../common/MidiServer.cpp" />
-		<Unit filename="../common/MidiServer.h" />
 		<Unit filename="../common/TuioServer.cpp" />
 		<Unit filename="../common/TuioServer.h" />
 		<Unit filename="../ext/portvideo/interface/Resources.c">
@@ -139,6 +126,9 @@
 		<Unit filename="../ext/portvideo/interface/Resources.h" />
 		<Unit filename="../ext/portvideo/common/RingBuffer.cpp" />
 		<Unit filename="../ext/portvideo/common/RingBuffer.h" />
+		<Unit filename="../ext/portvideo/common/VisionEngine.cpp" />
+		<Unit filename="../ext/portvideo/common/VisionEngine.h" />
+		<Unit filename="../ext/portvideo/common/UserInterface.h" />
 		<Unit filename="../ext/portvideo/interface/SDLinterface.cpp" />
 		<Unit filename="../ext/portvideo/interface/SDLinterface.h" />
 		<Unit filename="../ext/portvideo/interface/SFont.c">
@@ -157,10 +147,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../ext/libfidtrack/dump_graph.h" />
-		<Unit filename="../ext/libfidtrack/fidtrack120.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/libfidtrack/fidtrack120.h" />
 		<Unit filename="../ext/libfidtrack/fidtrackX.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -170,10 +156,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../ext/libfidtrack/segment.h" />
-		<Unit filename="../ext/libfidtrack/threshold.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/libfidtrack/threshold.h" />
 		<Unit filename="../ext/libfidtrack/tiled_bernsen_threshold.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -204,39 +186,8 @@
 		<Unit filename="../ext/oscpack/osc/OscReceivedElements.h" />
 		<Unit filename="../ext/oscpack/osc/OscTypes.cpp" />
 		<Unit filename="../ext/oscpack/osc/OscTypes.h" />
-		<Unit filename="../ext/portmidi/pm_common/pminternal.h" />
-		<Unit filename="../ext/portmidi/pm_common/pmutil.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/portmidi/pm_common/pmutil.h" />
-		<Unit filename="../ext/portmidi/pm_common/portmidi.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/portmidi/pm_common/portmidi.h" />
-		<Unit filename="../ext/portmidi/pm_linux/finddefault.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/portmidi/pm_linux/pmlinux.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/portmidi/pm_linux/pmlinux.h" />
-		<Unit filename="../ext/portmidi/pm_linux/pmlinuxalsa.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/portmidi/pm_linux/pmlinuxalsa.h" />
-		<Unit filename="../ext/portmidi/porttime/porttime.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/portmidi/porttime/porttime.h" />
-		<Unit filename="../ext/portmidi/porttime/ptlinux.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/tinyxml/tinystr.cpp" />
-		<Unit filename="../ext/tinyxml/tinystr.h" />
-		<Unit filename="../ext/tinyxml/tinyxml.cpp" />
-		<Unit filename="../ext/tinyxml/tinyxml.h" />
-		<Unit filename="../ext/tinyxml/tinyxmlerror.cpp" />
-		<Unit filename="../ext/tinyxml/tinyxmlparser.cpp" />
+		<Unit filename="../ext/portvideo/tinyxml/tinyxml2.cpp" />
+		<Unit filename="../ext/portvideo/tinyxml/tinyxml2.h" />
 		<Unit filename="../ext/portvideo/linux/DC1394Camera.cpp" />
 		<Unit filename="../ext/portvideo/linux/DC1394Camera.h" />
 		<Unit filename="../ext/portvideo/linux/V4Linux2Camera.cpp" />

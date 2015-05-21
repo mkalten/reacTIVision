@@ -17,7 +17,7 @@
 					<Add option="-g" />
 					<Add option="-DLINUX" />
 					<Add directory="/usr/include/SDL2" />
-					<Add directory="../../tinyxml" />
+					<Add directory="../tinyxml" />
 					<Add directory="../common" />
 					<Add directory="../interface" />
 					<Add directory="../sdldemo" />
@@ -40,7 +40,7 @@
 					<Add option="-DLINUX" />
 					<Add option="-DNDEBUG" />
 					<Add directory="/usr/include/SDL2" />
-					<Add directory="../../tinyxml" />
+					<Add directory="../tinyxml" />
 					<Add directory="../common" />
 					<Add directory="../interface" />
 					<Add directory="../sdldemo" />
@@ -63,7 +63,7 @@
 					<Add option="-g" />
 					<Add option="-DLINUX" />
 					<Add directory="/usr/include/SDL2" />
-					<Add directory="../../tinyxml" />
+					<Add directory="../tinyxml" />
 					<Add directory="../common" />
 					<Add directory="../interface" />
 					<Add directory="../sdldemo" />
@@ -91,6 +91,9 @@
 		<Unit filename="../common/FrameProcessor.h" />
 		<Unit filename="../common/RingBuffer.cpp" />
 		<Unit filename="../common/RingBuffer.h" />
+		<Unit filename="../common/UserInterface.h" />
+		<Unit filename="../common/VisionEngine.cpp" />
+		<Unit filename="../common/VisionEngine.h" />
 		<Unit filename="../sdldemo/Main.cpp" />
 		<Unit filename="../sdldemo/Main.h" />
 		<Unit filename="../sdldemo/FrameInverter.cpp" />
@@ -107,12 +110,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../interface/Resources.h" />
-		<Unit filename="../../tinyxml/tinystr.cpp" />
-		<Unit filename="../../tinyxml/tinystr.h" />
-		<Unit filename="../../tinyxml/tinyxml.cpp" />
-		<Unit filename="../../tinyxml/tinyxml.h" />
-		<Unit filename="../../tinyxml/tinyxmlerror.cpp" />
-		<Unit filename="../../tinyxml/tinyxmlparser.cpp" />
+		<Unit filename="../tinyxml/tinyxml2.cpp" />
+		<Unit filename="../tinyxml/tinyxml2.h" />
 		<Unit filename="./DC1394Camera.cpp" />
 		<Unit filename="./DC1394Camera.h" />
 		<Unit filename="./V4Linux2Camera.cpp" />
