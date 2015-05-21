@@ -58,7 +58,7 @@ public:
     int getCameraSetting(int mode);
     int getMaxCameraSetting(int mode);
     int getMinCameraSetting(int mode);
-    void showSettingsDialog();
+    bool showSettingsDialog(bool lock);
 
 private:
 	std::vector<std::string> image_list;

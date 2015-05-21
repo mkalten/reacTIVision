@@ -93,13 +93,13 @@ bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 	if ((flag==KEY_R) && (!calibration) && (!empty_grid)) {
 		if (!show_grid) {
 			show_grid = true;
-			if(msg_listener) {
-				prevMode = msg_listener->getDisplayMode();
-				msg_listener->setDisplayMode(msg_listener->DEST_DISPLAY);
+			if(interface) {
+				prevMode = interface->getDisplayMode();
+				interface->setDisplayMode(interface->DEST_DISPLAY);
 			}
 		} else {
 			show_grid = false;
-			if(msg_listener) msg_listener->setDisplayMode(prevMode);
+			if(interface) interface->setDisplayMode(prevMode);
 		}
 	} else if (flag==KEY_C) {
 		if(!calibration) {
@@ -176,7 +176,7 @@ void FiducialFinder::displayControl() {
 		}			
 	}
     
-    msg_listener->displayControl(displayText, 0, maxValue, settingValue);
+    interface->displayControl(displayText, 0, maxValue, settingValue);
 }
 
 void FiducialFinder::sendTuioMessages() {
@@ -192,7 +192,7 @@ void FiducialFinder::sendTuioMessages() {
 
 			std::string remove_message = fiducial->checkRemoved();
 			if (remove_message!="") {
-				if(msg_listener) msg_listener->setMessage(remove_message);
+				if(interface) interface->printMessage(remove_message);
 				
 				fiducial = fiducialList.erase(fiducial);
 				// send a single alive message if any
@@ -226,7 +226,7 @@ void FiducialFinder::sendTuioMessages() {
 				}
 				
 				std::string set_message = fiducial->addSetMessage(tuio_server);
-				if(set_message!="" && msg_listener) msg_listener->setMessage(set_message);
+				if(set_message!="" && interface) interface->printMessage(set_message);
 		
 				if (fiducial->unsent>unsent) unsent = fiducial->unsent;
 			}
@@ -260,11 +260,11 @@ void FiducialFinder::sendMidiMessages() {
 			std::string remove_message = fiducial->checkRemoved();			
 			if(remove_message!="") {
 				midi_server->sendRemoveMessage(fiducial->fiducial_id);
-				if(msg_listener) msg_listener->setMessage(remove_message);
+				if(interface) interface->printMessage(remove_message);
 				fiducial = fiducialList.erase(fiducial);
 			} else {
 				std::string set_message = fiducial->addSetMessage(midi_server);
-				if(set_message!="" && msg_listener) msg_listener->setMessage(set_message);
+				if(set_message!="" && interface) interface->printMessage(set_message);
 				fiducial++;
 			}
 		}
@@ -288,27 +288,20 @@ void FiducialFinder::finish() {
 
 void FiducialFinder::drawObject(int id, int xpos, int ypos, unsigned char *disp, int state)
 {
-	if (msg_listener->getDisplayMode()==msg_listener->NO_DISPLAY) return;
+    if ((interface==NULL) || (disp==NULL)) return;
+	if (interface->getDisplayMode()==interface->NO_DISPLAY) return;
+    
 	char id_str[8];
 	if(id>=0) sprintf(id_str,"%d",id);
 	else sprintf(id_str,"F");
-	FontTool::drawText(xpos,ypos,id_str);
-	
-	int pixel = 0;
-	//unsigned char* disp = (unsigned char*)(display->pixels);
-	for (int i=1;i<3;i++) {
-		pixel=4*(ypos*width+(xpos+i));
-		if ((pixel>=0) && (pixel<width*height*3)) disp[pixel+state]=disp[pixel+3]=255;
-		pixel=4*(ypos*width+(xpos-i));
-		if ((pixel>=0) && (pixel<width*height*3)) disp[pixel+state]=disp[pixel+3]=255;
-		pixel=4*((ypos+i)*width+xpos);
-		if ((pixel>=0) && (pixel<width*height*3)) disp[pixel+state]=disp[pixel+3]=255;
-		pixel=4*((ypos-i)*width+xpos);
-		if ((pixel>=0) && (pixel<width*height*3)) disp[pixel+state]=disp[pixel+3]=255;
-	}
+    
+    interface->drawMark(xpos,ypos, id_str, state);
 }
 
 void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest, unsigned char *disp) {
+
+    if ((interface==NULL) || (disp==NULL)) return;
+    if (interface->getDisplayMode()==interface->NO_DISPLAY) return;
 
 	//unsigned char* disp = (unsigned char*)(display->pixels);
 	int length = width*height;

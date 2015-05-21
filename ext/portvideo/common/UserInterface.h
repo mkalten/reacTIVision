@@ -16,17 +16,12 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef FRAMEPROCESSOR_H
-#define FRAMEPROCESSOR_H
+#ifndef USERINTERFACE_H
+#define USERINTERFACE_H
 
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include "UserInterface.h"
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 #define KEY_A 4
 #define KEY_B 5
@@ -61,56 +56,36 @@
 #define KEY_DOWN 81
 #define KEY_UP 82
 
-class FrameProcessor
+class VisionEngine;
+class UserInterface
 {
 public:
-
-	FrameProcessor() {
-		width     = 0;
-		height    = 0;
-		srcBytes  = 0;
-		destBytes = 0;
-		srcSize   = 0;
-		destSize  = 0;
-		dispSize  = 0;
-		initialized = false;
-	};
-	virtual ~FrameProcessor() {};
-
-	virtual bool init(int w, int h, int sb, int db) {
-		width  = w;
-		height = h;
-		srcBytes  = sb;
-		destBytes = db;
-
-		srcSize   = w*h*sb;
-		destSize  = w*h*db;
-		dispSize  = w*h*4;
-
-		initialized = true;
-		return true;
-	};
-
-    virtual void addUserInterface(UserInterface *iface) { interface=iface; };
-    virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
-	virtual void finish() {};
-    virtual bool setFlag(unsigned char flag, bool value, bool lock) { return lock; };
-    virtual bool toggleFlag(unsigned char flag, bool lock) { return lock; };
-	std::vector<std::string> getOptions() { return help_text; }
-
+	UserInterface() { verbose_ = false; };
+	virtual ~UserInterface() {};
+    
+	enum DisplayMode { NO_DISPLAY, SOURCE_DISPLAY, DEST_DISPLAY };
+    void setDisplayMode(DisplayMode mode) { displayMode_ = mode; };
+    DisplayMode getDisplayMode() { return displayMode_; };
+    
+    virtual unsigned char* openDisplay(VisionEngine *engine) = 0;
+    virtual void updateDisplay() = 0;
+    virtual void closeDisplay() = 0;
+    
+    virtual void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color) = 0;
+    virtual void processEvents() = 0;
+    void setVerbose(bool verbose) { verbose_ = verbose; };
+    
+	virtual void printMessage(std::string message) = 0;
+	virtual void displayMessage(const char *message) = 0;
+    virtual void displayControl(const char *title, int min, int max, int value) = 0;
+    virtual void displayError(const char *message) = 0;
+    virtual void drawMark(int xpos, int ypos, const char *mark, int state) = 0;
+    
 protected:
-	int width;
-	int height;
-	int srcBytes;
-	int destBytes;
-	int srcSize;
-	int destSize;
-	int dispSize;
+	bool verbose_;
+    DisplayMode displayMode_;
+    VisionEngine *engine_;
 
-	bool initialized;
-	UserInterface *interface;
-
-	std::vector<std::string> help_text;
 };
 
 #endif

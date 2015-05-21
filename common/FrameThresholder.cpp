@@ -18,31 +18,18 @@
 */
 
 #include "FrameThresholder.h"
-#ifdef __APPLE__
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_thread.h>
+
+// the thread function
+#ifndef WIN32
+static void* threshold_thread_function( void* obj )
 #else
-#include <SDL.h>
-#include <SDL_thread.h>
+static DWORD WINAPI threshold_thread_function( LPVOID obj )
 #endif
-
-typedef struct threshold_data{
-    TiledBernsenThresholder *thresholder;
-    unsigned char *src;
-    unsigned char *dest;
-    int width,height;
-    int bytes;
-    int tile_size;
-    int gradient;
-} threshold_data;
-
-// the thread function which contantly retrieves the latest frame
-int threshold_thread_function(void *obj) {
-
+{
     threshold_data *data = (threshold_data *)obj;
     tiled_bernsen_threshold( data->thresholder, data->dest, data->src,data->bytes, data->width, data->height, data->tile_size, data->gradient );
 
-    return(1);
+    return(0);
 }
 
 int getDividers(short number, short *dividers) {
@@ -144,7 +131,12 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
 
     //long start_time = SDLinterface::currentTime();
     //tiled_bernsen_threshold( thresholder, dest, src, srcBytes, width, height, tile_size, gradient );
-    SDL_Thread *tthreads[16];
+    
+#ifdef WIN32
+    HANDLE tthreads[16];
+#else
+    pthread_t tthreads[16];
+#endif
     threshold_data tdata[16];
 
     for (int i=0;i<thread_count;i++) {
@@ -163,13 +155,23 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
 		tdata[i].tile_size=tile_size;
 		tdata[i].gradient=gradient;
     
-		tthreads[i] = SDL_CreateThread(threshold_thread_function,NULL,&tdata[i]);
+#ifdef WIN32
+        DWORD threadId;
+        cameraThread = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
+#else
+        pthread_create(&tthreads[i] , NULL, threshold_thread_function, &tdata[i]);
+#endif
     }
 
     if (setGradient || setTilesize) displayControl();
 
     for (int i=0;i<thread_count;i++) {
-        SDL_WaitThread(tthreads[i],NULL);
+#ifdef WIN32
+        if( tthreads[i] ) CloseHandle( tthreads[i] );
+#else
+        if( tthreads[i] ) pthread_detach(tthreads[i]);
+#endif
+        tthreads[i] = NULL;
     }
 
     /*long threshold_time = SDLinterface::currentTime() - start_time;
@@ -252,6 +254,6 @@ void FrameThresholder::displayControl() {
         sprintf(displayText,"tile size %d",settingValue);
     }
   
-    msg_listener->displayControl(displayText, 0, maxValue, settingValue);
+    interface->displayControl(displayText, 0, maxValue, settingValue);
 }
 

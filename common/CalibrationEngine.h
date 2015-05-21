@@ -63,7 +63,7 @@ private:
     int center_x, center_y;
 	int cell_size_x, cell_size_y;
 
-	MessageListener::DisplayMode prevMode;
+	UserInterface::DisplayMode prevMode;
 };
 
 #endif

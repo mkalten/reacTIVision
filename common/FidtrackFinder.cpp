@@ -239,6 +239,9 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 
 void FidtrackFinder::drawDisplay(unsigned char *disp) {
 
+    if ((interface==NULL) || (disp==NULL)) return;
+    if (interface->getDisplayMode()==interface->NO_DISPLAY) return;
+
 	FiducialFinder::displayControl();
 
 	char displayText[64]; 
@@ -272,7 +275,7 @@ void FidtrackFinder::drawDisplay(unsigned char *disp) {
 		maxValue = 200;
 	} else return;
 	
-    msg_listener->displayControl(displayText, 0, maxValue, settingValue);
+    interface->displayControl(displayText, 0, maxValue, settingValue);
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
@@ -401,10 +404,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 			drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),display,1);
 			fiducialList.push_back(addFiducial);
 			if (midi_server!=NULL) midi_server->sendAddMessage(fiducials[i].id);
-			if (msg_listener) {
+			if (interface) {
 				std::stringstream add_message;
 				add_message << "add obj " << session_id << " " << fiducials[i].id;
-				msg_listener->setMessage(add_message.str());
+				interface->printMessage(add_message.str());
 			}
 		}
 			
@@ -626,19 +629,19 @@ void FidtrackFinder::sendCursorMessages() {
 				aliveList[aliveSize]=finger->session_id;
 				aliveSize++;
 				session_id++;
-				if(msg_listener) {
+				if(interface) {
 					std::stringstream add_message;
 					add_message << "add cur " << finger->session_id;
-					msg_listener->setMessage(add_message.str());
+					interface->printMessage(add_message.str());
 				}
 				finger++;
 				break;
 			}
 			case FINGER_REMOVED: {
-				if(msg_listener) {
+				if(interface) {
 					std::stringstream del_message;
 					del_message << "del cur " << finger->session_id;
-					msg_listener->setMessage(del_message.str());
+					interface->printMessage(del_message.str());
 				}
 				finger = fingerList.erase(finger);
 				sendAliveMessage = true;
@@ -682,7 +685,7 @@ void FidtrackFinder::sendCursorMessages() {
 			}
 				
 			std::string set_message = finger->addSetMessage(tuio_server);
-			if(set_message!="" && msg_listener) msg_listener->setMessage(set_message);
+			if(set_message!="" && interface) interface->printMessage(set_message);
 		
 			if (finger->unsent>unsent) unsent = finger->unsent;
 		}

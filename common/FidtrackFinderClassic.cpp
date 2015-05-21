@@ -96,13 +96,13 @@ void FidtrackFinderClassic::process(unsigned char *src, unsigned char *dest, uns
 			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,0,0);
 			fiducialList.push_back(addFiducial);
 			if (midi_server!=NULL) midi_server->sendAddMessage(fiducials[i].id);
-			if (msg_listener) {
+			if (interface) {
 				//char add_message[16];
 				//sprintf(add_message,"add obj %d %ld",fiducials[i].id,session_id);
 				//msg_listener->setMessage(std::string(add_message));
 				std::stringstream add_message;
 				add_message << "add obj " << fiducials[i].id << " " << session_id;
-				msg_listener->setMessage(add_message.str());
+				interface->printMessage(add_message.str());
 			}
 			session_id++;
 		}

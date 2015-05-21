@@ -17,29 +17,30 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <Main.h>
 #include <string.h>
 #ifdef __APPLE__
 #include <SDL2/SDL.h>
 #else
 #include "SDL.h"
 #endif
-#include "../ext/portvideo/interface/SDLinterface.h"
+#ifdef LINUX
+#include <signal.h>
+#endif
+
+#include <Main.h>
+#include "SDLInterface.h"
+#include "VisionEngine.h"
+
 #include "FrameEqualizer.h"
 #include "FrameThresholder.h"
 #include "FidtrackFinder.h"
 #include "FidtrackFinderClassic.h"
 #include "CalibrationEngine.h"
 
-#ifdef LINUX
-#include <signal.h>
-#endif
-
-SDLinterface *engine;
+VisionEngine *engine;
 
 static void terminate (int param)
 {
-	printf("terminating reacTIVision ...\n");
 	if (engine!=NULL) engine->stop();
 }
 
@@ -319,43 +320,6 @@ void writeSettings(application_settings *config) {
 
 }
 
-
-CameraEngine* setupCamera(char *camera_config) {
-
-    CameraEngine *camera = CameraTool::findCamera(camera_config);
-    if (camera == NULL) return NULL;
-
-    bool success = camera->initCamera();
-
-    if(success) {
-        int width = camera->getWidth();
-        int height = camera->getHeight();
-        float fps = camera->getFps();
-
-        printf("camera: %s\n",camera->getName());
-        if (fps>0) {
-		if (int(fps)==fps) printf("format: %dx%d, %dfps\n",width,height,int(fps));
-		else printf("format: %dx%d, %'.1f fps\n",width,height,fps);
-        } else printf("format: %dx%d\n",width,height);
-
-        return camera;
-    } else {
-        printf("could not initialize camera\n");
-        camera->closeCamera();
-        delete camera;
-        return NULL;
-    }
-}
-
-void teardownCamera(CameraEngine *camera)
-{
-    if (camera!=NULL) {
-        camera->stopCamera();
-        camera->closeCamera();
-        delete camera;
-    }
-}
-
 int main(int argc, char* argv[]) {
 
 	application_settings config;
@@ -401,17 +365,19 @@ int main(int argc, char* argv[]) {
 	readSettings(&config);
     config.headless = headless;
 
-	CameraEngine *camera = setupCamera(config.camera_config);
-
-	engine = new SDLinterface(app_name, camera, &config);
+    UserInterface *interface;
+	engine = new VisionEngine(app_name,&config);
+    engine->setupCamera(config.camera_config);
 
     if (!headless) {
+        interface = new SDLinterface(app_name,config.fullscreen);
         switch (config.display_mode) {
-            case 0: engine->setDisplayMode(engine->NO_DISPLAY); break;
-            case 1: engine->setDisplayMode(engine->SOURCE_DISPLAY); break;
-            case 2: engine->setDisplayMode(engine->DEST_DISPLAY); break;
+            case 0: interface->setDisplayMode(interface->NO_DISPLAY); break;
+            case 1: interface->setDisplayMode(interface->SOURCE_DISPLAY); break;
+            case 2: interface->setDisplayMode(interface->DEST_DISPLAY); break;
         }
-    } else engine->setDisplayMode(engine->NO_DISPLAY);
+        engine->setInterface(interface);
+    }
 
 	MessageServer  *server		= NULL;
 	FrameProcessor *fiducialfinder	= NULL;
@@ -437,11 +403,13 @@ int main(int argc, char* argv[]) {
 	calibrator = new CalibrationEngine(config.grid_config);
 	engine->addFrameProcessor(calibrator);
 
-	engine->run();
-	teardownCamera(camera);
+	engine->start();
 
-	config.display_mode = engine->getDisplayMode();
-
+    if (!headless) {
+        config.display_mode = interface->getDisplayMode();
+        delete interface;
+    }
+    
 	engine->removeFrameProcessor(calibrator);
 	delete calibrator;
 
@@ -451,7 +419,6 @@ int main(int argc, char* argv[]) {
 	}
 
 	engine->removeFrameProcessor(fiducialfinder);
-
 
     config.gradient_gate = ((FrameThresholder*)thresholder)->getGradientGate();
     config.tile_size = ((FrameThresholder*)thresholder)->getTileSize();
@@ -471,5 +438,6 @@ int main(int argc, char* argv[]) {
 	delete server;
 
 	writeSettings(&config);
+    printf("done\n");
 	return 0;
 }

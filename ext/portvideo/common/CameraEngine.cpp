@@ -69,10 +69,8 @@
 
 	}
 
-//	void CameraEngine::drawGUI(SDL_Surface *display) {
-    void CameraEngine::drawGUI(MessageListener *display) {
+    void CameraEngine::showInterface(UserInterface *interface) {
 		if(!settingsDialog) return;
-		//unsigned char* disp = (unsigned char*)(display->pixels);
 
 		int settingValue = getCameraSetting(currentCameraSetting);
 		int maxValue =  getMaxCameraSetting(currentCameraSetting);
@@ -93,7 +91,7 @@
 		char displayText[256];
 		sprintf(displayText,"%s %d",settingText,settingValue);
 
-        display->displayControl(displayText, minValue, maxValue, settingValue);
+        interface->displayControl(displayText, minValue, maxValue, settingValue);
 	}
 
 	void CameraEngine::readSettings() {

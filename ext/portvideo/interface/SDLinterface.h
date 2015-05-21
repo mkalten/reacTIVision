@@ -47,116 +47,83 @@
 #define WIDTH 640
 #define HEIGHT 480
 
-#include "CameraTool.h"
-#include "RingBuffer.h"
-#include "FrameProcessor.h"
+#include "UserInterface.h"
 #include "FontTool.h"
-
-#include "Main.h"
 #include "Resources.h"
 
-class SDLinterface: public MessageListener
+class SDLinterface: public UserInterface
 {
 
 public:
-	SDLinterface(const char* name, CameraEngine *camera, application_settings *config);
+	SDLinterface(const char* name, bool fullscreen);
 	~SDLinterface() {};
 
-	void run();
-	void stop();
-
-	CameraEngine *camera_;
-	const char* camera_config;
-
-	bool running_;
-	bool error_;
-	bool pause_;
-	bool calibrate_;
-	bool help_;
-    bool display_lock_;
-    unsigned int current_fps_;
-
-	RingBuffer *ringBuffer;
-
-	void addFrameProcessor(FrameProcessor *fp);
-	void removeFrameProcessor(FrameProcessor *fp);
-	void setMessage(std::string message);
-	void displayMessage(const char *message);
+	unsigned char* openDisplay(VisionEngine *engine);
+    void updateDisplay();
+    void closeDisplay();
+    
+    void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color);
+    void processEvents();
+    void setDisplayMode(DisplayMode mode);
+    
+    void printMessage(std::string message);
+    void displayMessage(const char *message);
     void displayControl(const char *title, int min, int max, int value);
-
-	long framenumber_;
-
-	void setDisplayMode(DisplayMode mode);
-	DisplayMode getDisplayMode() { return displayMode_; }
-
-	
-
-	static long currentTime() {
-#ifdef WIN32
-		return GetTickCount();
-#else
-		struct timeval tv;
-		struct timezone tz;
-		gettimeofday(&tv,&tz);
-		return ((tv.tv_sec*1000000)+(tv.tv_usec));
-#endif
-	}
+    void displayError(const char* error);
+    void drawMark(int xpos, int ypos, const char *mark, int state);
 
 protected:
-	bool setupWindow();
-	void teardownWindow();
+	
+    bool setupWindow();
+    char* checkRenderDriver();
 
-	void initFrameProcessors();
-
-	void allocateBuffers();
+    void allocateBuffers();
 	void freeBuffers();
 
-	void mainLoop();
-	void endLoop();
-
-	void process_events();
 	void toggleFullScreen();
-
-#ifndef NDEBUG
-	void saveBuffer(unsigned char* buffer);
-#endif
-
 	void drawHelp(unsigned char* buffer);
-	void showError(const char* error);
-
-	SDL_Renderer *renderer_;
-	SDL_Window *window_;
-	SDL_Surface *displayImage_;
-	SDL_Surface *iconImage_;
-
-	unsigned char* sourceBuffer_;
-	unsigned char* destBuffer_;
-
-	SDL_Texture *texture_;
-	SDL_Texture *display_;
+    void showFrameRate();
 
 private:
+    
+    static long currentTime() {
+#ifdef WIN32
+        return GetTickCount();
+#else
+        struct timeval tv;
+        struct timezone tz;
+        gettimeofday(&tv,&tz);
+        return ((tv.tv_sec*1000000)+(tv.tv_usec));
+#endif
+    }
+    
+    SDL_Renderer *renderer_;
+    SDL_Window *window_;
+    SDL_Surface *displayImage_;
+    
+    unsigned char* sourceBuffer_;
+    unsigned char* destBuffer_;
+    
+    SDL_Texture *texture_;
+    SDL_Texture *display_;
+    
+    bool error_;
+    bool pause_;
+    bool help_;
+#ifndef NDEBUG
+    bool recording_;
+#endif
+    bool fullscreen_;
+   
 	long frames_;
   	long lastTime_;
 	unsigned int cameraTime_, processingTime_, totalTime_;
-
-	void frameStatistics(long cameraTime, long processingTime, long totalTime);
-	bool recording_;
-
-	bool headless_;
-
+    unsigned int current_fps_;
+    
 	int width_;
 	int height_;
-	int fps_;
 	int bytesPerSourcePixel_;
 	int bytesPerDestPixel_;
-	bool fullscreen_;
-
-	std::vector<FrameProcessor*> processorList;
-	std::vector<FrameProcessor*>::iterator frame;
-
-	DisplayMode displayMode_;
-	SDL_Thread *cameraThread;
 
 	std::string app_name_;
 	std::vector<std::string> help_text;

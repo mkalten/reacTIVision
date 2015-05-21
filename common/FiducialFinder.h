@@ -35,8 +35,6 @@
 #include <CoreFoundation/CFBundle.h>
 #endif
 
-#include "../ext/portvideo/interface/FontTool.h"
-
 class FiducialFinder: public FrameProcessor
 {
 public:
@@ -114,7 +112,7 @@ protected:
 	void sendTuioMessages();
 	void sendMidiMessages();
 
-	MessageListener::DisplayMode prevMode;
+	UserInterface::DisplayMode prevMode;
 	bool show_settings;
 	
 private:

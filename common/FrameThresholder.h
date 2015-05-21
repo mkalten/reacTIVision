@@ -20,9 +20,25 @@
 #ifndef FRAMETHRESHOLDER_H
 #define FRAMETHRESHOLDER_H
 
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif
+
 #include "FrameProcessor.h"
 #include "tiled_bernsen_threshold.h"
 #include "threshold.h"
+
+typedef struct threshold_data{
+    TiledBernsenThresholder *thresholder;
+    unsigned char *src;
+    unsigned char *dest;
+    int width,height;
+    int bytes;
+    int tile_size;
+    int gradient;
+} threshold_data;
 
 class FrameThresholder: public FrameProcessor
 {

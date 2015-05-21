@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B200D5491B0E25EA00249D8B /* VisionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D5471B0E25EA00249D8B /* VisionEngine.cpp */; };
 		B206F53E19E3DD4A00B8E1DA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */; };
 		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; };
 		B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; };
@@ -100,6 +101,9 @@
 
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B200D5461B0E25EA00249D8B /* UserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserInterface.h; path = ../ext/portvideo/common/UserInterface.h; sourceTree = "<group>"; };
+		B200D5471B0E25EA00249D8B /* VisionEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = VisionEngine.cpp; path = ../ext/portvideo/common/VisionEngine.cpp; sourceTree = "<group>"; };
+		B200D5481B0E25EA00249D8B /* VisionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisionEngine.h; path = ../ext/portvideo/common/VisionEngine.h; sourceTree = "<group>"; };
 		B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = ../../../../../../System/Library/Frameworks/CoreMedia.framework; sourceTree = "<group>"; };
 		B214E6660959DA6F00A347C1 /* FidtrackFinder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; lineEnding = 0; name = FidtrackFinder.cpp; path = ../common/FidtrackFinder.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B214E6670959DA6F00A347C1 /* FidtrackFinder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FidtrackFinder.h; path = ../common/FidtrackFinder.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -261,6 +265,8 @@
 			children = (
 				B214E66E0959DA6F00A347C1 /* Main.cpp */,
 				B2A8A0C919ECF6EE00D8D4FA /* Main.h */,
+				B200D5471B0E25EA00249D8B /* VisionEngine.cpp */,
+				B200D5481B0E25EA00249D8B /* VisionEngine.h */,
 				B220851F078AFC4D0047913B /* SDLinterface.cpp */,
 				B2208520078AFC4D0047913B /* SDLinterface.h */,
 				B2208519078AFC3D0047913B /* FiducialFinder.cpp */,
@@ -445,25 +451,26 @@
 		B2F486A407788A9A00370074 /* portvideo */ = {
 			isa = PBXGroup;
 			children = (
-				B260A1F01B0A624E0053F53D /* ps3eye.cpp */,
-				B260A1F11B0A624E0053F53D /* ps3eye.h */,
-				B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */,
-				B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */,
 				B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */,
 				B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */,
 				B239D6A30CC51682009708F3 /* DC1394Camera.cpp */,
 				B239D6A40CC51682009708F3 /* DC1394Camera.h */,
+				B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */,
+				B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */,
+				B260A1F01B0A624E0053F53D /* ps3eye.cpp */,
+				B260A1F11B0A624E0053F53D /* ps3eye.h */,
 				B2208511078AFC0A0047913B /* CameraTool.cpp */,
 				B2208512078AFC0A0047913B /* CameraTool.h */,
 				B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */,
 				B2E6097008EAE59400136A11 /* CameraEngine.h */,
-				B2208522078AFC4D0047913B /* RingBuffer.h */,
 				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
 				B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */,
 				B2E644150D6C39EC0000ABD0 /* FolderCamera.h */,
 				B21D89E30CE7A0FE003B810C /* FileCamera.cpp */,
 				B21D89E40CE7A0FE003B810C /* FileCamera.h */,
 				B220851B078AFC3D0047913B /* FrameProcessor.h */,
+				B200D5461B0E25EA00249D8B /* UserInterface.h */,
+				B2208522078AFC4D0047913B /* RingBuffer.h */,
 				B2375F3B0CCE305C00DE086D /* FontTool.cpp */,
 				B2375E210CCE125700DE086D /* FontTool.h */,
 				B2F024DF0975394D00538C36 /* SFont.c */,
@@ -549,6 +556,7 @@
 				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
 				B297D3C3097536E2004AB0FE /* TuioServer.cpp in Sources */,
 				B297D3C4097536E2004AB0FE /* dump_graph.c in Sources */,
+				B200D5491B0E25EA00249D8B /* VisionEngine.cpp in Sources */,
 				B297D3C5097536E2004AB0FE /* fidtrack120.c in Sources */,
 				B297D3C6097536E2004AB0FE /* fidtrackX.c in Sources */,
 				B297D3C7097536E2004AB0FE /* segment.c in Sources */,

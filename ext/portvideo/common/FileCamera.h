@@ -51,10 +51,10 @@ public:
 	int getCameraSetting(int mode);
 	int getMaxCameraSetting(int mode);
 	int getMinCameraSetting(int mode);
-	void showSettingsDialog();
+	bool showSettingsDialog(bool lock);
 
-private:
-	char *image_file;
+//private:
+//	char *image_file;
 };
 
 #endif

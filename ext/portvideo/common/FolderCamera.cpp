@@ -40,7 +40,7 @@ FolderCamera::~FolderCamera()
 
 bool FolderCamera::findCamera() {
 	readSettings();
-	if (config.folder==NULL) return false;
+	//if (config.folder==NULL) return false;
 	struct stat info;
 	if (stat(config.folder,&info)!=0) return false;	
 	return true;
@@ -237,8 +237,8 @@ int FolderCamera::getMinCameraSetting(int mode) {
 	return 0;
 }
 
-void FolderCamera::showSettingsDialog() {
-	return;
+bool FolderCamera::showSettingsDialog(bool lock) {
+	return lock;
 }
 #endif
 
