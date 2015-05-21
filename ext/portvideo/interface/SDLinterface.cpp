@@ -16,7 +16,6 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
 #include "SDLinterface.h"
 #include "VisionEngine.h"
 
@@ -31,47 +30,8 @@ unsigned char* SDLinterface::openDisplay(VisionEngine *engine) {
 void SDLinterface::closeDisplay()
 {
     engine_->stop();
+    SDL_Delay(10);
     freeBuffers();
-}
-
-void SDLinterface::displayError(const char* error)
-{
-    SDL_SetWindowTitle(window_,app_name_.c_str());
-    SDL_RenderClear(renderer_);
-    
-    SDL_Rect *image_rect = new SDL_Rect();
-    image_rect->x = (width_-camera_rect.w)/2-47;
-    image_rect->y = (height_-camera_rect.h)/2-39;
-    image_rect->w = camera_rect.w;
-    image_rect->h = camera_rect.h;
-    SDL_BlitSurface(getCamera(), &camera_rect, displayImage_, image_rect);
-    delete image_rect;
-    
-    std::string error_message = "Press any key to exit "+app_name_+" ...";
-    FontTool::drawText((width_- FontTool::getTextWidth(error))/2,height_/2+60,error);
-    FontTool::drawText((width_- FontTool::getTextWidth(error_message.c_str()))/2,height_/2+80,error_message.c_str());
-    SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
-    SDL_RenderCopy(renderer_, display_, NULL, NULL);
-    SDL_RenderPresent(renderer_);
-    
-    error_=true;
-    while(error_) {
-        processEvents();
-        SDL_Delay(1);
-    }
-}
-
-void SDLinterface::drawHelp(unsigned char* buffer)
-{
-    int y = FontTool::getFontHeight()-3;
-    
-    for(std::vector<std::string>::iterator help_line = help_text.begin(); help_line!=help_text.end(); help_line++) {
-        if (strcmp(help_line->c_str(), "") == 0) y+=5;
-        else {
-            FontTool::drawText(FontTool::getFontHeight(),y,help_line->c_str());
-            y+=FontTool::getFontHeight()-3;
-        }
-    }
 }
 
 void SDLinterface::updateDisplay()
@@ -107,31 +67,6 @@ void SDLinterface::updateDisplay()
     
     processEvents();
     showFrameRate();
-}
-
-void SDLinterface::showFrameRate() {
-    
-    frames_++;
-    time_t currentTime;
-    time(&currentTime);
-    long diffTime = (long)( currentTime - lastTime_ );
-    
-    if (fullscreen_) {
-        char caption[24] = "";
-        sprintf(caption,"%d FPS",current_fps_);
-        FontTool::drawText(width_-(FontTool::getTextWidth(caption)+FontTool::getFontHeight()),FontTool::getFontHeight(),caption);
-    }
-    
-    if (diffTime >= 1) {
-        current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
-        
-        char caption[24] = "";
-        sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
-        SDL_SetWindowTitle( window_, caption);
-        
-        lastTime_ = (long)currentTime;
-        frames_ = 0;
-    }
 }
 
 char* SDLinterface::checkRenderDriver() {
@@ -255,7 +190,6 @@ void SDLinterface::processEvents()
                     engine_->event(event.key.keysym.scancode);
                 }
                 
-                
                 break;
             case SDL_QUIT:
                 closeDisplay();
@@ -337,11 +271,76 @@ void SDLinterface::toggleFullScreen() {
     }
 }
 
+void SDLinterface::showFrameRate() {
+    
+    frames_++;
+    time_t currentTime;
+    time(&currentTime);
+    long diffTime = (long)( currentTime - lastTime_ );
+    
+    if (fullscreen_) {
+        char caption[24] = "";
+        sprintf(caption,"%d FPS",current_fps_);
+        FontTool::drawText(width_-(FontTool::getTextWidth(caption)+FontTool::getFontHeight()),FontTool::getFontHeight(),caption);
+    }
+    
+    if (diffTime >= 1) {
+        current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
+        
+        char caption[24] = "";
+        sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
+        SDL_SetWindowTitle( window_, caption);
+        
+        lastTime_ = (long)currentTime;
+        frames_ = 0;
+    }
+}
+
 void SDLinterface::printMessage(std::string message)
 {
     if (verbose_) {
         std::cout << message << std::endl;
         std::cout.flush();
+    }
+}
+
+void SDLinterface::displayError(const char* error)
+{
+    SDL_SetWindowTitle(window_,app_name_.c_str());
+    SDL_RenderClear(renderer_);
+    
+    SDL_Rect *image_rect = new SDL_Rect();
+    image_rect->x = (width_-camera_rect.w)/2-47;
+    image_rect->y = (height_-camera_rect.h)/2-39;
+    image_rect->w = camera_rect.w;
+    image_rect->h = camera_rect.h;
+    SDL_BlitSurface(getCamera(), &camera_rect, displayImage_, image_rect);
+    delete image_rect;
+    
+    std::string error_message = "Press any key to exit "+app_name_+" ...";
+    FontTool::drawText((width_- FontTool::getTextWidth(error))/2,height_/2+60,error);
+    FontTool::drawText((width_- FontTool::getTextWidth(error_message.c_str()))/2,height_/2+80,error_message.c_str());
+    SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
+    SDL_RenderCopy(renderer_, display_, NULL, NULL);
+    SDL_RenderPresent(renderer_);
+    
+    error_=true;
+    while(error_) {
+        processEvents();
+        SDL_Delay(1);
+    }
+}
+
+void SDLinterface::drawHelp(unsigned char* buffer)
+{
+    int y = FontTool::getFontHeight()-3;
+    
+    for(std::vector<std::string>::iterator help_line = help_text.begin(); help_line!=help_text.end(); help_line++) {
+        if (strcmp(help_line->c_str(), "") == 0) y+=5;
+        else {
+            FontTool::drawText(FontTool::getFontHeight(),y,help_line->c_str());
+            y+=FontTool::getFontHeight()-3;
+        }
     }
 }
 
@@ -358,7 +357,6 @@ void SDLinterface::displayMessage(const char *message)
 
 void SDLinterface::displayControl(const char *title, int min, int max, int value)
 {
-    
     unsigned char* disp = (unsigned char*)(displayImage_->pixels);
     
     int x_offset=width_/2-128;
