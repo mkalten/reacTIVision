@@ -157,7 +157,7 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
     
 #ifdef WIN32
         DWORD threadId;
-        cameraThread = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
+        tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
 #else
         pthread_create(&tthreads[i] , NULL, threshold_thread_function, &tdata[i]);
 #endif
@@ -167,11 +167,12 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
 
     for (int i=0;i<thread_count;i++) {
 #ifdef WIN32
-        if( tthreads[i] ) CloseHandle( tthreads[i] );
+        WaitForSingleObject(tthreads[i],INFINITE);
+		CloseHandle(tthreads[i]);
 #else
-        /*if( tthreads[i] )*/ pthread_join(tthreads[i],NULL);
+        pthread_join(tthreads[i],NULL);
 #endif
-        //tthreads[i] = NULL;
+
     }
 
     /*long threshold_time = SDLinterface::currentTime() - start_time;
@@ -254,6 +255,6 @@ void FrameThresholder::displayControl() {
         sprintf(displayText,"tile size %d",settingValue);
     }
   
-    interface->displayControl(displayText, 0, maxValue, settingValue);
+    interface_->displayControl(displayText, 0, maxValue, settingValue);
 }
 

@@ -147,7 +147,8 @@ void VisionEngine::startThread() {
 void VisionEngine::stopThread() {
     
 #ifdef WIN32
-    if( cameraThread ) CloseHandle( cameraThread );
+	WaitForSingleObject(cameraThread,INFINITE);
+	if( cameraThread ) CloseHandle( cameraThread );
 #else
     if( cameraThread ) pthread_join(cameraThread,NULL);
 #endif
