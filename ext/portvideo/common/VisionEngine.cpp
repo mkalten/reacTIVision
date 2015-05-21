@@ -150,7 +150,6 @@ void VisionEngine::stopThread() {
     if( cameraThread ) CloseHandle( cameraThread );
 #else
     if( cameraThread ) pthread_join(cameraThread,NULL);
-    pthread_exit(NULL);
 #endif
     cameraThread = NULL;
     
