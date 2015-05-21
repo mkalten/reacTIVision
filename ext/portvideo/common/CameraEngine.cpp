@@ -28,7 +28,7 @@ using namespace tinyxml2;
 			currentCameraSetting = BRIGHTNESS;
 			settingsDialog = true;
 			return true;
-        } else return lock;
+        	} else return lock;
 	}
 
 	void CameraEngine::control(unsigned char key) {
@@ -92,7 +92,7 @@ using namespace tinyxml2;
 		char displayText[256];
 		sprintf(displayText,"%s %d",settingText,settingValue);
 
-        interface->displayControl(displayText, minValue, maxValue, settingValue);
+       		interface->displayControl(displayText, minValue, maxValue, settingValue);
 	}
 
 	void CameraEngine::readSettings() {

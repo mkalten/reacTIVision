@@ -201,7 +201,10 @@ void VisionEngine::mainLoop()
         ringBuffer->readFinished();
         
         //if (!recording_) frameStatistics(camera_time-start_time,processing_time-camera_time, currentTime()-start_time);
-        if (interface_ && running_ ) interface_->updateDisplay();
+        if (interface_ && running_ ) {
+		interface_->updateDisplay();
+		camera_->showInterface(interface_);
+	}
     }
 }
 
@@ -250,7 +253,7 @@ void VisionEngine::frameStatistics(long cameraTime, long processingTime, long to
 
 void VisionEngine::event(int key)
 {
-    //printf("%d\n",event.key.keysym.sym);
+    //printf("%d\n",key);
     if( key == KEY_O ){
         display_lock_ = camera_->showSettingsDialog(display_lock_);
     }
