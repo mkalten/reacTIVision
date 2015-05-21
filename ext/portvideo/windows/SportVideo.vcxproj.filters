@@ -54,26 +54,20 @@
     <ClCompile Include="..\common\RingBuffer.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
-    <ClCompile Include="..\interface\SDLinterface.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
     <ClCompile Include="..\interface\SFont.c">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tinyxml\tinystr.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tinyxml\tinyxml.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tinyxml\tinyxmlerror.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\tinyxml\tinyxmlparser.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
     <ClCompile Include=".\videoInputCamera.cpp">
       <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\VisionEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tinyxml\tinyxml2.cpp">
+      <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interface\SDLinterface.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,20 +101,23 @@
     <ClInclude Include="..\common\RingBuffer.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
-    <ClInclude Include="..\interface\SDLinterface.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
     <ClInclude Include="..\interface\SFont.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\tinyxml\tinystr.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\tinyxml\tinyxml.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
     <ClInclude Include=".\videoInputCamera.h">
       <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\UserInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\VisionEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tinyxml\tinyxml2.h">
+      <Filter>Header Files\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interface\SDLinterface.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
