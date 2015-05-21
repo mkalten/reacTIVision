@@ -149,7 +149,8 @@ void VisionEngine::stopThread() {
 #ifdef WIN32
     if( cameraThread ) CloseHandle( cameraThread );
 #else
-    if( cameraThread ) pthread_detach(cameraThread);
+    if( cameraThread ) pthread_join(cameraThread,NULL);
+    pthread_exit(NULL);
 #endif
     cameraThread = NULL;
     
@@ -201,7 +202,7 @@ void VisionEngine::mainLoop()
         ringBuffer->readFinished();
         
         //if (!recording_) frameStatistics(camera_time-start_time,processing_time-camera_time, currentTime()-start_time);
-        if (interface_) interface_->updateDisplay();
+        if (interface_ && running_ ) interface_->updateDisplay();
     }
 }
 
@@ -217,7 +218,7 @@ void VisionEngine::endLoop() {
 }
 
 void VisionEngine::stop() {
-    std::cout << "terminating " << app_name_ << " ... ";
+    std::cout << "terminating " << app_name_ << " ... " << std::endl;
     running_ = false;
 }
 

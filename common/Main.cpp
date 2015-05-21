@@ -414,6 +414,5 @@ int main(int argc, char* argv[]) {
 	delete server;
 
 	writeSettings(&config);
-    printf("done\n");
 	return 0;
 }

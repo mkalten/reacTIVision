@@ -30,7 +30,6 @@ unsigned char* SDLinterface::openDisplay(VisionEngine *engine) {
 void SDLinterface::closeDisplay()
 {
     engine_->stop();
-    SDL_Delay(10);
     freeBuffers();
 }
 

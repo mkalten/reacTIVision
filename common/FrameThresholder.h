@@ -28,7 +28,6 @@
 
 #include "FrameProcessor.h"
 #include "tiled_bernsen_threshold.h"
-#include "threshold.h"
 
 typedef struct threshold_data{
     TiledBernsenThresholder *thresholder;
