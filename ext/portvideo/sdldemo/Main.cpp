@@ -35,7 +35,7 @@ static void terminate (int param)
 	if (engine!=NULL) engine->stop();
 }
 
-void printUsage(const char *app_name = "portvideo") {
+void printUsage(const char *app_name) {
 	std::cout << "usage: " << app_name << " -c [config_file]" << std::endl;
 	std::cout << "the default configuration file is camera.xml" << std::endl;
 	std::cout << "\t -n starts " << app_name << " without GUI" << std::endl;
@@ -217,5 +217,9 @@ int main(int argc, char* argv[]) {
 
 	writeSettings(&config);
     delete engine;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/devel
 	return 0;
 }
