@@ -48,7 +48,7 @@ void printUsage(const char* app_name) {
 	std::cout << "usage: " << app_name << " -c [config_file]" << std::endl;
 	std::cout << "the default configuration file is " << app_name << ".xml" << std::endl;
 	std::cout << "\t -n starts " << app_name << " without GUI" << std::endl;
-	std::cout << "\t -l lists all available cameras and MIDI devices" << std::endl;
+	std::cout << "\t -l lists all available cameras" << std::endl;
 	std::cout << "\t -h shows this help message" << std::endl;
 	std::cout << std::endl;
 }
@@ -59,12 +59,10 @@ void readSettings(application_settings *config) {
 	sprintf(config->host,"localhost");
 	sprintf(config->tree_config,"none");
 	sprintf(config->grid_config,"none");
-	sprintf(config->midi_config,"none");
 	sprintf(config->camera_config,"none");
 	config->invert_x = false;
 	config->invert_y = false;
 	config->invert_a = false;
-	config->midi = false;
 	config->amoeba = true;
 	config->classic = false;
 	config->background = false;
@@ -119,15 +117,6 @@ void readSettings(application_settings *config) {
 	if( camera_element!=NULL )
 	{
 		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
-	}
-
-	TiXmlElement* midi_element = config_root.FirstChild("midi").Element();
-	if( midi_element!=NULL )
-	{
-		if(midi_element->Attribute("config")!=NULL) {
-			sprintf(config->midi_config,"%s",midi_element->Attribute("config"));
-			config->midi=true;
-		}
 	}
 
 	TiXmlElement* finger_element = config_root.FirstChild("finger").Element();
@@ -240,12 +229,6 @@ void writeSettings(application_settings *config) {
 		if(camera_element->Attribute("config")!=NULL) camera_element->SetAttribute("config",config->camera_config);
 	}
 
-	TiXmlElement* midi_element = config_root.FirstChild("midi").Element();
-	if( midi_element!=NULL )
-	{
-		if(midi_element->Attribute("config")!=NULL) midi_element->SetAttribute("config",config->midi_config);
-	}
-
 	TiXmlElement* finger_element = config_root.FirstChild("finger").Element();
 	if( finger_element!=NULL )
 	{
@@ -346,7 +329,6 @@ int main(int argc, char* argv[]) {
             headless = true;
         } else if( strcmp( argv[1], "-l" ) == 0 ) {
             CameraTool::listDevices();
-            MidiServer::listDevices();
             return 0;
         } else if ( (std::string(argv[1]).find("-NSDocumentRevisionsDebugMode")==0 ) || (std::string(argv[1]).find("-psn_")==0) ){
             // ignore mac specific arguments
@@ -379,14 +361,13 @@ int main(int argc, char* argv[]) {
         engine->setInterface(interface);
     }
 
-	MessageServer  *server		= NULL;
+	TuioServer     *server		= NULL;
 	FrameProcessor *fiducialfinder	= NULL;
 	FrameProcessor *thresholder	= NULL;
 	FrameProcessor *equalizer	= NULL;
 	FrameProcessor *calibrator	= NULL;
 
-	if(config.midi) server = new MidiServer(config.midi_config);
-	else server = new TuioServer(config.host,config.port);
+	server = new TuioServer(config.host,config.port);
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 
     equalizer = new FrameEqualizer();

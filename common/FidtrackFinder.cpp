@@ -19,6 +19,7 @@
 
 #include "FidtrackFinder.h"
 #include <sstream>
+#include <iostream>
 
 bool FidtrackFinder::init(int w, int h, int sb, int db) {
 
@@ -403,7 +404,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size,fiducials[i].leaf_size);
 			drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),display,1);
 			fiducialList.push_back(addFiducial);
-			if (midi_server!=NULL) midi_server->sendAddMessage(fiducials[i].id);
 			if (interface) {
 				std::stringstream add_message;
 				add_message << "add obj " << session_id << " " << fiducials[i].id;
@@ -579,7 +579,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
     if (tuio_server!=NULL) {
 		sendTuioMessages();
 		if (detect_finger) sendCursorMessages();
-	} else if (midi_server!=NULL) sendMidiMessages();
+	}
 	
 	if (show_grid) drawGrid(src,dest,display);
 	if (show_settings) drawDisplay(display);

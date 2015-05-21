@@ -95,7 +95,6 @@ void FidtrackFinderClassic::process(unsigned char *src, unsigned char *dest, uns
 			FiducialObject addFiducial(session_id, fiducials[i].id, width, height);
 			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,0,0);
 			fiducialList.push_back(addFiducial);
-			if (midi_server!=NULL) midi_server->sendAddMessage(fiducials[i].id);
 			if (interface) {
 				//char add_message[16];
 				//sprintf(add_message,"add obj %d %ld",fiducials[i].id,session_id);
@@ -112,7 +111,6 @@ void FidtrackFinderClassic::process(unsigned char *src, unsigned char *dest, uns
 	} 
 
 	if (tuio_server) sendTuioMessages();
-	if (midi_server) sendMidiMessages();
 	if (show_grid) drawGrid(src,dest,display);
 	if (show_settings) displayControl();
 }

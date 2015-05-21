@@ -22,7 +22,6 @@
 
 
 #define TUIO_SERVER 0
-#define MIDI_SERVER 1
 #define TWO_PI 6.283185307179586232
 
 class MessageServer

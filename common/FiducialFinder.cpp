@@ -254,23 +254,6 @@ void FiducialFinder::sendTuioMessages() {
 		delete[] aliveList;
 }
 
-void FiducialFinder::sendMidiMessages() {
-
-		for(std::list<FiducialObject>::iterator fiducial = fiducialList.begin(); fiducial!=fiducialList.end();) {
-			std::string remove_message = fiducial->checkRemoved();			
-			if(remove_message!="") {
-				midi_server->sendRemoveMessage(fiducial->fiducial_id);
-				if(interface) interface->printMessage(remove_message);
-				fiducial = fiducialList.erase(fiducial);
-			} else {
-				std::string set_message = fiducial->addSetMessage(midi_server);
-				if(set_message!="" && interface) interface->printMessage(set_message);
-				fiducial++;
-			}
-		}
-		totalframes++;
-}
-
 void FiducialFinder::finish() {
 	
 	// on exit we have to send an empty alive message to clear the scene
@@ -281,8 +264,6 @@ void FiducialFinder::finish() {
 		tuio_server->addCurAlive(NULL, 0);
 		tuio_server->addCurSeq(-1);
 		tuio_server->sendCurMessages();
-	} else if (midi_server){
-		midi_server->sendNullMessages();
 	}
 }
 

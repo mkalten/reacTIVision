@@ -26,8 +26,8 @@
 #include <sys/time.h>
 #endif
 
+#include <string>
 #include "TuioServer.h"
-#include "MidiServer.h"
 #include "floatpoint.h"
 #include "math.h"
 #include "stdio.h"
@@ -90,7 +90,6 @@ class FiducialObject {
 	void update(float x, float y, float a, float root, float leaf);
 	std::string getStatistics();
 	std::string addSetMessage(TuioServer *tserver);
-	std::string addSetMessage(MidiServer *mserver);
 	void redundantSetMessage(TuioServer *server);
 
 	void setBlobOffset(float x, float y);

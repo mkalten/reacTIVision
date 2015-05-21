@@ -273,42 +273,6 @@ bool FiducialObject::checkIdConflict (int s_id, int f_id) {
 	return false;
 }
 
-
-std::string FiducialObject::addSetMessage (MidiServer *mserver) {
-
-	std::stringstream message;
-
-	if(updated) {
-		updated = false;
-		// see if anything has changed compared to the last appearance
-		if (( current.xpos!=last.xpos) || ( current.ypos!=last.ypos) || ( current.angle!=last.angle) || (lost_frames>0) ) {
-			
-			int s_id = session_id;
-			int f_id = fiducial_id;
-			float x = current.xpos/width;
-			float y = current.ypos/height;
-			float a = current.angle;
-			float X = current.motion_speed_x;
-			float Y = current.motion_speed_y;
-			float A = current.rotation_speed;
-			float m = current.motion_accel;
-			float r = current.rotation_accel;
-	
-			mserver->sendControlMessage(f_id, x, y, a);
-			message << "set obj " <<" "<< s_id <<" "<< f_id <<" "<< x <<" "<< y <<" "<< a <<" "<< X <<" "<< Y <<" "<< A <<" "<< m <<" "<< r;	
-
-			unsent = 0;
-			saveLastFrame();
-			return message.str();
-		} else unsent++;
-	}
-
-	saveLastFrame();
-	return message.str();
-}
-
-
-
 void FiducialObject::redundantSetMessage (TuioServer *server) {
 
 	int s_id = session_id;

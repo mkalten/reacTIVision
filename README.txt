@@ -17,9 +17,7 @@ reacTIVision is a standalone application, which sends Open Sound
 Control (OSC) messages via a UDP network socket to any connected
 client application. It implements the TUIO protocol, which has been
 specially designed for transmitting the state of tangible objects
-and multi-touch events from a tabletop surface. As an alternative 
-to TUIO, the application is also capabable of sending MIDI messages.
-http://www.tuio.org/
+and multi-touch events from a tabletop surface. http://www.tuio.org/
 
 The TUIO framework includes a set of example client projects
 for various programming languages, which serve as a base for
@@ -132,23 +130,6 @@ crop the raw camera frames to reduce the final image size.
 Please see the example options in the file for further information. 
 
 You can list all available cameras with the "-l" startup option.
-
-TUIO vs. MIDI
--------------
-The application can alternatively send  MIDI messages, which allows
-the mapping of any object dimension (xpos, ypos, angle) to a MIDI
-control message through an XML configuration file. Adding and removing
-objects can also be mapped to simple note ON/OFF events.
-Keep in mind though that MIDI has less bandwidth and data resolution
-compared to Open Sound Control, so the MIDI feature is only meant
-as a convenience alternative to TUIO in some application scenarios.
-
-Adding <midi config="midi.xml" /> to reacTIVision.xml switches to
-MIDI mode and specifies the MIDI configuration file that contains the
-mappings and MIDI device selection. An example configuration file along
-with a simple PD patch example can be found in the midi folder.
-
-You can list all available MIDI devices with the "-l" startup option.
 
 Calibration and Distortion
 --------------------------

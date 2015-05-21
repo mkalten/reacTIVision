@@ -20,6 +20,7 @@
 #ifndef FIDTRACKFINDER
 #define FIDTRACKFINDER
 
+#include <string>
 #include "FiducialFinder.h"
 #include "FingerObject.h"
 #include "segment.h"

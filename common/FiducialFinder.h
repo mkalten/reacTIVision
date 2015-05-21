@@ -27,7 +27,6 @@
 
 #include "FrameProcessor.h"
 #include "TuioServer.h"
-#include "MidiServer.h"
 #include "FiducialObject.h"
 #include "floatpoint.h"
 
@@ -43,10 +42,6 @@ public:
 		this->message_server = server;
 		if (server->getType()==TUIO_SERVER) {
 			tuio_server = (TuioServer*)server;
-			midi_server = NULL;
-		} else if (server->getType()==MIDI_SERVER) {
-			midi_server = (MidiServer*)server;
-			tuio_server = NULL;
 		}
 
 	if (strcmp(grid_cfg, "none" ) == 0 ) {
@@ -106,11 +101,9 @@ protected:
 	void computeGrid();
 
 	TuioServer *tuio_server;
-	MidiServer *midi_server;
 	MessageServer *message_server;
 	
 	void sendTuioMessages();
-	void sendMidiMessages();
 
 	UserInterface::DisplayMode prevMode;
 	bool show_settings;

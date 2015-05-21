@@ -26,12 +26,10 @@ struct application_settings {
 	char host[1024];
 	char tree_config[1024];
 	char grid_config[1024];
-	char midi_config[1024];
 	char camera_config[1024];
 	bool invert_x;
 	bool invert_y;
 	bool invert_a;
-	bool midi;
 	bool amoeba;
 	bool classic;
 	bool background;
