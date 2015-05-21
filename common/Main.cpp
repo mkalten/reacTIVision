@@ -34,7 +34,6 @@
 #include "FrameEqualizer.h"
 #include "FrameThresholder.h"
 #include "FidtrackFinder.h"
-#include "FidtrackFinderClassic.h"
 #include "CalibrationEngine.h"
 
 VisionEngine *engine;
@@ -64,7 +63,6 @@ void readSettings(application_settings *config) {
 	config->invert_y = false;
 	config->invert_a = false;
 	config->amoeba = true;
-	config->classic = false;
 	config->background = false;
 	config->fullscreen = false;
 	config->headless = false;
@@ -179,7 +177,6 @@ void readSettings(application_settings *config) {
 	{
 		if(fiducial_element->Attribute("engine")!=NULL)  {
 			if ( strcmp( fiducial_element->Attribute("engine"), "amoeba" ) == 0 ) config->amoeba = true;
-			else if ( strcmp( fiducial_element->Attribute("engine"), "classic" ) == 0 ) { config->classic = true; config->amoeba = false; }
 		}
 		if(fiducial_element->Attribute("tree")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("tree"));
 	}
@@ -280,7 +277,6 @@ void writeSettings(application_settings *config) {
 	{
 		if(fiducial_element->Attribute("engine")!=NULL)  {
 			if (config->amoeba) fiducial_element->SetAttribute("engine", "amoeba"); 
-			else if (config->classic) fiducial_element->SetAttribute("engine","classic"); 
 		}
 		if(fiducial_element->Attribute("tree")!=NULL) fiducial_element->SetAttribute("tree",config->tree_config);
 	}
@@ -378,7 +374,6 @@ int main(int argc, char* argv[]) {
     engine->addFrameProcessor(thresholder);
 
     if (config.amoeba) fiducialfinder = new FidtrackFinder(server, config.tree_config, config.grid_config, config.finger_size, config.finger_sensitivity);
-    else if (config.classic) fiducialfinder = new FidtrackFinderClassic(server, config.grid_config);
 	engine->addFrameProcessor(fiducialfinder);
 
 	calibrator = new CalibrationEngine(config.grid_config);

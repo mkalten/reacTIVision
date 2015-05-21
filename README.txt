@@ -39,10 +39,6 @@ This application was designed to track specially designed fiducial
 markers. You will find the default "amoeba" set of 216 fiducials in
 the document "default.pdf" within the symbols folder. Print this
 document and attach the labels to any object you want to track.
-The default fiducial tracking engine is based on the included fidtrack
-library, which also provides an alternative "classic“ fiducial set,
-which are a reimplementation of Enrico Costanza’s d-touch concept.
-See below how to configure the application to use these symbol sets.
 
 reacTIVision detects the ID, position and rotation angle of fiducial 
 markers in the realtime video and transmits these values to the client
@@ -108,9 +104,8 @@ You can change this setting by adding or editing the XML tag
 
 The <fiducial engine="amoeba" tree="default"/> XML tag lets you
 select the fiducial engine or an alternative amoeba tree order.
-The default engine is using the fastest and effective 'amoeba' 
-fiducial set. Add the 'classic' option in order to use the dtouch
-reimplementation from libfidtrack.
+This default engine is using the fast and robust 'amoeba' 
+fiducial set.
 
 The display attribute defines the default screen upon startup.
 The <image display="dest" equalize="false" gradient="32" tile="10"/>
