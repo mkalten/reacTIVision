@@ -37,6 +37,7 @@
 #include "CalibrationEngine.h"
 
 VisionEngine *engine;
+using namespace tinyxml2;
 
 static void terminate (int param)
 {
@@ -93,38 +94,38 @@ void readSettings(application_settings *config) {
 #endif
 	}
 
-	TiXmlDocument xml_settings( config->file );
-	xml_settings.LoadFile();
+    XMLDocument xml_settings;
+	xml_settings.LoadFile(config->file);
 	if( xml_settings.Error() )
 	{
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
 		return;
 	}
 
-	TiXmlHandle docHandle( &xml_settings );
-	TiXmlHandle config_root = docHandle.FirstChild("reactivision");
+	XMLHandle docHandle( &xml_settings );
+	XMLHandle config_root = docHandle.FirstChildElement("reactivision");
 
-	TiXmlElement* tuio_element = config_root.FirstChild("tuio").Element();
+	XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
 	if( tuio_element!=NULL )
 	{
 		if(tuio_element->Attribute("host")!=NULL) sprintf(config->host,"%s",tuio_element->Attribute("host"));
 		if(tuio_element->Attribute("port")!=NULL) config->port = atoi(tuio_element->Attribute("port"));
 	}
 
-	TiXmlElement* camera_element = config_root.FirstChild("camera").Element();
+	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
 	{
 		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
 	}
 
-	TiXmlElement* finger_element = config_root.FirstChild("finger").Element();
+	XMLElement* finger_element = config_root.FirstChildElement("finger").ToElement();
 	if( finger_element!=NULL )
 	{
 		if(finger_element->Attribute("size")!=NULL) config->finger_size = atoi(finger_element->Attribute("size"));
 		if(finger_element->Attribute("sensitivity")!=NULL) config->finger_sensitivity = atoi(finger_element->Attribute("sensitivity"));
 	}
 
-	TiXmlElement* image_element = config_root.FirstChild("image").Element();
+	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if( image_element!=NULL )
 	{
 		if(image_element->Attribute("display")!=NULL)  {
@@ -143,7 +144,7 @@ void readSettings(application_settings *config) {
 
 	}
 
-    TiXmlElement* threshold_element = config_root.FirstChild("threshold").Element();
+    XMLElement* threshold_element = config_root.FirstChildElement("threshold").ToElement();
     if( threshold_element!=NULL )
     {
         if(threshold_element->Attribute("gradient")!=NULL) {
@@ -172,7 +173,7 @@ void readSettings(application_settings *config) {
  
     }
 
-	TiXmlElement* fiducial_element = config_root.FirstChild("fiducial").Element();
+	XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
 	if( fiducial_element!=NULL )
 	{
 		if(fiducial_element->Attribute("engine")!=NULL)  {
@@ -181,7 +182,7 @@ void readSettings(application_settings *config) {
 		if(fiducial_element->Attribute("tree")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("tree"));
 	}
 
-	TiXmlElement* calibration_element = config_root.FirstChild("calibration").Element();
+	XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
 	if( calibration_element!=NULL )
 	{
 		if(calibration_element->Attribute("invert")!=NULL)  {
@@ -197,8 +198,8 @@ void readSettings(application_settings *config) {
 
 void writeSettings(application_settings *config) {
 
-	TiXmlDocument xml_settings( config->file );
-	xml_settings.LoadFile();
+	XMLDocument xml_settings;
+	xml_settings.LoadFile(config->file);
 	if( xml_settings.Error() )
 	{
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
@@ -207,10 +208,10 @@ void writeSettings(application_settings *config) {
 
 	char config_value[64];
 
-	TiXmlHandle docHandle( &xml_settings );
-	TiXmlHandle config_root = docHandle.FirstChild("reactivision");
+	XMLHandle docHandle( &xml_settings );
+	XMLHandle config_root = docHandle.FirstChildElement("reactivision");
 
-	TiXmlElement* tuio_element = config_root.FirstChild("tuio").Element();
+	XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
 	if( tuio_element!=NULL )
 	{
 		if(tuio_element->Attribute("host")!=NULL) tuio_element->SetAttribute("host",config->host);
@@ -220,13 +221,13 @@ void writeSettings(application_settings *config) {
 		}
 	}
 
-	TiXmlElement* camera_element = config_root.FirstChild("camera").Element();
+	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
 	{
 		if(camera_element->Attribute("config")!=NULL) camera_element->SetAttribute("config",config->camera_config);
 	}
 
-	TiXmlElement* finger_element = config_root.FirstChild("finger").Element();
+	XMLElement* finger_element = config_root.FirstChildElement("finger").ToElement();
 	if( finger_element!=NULL )
 	{
 		if(finger_element->Attribute("size")!=NULL) {
@@ -239,7 +240,7 @@ void writeSettings(application_settings *config) {
 		}
 	}
 
-	TiXmlElement* image_element = config_root.FirstChild("image").Element();
+	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if( image_element!=NULL )
 	{
 		if(image_element->Attribute("display")!=NULL)  {
@@ -258,7 +259,7 @@ void writeSettings(application_settings *config) {
 
 	}
 
-    TiXmlElement* threshold_element = config_root.FirstChild("threshold").Element();
+    XMLElement* threshold_element = config_root.FirstChildElement("threshold").ToElement();
     if( threshold_element!=NULL )
     {
         if(threshold_element->Attribute("gradient")!=NULL) {
@@ -272,7 +273,7 @@ void writeSettings(application_settings *config) {
     }
 
 
-	TiXmlElement* fiducial_element = config_root.FirstChild("fiducial").Element();
+	XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
 	if( fiducial_element!=NULL )
 	{
 		if(fiducial_element->Attribute("engine")!=NULL)  {
@@ -281,7 +282,7 @@ void writeSettings(application_settings *config) {
 		if(fiducial_element->Attribute("tree")!=NULL) fiducial_element->SetAttribute("tree",config->tree_config);
 	}
 
-	TiXmlElement* calibration_element = config_root.FirstChild("calibration").Element();
+	XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
 	if( calibration_element!=NULL )
 	{
 		sprintf(config_value," ");
@@ -294,7 +295,7 @@ void writeSettings(application_settings *config) {
 		if(calibration_element->Attribute("grid")!=NULL) calibration_element->SetAttribute("grid",config->grid_config);
 	}
 
-	xml_settings.SaveFile();
+	xml_settings.SaveFile(config->file);
 	if( xml_settings.Error() ) std::cout << "Error saving configuration file: "  << config->file << std::endl;
 
 }

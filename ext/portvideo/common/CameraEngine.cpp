@@ -17,6 +17,7 @@
  */
 
 #include "CameraEngine.h"
+using namespace tinyxml2;
 
 	bool CameraEngine::showSettingsDialog(bool lock) {
 		if (settingsDialog) {
@@ -150,17 +151,17 @@
 #endif
 		}
 
-		TiXmlDocument xml_settings( config_file );
-		xml_settings.LoadFile();
+        XMLDocument xml_settings;
+		xml_settings.LoadFile( config_file);
 		if( xml_settings.Error() )
 		{
 			std::cout << "Error loading camera configuration file: " << config_file << std::endl;
 			return;
 		}
 
-		TiXmlHandle docHandle( &xml_settings );
-		TiXmlHandle camera = docHandle.FirstChild("portvideo").FirstChild("camera");
-		TiXmlElement* camera_element = camera.Element();
+		XMLHandle docHandle( &xml_settings );
+		XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
+		XMLElement* camera_element = camera.ToElement();
 
 
 		if( camera_element==NULL )
@@ -189,7 +190,7 @@
 #endif
 		}
 
-		TiXmlElement* image_element = camera.FirstChild("capture").Element();
+		XMLElement* image_element = camera.FirstChildElement("capture").ToElement();
 
 		if (image_element!=NULL) {
 			if ((image_element->Attribute("color")!=NULL) && ( strcmp( image_element->Attribute("color"), "true" ) == 0 )) config.color = true;
@@ -210,7 +211,7 @@
 			}
 		}
 
-		TiXmlElement* frame_element = camera.FirstChild("frame").Element();
+		XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
 		if (frame_element!=NULL) {
 			config.frame = true;
 
@@ -240,7 +241,7 @@
 			}
 		}
 
-		TiXmlElement* settings_element = camera.FirstChild("settings").Element();
+		XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
 		if (settings_element!=NULL) {
 			if(settings_element->Attribute("brightness")!=NULL) {
 				if (strcmp(settings_element->Attribute("brightness"), "max" ) == 0) config.brightness=SETTING_MAX;
@@ -324,17 +325,17 @@ void CameraEngine::saveSettings() {
 #endif
 	}
 
-	TiXmlDocument xml_settings( config_file );
-	xml_settings.LoadFile();
+	XMLDocument xml_settings;
+	xml_settings.LoadFile(config_file);
 	if( xml_settings.Error() )
 	{
 		std::cout << "Error loading camera configuration file: " << config_file << std::endl;
 		return;
 	}
 
-	TiXmlHandle docHandle( &xml_settings );
-	TiXmlHandle camera = docHandle.FirstChild("portvideo").FirstChild("camera");
-	TiXmlElement* settings_element = camera.FirstChild("settings").Element();
+	XMLHandle docHandle( &xml_settings );
+	XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
+	XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
 
 	char config_value[64];
 
@@ -422,7 +423,7 @@ void CameraEngine::saveSettings() {
 		}
 	}
 
-	xml_settings.SaveFile();
+	xml_settings.SaveFile(config_file);
 	if( xml_settings.Error() ) std::cout << "Error saving camera configuration file: "  << config_file << std::endl;
 
 }

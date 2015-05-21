@@ -22,7 +22,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits.h>
-#include "tinyxml.h"
+#include "tinyxml2.h"
 #include <math.h>
 #include "FrameProcessor.h"
 #include "UserInterface.h"

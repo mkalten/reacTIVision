@@ -3,6 +3,7 @@
 		* implement RGB color modes
 		* eliminated internal SDL dependencies
 		* updated SDL library to 2.0
+		* updated to TinyXML2
 		* projects for XCode 3.2 and Visual Studio 2012
 		* changed to LGPL license
 * Tue Aug 11 2009 Martin Kaltenbrunner <modin@yuri.at>

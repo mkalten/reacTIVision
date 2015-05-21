@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B200D5381B0CAEC400249D8B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B200D5361B0CAEC400249D8B /* InfoPlist.strings */; };
 		B200D5431B0D153F00249D8B /* VisionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D5421B0D153F00249D8B /* VisionEngine.cpp */; };
+		B200D55D1B0E52BB00249D8B /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D55A1B0E52BB00249D8B /* tinyxml2.cpp */; };
 		B206F53E19E3DD4A00B8E1DA /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */; };
 		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; };
 		B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; };
@@ -19,10 +20,6 @@
 		B2375F3C0CCE305C00DE086D /* FontTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2375F3B0CCE305C00DE086D /* FontTool.cpp */; };
 		B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B239D6A30CC51682009708F3 /* DC1394Camera.cpp */; };
 		B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B244E81519C6D4DC008ADD32 /* libusb.a */; };
-		B24EA44F0015EAB600096D13 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA4490015EAB600096D13 /* tinystr.cpp */; };
-		B24EA4510015EAB600096D13 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA44B0015EAB600096D13 /* tinyxml.cpp */; };
-		B24EA4530015EAB600096D13 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA44D0015EAB600096D13 /* tinyxmlerror.cpp */; };
-		B24EA4540015EAB600096D13 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B24EA44E0015EAB600096D13 /* tinyxmlparser.cpp */; };
 		B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B24EA4F20015EB5000096D13 /* Cocoa.framework */; };
 		B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */; };
 		B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260A1F01B0A624E0053F53D /* ps3eye.cpp */; };
@@ -68,6 +65,8 @@
 		B200D5421B0D153F00249D8B /* VisionEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = VisionEngine.cpp; path = ../common/VisionEngine.cpp; sourceTree = "<group>"; };
 		B200D5441B0D154B00249D8B /* VisionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisionEngine.h; path = ../common/VisionEngine.h; sourceTree = "<group>"; };
 		B200D5451B0E12BA00249D8B /* UserInterface.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = UserInterface.h; path = ../common/UserInterface.h; sourceTree = "<group>"; };
+		B200D55A1B0E52BB00249D8B /* tinyxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml2.cpp; sourceTree = "<group>"; };
+		B200D55B1B0E52BB00249D8B /* tinyxml2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml2.h; sourceTree = "<group>"; };
 		B206F53D19E3DD4A00B8E1DA /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = /System/Library/Frameworks/CoreMedia.framework; sourceTree = "<absolute>"; };
 		B214E66E0959DA6F00A347C1 /* Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = Main.cpp; path = ../sdldemo/Main.cpp; sourceTree = SOURCE_ROOT; };
 		B21683D119F3962500F07F0D /* USBBusProber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = USBBusProber.framework; path = Frameworks/USBBusProber.framework; sourceTree = "<group>"; };
@@ -87,12 +86,6 @@
 		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DC1394Camera.cpp; path = ../linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
 		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
-		B24EA4490015EAB600096D13 /* tinystr.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinystr.cpp; path = ../../tinyxml/tinystr.cpp; sourceTree = SOURCE_ROOT; };
-		B24EA44A0015EAB600096D13 /* tinystr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tinystr.h; path = ../../tinyxml/tinystr.h; sourceTree = SOURCE_ROOT; };
-		B24EA44B0015EAB600096D13 /* tinyxml.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxml.cpp; path = ../../tinyxml/tinyxml.cpp; sourceTree = SOURCE_ROOT; };
-		B24EA44C0015EAB600096D13 /* tinyxml.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tinyxml.h; path = ../../tinyxml/tinyxml.h; sourceTree = SOURCE_ROOT; };
-		B24EA44D0015EAB600096D13 /* tinyxmlerror.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlerror.cpp; path = ../../tinyxml/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
-		B24EA44E0015EAB600096D13 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tinyxmlparser.cpp; path = ../../tinyxml/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
 		B24EA4F20015EB5000096D13 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		B260492208E9BF4B0095D4C8 /* SportVideo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SportVideo.icns; sourceTree = SOURCE_ROOT; };
 		B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PS3EyeCamera.cpp; sourceTree = "<group>"; };
@@ -156,10 +149,10 @@
 				B2208520078AFC4D0047913B /* SDLinterface.h */,
 				B29AE05A1B0A95050046E462 /* FrameInverter.cpp */,
 				B29AE05B1B0A95050046E462 /* FrameInverter.h */,
-				B24EA4470015EA6F00096D13 /* tinyxml */,
+				B2F486A407788A9A00370074 /* drivers */,
 				B267A21D1B0A8CB9003CA930 /* common */,
 				B267A21E1B0A8D9F003CA930 /* interface */,
-				B2F486A407788A9A00370074 /* drivers */,
+				B200D5581B0E52BB00249D8B /* tinyxml */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -229,18 +222,14 @@
 			path = English.lproj;
 			sourceTree = "<group>";
 		};
-		B24EA4470015EA6F00096D13 /* tinyxml */ = {
+		B200D5581B0E52BB00249D8B /* tinyxml */ = {
 			isa = PBXGroup;
 			children = (
-				B24EA4490015EAB600096D13 /* tinystr.cpp */,
-				B24EA44A0015EAB600096D13 /* tinystr.h */,
-				B24EA44B0015EAB600096D13 /* tinyxml.cpp */,
-				B24EA44C0015EAB600096D13 /* tinyxml.h */,
-				B24EA44D0015EAB600096D13 /* tinyxmlerror.cpp */,
-				B24EA44E0015EAB600096D13 /* tinyxmlparser.cpp */,
+				B200D55A1B0E52BB00249D8B /* tinyxml2.cpp */,
+				B200D55B1B0E52BB00249D8B /* tinyxml2.h */,
 			);
 			name = tinyxml;
-			path = ../../tinyxml;
+			path = ../tinyxml;
 			sourceTree = "<group>";
 		};
 		B267A21D1B0A8CB9003CA930 /* common */ = {
@@ -358,6 +347,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B200D55D1B0E52BB00249D8B /* tinyxml2.cpp in Sources */,
 				B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */,
 				B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */,
 				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
@@ -367,11 +357,7 @@
 				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
 				B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */,
 				B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */,
-				B24EA44F0015EAB600096D13 /* tinystr.cpp in Sources */,
-				B24EA4510015EAB600096D13 /* tinyxml.cpp in Sources */,
-				B24EA4530015EAB600096D13 /* tinyxmlerror.cpp in Sources */,
 				B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */,
-				B24EA4540015EAB600096D13 /* tinyxmlparser.cpp in Sources */,
 				B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */,
 				B2375F3C0CCE305C00DE086D /* FontTool.cpp in Sources */,
 				B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */,
@@ -417,7 +403,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					../../tinyxml,
+					./tinyxml,
 					../macosx,
 					../common,
 				);
@@ -456,7 +442,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					../../tinyxml,
+					./tinyxml,
 					../macosx,
 					../common,
 				);
@@ -493,7 +479,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					../../tinyxml,
+					./tinyxml,
 					../macosx,
 					../common,
 				);

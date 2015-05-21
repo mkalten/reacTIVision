@@ -28,6 +28,8 @@
 #endif
 
 VisionEngine *engine;
+using namespace tinyxml2;
+
 static void terminate (int param)
 {
 	if (engine!=NULL) engine->stop();
@@ -70,24 +72,24 @@ void readSettings(application_settings *config) {
 #endif
 	}
 
-	TiXmlDocument xml_settings( config->file );
-	xml_settings.LoadFile();
+	XMLDocument xml_settings;
+	xml_settings.LoadFile(config->file);
 	if( xml_settings.Error() )
 	{
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
 		return;
 	}
 
-	TiXmlHandle docHandle( &xml_settings );
-	TiXmlHandle config_root = docHandle.FirstChild("portvideo");
+	XMLHandle docHandle( &xml_settings );
+	XMLHandle config_root = docHandle.FirstChildElement("portvideo");
 
-	TiXmlElement* camera_element = config_root.FirstChild("camera").Element();
+	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
 	{
 		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
 	}
 
-	TiXmlElement* image_element = config_root.FirstChild("image").Element();
+	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if( image_element!=NULL )
 	{
 		if(image_element->Attribute("display")!=NULL)  {
@@ -111,24 +113,24 @@ void readSettings(application_settings *config) {
 
 void writeSettings(application_settings *config) {
 
-	TiXmlDocument xml_settings( config->file );
-	xml_settings.LoadFile();
+	XMLDocument xml_settings;
+	xml_settings.LoadFile(config->file);
 	if( xml_settings.Error() )
 	{
 		std::cout << "Error loading configuration file: " << config->file << std::endl;
 		return;
 	}
 
-	TiXmlHandle docHandle( &xml_settings );
-	TiXmlHandle config_root = docHandle.FirstChild("portivideo");
+	XMLHandle docHandle( &xml_settings );
+	XMLHandle config_root = docHandle.FirstChildElement("portivideo");
 
-	TiXmlElement* camera_element = config_root.FirstChild("camera").Element();
+	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
 	{
 		if(camera_element->Attribute("config")!=NULL) camera_element->SetAttribute("config",config->camera_config);
 	}
 
-	TiXmlElement* image_element = config_root.FirstChild("image").Element();
+	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if( image_element!=NULL )
 	{
 		if(image_element->Attribute("display")!=NULL)  {
@@ -147,7 +149,7 @@ void writeSettings(application_settings *config) {
 
 	}
 
-	xml_settings.SaveFile();
+	xml_settings.SaveFile(config->file);
 	if( xml_settings.Error() ) std::cout << "Error saving configuration file: "  << config->file << std::endl;
 
 }
