@@ -65,7 +65,7 @@ public:
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
     
-    enum CameraSetting { BRIGHTNESS, CONTRAST, GAIN, SHUTTER, EXPOSURE, SHARPNESS, FOCUS, GAMMA };
+    enum CameraSetting { BRIGHTNESS, CONTRAST, GAIN, SHUTTER, EXPOSURE, SHARPNESS, FOCUS, GAMMA, COLOR_HUE, COLOR_RED, COLOR_BLUE, COLOR_GREEN };
     enum CropMode { CROP_NONE, CROP_RECT, CROP_SQUARE, CROP_WIDE};
     
     virtual int getCameraSettingStep(int mode) = 0;
@@ -115,6 +115,10 @@ protected:
         int sharpness;
         int focus;
         int gamma;
+        int hue;
+        int red;
+        int blue;
+        int green;
     };
     
     portvideo_settings config;
@@ -168,5 +172,9 @@ protected:
     int default_sharpness;
     int default_focus;
     int default_gamma;
+    int default_hue;
+    int default_red;
+    int default_blue;
+    int default_green;
 };
 #endif

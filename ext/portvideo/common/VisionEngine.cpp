@@ -201,8 +201,8 @@ void VisionEngine::mainLoop()
         ringBuffer->readFinished();
         
         if (interface_ && running_ ) {
-            interface_->updateDisplay();
             camera_->showInterface(interface_);
+            interface_->updateDisplay();
         }
         
         //long total_time = currentMicroSeconds()-start_time;
