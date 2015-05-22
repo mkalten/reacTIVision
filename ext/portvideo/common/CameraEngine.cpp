@@ -26,7 +26,15 @@ using namespace tinyxml2;
 			saveSettings();
 			return false;
 		} else if (!lock) {
-			currentCameraSetting = BRIGHTNESS;
+			currentCameraSetting = -1;
+			for (int i=BRIGHTNESS;i<=COLOR_GREEN;i++) {
+                		int active = getMaxCameraSetting(currentCameraSetting)-getMinCameraSetting(currentCameraSetting);
+				if (active) {
+					currentCameraSetting = i;
+					break;
+				}
+			}
+			if ( currentCameraSetting < 0) return false;
 			settingsDialog = true;
 			return true;
         	} else return lock;
