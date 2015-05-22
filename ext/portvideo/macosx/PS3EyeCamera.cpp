@@ -45,7 +45,7 @@ void PS3EyeCamera::listDevices() {
         for (int i=0;i<count;i++) {
             printf("\t%d: PS3Eye%d\n",i,i);
             printf("\t\tformat: YUV422\n");
-            printf("\t\t\t320x240 125|100|75|60|50|40|30 fps\n");
+            printf("\t\t\t320x240 150|125|100|75|60|50|40|30 fps\n");
             printf("\t\t\t640x480 60|50|40|30|15 fps\n");
         }
         
@@ -70,11 +70,11 @@ bool PS3EyeCamera::findCamera() {
         } else if (cameraID>=devices.size()) {
             return false;
         }
-        
+
         eye = devices.at(config.device);
         sprintf(cameraName, "PS3Eye");
     } else {
-        fprintf (stderr, "no PS3Eye cameras found\n");
+        print("no PS3Eye cameras found\n");
     }
 
     return eye != NULL;
@@ -83,7 +83,7 @@ bool PS3EyeCamera::findCamera() {
 bool PS3EyeCamera::initCamera() {
     // check config parameters
     if (config.cam_width == SETTING_MIN || config.cam_width == 320 || config.cam_height == SETTING_MIN || config.cam_height == 240) {
-        
+
         config.cam_width = cam_width = 320;
         config.cam_height = cam_height =  240;
         
