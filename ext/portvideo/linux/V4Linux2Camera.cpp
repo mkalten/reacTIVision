@@ -472,7 +472,7 @@ unsigned char* V4Linux2Camera::getFrame()  {
     }
 
     if (config.frame) return crop_buffer;
-    else if (pixelformat==V4L2_PIX_FMT_GREY) return raw_buffer;
+    else if ((!colour) && (pixelformat==V4L2_PIX_FMT_GREY)) return raw_buffer;
     else return cam_buffer;
 }
 
