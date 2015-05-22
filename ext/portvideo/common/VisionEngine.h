@@ -49,8 +49,11 @@ class VisionEngine
 {
 
 public:
-	VisionEngine(const char* name, const char * camera_config);
-	~VisionEngine() {};
+	VisionEngine(const char* name, application_settings *config);
+	~VisionEngine() {
+        if (camera_) delete camera_;
+        if (interface_) delete interface_;
+    };
 
 	void start();
 	void stop();
@@ -129,6 +132,8 @@ private:
 #else
     HANDLE cameraThread;
 #endif
+    
+    application_settings *configuration_;
 
 	std::string app_name_;
 	std::vector<std::string> help_text;

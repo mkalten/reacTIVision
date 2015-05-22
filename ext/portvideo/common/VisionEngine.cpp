@@ -374,6 +374,7 @@ void VisionEngine::teardownCamera()
         camera_->stopCamera();
         camera_->closeCamera();
         delete camera_;
+        camera_ = NULL;
     }
 }
 
@@ -386,7 +387,7 @@ void VisionEngine::setInterface(UserInterface *uiface) {
     }
 }
 
-VisionEngine::VisionEngine(const char* name, const char *camera_config)
+VisionEngine::VisionEngine(const char* name, application_settings *config)
 : error_( false )
 , pause_( false )
 , calibrate_( false )
@@ -403,7 +404,8 @@ VisionEngine::VisionEngine(const char* name, const char *camera_config)
 , width_( WIDTH )
 , height_( HEIGHT )
 {
-    setupCamera(camera_config);
+    configuration_ = config;
+    setupCamera(config->camera_config);
     displayBuffer_ = NULL;
 
     lastTime_ = currentTime();

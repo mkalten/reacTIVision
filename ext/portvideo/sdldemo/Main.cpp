@@ -189,11 +189,10 @@ int main(int argc, char* argv[]) {
 	readSettings(&config);
     config.headless = headless;
 
-    UserInterface *uiface;
-	engine = new VisionEngine(app_name, config.camera_config);
+	engine = new VisionEngine(app_name, &config);
  
     if (!headless) {
-        uiface = new SDLinterface(app_name,config.fullscreen);
+        UserInterface *uiface = new SDLinterface(app_name,config.fullscreen);
         switch (config.display_mode) {
             case 0: uiface->setDisplayMode(uiface->NO_DISPLAY); break;
             case 1: uiface->setDisplayMode(uiface->SOURCE_DISPLAY); break;
@@ -206,11 +205,6 @@ int main(int argc, char* argv[]) {
     engine->addFrameProcessor(frameinverter);
     
 	engine->start();
-
-    if (!headless) {
-        config.display_mode = uiface->getDisplayMode();
-        delete uiface;
-    }
     
 	engine->removeFrameProcessor(frameinverter);
 	delete frameinverter;
