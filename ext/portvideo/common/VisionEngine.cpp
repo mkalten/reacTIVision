@@ -241,13 +241,13 @@ void VisionEngine::frameStatistics(long cameraTime, long processingTime, long to
     
     if (diffTime >= 1) {
         current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
-        std::cout << current_fps_ << "fps" << std::endl;
+        std::cout << current_fps_ << "fps ";
         
-        std::cout 	<< (cameraTime_/frames_)/1000.0f << " "
-        << (processingTime_/frames_)/1000.0f << " "
-        << (interfaceTime_/frames_)/1000.0f << " "
-        << (totalTime_/frames_)/1000.0f << std::endl;
-        std::cout << "average processing latency: " << (processingTime_/frames_)/1000.0f << " ms" << std::endl;
+        std::cout << std::fixed << std::setprecision(2)
+        << "c:" << (cameraTime_/frames_)/1000.0f
+        << "ms p:" << (processingTime_/frames_)/1000.0f
+        << "ms i:" << (interfaceTime_/frames_)/1000.0f
+        << "ms t:" << (totalTime_/frames_)/1000.0f << "ms" << std::endl;
         
         cameraTime_ = processingTime_ = interfaceTime_ = totalTime_ = 0.0f;
         

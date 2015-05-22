@@ -21,6 +21,7 @@
 #define VISIONENGINE_H
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <algorithm>
