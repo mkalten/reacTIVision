@@ -368,7 +368,7 @@ void SDLinterface::displayControl(const char *title, int min, int max, int value
     FontTool::drawText(x_offset+128-(FontTool::getTextWidth(title)/2),y_offset-FontTool::getFontHeight(),title);
     
     // draw the border
-    for (int i=x_offset;i<(x_offset+256);i++) {
+    for (int i=x_offset;i<=(x_offset+256);i++) {
         int pixel=(width_*y_offset+i)*4+1;
         disp[pixel]=disp[pixel+2]=255;
         pixel=(width_*(y_offset+25)+i)*4+1;
