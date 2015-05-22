@@ -326,22 +326,22 @@ namespace ps3eye {
     }
     
     /*static double getTickFrequency()
-    {
-#if defined WIN32 || defined _WIN32 || defined WINCE
-        LARGE_INTEGER freq;
-        QueryPerformanceFrequency(&freq);
-        return (double)freq.QuadPart;
-#else
-        static double freq = 0;
-        if( freq == 0 )
-        {
-            mach_timebase_info_data_t sTimebaseInfo;
-            mach_timebase_info(&sTimebaseInfo);
-            freq = sTimebaseInfo.denom*1e9/sTimebaseInfo.numer;
-        }
-        return freq;
-#endif
-    }*/
+     {
+     #if defined WIN32 || defined _WIN32 || defined WINCE
+     LARGE_INTEGER freq;
+     QueryPerformanceFrequency(&freq);
+     return (double)freq.QuadPart;
+     #else
+     static double freq = 0;
+     if( freq == 0 )
+     {
+     mach_timebase_info_data_t sTimebaseInfo;
+     mach_timebase_info(&sTimebaseInfo);
+     freq = sTimebaseInfo.denom*1e9/sTimebaseInfo.numer;
+     }
+     return freq;
+     #endif
+     }*/
     //
     
     
@@ -884,8 +884,8 @@ namespace ps3eye {
     
     const uint8_t* PS3EYECam::getLastFramePointer()
     {
-        const uint8_t* frame = const_cast<uint8_t*>(urb->frame_buffer + urb->frame_complete_ind * urb->frame_size);
         last_qued_frame_time = urb->last_frame_time;
+        const uint8_t* frame = const_cast<uint8_t*>(urb->frame_buffer + urb->frame_complete_ind * urb->frame_size);
         return frame;
     }
     

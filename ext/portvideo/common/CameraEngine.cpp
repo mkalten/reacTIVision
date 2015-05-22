@@ -22,6 +22,7 @@ using namespace tinyxml2;
 	bool CameraEngine::showSettingsDialog(bool lock) {
 		if (settingsDialog) {
 			settingsDialog = false;
+            updateSettings();
 			saveSettings();
 			return false;
 		} else if (!lock) {
@@ -34,7 +35,7 @@ using namespace tinyxml2;
 	void CameraEngine::control(unsigned char key) {
 		if(!settingsDialog) return;
 
-        int value,min,max,step = 0;
+        int value,min,max,step,active = 0;
 		switch(key) {
 			case VALUE_DOWN:
 				value = getCameraSetting(currentCameraSetting);
@@ -60,11 +61,20 @@ using namespace tinyxml2;
 				break;
 			case SETTING_PREVIOUS:
 				currentCameraSetting--;
-				if(currentCameraSetting<0) currentCameraSetting=GAMMA;
+                if(currentCameraSetting<0) {
+                    if (colour) currentCameraSetting=COLOR_GREEN;
+                    else currentCameraSetting=GAMMA;
+                }
+                active = getMaxCameraSetting(currentCameraSetting)-getMinCameraSetting(currentCameraSetting);
+                if (!active) control(SETTING_PREVIOUS);
 				break;
 			case SETTING_NEXT:
 				currentCameraSetting++;
-				if(currentCameraSetting>GAMMA) currentCameraSetting=0;
+				if ((colour) && (currentCameraSetting>COLOR_GREEN)) currentCameraSetting=0;
+                else if ((!colour) && (currentCameraSetting>GAMMA)) currentCameraSetting=0;
+                active = getMaxCameraSetting(currentCameraSetting)-getMinCameraSetting(currentCameraSetting);
+                if (!active) control(SETTING_NEXT);
+
 				break;
 		}
 
@@ -87,6 +97,10 @@ using namespace tinyxml2;
 			case SHARPNESS:		settingText = "Sharpness";  break;
 			case FOCUS:         settingText = "Focus";      break;
 			case GAMMA:         settingText = "Gamma";      break;
+            case COLOR_HUE:     settingText = "Color Hue";  break;
+            case COLOR_RED:     settingText = "Red Balance";  break;
+            case COLOR_BLUE:    settingText = "Blue Balance"; break;
+            case COLOR_GREEN:    settingText = "Green Balance"; break;
 		}
 
 		char displayText[256];
@@ -117,6 +131,10 @@ using namespace tinyxml2;
 		config.exposure = SETTING_DEFAULT;
 		config.sharpness = SETTING_DEFAULT;
 		config.shutter = SETTING_DEFAULT;
+        config.hue = SETTING_DEFAULT;
+        config.blue = SETTING_DEFAULT;
+        config.red = SETTING_DEFAULT;
+        config.green = SETTING_DEFAULT;
 
 		default_brightness = INT_MIN;
 		default_contrast = INT_MIN;
@@ -126,6 +144,10 @@ using namespace tinyxml2;
 		default_sharpness = INT_MIN;
 		default_focus = INT_MIN;
 		default_gamma = INT_MIN;
+        default_hue = INT_MIN;
+        default_red = INT_MIN;
+        default_blue = INT_MIN;
+        default_green = INT_MIN;
 
 #ifdef __APPLE__
 		char path[1024];
@@ -308,7 +330,7 @@ using namespace tinyxml2;
 	}
 
 void CameraEngine::saveSettings() {
-
+ 
 	if (strcmp( config_file, "none" ) == 0) {
 #ifdef __APPLE__
 		char path[1024];
@@ -625,49 +647,49 @@ void CameraEngine::applyCameraSettings() {
 	applyCameraSetting(GAMMA,config.gamma);
 }
 
-void CameraEngine::updateSettings()  {
+void CameraEngine::updateSettings() {
 
-    int brightness = getCameraSetting(BRIGHTNESS);
-    if (brightness==getMinCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MIN;
-    if (brightness==getMaxCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MAX;
-    if (brightness==getDefaultCameraSetting(BRIGHTNESS)) config.brightness=SETTING_DEFAULT;
+    config.brightness = getCameraSetting(BRIGHTNESS);
+    if (config.brightness==getMinCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MIN;
+    if (config.brightness==getMaxCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MAX;
+    if (config.brightness==getDefaultCameraSetting(BRIGHTNESS)) config.brightness=SETTING_DEFAULT;
     //printf("brightness %d\n",brightness);
 
-    int contrast = getCameraSetting(CONTRAST);
-    if (contrast==getMinCameraSetting(CONTRAST)) config.contrast=SETTING_MIN;
-    if (contrast==getMaxCameraSetting(CONTRAST)) config.contrast=SETTING_MAX;
-    if (contrast==getDefaultCameraSetting(CONTRAST)) config.contrast=SETTING_DEFAULT;
+    config.contrast = getCameraSetting(CONTRAST);
+    if (config.contrast==getMinCameraSetting(CONTRAST)) config.contrast=SETTING_MIN;
+    if (config.contrast==getMaxCameraSetting(CONTRAST)) config.contrast=SETTING_MAX;
+    if (config.contrast==getDefaultCameraSetting(CONTRAST)) config.contrast=SETTING_DEFAULT;
     //printf("contrast %d\n",contrast);
 
-    int gain = getCameraSetting(GAIN);
-    if (gain==getMinCameraSetting(GAIN)) config.gain=SETTING_MIN;
-    if (gain==getMaxCameraSetting(GAIN)) config.gain=SETTING_MAX;
-    if (gain==getDefaultCameraSetting(GAIN)) config.gain=SETTING_DEFAULT;
+    config.gain = getCameraSetting(GAIN);
+    if (config.gain==getMinCameraSetting(GAIN)) config.gain=SETTING_MIN;
+    if (config.gain==getMaxCameraSetting(GAIN)) config.gain=SETTING_MAX;
+    if (config.gain==getDefaultCameraSetting(GAIN)) config.gain=SETTING_DEFAULT;
     //printf("gain %d\n",gain);
 
-    int exposure = getCameraSetting(EXPOSURE);
-    if (exposure==getMinCameraSetting(EXPOSURE)) config.exposure=SETTING_MIN;
-    if (exposure==getMaxCameraSetting(EXPOSURE)) config.exposure=SETTING_MAX;
+    config.exposure = getCameraSetting(EXPOSURE);
+    if (config.exposure==getMinCameraSetting(EXPOSURE)) config.exposure=SETTING_MIN;
+    if (config.exposure==getMaxCameraSetting(EXPOSURE)) config.exposure=SETTING_MAX;
     if (getCameraSettingAuto(EXPOSURE)==true) config.exposure=SETTING_AUTO;
-    if (exposure==getDefaultCameraSetting(EXPOSURE)) config.exposure=SETTING_DEFAULT;
+    if (config.exposure==getDefaultCameraSetting(EXPOSURE)) config.exposure=SETTING_DEFAULT;
     //printf("exposure %d\n",exposure);
 
-    int sharpness = getCameraSetting(SHARPNESS);
-    if (sharpness==getMinCameraSetting(SHARPNESS)) config.sharpness=SETTING_MIN;
-    if (sharpness==getMaxCameraSetting(SHARPNESS)) config.sharpness=SETTING_MAX;
-    if (sharpness==getDefaultCameraSetting(SHARPNESS)) config.sharpness=SETTING_DEFAULT;
+    config.sharpness = getCameraSetting(SHARPNESS);
+    if (config.sharpness==getMinCameraSetting(SHARPNESS)) config.sharpness=SETTING_MIN;
+    if (config.sharpness==getMaxCameraSetting(SHARPNESS)) config.sharpness=SETTING_MAX;
+    if (config.sharpness==getDefaultCameraSetting(SHARPNESS)) config.sharpness=SETTING_DEFAULT;
     //printf("sharpness %d\n",sharpness);
 
-    int focus = getCameraSetting(FOCUS);
-    if (focus==getMinCameraSetting(FOCUS)) config.focus=SETTING_MIN;
-    if (focus==getMaxCameraSetting(FOCUS)) config.focus=SETTING_MAX;
-    if (focus==getDefaultCameraSetting(FOCUS)) config.focus=SETTING_DEFAULT;
+    config.focus = getCameraSetting(FOCUS);
+    if (config.focus==getMinCameraSetting(FOCUS)) config.focus=SETTING_MIN;
+    if (config.focus==getMaxCameraSetting(FOCUS)) config.focus=SETTING_MAX;
+    if (config.focus==getDefaultCameraSetting(FOCUS)) config.focus=SETTING_DEFAULT;
     //printf("focus %d\n",focus);
 
-    int gamma = getCameraSetting(GAMMA);
-    if (gamma==getMinCameraSetting(GAMMA)) config.gamma=SETTING_MIN;
-    if (gamma==getMaxCameraSetting(GAMMA)) config.gamma=SETTING_MAX;
-    if (gamma==getDefaultCameraSetting(GAMMA)) config.gamma=SETTING_DEFAULT;
+    config.gamma = getCameraSetting(GAMMA);
+    if (config.gamma==getMinCameraSetting(GAMMA)) config.gamma=SETTING_MIN;
+    if (config.gamma==getMaxCameraSetting(GAMMA)) config.gamma=SETTING_MAX;
+    if (config.gamma==getDefaultCameraSetting(GAMMA)) config.gamma=SETTING_DEFAULT;
     if (getCameraSettingAuto(GAMMA)==true) config.gamma=SETTING_AUTO;
     //printf("gamma %d\n",gamma);
 
