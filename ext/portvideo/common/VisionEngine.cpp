@@ -152,7 +152,6 @@ void VisionEngine::stopThread() {
 #else
     if( cameraThread ) pthread_join(cameraThread,NULL);
 #endif
-    cameraThread = NULL;
     
 }
 

@@ -209,7 +209,7 @@ int main(int argc, char* argv[]) {
 	engine->removeFrameProcessor(frameinverter);
 	delete frameinverter;
 
+    	delete engine;
 	writeSettings(&config);
-    delete engine;
 	return 0;
 }

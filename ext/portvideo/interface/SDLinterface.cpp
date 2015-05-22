@@ -23,7 +23,10 @@
 unsigned char* SDLinterface::openDisplay(VisionEngine *engine) {
     engine_ = engine;
     if( !setupWindow() ) return NULL;
-    if (displayMode_!=NO_DISPLAY) displayMessage("starting camera");
+    if (displayMode_==NO_DISPLAY) {
+        SDL_RenderClear(renderer_);
+	SDL_RenderPresent(renderer_);
+    } else displayMessage("starting camera");
     return (unsigned char*)displayImage_->pixels;
 }
 
