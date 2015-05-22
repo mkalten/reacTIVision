@@ -42,7 +42,7 @@ static DWORD WINAPI getFrameFromCamera( LPVOID obj )
     
     while(engine->running_) {
         if(!engine->pause_) {
-            //long start_time = VisionEngine::currentTime();
+            //long start_time = VisionEngine::currentMicroSeconds();
             cameraBuffer = engine->camera_->getFrame();
             if (cameraBuffer!=NULL) {
                 cameraWriteBuffer = engine->ringBuffer->getNextBufferToWrite();
@@ -50,8 +50,8 @@ static DWORD WINAPI getFrameFromCamera( LPVOID obj )
                     memcpy(cameraWriteBuffer,cameraBuffer,engine->ringBuffer->size());
                     engine->framenumber_++;
                     engine->ringBuffer->writeFinished();
-                    //long driver_time = VisionEngine::currentTime() - start_time;
-                    //std::cout << "camera latency: " << (driver_time/100)/10.0f << "ms" << std::endl;
+                    //long driver_time = VisionEngine::currentMicroSeconds() - start_time;
+                    //std::cout << "camera latency: " << driver_time/1000.0f << "ms" << std::endl;
                 }
                 gosleep(1);
             } else {
@@ -201,14 +201,13 @@ void VisionEngine::mainLoop()
             memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
         ringBuffer->readFinished();
         
-        //if (!recording_) frameStatistics(camera_time-start_time,processing_time-camera_time, currentTime()-start_time);
         if (interface_ && running_ ) {
             interface_->updateDisplay();
             camera_->showInterface(interface_);
         }
         
-        /*long total_time = currentMicroSeconds()-start_time;
-         frameStatistics(camera_time,processing_time,total_time);*/
+        //long total_time = currentMicroSeconds()-start_time;
+        //frameStatistics(camera_time,processing_time,total_time);
 
     }
 }
