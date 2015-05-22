@@ -65,17 +65,12 @@ bool PS3EyeCamera::findCamera() {
     if (devices.size() > 0)
     {
         cameraID = config.device;
-        if (cameraID < 0) {
-            cameraID = 0;
-        } else if (cameraID>=devices.size()) {
-            return false;
-        }
-
+        if (cameraID>=devices.size()) return false;
+        else if (cameraID < 0) cameraID = 0;
+        
         eye = devices.at(config.device);
         sprintf(cameraName, "PS3Eye");
-    } else {
-        print("no PS3Eye cameras found\n");
-    }
+    } else printf("no PS3Eye cameras found\n");
 
     return eye != NULL;
 }
@@ -105,17 +100,14 @@ bool PS3EyeCamera::initCamera() {
         else fps = config.cam_fps;
         
     } else {
-        // UNSUPPORTED CONFIGURATION
-        
         config.cam_width = cam_width = 640;
         config.cam_height = cam_height = 480;
         config.cam_fps = fps = 60;
     }
     
-
     // init camera
     eye->init( config.cam_width, config.cam_height, config.cam_fps );
-    fps = eye->getFrameRate();
+    config.cam_fps = fps = eye->getFrameRate();
     
     applyCameraSettings();
     
