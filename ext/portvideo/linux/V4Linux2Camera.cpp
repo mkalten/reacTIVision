@@ -61,10 +61,10 @@ bool V4Linux2Camera::initCamera() {
 
     cam_width = 0;
     cam_height = 0;
-    int max_width = 0;
-    int max_height = 0;
-    int min_width = INT_MAX;
-    int min_height = INT_MAX;
+    unsigned int max_width = 0;
+    unsigned int max_height = 0;
+    unsigned int min_width = INT_MAX;
+    unsigned int min_height = INT_MAX;
 
     // select size
     for (int i=0;;i++) {
@@ -79,7 +79,7 @@ bool V4Linux2Camera::initCamera() {
         if (frmsize.discrete.width<min_width) min_width=frmsize.discrete.width;
         if (frmsize.discrete.height<min_height) min_height=frmsize.discrete.height;
 
-        if ((config.cam_width==frmsize.discrete.width) && (config.cam_height==frmsize.discrete.height)) {
+        if ((config.cam_width==(int)frmsize.discrete.width) && (config.cam_height==(int)frmsize.discrete.height)) {
             cam_width = frmsize.discrete.width;
             cam_height = frmsize.discrete.height;
             break;

@@ -60,7 +60,7 @@ void DC1394Camera::listDevices() {
     } else if (list->num == 1) printf("1 DC1394 camera found:\n");
     else printf("%d DC1394 cameras found:\n", list->num);
     
-    for (int i=0;i<list->num;i++) {
+    for (unsigned int i=0;i<list->num;i++) {
         dc1394camera_t *camera = dc1394_camera_new (d, list->ids[i].guid);
         if (!camera) continue;
         printf("\t%d: %s\n", i, camera->model);
@@ -73,7 +73,7 @@ void DC1394Camera::listDevices() {
             continue;
         }
         
-        for (int i=0;i<video_modes.num;i++) {
+        for (unsigned int i=0;i<video_modes.num;i++) {
             
             if(video_modes.modes[i]>=DC1394_VIDEO_MODE_FORMAT7_0) {
                 dc1394color_coding_t coding;
@@ -98,7 +98,7 @@ void DC1394Camera::listDevices() {
             
                 dc1394framerates_t framerates;
                 dc1394_video_get_supported_framerates(camera,video_modes.modes[i],&framerates);
-                for (int j=0;j<framerates.num;j++) {
+                for (unsigned int j=0;j<framerates.num;j++) {
                     float fps = framerate_table[framerates.framerates[j]-DC1394_FRAMERATE_MIN];
                     if(int(fps)==fps) printf("%d|",int(fps));
                     else printf("%'.1f|",fps);
@@ -127,7 +127,7 @@ bool DC1394Camera::findCamera() {
 	if (list->num == 0) {
 		fprintf (stderr, "no DC1394 cameras found\n");
 		dc1394_free(d);
-		return false;  
+		return false;
 	} else if (list->num == 1) printf("1 DC1394 camera found\n");
     else printf("%d DC1394 camera found\n", list->num);
 
@@ -135,7 +135,7 @@ bool DC1394Camera::findCamera() {
     cameraID = config.device;
     if (cameraID<0) cameraID=0;
     
-    if (cameraID>=list->num) {
+    if (cameraID>=(int)list->num) {
         dc1394_free(d);
         return false;
     }
@@ -248,7 +248,7 @@ bool DC1394Camera::initCamera() {
 		}
 		
 		if ((config.cam_width!=SETTING_MAX) || (config.cam_height!=SETTING_MAX)) {
-			for (int i=video_modes.num-1;i>=0;i--) {
+			for (unsigned int i=video_modes.num-1;i>=0;i--) {
 				if (!dc1394_is_video_mode_scalable(video_modes.modes[i])) {
 					dc1394_get_color_coding_from_video_mode(camera,video_modes.modes[i], &coding);
 					if ((config.cam_width==width_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN]) && (config.cam_height==height_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN])) {
@@ -265,7 +265,7 @@ bool DC1394Camera::initCamera() {
 		if (video_mode == DC1394_VIDEO_MODE_FORMAT7_0) {
 			unsigned int w=0;
 			unsigned int h=0;
-			for (int i=video_modes.num-1;i>=0;i--) {
+			for (unsigned int i=video_modes.num-1;i>=0;i--) {
 				if (!dc1394_is_video_mode_scalable(video_modes.modes[i])) {
 					dc1394_get_color_coding_from_video_mode(camera,video_modes.modes[i], &coding);
 					if ((coding==preferred_coding) || (coding==YUV411_coding) || (coding==YUV422_coding)) {
