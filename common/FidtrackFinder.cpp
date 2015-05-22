@@ -292,16 +292,16 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 	#endif
 */
     
-    //long start_time = SDLinterface::currentTime();
+    //long start_time = VisionEngine::currentTime();
 
 	// segmentation
 	step_segmenter( &segmenter, dest );
 	// fiducial recognition
 	int fid_count = find_fiducialsX( fiducials, MAX_FIDUCIAL_COUNT,  &fidtrackerx, &segmenter, width, height);
     
-    //long segment_time = SDLinterface::currentTime() - start_time;
+    //long segment_time = VisionEngine::currentTime() - start_time;
     //std::cout << "segment latency: " << (segment_time/100.0f)/10.0f << "ms" << std::endl;
-    //start_time = SDLinterface::currentTime();
+    //start_time = VisionEngine::currentTime();
 
 	float total_leaf_size = 0.0f;
 	float total_fiducial_size = 0.0f;
@@ -585,7 +585,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 	if (show_settings) drawDisplay(display);
 	//printStatistics(start_time);
     
-    //long fiducial_time = SDLinterface::currentTime() - start_time;
+    //long fiducial_time = VisionEngine::currentTime() - start_time;
     //std::cout << "fiducial latency: " << (fiducial_time/100.0f)/10.0f << "ms" << std::endl;
 }
 

@@ -125,11 +125,10 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 	return true;
 }
 
-//void FrameThresholder::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
 void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
 
-    //long start_time = SDLinterface::currentTime();
+    //long start_time = VisionEngine::currentTime();
     //tiled_bernsen_threshold( thresholder, dest, src, srcBytes, width, height, tile_size, gradient );
     
 #ifdef WIN32
@@ -175,7 +174,7 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
 
     }
 
-    /*long threshold_time = SDLinterface::currentTime() - start_time;
+    /*long threshold_time = VisionEngine::currentTime() - start_time;
     float latency = (threshold_time/100.0f)/10.0f;
     std::cout << "threshold latency: " << latency << "ms" << std::endl;*/
 }

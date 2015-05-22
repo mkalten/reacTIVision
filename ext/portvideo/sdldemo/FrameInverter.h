@@ -27,8 +27,7 @@ class FrameInverter: public FrameProcessor
 public:	
 	FrameInverter() {};
 	~FrameInverter() {};
-	
-	//void process(unsigned char *src, unsigned char *dest, SDL_Surface *display);
+
     void process(unsigned char *src, unsigned char *dest, unsigned char *display);
 };
 

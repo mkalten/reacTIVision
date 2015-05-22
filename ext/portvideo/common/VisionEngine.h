@@ -77,7 +77,11 @@ public:
 
 	long framenumber_;
 
-
+    static long currentTime() {
+        time_t currentTime;
+        time(&currentTime);
+        return (long) currentTime;
+    }
 
 protected:
 	void initFrameProcessors();
@@ -97,12 +101,6 @@ protected:
 	unsigned char* sourceBuffer_;
 	unsigned char* destBuffer_;
     unsigned char* displayBuffer_;
-    
-    long currentTime() {
-        time_t currentTime;
-        time(&currentTime);
-        return (long) currentTime;
-    }
     
 #ifndef NDEBUG
     void saveBuffer(unsigned char* buffer);

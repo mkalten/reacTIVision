@@ -72,7 +72,6 @@ public:
 		 if (initialized) delete dmap;
 	}
 
-	//virtual void process(unsigned char *src, unsigned char *dest, SDL_Surface *display) = 0;
     virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
 
 	bool init(int w, int h, int sb ,int db);

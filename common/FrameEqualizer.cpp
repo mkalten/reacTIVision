@@ -41,7 +41,7 @@ bool FrameEqualizer::init(int w, int h, int sb, int db) {
 void FrameEqualizer::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
     
-    //long start_time = SDLinterface::currentTime();
+    //long start_time = VisionEngine::currentTime();
 
 	/*if (equalize) {
 		int size = width*height;
@@ -99,7 +99,7 @@ void FrameEqualizer::process(unsigned char *src, unsigned char *dest, unsigned c
         equalize = true;
     }
     
-     /*long equalize_time = SDLinterface::currentTime() - start_time;
+     /*long equalize_time = VisionEngine::currentTime() - start_time;
      float latency = (equalize_time/100.0f)/10.0f;
      std::cout << "equalizer latency: " << latency << "ms" << std::endl;*/
 }

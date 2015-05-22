@@ -249,7 +249,7 @@ void FiducialFinder::sendTuioMessages() {
 			// finally send the packet
 			tuio_server->addObjSeq(fseq);
 			tuio_server->sendObjMessages();
-			//if (fseq>0) std::cout << "sent frame " << totalframes << " at " << SDLinterface::currentTime() << std::endl; 
+			//if (fseq>0) std::cout << "sent frame " << totalframes << " at " << VisionEngine::currentTime() << std::endl; 
 		}
 		delete[] aliveList;
 }

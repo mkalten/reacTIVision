@@ -19,7 +19,6 @@
 
 #include "FrameInverter.h"
 
-//void FrameInverter::process(unsigned char *src, unsigned char *dest, SDL_Surface *display) {
 void FrameInverter::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 	// inverts the image
 	for (int i=srcSize;i>0;i--) {

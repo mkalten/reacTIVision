@@ -86,12 +86,6 @@ protected:
 
 private:
     
-    long currentTime() {
-        time_t currentTime;
-        time(&currentTime);
-        return (long) currentTime;
-    }
-    
     SDL_Renderer *renderer_;
     SDL_Window *window_;
     SDL_Surface *displayImage_;
