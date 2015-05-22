@@ -28,7 +28,7 @@ using namespace tinyxml2;
 		} else if (!lock) {
 			currentCameraSetting = -1;
 			for (int i=BRIGHTNESS;i<=COLOR_GREEN;i++) {
-                		int active = getMaxCameraSetting(currentCameraSetting)-getMinCameraSetting(currentCameraSetting);
+                int active = getMaxCameraSetting(i)-getMinCameraSetting(i);
 				if (active) {
 					currentCameraSetting = i;
 					break;

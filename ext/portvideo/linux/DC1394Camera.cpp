@@ -248,7 +248,7 @@ bool DC1394Camera::initCamera() {
 		}
 		
 		if ((config.cam_width!=SETTING_MAX) || (config.cam_height!=SETTING_MAX)) {
-			for (unsigned int i=video_modes.num-1;i>=0;i--) {
+			for (int i=video_modes.num-1;i>=0;i--) {
 				if (!dc1394_is_video_mode_scalable(video_modes.modes[i])) {
 					dc1394_get_color_coding_from_video_mode(camera,video_modes.modes[i], &coding);
 					if ((config.cam_width==width_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN]) && (config.cam_height==height_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN])) {
@@ -265,7 +265,7 @@ bool DC1394Camera::initCamera() {
 		if (video_mode == DC1394_VIDEO_MODE_FORMAT7_0) {
 			unsigned int w=0;
 			unsigned int h=0;
-			for (unsigned int i=video_modes.num-1;i>=0;i--) {
+			for (int i=video_modes.num-1;i>=0;i--) {
 				if (!dc1394_is_video_mode_scalable(video_modes.modes[i])) {
 					dc1394_get_color_coding_from_video_mode(camera,video_modes.modes[i], &coding);
 					if ((coding==preferred_coding) || (coding==YUV411_coding) || (coding==YUV422_coding)) {
