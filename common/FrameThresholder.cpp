@@ -18,6 +18,7 @@
 */
 
 #include "FrameThresholder.h"
+#include "VisionEngine.h"
 
 // the thread function
 #ifndef WIN32
@@ -128,7 +129,7 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
 
 
-    //long start_time = VisionEngine::currentTime();
+    //long start_time = VisionEngine::currentMicroSeconds();
     //tiled_bernsen_threshold( thresholder, dest, src, srcBytes, width, height, tile_size, gradient );
     
 #ifdef WIN32
@@ -174,9 +175,9 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned
 
     }
 
-    /*long threshold_time = VisionEngine::currentTime() - start_time;
-    float latency = (threshold_time/100.0f)/10.0f;
-    std::cout << "threshold latency: " << latency << "ms" << std::endl;*/
+    //long threshold_time = VisionEngine::currentMicroSeconds() - start_time;
+    //float latency = threshold_time/1000.0f;
+    //std::cout << "threshold latency: " << latency << "ms" << std::endl;
 }
 
 bool FrameThresholder::setFlag(unsigned char flag, bool value, bool lock) {

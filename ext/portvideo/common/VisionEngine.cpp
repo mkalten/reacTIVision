@@ -100,7 +100,7 @@ void VisionEngine::start() {
     }
     
     if( camera_->startCamera() ) {
-
+        
         startThread();
         
         // add the help message from all FrameProcessors
@@ -147,8 +147,8 @@ void VisionEngine::startThread() {
 void VisionEngine::stopThread() {
     
 #ifdef WIN32
-	WaitForSingleObject(cameraThread,INFINITE);
-	if( cameraThread ) CloseHandle( cameraThread );
+    WaitForSingleObject(cameraThread,INFINITE);
+    if( cameraThread ) CloseHandle( cameraThread );
 #else
     if( cameraThread ) pthread_join(cameraThread,NULL);
 #endif
@@ -173,7 +173,7 @@ void VisionEngine::mainLoop()
             continue;
         }
         
-        //long start_time = currentTime();
+        //long start_time = currentMicroSeconds();
         cameraReadBuffer = ringBuffer->getNextBufferToRead();
         // loop until we get access to a frame
         while (cameraReadBuffer==NULL) {
@@ -183,12 +183,12 @@ void VisionEngine::mainLoop()
             cameraReadBuffer = ringBuffer->getNextBufferToRead();
             //if (cameraReadBuffer!=NULL) break;
         }
-        //long camera_time = currentTime();
-        
+        //long camera_time = currentMicroSeconds()-start_time;
+
         // do the actual image processing job
         for (frame = processorList.begin(); frame!=processorList.end(); frame++)
             (*frame)->process(cameraReadBuffer,destBuffer_,displayBuffer_);
-        //long processing_time = currentTime();
+        //long processing_time = currentMicroSeconds()-start_time;
         
 #ifndef NDEBUG
         if (recording_) {
@@ -203,9 +203,13 @@ void VisionEngine::mainLoop()
         
         //if (!recording_) frameStatistics(camera_time-start_time,processing_time-camera_time, currentTime()-start_time);
         if (interface_ && running_ ) {
-		interface_->updateDisplay();
-		camera_->showInterface(interface_);
-	}
+            interface_->updateDisplay();
+            camera_->showInterface(interface_);
+        }
+        
+        /*long total_time = currentMicroSeconds()-start_time;
+         frameStatistics(camera_time,processing_time,total_time);*/
+
     }
 }
 
@@ -228,26 +232,27 @@ void VisionEngine::stop() {
 void VisionEngine::frameStatistics(long cameraTime, long processingTime, long totalTime) {
     
     frames_++;
-    processingTime_+=processingTime;
-    totalTime_+=totalTime;
     cameraTime_+=cameraTime;
+    processingTime_+=(processingTime-cameraTime);
+    interfaceTime_+=(totalTime-processingTime);
+    totalTime_+=totalTime;
     
-    time_t currentTime;
-    time(&currentTime);
-    long diffTime = (long)( currentTime - lastTime_ );
+    long currentTime_ = currentSeconds();
+    long diffTime = currentTime_ - lastTime_ ;
     
     if (diffTime >= 1) {
         current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
+        std::cout << current_fps_ << "fps" << std::endl;
         
-        std::cout 	<< floor((cameraTime_/frames_)/1000.0f) << " "
-         << floor((processingTime_/frames_)/1000.0f) << " "
-         << floor((totalTime_/frames_)/1000.0f) << std::endl;
-        std::cout << "frame latency: " << ((processingTime_/frames_)/100)/10.0f << " ms" << std::endl;
+        std::cout 	<< (cameraTime_/frames_)/1000.0f << " "
+        << (processingTime_/frames_)/1000.0f << " "
+        << (interfaceTime_/frames_)/1000.0f << " "
+        << (totalTime_/frames_)/1000.0f << std::endl;
+        std::cout << "average processing latency: " << (processingTime_/frames_)/1000.0f << " ms" << std::endl;
         
-        cameraTime_ = processingTime_ = totalTime_ = 0.0f;
-        std::cout << current_fps_ << std::endl;
+        cameraTime_ = processingTime_ = interfaceTime_ = totalTime_ = 0.0f;
         
-        lastTime_ = (long)currentTime;
+        lastTime_ = currentTime_;
         frames_ = 0;
     }
 }
@@ -293,7 +298,7 @@ void VisionEngine::event(int key)
     camera_->control(key);
     for (frame = processorList.begin(); frame!=processorList.end(); frame++)
         display_lock_ = (*frame)->toggleFlag(key,display_lock_);
-
+    
 }
 
 void VisionEngine::allocateBuffers()
@@ -365,7 +370,7 @@ void VisionEngine::setupCamera(const char *camera_config) {
         camera_ = NULL;
     }
     
-     allocateBuffers();
+    allocateBuffers();
 }
 
 void VisionEngine::teardownCamera()
@@ -407,16 +412,16 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
     configuration_ = config;
     setupCamera(config->camera_config);
     displayBuffer_ = NULL;
-
-    lastTime_ = currentTime();
-    cameraTime_ = processingTime_ = totalTime_ = 0.0f;
-
+    
+    lastTime_ = currentSeconds();
+    cameraTime_ = processingTime_ = interfaceTime_ = totalTime_ = 0.0f;
+    
     app_name_ = std::string(name);
     
     help_text.push_back("display:");
     help_text.push_back("   n - no image");
     help_text.push_back("   s - source image");
-    help_text.push_back("   t - target image");	
+    help_text.push_back("   t - target image");
     help_text.push_back("   h - toggle help text");
     help_text.push_back("  F1 - toggle fullscreen");
     help_text.push_back("");

@@ -273,7 +273,7 @@ void SDLinterface::toggleFullScreen() {
 void SDLinterface::showFrameRate() {
     
     frames_++;
-    long currentTime_ = VisionEngine::currentTime();
+    long currentTime_ = VisionEngine::currentSeconds();
     long diffTime = currentTime_ - lastTime_;
     
     if (fullscreen_) {
@@ -432,7 +432,7 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
     app_name_ = std::string(name);
     fullscreen_ = fullscreen;
     
-    lastTime_ = VisionEngine::currentTime();
+    lastTime_ = VisionEngine::currentSeconds();
     cameraTime_ = processingTime_ = totalTime_ = 0.0f;
     
     window_ = NULL;

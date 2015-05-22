@@ -77,10 +77,21 @@ public:
 
 	long framenumber_;
 
-    static long currentTime() {
+    static long currentSeconds() {
         time_t currentTime;
         time(&currentTime);
         return (long) currentTime;
+    }
+    
+    static long currentMicroSeconds() {
+#ifdef WIN32
+        return GetTickCount();
+#else
+        struct timeval tv;
+        struct timezone tz;
+        gettimeofday(&tv,&tz);
+        return ((tv.tv_sec*1000000)+(tv.tv_usec));
+#endif
     }
 
 protected:
@@ -112,9 +123,9 @@ protected:
 private:
 	long frames_;
   	long lastTime_;
-	unsigned int cameraTime_, processingTime_, totalTime_;
+	unsigned int cameraTime_, processingTime_, interfaceTime_, totalTime_;
 
-	void frameStatistics(long cameraTime, long processingTime, long totalTime);
+	void frameStatistics(long cameraTime, long processingTime,long totalTime);
 
 	int width_;
 	int height_;
