@@ -584,6 +584,9 @@ int V4Linux2Camera::getDefaultCameraSetting(int mode) {
     return INT_MIN;
 }
 
+bool V4Linux2Camera::hasCameraSettingAuto(int mode) {
+	return true;
+}
 
 bool V4Linux2Camera::getCameraSettingAuto(int mode) {
     return false;
@@ -619,6 +622,9 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
 
 }
 
+bool V4Linux2Camera::hasCameraSetting(int mode) {
+	return true;
+}
 
 bool V4Linux2Camera::setCameraSetting(int mode, int setting) {
 

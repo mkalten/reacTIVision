@@ -9,7 +9,7 @@ OSCOBJECTS = $(OSCSOURCES:.cpp=.o)
 SDL_CFLAGS  := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 
-INCLUDES = -I../ext/oscpack -I../ext/libfidtrack -I../ext/portvideo/common -I../ext/portvideo/interface -I../ext/portvideo/tinyxml -I../common
+INCLUDES = -I../ext/oscpack -I../ext/libfidtrack -I../ext/portvideo/linux -I../ext/portvideo/common -I../ext/portvideo/interface -I../ext/portvideo/tinyxml -I../common
 COPTS  = -Ofast -w
 CDEBUG = -Wall -g
 CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG

@@ -56,9 +56,11 @@ public:
 	int getDefaultCameraSetting(int mode);
 	bool setDefaultCameraSetting(int mode);
 	bool setCameraSetting(int mode, int value);
-    int getCameraSetting(int mode);
-    int getMaxCameraSetting(int mode);
-    int getMinCameraSetting(int mode);
+	int getCameraSetting(int mode);
+	int getMaxCameraSetting(int mode);
+	int getMinCameraSetting(int mode);
+	bool hasCameraSetting(int mode);
+	bool hasCameraSettingAuto(int mode);
 
 protected:
     bool requestBuffers();

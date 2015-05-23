@@ -7,11 +7,11 @@ CPPOBJECTS = $(CPPSOURCES:.cpp=.o)
 SDL_CFLAGS  := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 
-INCLUDES = -I../common -I../sdldemo -I../interface -I../tinyxml
+INCLUDES = -I../common -I../sdldemo -I../interface -I../tinyxml -I.
 COPTS  = -Ofast -w
 CDEBUG = -Wall -g
-#CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
-CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX
+CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
+#CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX
 CXXFLAGS = $(CFLAGS)
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
