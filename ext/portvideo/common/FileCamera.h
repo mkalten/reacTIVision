@@ -21,7 +21,7 @@
 #define FileCamera_H
 
 #include <stdio.h>
-#include "../common/CameraEngine.h"
+#include "CameraEngine.h"
 
 #ifndef WIN32
 #include <unistd.h>

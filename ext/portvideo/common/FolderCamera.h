@@ -29,7 +29,7 @@
 #include <dirent.h>
 #include <unistd.h>
 #endif
-#include "../common/CameraEngine.h"
+#include "CameraEngine.h"
 
 #include <vector>
 #include <string>

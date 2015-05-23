@@ -21,25 +21,25 @@
 
 #ifdef WIN32
 #include <windows.h>
-#include "../windows/videoInputCamera.h"
+#include "videoInputCamera.h"
 #endif
 
 #ifdef LINUX
 #include <stdio.h>
 #include <stdlib.h>
-#include "../linux/DC1394Camera.h"
-#include "../linux/V4Linux2Camera.h"
+#include "DC1394Camera.h"
+#include "V4Linux2Camera.h"
 #endif
 
 #ifdef __APPLE__
 #include <stdio.h>
 #include <stdlib.h>
-#include "../linux/DC1394Camera.h"
+#include "DC1394Camera.h"
     #ifndef MAC_OS_X_VERSION_10_6
-    #include "../macosx/legacy/MacVdigCamera.h"
+    #include ".legacy/MacVdigCamera.h"
 	#else
-	#include "../macosx/AVfoundationCamera.h"
-    #include "../macosx/PS3EyeCamera.h"
+	#include "AVfoundationCamera.h"
+    #include "PS3EyeCamera.h"
     #endif
 #endif
 
