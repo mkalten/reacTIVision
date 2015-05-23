@@ -27,9 +27,8 @@ using namespace tinyxml2;
 			return false;
 		} else if (!lock) {
 			currentCameraSetting = -1;
-			for (int i=BRIGHTNESS;i<=COLOR_GREEN;i++) {
-                int active = getMaxCameraSetting(i)-getMinCameraSetting(i);
-				if (active) {
+			for (int i=BRIGHTNESS;i<=GAMMA;i++) {
+				if (hasCameraSetting(i)) {
 					currentCameraSetting = i;
 					break;
 				}
@@ -43,7 +42,7 @@ using namespace tinyxml2;
 	void CameraEngine::control(unsigned char key) {
 		if(!settingsDialog) return;
 
-        int value,min,max,step,active = 0;
+        int value,min,max,step = 0;
 		switch(key) {
 			case VALUE_DOWN:
 				value = getCameraSetting(currentCameraSetting);
@@ -70,18 +69,16 @@ using namespace tinyxml2;
 			case SETTING_PREVIOUS:
 				currentCameraSetting--;
                 if(currentCameraSetting<0) {
-                    if (colour) currentCameraSetting=COLOR_GREEN;
+                    if (colour) currentCameraSetting=COLOR_BLUE;
                     else currentCameraSetting=GAMMA;
                 }
-                active = getMaxCameraSetting(currentCameraSetting)-getMinCameraSetting(currentCameraSetting);
-                if (!active) control(SETTING_PREVIOUS);
+                if (!hasCameraSetting(currentCameraSetting)) control(SETTING_PREVIOUS);
 				break;
 			case SETTING_NEXT:
 				currentCameraSetting++;
-				if ((colour) && (currentCameraSetting>COLOR_GREEN)) currentCameraSetting=0;
+				if ((colour) && (currentCameraSetting>COLOR_BLUE)) currentCameraSetting=0;
                 else if ((!colour) && (currentCameraSetting>GAMMA)) currentCameraSetting=0;
-                active = getMaxCameraSetting(currentCameraSetting)-getMinCameraSetting(currentCameraSetting);
-                if (!active) control(SETTING_NEXT);
+                if (!hasCameraSetting(currentCameraSetting)) control(SETTING_NEXT);
 
 				break;
 		}
@@ -99,16 +96,23 @@ using namespace tinyxml2;
 		switch (currentCameraSetting) {
 			case BRIGHTNESS:	settingText = "Brightness"; break;
 			case CONTRAST:		settingText = "Contrast";   break;
+            case SHARPNESS:		settingText = "Sharpness";  break;
+            case AUTO_GAIN:     settingText = "Auto Gain";  break;
 			case GAIN:          settingText = "Gain";       break;
-			case SHUTTER:		settingText = "Shutter";    break;
+            case AUTO_EXPOSURE:	settingText = "Auto Exposure"; break;
 			case EXPOSURE:		settingText = "Exposure";   break;
-			case SHARPNESS:		settingText = "Sharpness";  break;
+            case SHUTTER:		settingText = "Shutter";    break;
+            case AUTO_FOCUS:    settingText = "Auto Focus"; break;
 			case FOCUS:         settingText = "Focus";      break;
 			case GAMMA:         settingText = "Gamma";      break;
-            case COLOR_HUE:     settingText = "Color Hue";  break;
+            case AUTO_WHITE:    settingText = "Auto White"; break;
+            case WHITE:         settingText = "White Balance"; break;
+            case BACKLIGHT:     settingText = "Backlight Compensation"; break;
+            case COLOR_HUE:     settingText = "Auto Hue";  break;
+            case AUTO_HUE:      settingText = "Color Hue";  break;
             case COLOR_RED:     settingText = "Red Balance";  break;
             case COLOR_BLUE:    settingText = "Blue Balance"; break;
-            case COLOR_GREEN:    settingText = "Green Balance"; break;
+            case COLOR_GREEN:   settingText = "Green Balance"; break;
 		}
 
 		char displayText[256];
@@ -134,28 +138,33 @@ using namespace tinyxml2;
 		sprintf(config.folder,"none");
 		config.brightness = SETTING_DEFAULT;
 		config.contrast = SETTING_DEFAULT;
-		config.gain = SETTING_DEFAULT;
-		config.gamma = SETTING_DEFAULT;
-		config.exposure = SETTING_DEFAULT;
-		config.sharpness = SETTING_DEFAULT;
-		config.shutter = SETTING_DEFAULT;
-        config.hue = SETTING_DEFAULT;
+        config.sharpness = SETTING_DEFAULT;
+		config.gain = SETTING_AUTO;
+		config.gamma = SETTING_AUTO;
+		config.exposure = SETTING_AUTO;
+		config.shutter = SETTING_AUTO;
+        config.focus = SETTING_AUTO;
+        config.white = SETTING_AUTO;
+        config.backlight = SETTING_AUTO;
+        config.hue = SETTING_AUTO;
         config.blue = SETTING_DEFAULT;
         config.red = SETTING_DEFAULT;
         config.green = SETTING_DEFAULT;
 
-		default_brightness = INT_MIN;
-		default_contrast = INT_MIN;
-		default_gain = INT_MIN;
-		default_shutter = INT_MIN;
-		default_exposure = INT_MIN;
-		default_sharpness = INT_MIN;
-		default_focus = INT_MIN;
-		default_gamma = INT_MIN;
-        default_hue = INT_MIN;
-        default_red = INT_MIN;
-        default_blue = INT_MIN;
-        default_green = INT_MIN;
+		default_brightness = SETTING_DEFAULT;
+		default_contrast = SETTING_DEFAULT;
+        default_sharpness = SETTING_DEFAULT;
+		default_gain = SETTING_AUTO;
+		default_exposure = SETTING_AUTO;
+        default_shutter = SETTING_AUTO;
+		default_focus = SETTING_AUTO;
+		default_gamma = SETTING_AUTO;
+        default_white = SETTING_AUTO;
+        default_backlight = SETTING_AUTO;
+        default_hue = SETTING_AUTO;
+        default_red = SETTING_DEFAULT;
+        default_blue = SETTING_DEFAULT;
+        default_green = SETTING_DEFAULT;
 
 #ifdef __APPLE__
 		char path[1024];
@@ -273,62 +282,24 @@ using namespace tinyxml2;
 
 		XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
 		if (settings_element!=NULL) {
-			if(settings_element->Attribute("brightness")!=NULL) {
-				if (strcmp(settings_element->Attribute("brightness"), "max" ) == 0) config.brightness=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("brightness"), "min" ) == 0) config.brightness=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("brightness"), "auto" ) == 0) config.brightness=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("brightness"), "default" ) == 0) config.brightness=SETTING_DEFAULT;
-				else config.brightness = atoi(settings_element->Attribute("brightness"));
-			}
-			if(settings_element->Attribute("contrast")!=NULL) {
-				if (strcmp(settings_element->Attribute("contrast"), "max" ) == 0) config.contrast=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("contrast"), "min" ) == 0) config.contrast=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("contrast"), "auto" ) == 0) config.contrast=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("contrast"), "default" ) == 0) config.contrast=SETTING_DEFAULT;
-				else config.contrast = atoi(settings_element->Attribute("contrast"));
-			}
-			if(settings_element->Attribute("gain")!=NULL) {
-				if (strcmp(settings_element->Attribute("gain"), "max" ) == 0) config.gain=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("gain"), "min" ) == 0) config.gain=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("gain"), "auto" ) == 0) config.gain=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("gain"), "default" ) == 0) config.gain=SETTING_DEFAULT;
-				else config.gain = atoi(settings_element->Attribute("gain"));
-			}
-			if(settings_element->Attribute("gamma")!=NULL) {
-				if (strcmp(settings_element->Attribute("gamma"), "max" ) == 0) config.gamma=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("gamma"), "min" ) == 0) config.gamma=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("gamma"), "auto" ) == 0) config.gamma=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("gamma"), "default" ) == 0) config.gamma=SETTING_DEFAULT;
-				else config.gamma = atoi(settings_element->Attribute("gamma"));
-			}
-			if(settings_element->Attribute("shutter")!=NULL) {
-				if (strcmp(settings_element->Attribute("shutter"), "max" ) == 0) config.shutter=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("shutter"), "min" ) == 0) config.shutter=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("shutter"), "auto" ) == 0) config.shutter=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("shutter"), "default" ) == 0) config.shutter=SETTING_DEFAULT;
-				else config.shutter = atoi(settings_element->Attribute("shutter"));
-			}
-			if(settings_element->Attribute("exposure")!=NULL) {
-				if (strcmp(settings_element->Attribute("exposure"), "max" ) == 0) config.exposure=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("exposure"), "min" ) == 0) config.exposure=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("exposure"), "auto" ) == 0) config.exposure=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("exposure"), "default" ) == 0) config.exposure=SETTING_DEFAULT;
-				else config.exposure = atoi(settings_element->Attribute("exposure"));
-			}
-			if(settings_element->Attribute("sharpness")!=NULL) {
-				if (strcmp(settings_element->Attribute("sharpness"), "max" ) == 0) config.sharpness=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("sharpness"), "min" ) == 0) config.sharpness=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("sharpness"), "auto" ) == 0) config.sharpness=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("sharpness"), "default" ) == 0) config.sharpness=SETTING_DEFAULT;
-				else config.sharpness = atoi(settings_element->Attribute("sharpness"));
-			}
-			if(settings_element->Attribute("focus")!=NULL) {
-				if (strcmp(settings_element->Attribute("focus"), "max" ) == 0) config.focus=SETTING_MAX;
-				else if (strcmp(settings_element->Attribute("focus"), "min" ) == 0) config.focus=SETTING_MIN;
-				else if (strcmp(settings_element->Attribute("focus"), "auto" ) == 0) config.focus=SETTING_AUTO;
-				else if (strcmp(settings_element->Attribute("focus"), "default" ) == 0) config.focus=SETTING_DEFAULT;
-				else config.focus = atoi(settings_element->Attribute("focus"));
-			}
+            
+            config.brightness = readAttribute(settings_element, "brightness");
+            config.contrast = readAttribute(settings_element, "contrast");
+            config.sharpness = readAttribute(settings_element, "sharpness");
+            config.gain = readAttribute(settings_element, "gain");
+            config.exposure = readAttribute(settings_element, "exposure");
+            config.shutter = readAttribute(settings_element, "shutter");
+            config.focus = readAttribute(settings_element, "focus");
+            config.white = readAttribute(settings_element, "white");
+            config.gamma = readAttribute(settings_element, "gamma");
+            config.backlight = readAttribute(settings_element, "backlight");
+            
+            if (config.color) {
+                config.hue = readAttribute(settings_element, "hue");
+                config.red = readAttribute(settings_element, "red");
+                config.green = readAttribute(settings_element, "green");
+                config.blue = readAttribute(settings_element, "blue");
+            }
 		}
 
 		cam_width = config.cam_width;
@@ -336,6 +307,32 @@ using namespace tinyxml2;
 		colour = config.color;
 		bytes = (colour?3:1);
 	}
+
+int CameraEngine::readAttribute(XMLElement* settings,const char *attribute) {
+    
+    if(settings->Attribute(attribute)!=NULL) {
+        if (strcmp(settings->Attribute(attribute), "min" ) == 0) return SETTING_MIN;
+        else if (strcmp(settings->Attribute(attribute), "max" ) == 0) return SETTING_MAX;
+        else if (strcmp(settings->Attribute(attribute), "auto" ) == 0) return SETTING_AUTO;
+        else if (strcmp(settings->Attribute(attribute), "default" ) == 0) return SETTING_DEFAULT;
+        else return atoi(settings->Attribute(attribute));
+    }
+    
+    return SETTING_DEFAULT;
+}
+
+void CameraEngine::saveAttribute(XMLElement* settings,const char *attribute,int config) {
+    
+    if (config==SETTING_MIN) settings->SetAttribute(attribute,"min");
+    else if (config==SETTING_MAX) settings->SetAttribute(attribute,"max");
+    else if (config==SETTING_AUTO) settings->SetAttribute(attribute,"auto");
+    else if (config==SETTING_DEFAULT) settings->SetAttribute(attribute,"default");
+    else {
+        char value[64];
+        sprintf(value,"%d",config);
+        settings->SetAttribute(attribute,value);
+    }
+}
 
 void CameraEngine::saveSettings() {
  
@@ -367,90 +364,44 @@ void CameraEngine::saveSettings() {
 	XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
 	XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
 
-	char config_value[64];
-
 	if (settings_element!=NULL) {
-		if(settings_element->Attribute("brightness")!=NULL) {
+        
+        if (hasCameraSetting(BRIGHTNESS)) saveAttribute(settings_element, "brightness", config.brightness);
+        else settings_element->DeleteAttribute("brightness");
+        if (hasCameraSetting(CONTRAST)) saveAttribute(settings_element, "contrast", config.contrast);
+        else settings_element->DeleteAttribute("contrast");
+        if (hasCameraSetting(SHARPNESS)) saveAttribute(settings_element, "sharpness", config.sharpness);
+        else settings_element->DeleteAttribute("sharpness");
+        if (hasCameraSetting(GAIN)) saveAttribute(settings_element, "gain", config.gain);
+        else settings_element->DeleteAttribute("gain");
+        if (hasCameraSetting(EXPOSURE)) saveAttribute(settings_element, "exposure", config.exposure);
+        else settings_element->DeleteAttribute("exposure");
+        if (hasCameraSetting(FOCUS)) saveAttribute(settings_element, "focus", config.focus);
+        else settings_element->DeleteAttribute("focus");
+        if (hasCameraSetting(SHUTTER)) saveAttribute(settings_element, "shutter", config.shutter);
+        else settings_element->DeleteAttribute("shutter");
+        if (hasCameraSetting(WHITE)) saveAttribute(settings_element, "white", config.white);
+        else settings_element->DeleteAttribute("white");
+        if (hasCameraSetting(BACKLIGHT)) saveAttribute(settings_element, "backlight", config.backlight);
+        else settings_element->DeleteAttribute("backlight");
+        if (hasCameraSetting(GAMMA)) saveAttribute(settings_element, "gamma", config.gamma);
+        else settings_element->DeleteAttribute("gamma");
 
-			if (config.brightness==SETTING_MAX) settings_element->SetAttribute("brightness","max");
-			else if (config.brightness==SETTING_MIN) settings_element->SetAttribute("brightness","min");
-			else if (config.brightness==SETTING_AUTO) settings_element->SetAttribute("brightness","auto");
-			else if (config.brightness==SETTING_DEFAULT) settings_element->SetAttribute("brightness","default");
-			else {
-				sprintf(config_value,"%d",config.brightness);
-				settings_element->SetAttribute("brightness",config_value);
-			}
-		}
-		if(settings_element->Attribute("contrast")!=NULL) {
-			if (config.contrast==SETTING_MAX) settings_element->SetAttribute("contrast","max");
-			else if (config.contrast==SETTING_MIN) settings_element->SetAttribute("contrast","min");
-			else if (config.contrast==SETTING_AUTO) settings_element->SetAttribute("contrast","auto");
-			else if (config.contrast==SETTING_DEFAULT) settings_element->SetAttribute("contrast","default");
-			else {
-				sprintf(config_value,"%d",config.contrast);
-				settings_element->SetAttribute("contrast",config_value);
-			}
-		}
-		if(settings_element->Attribute("gain")!=NULL) {
-			if (config.gain==SETTING_MAX) settings_element->SetAttribute("gain","max");
-			else if (config.gain==SETTING_MIN) settings_element->SetAttribute("gain","min");
-			else if (config.gain==SETTING_AUTO) settings_element->SetAttribute("gain","auto");
-			else if (config.gain==SETTING_DEFAULT) settings_element->SetAttribute("gain","default");
-			else {
-				sprintf(config_value,"%d",config.gain);
-				settings_element->SetAttribute("gain",config_value);
-			}
-		}
-		if(settings_element->Attribute("gamma")!=NULL) {
-			if (config.gamma==SETTING_MAX) settings_element->SetAttribute("gamma","max");
-			else if (config.gamma==SETTING_MIN) settings_element->SetAttribute("gamma","min");
-			else if (config.gamma==SETTING_AUTO) settings_element->SetAttribute("gamma","auto");
-			else if (config.gamma==SETTING_DEFAULT) settings_element->SetAttribute("gamma","default");
-			else {
-				sprintf(config_value,"%d",config.gamma);
-				settings_element->SetAttribute("gamma",config_value);
-			}
-		}
-		if(settings_element->Attribute("shutter")!=NULL) {
-			if (config.shutter==SETTING_MAX) settings_element->SetAttribute("shutter","max");
-			else if (config.shutter==SETTING_MIN) settings_element->SetAttribute("shutter","min");
-			else if (config.shutter==SETTING_AUTO) settings_element->SetAttribute("shutter","auto");
-			else if (config.shutter==SETTING_DEFAULT) settings_element->SetAttribute("shutter","default");
-			else {
-				sprintf(config_value,"%d",config.shutter);
-				settings_element->SetAttribute("shutter",config_value);
-			}
-		}
-		if(settings_element->Attribute("exposure")!=NULL) {
-			if (config.exposure==SETTING_MAX) settings_element->SetAttribute("exposure","max");
-			else if (config.exposure==SETTING_MIN) settings_element->SetAttribute("exposure","min");
-			else if (config.exposure==SETTING_AUTO) settings_element->SetAttribute("exposure","auto");
-			else if (config.exposure==SETTING_DEFAULT) settings_element->SetAttribute("exposure","default");
-			else {
-				sprintf(config_value,"%d",config.exposure);
-				settings_element->SetAttribute("exposure",config_value);
-			}
-		}
-		if(settings_element->Attribute("sharpness")!=NULL) {
-			if (config.sharpness==SETTING_MAX) settings_element->SetAttribute("sharpness","max");
-			else if (config.sharpness==SETTING_MIN) settings_element->SetAttribute("sharpness","min");
-			else if (config.sharpness==SETTING_AUTO) settings_element->SetAttribute("sharpness","auto");
-			else if (config.sharpness==SETTING_DEFAULT) settings_element->SetAttribute("sharpness","default");
-			else {
-				sprintf(config_value,"%d",config.sharpness);
-				settings_element->SetAttribute("sharpness",config_value);
-			}
-		}
-		if(settings_element->Attribute("focus")!=NULL) {
-			if (config.focus==SETTING_MAX) settings_element->SetAttribute("focus","max");
-			else if (config.focus==SETTING_MIN) settings_element->SetAttribute("focus","min");
-			else if (config.focus==SETTING_AUTO) settings_element->SetAttribute("focus","auto");
-			else if (config.focus==SETTING_DEFAULT) settings_element->SetAttribute("focus","default");
-			else {
-				sprintf(config_value,"%d",config.focus);
-				settings_element->SetAttribute("focus",config_value);
-			}
-		}
+        if (colour) {
+            if (hasCameraSetting(COLOR_HUE)) saveAttribute(settings_element, "hue", config.hue);
+            else settings_element->DeleteAttribute("hue");
+            if (hasCameraSetting(COLOR_RED)) saveAttribute(settings_element, "red", config.red);
+            else settings_element->DeleteAttribute("red");
+            if (hasCameraSetting(COLOR_GREEN)) saveAttribute(settings_element, "green", config.green);
+            else settings_element->DeleteAttribute("green");
+            if (hasCameraSetting(COLOR_BLUE)) saveAttribute(settings_element, "blue", config.green);
+            else settings_element->DeleteAttribute("blue");
+        } else {
+            settings_element->DeleteAttribute("hue");
+            settings_element->DeleteAttribute("red");
+            settings_element->DeleteAttribute("green");
+            settings_element->DeleteAttribute("blue");
+        }
 	}
 
 	xml_settings.SaveFile(config_file);
@@ -614,7 +565,6 @@ void CameraEngine::cropFrame(unsigned char *cambuf, unsigned char *cropbuf, int 
         src += bytes*config.cam_width;
         dest += bytes*config.frame_width;
     }
-
 }
 
 
@@ -636,8 +586,6 @@ void CameraEngine::applyCameraSetting(int mode, int value) {
 			int min = getMinCameraSetting(mode);
 			if (value<min) value = min;
 			else if (value>max) value = max;
-
-			//setCameraSettingAuto(mode,false);
 			setCameraSetting(mode,value);
 		}
 	}
@@ -645,60 +593,54 @@ void CameraEngine::applyCameraSetting(int mode, int value) {
 
 void CameraEngine::applyCameraSettings() {
 
+    for (int mode=BRIGHTNESS;mode<=COLOR_BLUE;mode++)
+        setDefaultCameraSetting(mode);
+        
 	applyCameraSetting(BRIGHTNESS,config.brightness);
 	applyCameraSetting(CONTRAST,config.contrast);
+    applyCameraSetting(SHARPNESS,config.sharpness);
 	applyCameraSetting(GAIN,config.gain);
-	applyCameraSetting(SHUTTER,config.shutter);
 	applyCameraSetting(EXPOSURE,config.exposure);
-	applyCameraSetting(SHARPNESS,config.sharpness);
+    applyCameraSetting(SHUTTER,config.shutter);
 	applyCameraSetting(FOCUS,config.focus);
-	applyCameraSetting(GAMMA,config.gamma);
+    applyCameraSetting(WHITE,config.white);
+    applyCameraSetting(BACKLIGHT,config.backlight);
+    applyCameraSetting(GAMMA,config.gamma);
+    
+    applyCameraSetting(COLOR_HUE,config.red);
+    applyCameraSetting(COLOR_RED,config.red);
+    applyCameraSetting(COLOR_GREEN,config.green);
+    applyCameraSetting(COLOR_BLUE,config.blue);
+}
+
+int CameraEngine::updateSetting(int mode) {
+    
+    if (getCameraSettingAuto(mode)) return SETTING_AUTO;
+
+    int value = getCameraSetting(mode);
+    if (value==getMinCameraSetting(mode)) value = SETTING_MIN;
+    else if (value==getMaxCameraSetting(mode)) value = SETTING_MAX;
+    else if (value==getDefaultCameraSetting(mode)) value = SETTING_DEFAULT;
+    return value;
 }
 
 void CameraEngine::updateSettings() {
 
-    config.brightness = getCameraSetting(BRIGHTNESS);
-    if (config.brightness==getMinCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MIN;
-    if (config.brightness==getMaxCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MAX;
-    if (config.brightness==getDefaultCameraSetting(BRIGHTNESS)) config.brightness=SETTING_DEFAULT;
-    //printf("brightness %d\n",brightness);
+    config.brightness = updateSetting(BRIGHTNESS);
+    config.contrast = updateSetting(CONTRAST);
+    config.sharpness = updateSetting(SHARPNESS);
+    
+    config.gain = updateSetting(GAIN);
+    config.exposure = updateSetting(EXPOSURE);
+    config.shutter = updateSetting(SHUTTER);
+    config.focus = updateSetting(FOCUS);
+    config.white = updateSetting(WHITE);
+    config.backlight = updateSetting(BACKLIGHT);
+    config.gamma = updateSetting(GAMMA);
 
-    config.contrast = getCameraSetting(CONTRAST);
-    if (config.contrast==getMinCameraSetting(CONTRAST)) config.contrast=SETTING_MIN;
-    if (config.contrast==getMaxCameraSetting(CONTRAST)) config.contrast=SETTING_MAX;
-    if (config.contrast==getDefaultCameraSetting(CONTRAST)) config.contrast=SETTING_DEFAULT;
-    //printf("contrast %d\n",contrast);
-
-    config.gain = getCameraSetting(GAIN);
-    if (config.gain==getMinCameraSetting(GAIN)) config.gain=SETTING_MIN;
-    if (config.gain==getMaxCameraSetting(GAIN)) config.gain=SETTING_MAX;
-    if (config.gain==getDefaultCameraSetting(GAIN)) config.gain=SETTING_DEFAULT;
-    //printf("gain %d\n",gain);
-
-    config.exposure = getCameraSetting(EXPOSURE);
-    if (config.exposure==getMinCameraSetting(EXPOSURE)) config.exposure=SETTING_MIN;
-    if (config.exposure==getMaxCameraSetting(EXPOSURE)) config.exposure=SETTING_MAX;
-    if (getCameraSettingAuto(EXPOSURE)==true) config.exposure=SETTING_AUTO;
-    if (config.exposure==getDefaultCameraSetting(EXPOSURE)) config.exposure=SETTING_DEFAULT;
-    //printf("exposure %d\n",exposure);
-
-    config.sharpness = getCameraSetting(SHARPNESS);
-    if (config.sharpness==getMinCameraSetting(SHARPNESS)) config.sharpness=SETTING_MIN;
-    if (config.sharpness==getMaxCameraSetting(SHARPNESS)) config.sharpness=SETTING_MAX;
-    if (config.sharpness==getDefaultCameraSetting(SHARPNESS)) config.sharpness=SETTING_DEFAULT;
-    //printf("sharpness %d\n",sharpness);
-
-    config.focus = getCameraSetting(FOCUS);
-    if (config.focus==getMinCameraSetting(FOCUS)) config.focus=SETTING_MIN;
-    if (config.focus==getMaxCameraSetting(FOCUS)) config.focus=SETTING_MAX;
-    if (config.focus==getDefaultCameraSetting(FOCUS)) config.focus=SETTING_DEFAULT;
-    //printf("focus %d\n",focus);
-
-    config.gamma = getCameraSetting(GAMMA);
-    if (config.gamma==getMinCameraSetting(GAMMA)) config.gamma=SETTING_MIN;
-    if (config.gamma==getMaxCameraSetting(GAMMA)) config.gamma=SETTING_MAX;
-    if (config.gamma==getDefaultCameraSetting(GAMMA)) config.gamma=SETTING_DEFAULT;
-    if (getCameraSettingAuto(GAMMA)==true) config.gamma=SETTING_AUTO;
-    //printf("gamma %d\n",gamma);
+    config.hue = updateSetting(COLOR_HUE);
+    config.red = updateSetting(COLOR_RED);
+    config.green = updateSetting(COLOR_GREEN);
+    config.blue = updateSetting(COLOR_BLUE);
 
 }

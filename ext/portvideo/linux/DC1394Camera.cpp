@@ -476,6 +476,10 @@ bool DC1394Camera::closeCamera()
 	return true;
 }
 
+bool DC1394Camera::hasCameraSetting(int mode) {
+    return true;
+}
+
 bool DC1394Camera::setCameraSettingAuto(int mode, bool flag) {
 
 	dc1394feature_t feature = (dc1394feature_t)-1;
@@ -512,6 +516,9 @@ bool DC1394Camera::getCameraSettingAuto(int mode) {
     return false;
 }
 
+bool DC1394Camera::hasCameraSettingAuto(int mode) {
+    return true;
+}
 
 bool DC1394Camera::setCameraSetting(int mode, int setting) {
 

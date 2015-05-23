@@ -50,6 +50,8 @@ public:
     int getMinCameraSetting(int mode);
     bool setDefaultCameraSetting(int mode);
     int getDefaultCameraSetting(int mode);
+    bool hasCameraSetting(int mode);
+    bool hasCameraSettingAuto(int mode);
 
 private:
     ps3eye::PS3EYECam::PS3EYERef eye;

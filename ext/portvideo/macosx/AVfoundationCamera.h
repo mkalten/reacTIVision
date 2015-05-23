@@ -23,7 +23,7 @@
 #import <Cocoa/Cocoa.h>
 #import <VVUVCKit/VVUVCKit.h>
 
-#include "../common/cameraEngine.h"
+#include "cameraEngine.h"
 
 @interface FrameGrabber : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
@@ -49,7 +49,7 @@ class AVfoundationCamera : public CameraEngine
 
 public:
 	AVfoundationCamera(const char* config_file);
-	~AVfoundationCamera();
+    ~AVfoundationCamera();
 	
     static void listDevices();
 
@@ -71,6 +71,9 @@ public:
     int getMinCameraSetting(int mode);
     bool setDefaultCameraSetting(int mode);
     int getDefaultCameraSetting(int mode);
+    bool hasCameraSetting(int mode);
+    bool hasCameraSettingAuto(int mode);
+    
 	bool showSettingsDialog(bool lock);
     
 private:

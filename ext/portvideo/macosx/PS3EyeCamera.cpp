@@ -184,22 +184,36 @@ int PS3EyeCamera::getCameraSettingStep(int mode) {
     return 1;
 }
 
-bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
-    // supported: gain, awb = Automatic White Balance?
+bool PS3EyeCamera::hasCameraSettingAuto(int mode) {
+    return true;
+}
 
-    if (mode == GAIN) {
+bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
+
+    if (mode == AUTO_GAIN) {
         eye->setAutogain(flag);
         return true;
-    } /*else if (_m == EYE_AWB) {
+    } else if (mode == AUTO_WHITE) {
         eye->setAutoWhiteBalance(flag);
-    }*/
+    }
 
     return false;
 }
 
 bool PS3EyeCamera::getCameraSettingAuto(int mode) {
 
-    return mode == GAIN;// || _m == EYE_AWB;
+    if (mode == AUTO_GAIN) {
+        return eye->getAutogain();
+        return true;
+    } else if (mode == AUTO_WHITE) {
+        return eye->getAutoWhiteBalance();
+    }
+    
+    return false;
+}
+
+bool PS3EyeCamera::hasCameraSetting(int mode) {
+    return true;
 }
 
 bool PS3EyeCamera::setCameraSetting(int mode, int value) {

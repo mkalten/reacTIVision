@@ -20,7 +20,7 @@
 #define DC1394Camera_H
 
 #include <unistd.h>
-#include "../common/CameraEngine.h"
+#include "CameraEngine.h"
 #include <dc1394/dc1394.h>
 	
 class DC1394Camera : public CameraEngine
@@ -49,6 +49,8 @@ public:
 	int getMinCameraSetting(int mode);
     int getDefaultCameraSetting(int mode);
     bool setDefaultCameraSetting(int mode);
+    bool hasCameraSetting(int mode);
+    bool hasCameraSettingAuto(int mode);
 
 private:
 	dc1394_t *d;

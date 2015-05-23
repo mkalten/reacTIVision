@@ -154,6 +154,9 @@ AVfoundationCamera::AVfoundationCamera(const char* cfg):CameraEngine(cfg)
 
 AVfoundationCamera::~AVfoundationCamera()
 {
+    updateSettings();
+    saveSettings();
+    
     if (uvcController) [uvcController release];
     if (selectedVideoDevice) [selectedVideoDevice release];
     if (videoOutput) [videoOutput release];
@@ -500,16 +503,39 @@ bool AVfoundationCamera::showSettingsDialog(bool lock) {
     return lock;
 }
 
+bool AVfoundationCamera::hasCameraSettingAuto(int mode) {
+    
+    if (uvcController==NULL) return false;
+    
+    switch (mode) {
+        case EXPOSURE:
+            return [uvcController autoExposureModeSupported];
+        case WHITE:
+            return [uvcController autoWhiteBalanceSupported];
+        case FOCUS:
+            return [uvcController autoFocusSupported];
+        case COLOR_HUE:
+            return [uvcController autoHueSupported];
+    }
+    
+    return false;
+}
+
 bool AVfoundationCamera::getCameraSettingAuto(int mode) {
     
     if (uvcController==NULL) return false;
-    //printf("get auto %d\n",mode);
+    if (!hasCameraSettingAuto(mode)) return false;
 
     switch (mode) {
         case EXPOSURE:
             if ([uvcController autoExposureMode]>UVC_AEMode_Manual) return true;
-            else return true;
-        case GAIN: return [uvcController autoWhiteBalance];
+            else return false;
+        case WHITE:
+            return [uvcController autoWhiteBalance];
+        case FOCUS:
+            return [uvcController autoFocus];
+        case COLOR_HUE:
+            return [uvcController autoHue];
     }
     
     return false;
@@ -518,57 +544,121 @@ bool AVfoundationCamera::getCameraSettingAuto(int mode) {
 bool AVfoundationCamera::setCameraSettingAuto(int mode, bool flag) {
     
     if (uvcController==NULL) return false;
-    //printf("set auto %d %d\n",mode,flag);
+    if (!hasCameraSettingAuto(mode)) return false;
     
     switch (mode) {
         case EXPOSURE:
             if (flag==true) [uvcController setAutoExposureMode:UVC_AEMode_Auto];
             else [uvcController setAutoExposureMode:UVC_AEMode_Manual];
-            break;
-        case GAIN:
+            return true;
+        case WHITE:
             [uvcController setAutoWhiteBalance:flag];
-            break;
+            return true;
+        case FOCUS:
+            [uvcController setAutoFocus:flag];
+            return true;
+        case COLOR_HUE:
+            [uvcController setAutoHue:flag];
+            return true;
     }
     
     return false;
 }
 
+bool AVfoundationCamera::hasCameraSetting(int mode) {
+
+    if (uvcController==NULL) return false;
+
+    switch (mode) {
+        case BRIGHTNESS:
+            return [uvcController brightSupported];
+        case CONTRAST:
+            return [uvcController contrastSupported];
+        case SHARPNESS:
+            return [uvcController sharpnessSupported];
+        case GAIN:
+            return [uvcController gainSupported];
+        case AUTO_GAIN:
+            return hasCameraSettingAuto(GAIN);
+        case EXPOSURE:
+            return [uvcController exposureTimeSupported];
+        case AUTO_EXPOSURE:
+            return hasCameraSettingAuto(EXPOSURE);
+        case FOCUS:
+            return [uvcController focusSupported];
+        case AUTO_FOCUS:
+            return hasCameraSettingAuto(FOCUS);
+        case WHITE:
+            return [uvcController whiteBalanceSupported];
+        case AUTO_WHITE:
+            return hasCameraSettingAuto(WHITE);
+        case BACKLIGHT:
+            return [uvcController backlightSupported];
+        case COLOR_HUE:
+            return [uvcController hueSupported];
+        case AUTO_HUE:
+            return hasCameraSettingAuto(COLOR_HUE);
+    }
+    
+    return false;
+}
 
 bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
     
     if (uvcController==NULL) return false;
-   // int current_setting = getCameraSetting(mode);
-   // if (setting==current_setting) return true;
-    setCameraSettingAuto(mode,false);
+    if (!hasCameraSetting(mode)) return false;
     
-    //printf("set %d %d\n",mode,setting);
-
     switch (mode) {
-        case BRIGHTNESS:    [uvcController setBright:setting]; break;
-        case CONTRAST:      [uvcController setContrast:setting]; break;
-        case GAIN:          [uvcController setGain:setting]; break;
-        case EXPOSURE:      [uvcController setExposureTime:setting]; break;
-        case SHARPNESS:     [uvcController setSharpness:setting]; break;
-        case FOCUS:         [uvcController setFocus:setting]; break;
-        case GAMMA:         [uvcController setWhiteBalance:setting]; break;
+        case BRIGHTNESS:
+            [uvcController setBright:setting]; return true;
+        case CONTRAST:
+            [uvcController setContrast:setting]; return true;
+        case SHARPNESS:
+            [uvcController setSharpness:setting]; return true;
+        case GAIN:
+            [uvcController setGain:setting]; return true;
+        case EXPOSURE:
+            [uvcController setExposureTime:setting]; return true;
+        case FOCUS:
+            [uvcController setFocus:setting]; return true;
+        case WHITE:
+            [uvcController setWhiteBalance:setting]; return true;
+        case BACKLIGHT:
+            [uvcController setBacklight:setting]; return true;
+        case COLOR_HUE:
+            [uvcController setHue:setting]; return true;
     }
     
     return false;
 }
 
+
+
 int AVfoundationCamera::getCameraSetting(int mode) {
- 
-    if (uvcController==NULL) return 0;
-    //printf("get %d\n",mode);
     
+    if (uvcController==NULL) return 0;
+    if (!hasCameraSetting(mode)) return 0;
+    if (getCameraSettingAuto(mode)) return 0;
+
     switch (mode) {
-        case BRIGHTNESS:    return [uvcController bright];
-        case CONTRAST:      return [uvcController contrast];
-        case GAIN:          return [uvcController gain];
-        case EXPOSURE:      return [uvcController exposureTime];
-        case SHARPNESS:     return [uvcController sharpness];
-        case FOCUS:         return [uvcController focus];
-        case GAMMA:         return [uvcController whiteBalance];
+        case BRIGHTNESS:
+            return [uvcController bright];
+        case CONTRAST:
+            return [uvcController contrast];
+        case SHARPNESS:
+            return [uvcController sharpness];
+        case GAIN:
+            return [uvcController gain];
+        case EXPOSURE:
+            return [uvcController exposureTime];
+        case FOCUS:
+            return [uvcController focus];
+        case WHITE:
+            return [uvcController whiteBalance];
+        case BACKLIGHT:
+            return [uvcController backlight];
+        case COLOR_HUE:
+            return [uvcController hue];
     }
 
     return 0;
@@ -577,16 +667,19 @@ int AVfoundationCamera::getCameraSetting(int mode) {
 int AVfoundationCamera::getMaxCameraSetting(int mode) {
 
     if (uvcController==NULL) return 0;
-    //printf("max %d\n",mode);
+    if (!hasCameraSetting(mode)) return 0;
+    if (getCameraSettingAuto(mode)) return 0;
 
     switch (mode) {
         case BRIGHTNESS:    return [uvcController maxBright];
         case CONTRAST:      return [uvcController maxContrast];
+        case SHARPNESS:     return [uvcController maxSharpness];
         case GAIN:          return [uvcController maxGain];
         case EXPOSURE:      return [uvcController maxExposureTime];
-        case SHARPNESS:     return [uvcController maxSharpness];
         case FOCUS:         return [uvcController maxFocus];
-        case GAMMA:         return [uvcController maxWhiteBalance];
+        case WHITE:         return [uvcController maxWhiteBalance];
+        case BACKLIGHT:     return [uvcController maxBacklight];
+        case COLOR_HUE:     return [uvcController maxHue];
     }
     
     return 0;
@@ -595,7 +688,8 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
 int AVfoundationCamera::getMinCameraSetting(int mode) {
  
     if (uvcController==NULL) return 0;
-    //printf("min %d\n",mode);
+    if (!hasCameraSetting(mode)) return 0;
+    if (getCameraSettingAuto(mode)) return 0;
 
     switch (mode) {
         case BRIGHTNESS:    return [uvcController minBright];
@@ -604,7 +698,9 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
         case EXPOSURE:      return [uvcController minExposureTime];
         case SHARPNESS:     return [uvcController minSharpness];
         case FOCUS:         return [uvcController minFocus];
-        case GAMMA:         return [uvcController minWhiteBalance];
+        case WHITE:         return [uvcController minWhiteBalance];
+        case BACKLIGHT:     return [uvcController minBacklight];
+        case COLOR_HUE:     return [uvcController minHue];
     }
     
     return 0;
@@ -613,7 +709,7 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
 bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
 
     if (uvcController==NULL) return false;
-    //printf("set default %d\n",mode);
+    if (!hasCameraSetting(mode)) return false;
 
     switch (mode) {
         case BRIGHTNESS:
@@ -624,6 +720,10 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
             [uvcController resetContrast];
             default_contrast = [uvcController contrast];
             break;
+        case SHARPNESS:
+            [uvcController resetSharpness];
+            default_sharpness = [uvcController sharpness];
+            break;
         case GAIN:
             [uvcController resetGain];
             default_gain = [uvcController gain];
@@ -632,18 +732,23 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
             [uvcController resetExposureTime];
             default_exposure = [uvcController exposureTime];
             break;
-        case SHARPNESS:
-            [uvcController resetSharpness];
-            default_sharpness = [uvcController sharpness];
-            break;
         case FOCUS:
             [uvcController resetFocus];
             default_focus = [uvcController focus];
             break;
-        case GAMMA:
+        case WHITE:
             [uvcController resetWhiteBalance];
-            default_gamma = [uvcController whiteBalance];
+            default_white = [uvcController whiteBalance];
             break;
+        case BACKLIGHT:
+            [uvcController resetBacklight];
+            default_backlight = [uvcController backlight];
+            break;
+        case COLOR_HUE:
+            [uvcController resetHue];
+            default_hue = [uvcController hue];
+            break;
+            
     }
 
     return false;
@@ -652,7 +757,7 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
 int AVfoundationCamera::getDefaultCameraSetting(int mode) {
     
     if (uvcController==NULL) return 0;
-    //printf("get default %d\n",mode);
+    if (!hasCameraSetting(mode)) return 0;
     
     switch (mode) {
         case BRIGHTNESS: return default_brightness;
@@ -661,12 +766,15 @@ int AVfoundationCamera::getDefaultCameraSetting(int mode) {
         case EXPOSURE: return default_exposure;
         case SHARPNESS: return default_sharpness;
         case FOCUS: return default_focus;
-        case GAMMA: return default_gamma;
+        case WHITE: return default_white;
+        case BACKLIGHT: return default_backlight;
+        case COLOR_HUE: return default_hue;
     }
     
-    return INT_MIN;
+    return 0;
 }
 
 int AVfoundationCamera::getCameraSettingStep(int mode) {
+    if (!hasCameraSetting(mode)) return 0;
     return 1;
 }

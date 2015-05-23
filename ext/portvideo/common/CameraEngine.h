@@ -54,7 +54,7 @@ public:
         crop_frame=false;
     }
     
-    virtual ~CameraEngine() { };
+    virtual ~CameraEngine() {};
     
     virtual bool findCamera() = 0;
     virtual bool initCamera() = 0;
@@ -65,7 +65,7 @@ public:
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
     
-    enum CameraSetting { BRIGHTNESS, CONTRAST, GAIN, SHUTTER, EXPOSURE, SHARPNESS, FOCUS, GAMMA, COLOR_HUE, COLOR_RED, COLOR_BLUE, COLOR_GREEN };
+    enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, BACKLIGHT, GAMMA, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
     enum CropMode { CROP_NONE, CROP_RECT, CROP_SQUARE, CROP_WIDE};
     
     virtual int getCameraSettingStep(int mode) = 0;
@@ -77,6 +77,8 @@ public:
     virtual bool getCameraSettingAuto(int mode) = 0;
     virtual bool setDefaultCameraSetting(int mode) = 0;
     virtual int getDefaultCameraSetting(int mode) = 0;
+    virtual bool hasCameraSetting(int mode) = 0;
+    virtual bool hasCameraSettingAuto(int mode) = 0;
     
     virtual bool showSettingsDialog(bool lock);
     virtual void control(unsigned char key);
@@ -97,24 +99,32 @@ protected:
         int device;
         char file[255];
         char folder[255];
+        
         bool color;
         bool compress;
         bool frame;
+        
         int cam_width;
         int cam_height;
         float cam_fps;
+        
         int frame_xoff;
         int frame_yoff;
         int frame_width;
         int frame_height;
+        
         int brightness;
+        int contrast;
+        int sharpness;
+
         int gain;
         int shutter;
         int exposure;
-        int contrast;
-        int sharpness;
         int focus;
         int gamma;
+        int white;
+        int backlight;
+
         int hue;
         int red;
         int blue;
@@ -156,22 +166,30 @@ protected:
     void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
     
     void readSettings();
+    int readAttribute(tinyxml2::XMLElement* settings,const char *attribute);
     void saveSettings();
+    void saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config);
+
     void applyCameraSettings();
     void applyCameraSetting(int mode, int value);
     void updateSettings();
+    int updateSetting(int mode);
     
     void setupFrame();
     void cropFrame(unsigned char *src, unsigned char *dest, int bytes);
     
     int default_brightness;
     int default_contrast;
+    int default_sharpness;
+    
     int default_gain;
     int default_shutter;
     int default_exposure;
-    int default_sharpness;
     int default_focus;
     int default_gamma;
+    int default_backlight;
+    int default_white;
+    
     int default_hue;
     int default_red;
     int default_blue;
