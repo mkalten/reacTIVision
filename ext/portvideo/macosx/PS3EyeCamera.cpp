@@ -154,27 +154,11 @@ unsigned char*  PS3EyeCamera::getFrame() {
     if (colour) {
         yuyv2rgb(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
     } else {
-        if (!config.frame) yuyv2gray(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
-        else {
-            unsigned char *src = (unsigned char *) eye->getLastFramePointer();
-            unsigned char *dest = cam_buffer;
-            
-            src += 2*(config.frame_yoff*cam_width);
-            int xend = (cam_width-(frame_width+config.frame_xoff));
-            
-            for (int i=0;i<frame_height;i++) {
-                
-                src +=  2*config.frame_xoff;
-                for (int j=frame_width/2;j>0;j--) {
-                    *dest++ = *src++;
-                    src++;
-                    *dest++ = *src++;
-                    src++;
-                }
-                src +=  2*xend;
-            }
-            
-        }
+        
+         if (config.frame)
+             crop_yuyv2gray(cam_width, frame_width, frame_height, config.frame_xoff, config.frame_yoff, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+         else
+             yuyv2gray(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
     }
     
     return cam_buffer;

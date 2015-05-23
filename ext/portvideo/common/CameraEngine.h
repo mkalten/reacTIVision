@@ -158,12 +158,14 @@ protected:
     bool running;
     bool settingsDialog;
     int currentCameraSetting;
-    
+ 
+    void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
     void uyvy2gray(int width, int height, unsigned char *src, unsigned char *dest);
     void yuyv2gray(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_yuyv2gray(int src_w, int dest_w, int dest_h, int x_off, int y_off, unsigned char *src, unsigned char *dest);
+    
     void uyvy2rgb(int width, int height, unsigned char *src, unsigned char *dest);
     void yuyv2rgb(int width, int height, unsigned char *src, unsigned char *dest);
-    void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
     
     void readSettings();
     int readAttribute(tinyxml2::XMLElement* settings,const char *attribute);
