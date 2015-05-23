@@ -21,6 +21,7 @@
 					<Add directory="../common" />
 					<Add directory="../interface" />
 					<Add directory="../sdldemo" />
+					<Add directory="./" />
 				</Compiler>
 				<Linker>
 					<Add library="SDL2" />
@@ -44,6 +45,7 @@
 					<Add directory="../common" />
 					<Add directory="../interface" />
 					<Add directory="../sdldemo" />
+					<Add directory="./" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -67,6 +69,7 @@
 					<Add directory="../common" />
 					<Add directory="../interface" />
 					<Add directory="../sdldemo" />
+					<Add directory="./" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg" />

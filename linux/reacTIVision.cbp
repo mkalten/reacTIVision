@@ -30,7 +30,6 @@
 					<Add library="SDL2" />
 					<Add library="dc1394" />
 					<Add library="pthread" />
-					<Add library="asound" />
 					<Add library="turbojpeg" />
 				</Linker>
 			</Target>
@@ -59,7 +58,6 @@
 					<Add library="SDL2" />
 					<Add library="pthread" />
 					<Add library="dc1394" />
-					<Add library="asound" />
 					<Add library="turbojpeg" />
 				</Linker>
 			</Target>
@@ -87,7 +85,6 @@
 					<Add library="SDL2" />
 					<Add library="dc1394" />
 					<Add library="pthread" />
-					<Add library="asound" />
 					<Add library="turbojpeg" />
 				</Linker>
 			</Target>
