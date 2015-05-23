@@ -169,16 +169,24 @@ int PS3EyeCamera::getCameraSettingStep(int mode) {
 }
 
 bool PS3EyeCamera::hasCameraSettingAuto(int mode) {
-    return true;
+    
+    switch (mode) {
+        case GAIN:
+        case WHITE:
+            return true;
+    }
+    return false;
 }
 
 bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
 
-    if (mode == AUTO_GAIN) {
-        eye->setAutogain(flag);
-        return true;
-    } else if (mode == AUTO_WHITE) {
-        eye->setAutoWhiteBalance(flag);
+    switch (mode) {
+        case GAIN:
+            eye->setAutogain(flag);
+            return true;
+        case WHITE:
+            eye->setAutoWhiteBalance(flag);
+            return true;
     }
 
     return false;
@@ -186,18 +194,33 @@ bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
 
 bool PS3EyeCamera::getCameraSettingAuto(int mode) {
 
-    if (mode == AUTO_GAIN) {
-        return eye->getAutogain();
-        return true;
-    } else if (mode == AUTO_WHITE) {
-        return eye->getAutoWhiteBalance();
+    switch (mode) {
+        case GAIN:
+            return eye->getAutogain();
+        case WHITE:
+            return eye->getAutoWhiteBalance();
     }
     
     return false;
 }
 
 bool PS3EyeCamera::hasCameraSetting(int mode) {
-    return true;
+    
+    switch (mode) {
+        case GAIN:
+        case AUTO_GAIN:
+        case EXPOSURE:
+        case SHARPNESS:
+        case BRIGHTNESS:
+        case CONTRAST:
+        case AUTO_WHITE:
+        case COLOR_HUE:
+        case COLOR_RED:
+        case COLOR_BLUE:
+        case COLOR_GREEN:
+            return true;
+    }
+    return false;
 }
 
 bool PS3EyeCamera::setCameraSetting(int mode, int value) {
