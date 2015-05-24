@@ -42,29 +42,23 @@ bool CameraEngine::showSettingsDialog(bool lock) {
 void CameraEngine::control(unsigned char key) {
     if(!settingsDialog) return;
 
-    int value,min,max,step = 0;
+    int step = 0;
     switch(key) {
         case VALUE_DOWN:
-            value = getCameraSetting(currentCameraSetting);
-            min = getMinCameraSetting(currentCameraSetting);
-            max = getMaxCameraSetting(currentCameraSetting);
             step = getCameraSettingStep(currentCameraSetting);
-            if (step==1) step = (int)((float)max/256.0f);
+            if (step==1) step = (int)((float)ctrl_max/256.0f);
             if (step<1) step=1;
-            value -= step;
-            if (value<min) value=min;
-            setCameraSetting(currentCameraSetting,value);
+            ctrl_val -= step;
+            if (ctrl_val<ctrl_min) ctrl_val=ctrl_min;
+            setCameraSetting(currentCameraSetting,ctrl_val);
             break;
         case VALUE_UP:
-            value = getCameraSetting(currentCameraSetting);
-            min = getMinCameraSetting(currentCameraSetting);
-            max = getMaxCameraSetting(currentCameraSetting);
             step = getCameraSettingStep(currentCameraSetting);
-            if (step==1) step = (int)((float)max/256.0f);
+            if (step==1) step = (int)((float)ctrl_max/256.0f);
             if (step<1) step=1;
-            value += step;
-            if (value>max) value=max;
-            setCameraSetting(currentCameraSetting,value);
+            ctrl_val += step;
+            if (ctrl_val>ctrl_max) ctrl_val=ctrl_max;
+            setCameraSetting(currentCameraSetting,ctrl_val);
             break;
         case SETTING_PREVIOUS:
             currentCameraSetting--;
@@ -72,14 +66,14 @@ void CameraEngine::control(unsigned char key) {
                 if (colour) currentCameraSetting=COLOR_BLUE;
                 else currentCameraSetting=BACKLIGHT;
             }
-            if ((!hasCameraSetting(currentCameraSetting)) ||  (getCameraSettingAuto(currentCameraSetting)))
+            if ((!hasCameraSetting(currentCameraSetting)) || (getCameraSettingAuto(currentCameraSetting)))
                 control(SETTING_PREVIOUS);
             break;
         case SETTING_NEXT:
             currentCameraSetting++;
             if ((colour) && (currentCameraSetting>COLOR_BLUE)) currentCameraSetting=0;
             else if ((!colour) && (currentCameraSetting>BACKLIGHT)) currentCameraSetting=0;
-            if ((!hasCameraSetting(currentCameraSetting)) ||  (getCameraSettingAuto(currentCameraSetting)))
+            if ((!hasCameraSetting(currentCameraSetting)) || (getCameraSettingAuto(currentCameraSetting)))
                 control(SETTING_NEXT);
             break;
         case KEY_D:

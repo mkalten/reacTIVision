@@ -565,16 +565,14 @@ static int xioctl(int fd, int request, void * arg)
 bool V4Linux2Camera::getCameraSettingAuto(int mode) {
 
     if (!hasCameraSetting(mode)) return false;
-    //v4l2_ext_control v4l2_ctrl[2];
-    v4l2_control v4l2_ctrl;
+    v4l2_ext_control v4l2_ctrl[2];
     memset(&v4l2_ctrl, 0, sizeof (v4l2_ctrl));
 
     switch (mode) {
         case GAIN: return getCameraSetting(AUTO_GAIN);
         case EXPOSURE:
-            v4l2_ctrl.id = V4L2_CID_EXPOSURE_AUTO;
-            //v4l2_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
-            //v4l2_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
+            v4l2_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
+            v4l2_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
             //v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
             //v4l2_ctrl[1].value = V4L2_EXPOSURE_AUTO;
           break;
@@ -590,16 +588,15 @@ bool V4Linux2Camera::getCameraSettingAuto(int mode) {
         return false;
     }*/
 
-    if ((ioctl(cameraID, VIDIOC_G_CTRL, &v4l2_ctrl)) < 0) {
-        printf("Unable to Gget AUTO mode: %s\n" , strerror(errno));
+    if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_ctrl)) < 0) {
+        // printf("Unable to Gget AUTO mode: %s\n" , strerror(errno));
         return false;
     }
 
     if (mode==EXPOSURE) {
         //printf("get auto mode: %d %d\n",v4l2_ctrl[0].value,v4l2_ctrl[1].value);
-        printf("get auto mode: %d\n",v4l2_ctrl.value);
-        return (v4l2_ctrl.value<1);
-    } else return v4l2_ctrl.value;
+        return (v4l2_ctrl[1].value<1);
+    } else return v4l2_ctrl[1].value;
 }
 
 bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
@@ -618,7 +615,7 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
                 v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
                 v4l2_ctrl[1].value = V4L2_EXPOSURE_AUTO;
             } else {
-                v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+                v4l2_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
                 v4l2_ctrl[1].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
            }
             break;
@@ -629,12 +626,11 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
         default: return false;
     }
     if ((xioctl(cameraID, VIDIOC_S_EXT_CTRLS, &v4l2_ctrl)) < 0) {
-
-        printf("Unable to Sset AUTO mode: %s\n" , strerror(errno));
+        //printf("Unable to Sset AUTO mode: %s\n" , strerror(errno));
         return false;
-    }
+    } else return true;
 
-    if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_ctrl)) < 0) {
+    /*if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_ctrl)) < 0) {
         printf("Unable to Sget AUTO mode: %s\n" , strerror(errno));
         return false;
     }
@@ -643,7 +639,7 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
         printf("set auto mode: %d %d\n",v4l2_ctrl[0].value,v4l2_ctrl[1].value);
     }
 
-    return true;
+    return true*/
 }
 
 bool V4Linux2Camera::hasCameraSetting(int mode) {
