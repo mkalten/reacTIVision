@@ -1,16 +1,16 @@
 /*  portVideo, a cross platform camera framework
  Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
- 
+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
  version 2.1 of the License, or (at your option) any later version.
- 
+
  This library is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -53,9 +53,9 @@ public:
         settingsDialog=false;
         crop_frame=false;
     }
-    
+
     virtual ~CameraEngine() {};
-    
+
     virtual bool findCamera() = 0;
     virtual bool initCamera() = 0;
     virtual bool startCamera() = 0;
@@ -64,10 +64,10 @@ public:
     virtual bool resetCamera() = 0;
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
-    
-    enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, BACKLIGHT, GAMMA, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
+
+    enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
     enum CropMode { CROP_NONE, CROP_RECT, CROP_SQUARE, CROP_WIDE};
-    
+
     virtual int getCameraSettingStep(int mode) = 0;
     virtual int getMinCameraSetting(int mode) = 0;
     virtual int getMaxCameraSetting(int mode) = 0;
@@ -79,40 +79,40 @@ public:
     virtual int getDefaultCameraSetting(int mode) = 0;
     virtual bool hasCameraSetting(int mode) = 0;
     virtual bool hasCameraSettingAuto(int mode) = 0;
-    
+
     virtual bool showSettingsDialog(bool lock);
     virtual void control(unsigned char key);
     virtual void showInterface(UserInterface *uiface);
-    
+
     int getId() { return cameraID; }
     int getFps() { return (int)floor(fps+0.5f); }
     int getWidth() { return frame_width; }
     int getHeight() { return frame_height; }
     bool getColour() { return colour; }
     char* getName() { return cameraName; }
-    
+
 protected:
     int cameraID;
     char cameraName[256];
-    
+
     struct portvideo_settings {
         int device;
         char file[255];
         char folder[255];
-        
+
         bool color;
         bool compress;
         bool frame;
-        
+
         int cam_width;
         int cam_height;
         float cam_fps;
-        
+
         int frame_xoff;
         int frame_yoff;
         int frame_width;
         int frame_height;
-        
+
         int brightness;
         int contrast;
         int sharpness;
@@ -130,60 +130,69 @@ protected:
         int blue;
         int green;
     };
-    
+
     portvideo_settings config;
     const char* config_file;
-    
+
     char* image_file;
 #ifdef __APPLE__
     char full_path[1024];
 #endif
-    
+
     bool crop_frame;
     unsigned char* crop_buffer;
     int crop_xoff, crop_yoff;
-    
+
     unsigned char* cam_buffer;
-    
+
     int cam_width, cam_height;
     int frame_width, frame_height;
     float fps;
-    
+
     bool colour;
     int bytes;
-    
+
     int timeout;
     int lost_frames;
-    
+
     bool running;
     bool settingsDialog;
     int currentCameraSetting;
- 
+
     void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_rgb2gray(int width, unsigned char *src, unsigned char *dest);
     void uyvy2gray(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_uyvy2gray(int width, unsigned char *src, unsigned char *dest);
     void yuyv2gray(int width, int height, unsigned char *src, unsigned char *dest);
-    void crop_yuyv2gray(int src_w, int dest_w, int dest_h, int x_off, int y_off, unsigned char *src, unsigned char *dest);
-    
+    void crop_yuyv2gray(int width, unsigned char *src, unsigned char *dest);
+    void yuv2gray(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_yuv2gray(int width, unsigned char *src, unsigned char *dest);
+
+    void gray2rgb(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_gray2rgb(int width, unsigned char *src, unsigned char *dest);
     void uyvy2rgb(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_uyvy2rgb(int width, unsigned char *src, unsigned char *dest);
     void yuyv2rgb(int width, int height, unsigned char *src, unsigned char *dest);
-    
+    void crop_yuyv2rgb(int width, unsigned char *src, unsigned char *dest);
+
     void readSettings();
     int readAttribute(tinyxml2::XMLElement* settings,const char *attribute);
     void saveSettings();
     void saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config);
 
+    void resetCameraSettings();
     void applyCameraSettings();
     void applyCameraSetting(int mode, int value);
     void updateSettings();
     int updateSetting(int mode);
-    
+
     void setupFrame();
     void cropFrame(unsigned char *src, unsigned char *dest, int bytes);
-    
+
     int default_brightness;
     int default_contrast;
     int default_sharpness;
-    
+
     int default_gain;
     int default_shutter;
     int default_exposure;
@@ -191,10 +200,14 @@ protected:
     int default_gamma;
     int default_backlight;
     int default_white;
-    
+
     int default_hue;
     int default_red;
     int default_blue;
     int default_green;
+
+    int ctrl_min;
+    int ctrl_max;
+    int ctrl_val;
 };
 #endif

@@ -141,7 +141,6 @@ bool V4Linux2Camera::initCamera() {
     fps = v4l2_parm.parm.capture.timeperframe.denominator;
 
     if (v4l2_form.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG) _jpegDecompressor = tjInitDecompress();
-    applyCameraSettings();
 
     if (!requestBuffers()) {
         printf("Error requesting buffers.\n");
@@ -337,6 +336,7 @@ bool V4Linux2Camera::startCamera() {
         return false;
     }
 
+    applyCameraSettings();
     running = true;
     return true;
 }
@@ -344,13 +344,8 @@ bool V4Linux2Camera::startCamera() {
 unsigned char* V4Linux2Camera::getFrame()  {
 
     if (cameraID==-1) return NULL;
-    /*memset (&v4l2_buf, 0, sizeof (v4l2_buf));
-     v4l2_buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-     v4l2_buf.memory = V4L2_MEMORY_MMAP;*/
 
     if (ioctl(cameraID, VIDIOC_DQBUF, &v4l2_buf)<0) {
-        //stopCamera();
-        //closeCamera();
         running = false;
         return NULL;
     }
@@ -360,12 +355,15 @@ unsigned char* V4Linux2Camera::getFrame()  {
 
     if(colour) {
         if (config.frame) {
-         if (pixelformat==V4L2_PIX_FMT_YUYV) {
-         } else if (pixelformat==V4L2_PIX_FMT_UYVY) {
-         } else if (pixelformat==V4L2_PIX_FMT_YUV420) {
-         } else if (pixelformat==V4L2_PIX_FMT_YUV410) {
-         } else if (pixelformat==V4L2_PIX_FMT_GREY) {
-         } else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
+         if (pixelformat==V4L2_PIX_FMT_YUYV)
+            crop_yuyv2rgb(cam_width,raw_buffer,crop_buffer);
+         else if (pixelformat==V4L2_PIX_FMT_UYVY)
+            crop_uyvy2rgb(cam_width,raw_buffer,crop_buffer);
+         else if (pixelformat==V4L2_PIX_FMT_YUV420) { //TODO
+         } else if (pixelformat==V4L2_PIX_FMT_YUV410) { //TODO
+         } else if (pixelformat==V4L2_PIX_FMT_GREY)
+            crop_gray2rgb(cam_width,raw_buffer, crop_buffer);
+         else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
                 tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_RGB, TJFLAG_FASTDCT);
@@ -373,77 +371,34 @@ unsigned char* V4Linux2Camera::getFrame()  {
          }
 
         } else {
-         if (pixelformat==V4L2_PIX_FMT_YUYV) {
+         if (pixelformat==V4L2_PIX_FMT_YUYV)
             yuyv2rgb(cam_width,cam_height,raw_buffer,cam_buffer);
-         } else if (pixelformat==V4L2_PIX_FMT_UYVY) {
+         else if (pixelformat==V4L2_PIX_FMT_UYVY)
             uyvy2rgb(cam_width,cam_height,raw_buffer,cam_buffer);
-         } else if (pixelformat==V4L2_PIX_FMT_YUV420) {
-         } else if (pixelformat==V4L2_PIX_FMT_YUV410) {
-         } else if (pixelformat==V4L2_PIX_FMT_GREY) {
-
-             int size = cam_width*cam_height;
-             unsigned char *src = raw_buffer+size-1;
-             unsigned char *dest = cam_buffer+3*size-1;
-             for (int i=size;i>0;i--) {
-                    unsigned char pixel = *src--;
-                    *dest-- = pixel;
-                    *dest-- = pixel;
-                    *dest-- = pixel;
-             }
-         } else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
+         else if (pixelformat==V4L2_PIX_FMT_YUV420) { //TODO
+         } else if (pixelformat==V4L2_PIX_FMT_YUV410) { //TODO
+         } else if (pixelformat==V4L2_PIX_FMT_GREY)
+            gray2rgb(cam_width,cam_height,raw_buffer,cam_buffer);
+         else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_RGB, TJFLAG_FASTDCT);
          }
+                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_RGB, TJFLAG_FASTDCT);
 
         }
 
     } else {
         if (config.frame) {
-            if (pixelformat==V4L2_PIX_FMT_YUYV) {
-
-                unsigned char *src = raw_buffer;
-                unsigned char *dest = crop_buffer;
-
-                src += 2*(config.frame_yoff*cam_width);
-                int xend = (cam_width-(frame_width+config.frame_xoff));
-
-                for (int i=0;i<frame_height;i++) {
-
-                    src +=  2*config.frame_xoff;
-                    for (int j=frame_width/2;j>0;j--) {
-                        *dest++ = *src++;
-                        src++;
-                        *dest++ = *src++;
-                        src++;
-                    }
-                    src +=  2*xend;
-                }
-            }
-            else if (pixelformat==V4L2_PIX_FMT_UYVY) {
-
-                unsigned char *src = raw_buffer;
-                unsigned char *dest = crop_buffer;
-
-                src += 2*(config.frame_yoff*cam_width);
-                int xend = (cam_width-(frame_width+config.frame_xoff));
-
-                for (int i=0;i<frame_height;i++) {
-
-                    src +=  2*config.frame_xoff;
-                    for (int j=frame_width/2;j>0;j--) {
-                        src++;
-                        *dest++ = *src++;
-                        src++;
-                        *dest++ = *src++;
-                    }
-                    src +=  2*xend;
-                }
-
-            }
-            else if (pixelformat==V4L2_PIX_FMT_YUV420) cropFrame(raw_buffer,crop_buffer,1);
-            else if (pixelformat==V4L2_PIX_FMT_YUV410) cropFrame(raw_buffer,crop_buffer,1);
-            else if (pixelformat==V4L2_PIX_FMT_GREY) cropFrame(raw_buffer,crop_buffer,1);
+            if (pixelformat==V4L2_PIX_FMT_YUYV)
+                crop_yuyv2gray(cam_width,raw_buffer,crop_buffer);
+            else if (pixelformat==V4L2_PIX_FMT_UYVY)
+                crop_uyvy2gray(cam_width,raw_buffer,crop_buffer);
+            else if (pixelformat==V4L2_PIX_FMT_YUV420)
+                cropFrame(raw_buffer,crop_buffer,1);
+            else if (pixelformat==V4L2_PIX_FMT_YUV410)
+                cropFrame(raw_buffer,crop_buffer,1);
+            else if (pixelformat==V4L2_PIX_FMT_GREY)
+                cropFrame(raw_buffer,crop_buffer,1);
             else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
 
                 int jpegSubsamp;
@@ -456,7 +411,7 @@ unsigned char* V4Linux2Camera::getFrame()  {
             else if (pixelformat==V4L2_PIX_FMT_UYVY) uyvy2gray(cam_width, cam_height, raw_buffer, cam_buffer);
             else if (pixelformat==V4L2_PIX_FMT_YUV420) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
             else if (pixelformat==V4L2_PIX_FMT_YUV410) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
-           //else if (pixelformat==V4L2_PIX_FMT_GREY) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
+            //else if (pixelformat==V4L2_PIX_FMT_GREY) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
             else if (pixelformat==V4L2_PIX_FMT_MJPEG)  {
 
                 int jpegSubsamp;
@@ -576,112 +531,283 @@ bool V4Linux2Camera::unmapBuffers() {
     return true;
 }
 
-bool V4Linux2Camera::setDefaultCameraSetting(int mode) {
-    return false;
-}
-
-int V4Linux2Camera::getDefaultCameraSetting(int mode) {
-    return INT_MIN;
-}
-
 bool V4Linux2Camera::hasCameraSettingAuto(int mode) {
-	return true;
+
+    v4l2_queryctrl v4l2_query;
+
+    switch (mode) {
+        case GAIN: v4l2_query.id = V4L2_CID_AUTOGAIN; break;
+        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_AUTO; break;
+        case WHITE: v4l2_query.id = V4L2_CID_AUTO_WHITE_BALANCE; break;
+        case FOCUS: v4l2_query.id = V4L2_CID_FOCUS_AUTO; break;
+        case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE_AUTO; break;
+        default: return false;
+    }
+
+    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+        return false;
+    } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
+        return false;
+    } else return true;
+
+}
+
+static int xioctl(int fd, int request, void * arg)
+{
+	int r;
+
+	do
+	r = ioctl(fd, request, arg); while (-1==r&&EINTR==errno);
+
+	return r;
 }
 
 bool V4Linux2Camera::getCameraSettingAuto(int mode) {
-    return false;
+
+    if (!hasCameraSetting(mode)) return false;
+    //v4l2_ext_control v4l2_ctrl[2];
+    v4l2_control v4l2_ctrl;
+    memset(&v4l2_ctrl, 0, sizeof (v4l2_ctrl));
+
+    switch (mode) {
+        case GAIN: return getCameraSetting(AUTO_GAIN);
+        case EXPOSURE:
+            v4l2_ctrl.id = V4L2_CID_EXPOSURE_AUTO;
+            //v4l2_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
+            //v4l2_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
+            //v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+            //v4l2_ctrl[1].value = V4L2_EXPOSURE_AUTO;
+          break;
+        case WHITE: return getCameraSetting(AUTO_WHITE);
+        case FOCUS: /*v4l2_ctrl.id = V4L2_CID_FOCUS_AUTO;*/ break;
+        case COLOR_HUE: return getCameraSetting(AUTO_HUE);
+        default: return false;
+    }
+
+    /*if ((xioctl(cameraID, VIDIOC_S_EXT_CTRLS, &v4l2_ctrl[1])) < 0) {
+
+        printf("Unable to Gset AUTO mode: %s\n" , strerror(errno));
+        return false;
+    }*/
+
+    if ((ioctl(cameraID, VIDIOC_G_CTRL, &v4l2_ctrl)) < 0) {
+        printf("Unable to Gget AUTO mode: %s\n" , strerror(errno));
+        return false;
+    }
+
+    if (mode==EXPOSURE) {
+        //printf("get auto mode: %d %d\n",v4l2_ctrl[0].value,v4l2_ctrl[1].value);
+        printf("get auto mode: %d\n",v4l2_ctrl.value);
+        return (v4l2_ctrl.value<1);
+    } else return v4l2_ctrl.value;
 }
 
 bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
 
-    v4l2_ctrl.id = 0;
+    if (!hasCameraSetting(mode)) return false;
+    v4l2_ext_control v4l2_ctrl[2];
+    memset(&v4l2_ctrl, 0, sizeof (v4l2_ctrl));
 
     switch (mode) {
         case GAIN:
-            //v4l2_ctrl.id = V4L2_CID_AUTOGAIN;
-            //v4l2_ctrl.value = (int)flag;
-            break;
+           return(setCameraSetting(AUTO_GAIN,flag));
         case EXPOSURE:
-            v4l2_ctrl.id = V4L2_CID_EXPOSURE_AUTO;
-            if (flag==true) v4l2_ctrl.value = V4L2_EXPOSURE_AUTO;
-            else {
-                v4l2_ctrl.value = V4L2_EXPOSURE_MANUAL;
-                v4l2_ctrl.id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
-                ioctl(cameraID, VIDIOC_S_CTRL, &v4l2_ctrl);
-                v4l2_ctrl.id = V4L2_CID_EXPOSURE_AUTO;
-            }
+            v4l2_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
+            v4l2_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
+            if (flag==true) {
+                v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+                v4l2_ctrl[1].value = V4L2_EXPOSURE_AUTO;
+            } else {
+                v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+                v4l2_ctrl[1].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
+           }
             break;
+        case WHITE:
+            return(setCameraSetting(AUTO_WHITE,flag));
+        case COLOR_HUE:
+            return(setCameraSetting(AUTO_HUE,flag));
+        default: return false;
+    }
+    if ((xioctl(cameraID, VIDIOC_S_EXT_CTRLS, &v4l2_ctrl)) < 0) {
+
+        printf("Unable to Sset AUTO mode: %s\n" , strerror(errno));
+        return false;
     }
 
-    if (v4l2_ctrl.id==0) return false;
-
-    if ((ioctl(cameraID, VIDIOC_S_CTRL, &v4l2_ctrl)) < 0) {
-        printf("Unable to set AUTO mode: %s\n" , strerror(errno));
+    if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_ctrl)) < 0) {
+        printf("Unable to Sget AUTO mode: %s\n" , strerror(errno));
         return false;
-    } return true;
+    }
 
+    if (mode==EXPOSURE) {
+        printf("set auto mode: %d %d\n",v4l2_ctrl[0].value,v4l2_ctrl[1].value);
+    }
+
+    return true;
 }
 
 bool V4Linux2Camera::hasCameraSetting(int mode) {
-	return true;
+
+    struct v4l2_queryctrl v4l2_query = {0};
+
+    switch (mode) {
+        case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
+        case CONTRAST: v4l2_query.id = V4L2_CID_CONTRAST; break;
+        case SHARPNESS: v4l2_query.id = V4L2_CID_SHARPNESS; break;
+        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
+        case AUTO_GAIN: return hasCameraSettingAuto(GAIN);
+        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
+        case AUTO_EXPOSURE: return hasCameraSettingAuto(EXPOSURE);
+        case WHITE: v4l2_query.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
+        case AUTO_WHITE: return hasCameraSettingAuto(WHITE);
+        case FOCUS: v4l2_query.id = V4L2_CID_FOCUS_ABSOLUTE; break;
+        case AUTO_FOCUS: return hasCameraSettingAuto(FOCUS);
+        case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
+        case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
+        case AUTO_HUE: return hasCameraSettingAuto(COLOR_HUE);
+        case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
+        case COLOR_BLUE: v4l2_query.id = V4L2_CID_BLUE_BALANCE; break;
+        default: return false;
+    }
+
+    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+        return false;
+    } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
+        return false;
+    } return true;
 }
 
 bool V4Linux2Camera::setCameraSetting(int mode, int setting) {
 
-    int current_setting = getCameraSetting(mode);
-    if (setting==current_setting) return true;
-    setCameraSettingAuto(mode,false);
-
-    v4l2_ctrl.id = 0;
+    if (!hasCameraSetting(mode)) return false;
+    struct v4l2_control v4l2_ctrl = {0};
     v4l2_ctrl.value = setting;
 
     switch (mode) {
-        case BRIGHTNESS: v4l2_ctrl.id = V4L2_CID_BRIGHTNESS; config.brightness = setting; break;
-        case CONTRAST: v4l2_ctrl.id = V4L2_CID_CONTRAST; config.contrast = setting; break;
-        case GAIN: v4l2_ctrl.id = V4L2_CID_GAIN; config.gain = setting; break;
-        case EXPOSURE: v4l2_ctrl.id = V4L2_CID_EXPOSURE_ABSOLUTE; config.exposure = setting; break;
-        case SHARPNESS: v4l2_ctrl.id = V4L2_CID_SHARPNESS; config.sharpness = setting; break;
-        case GAMMA: v4l2_ctrl.id = V4L2_CID_GAMMA; config.gamma = setting; break;
+        case BRIGHTNESS: v4l2_ctrl.id = V4L2_CID_BRIGHTNESS; break;
+        case CONTRAST: v4l2_ctrl.id = V4L2_CID_CONTRAST; break;
+        case SHARPNESS: v4l2_ctrl.id = V4L2_CID_SHARPNESS; break;
+        case GAIN: v4l2_ctrl.id = V4L2_CID_GAIN; break;
+        case AUTO_GAIN:  v4l2_ctrl.id = V4L2_CID_AUTOGAIN; break;
+        case EXPOSURE: v4l2_ctrl.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
+        case AUTO_EXPOSURE: return setCameraSettingAuto(EXPOSURE,setting);
+        case WHITE: v4l2_ctrl.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
+        case AUTO_WHITE: v4l2_ctrl.id = V4L2_CID_AUTO_WHITE_BALANCE; break;
+        case FOCUS: v4l2_ctrl.id = V4L2_CID_FOCUS_ABSOLUTE; break;
+        case AUTO_FOCUS: return setCameraSettingAuto(FOCUS,setting);
+        case BACKLIGHT: v4l2_ctrl.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case GAMMA: v4l2_ctrl.id = V4L2_CID_GAMMA; break;
+        case COLOR_HUE: v4l2_ctrl.id = V4L2_CID_HUE; break;
+        case AUTO_HUE: v4l2_ctrl.id = V4L2_CID_HUE_AUTO; break;
+        case COLOR_RED: v4l2_ctrl.id = V4L2_CID_RED_BALANCE; break;
+        case COLOR_BLUE: v4l2_ctrl.id = V4L2_CID_BLUE_BALANCE; break;
+        default: return false;
     }
 
-    if (v4l2_ctrl.id==0) return false;
-
     if ((ioctl(cameraID, VIDIOC_S_CTRL, &v4l2_ctrl)) < 0) {
+        //printf("Unable to set value: %s\n" , strerror(errno));
         return false;
     } return true;
 }
 
 int V4Linux2Camera::getCameraSetting(int mode) {
 
-    v4l2_ctrl.id = 0;
-    v4l2_ctrl.value = 0;
+    if (!hasCameraSetting(mode)) return 0;
+    v4l2_control v4l2_ctrl;
 
     switch (mode) {
         case BRIGHTNESS: v4l2_ctrl.id = V4L2_CID_BRIGHTNESS; break;
         case CONTRAST: v4l2_ctrl.id = V4L2_CID_CONTRAST; break;
-        case GAIN: v4l2_ctrl.id = V4L2_CID_GAIN; break;
-        case EXPOSURE: v4l2_ctrl.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
         case SHARPNESS: v4l2_ctrl.id = V4L2_CID_SHARPNESS; break;
+        case GAIN: v4l2_ctrl.id = V4L2_CID_GAIN; break;
+        case AUTO_GAIN: v4l2_ctrl.id = V4L2_CID_AUTOGAIN; break;
+        case EXPOSURE: v4l2_ctrl.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
+        case AUTO_EXPOSURE: return getCameraSettingAuto(EXPOSURE); break;
+        case WHITE: v4l2_ctrl.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
+        case AUTO_WHITE: v4l2_ctrl.id = V4L2_CID_AUTO_WHITE_BALANCE; break;
+        case FOCUS: v4l2_ctrl.id = V4L2_CID_FOCUS_ABSOLUTE; break;
+        case AUTO_FOCUS: return getCameraSettingAuto(FOCUS);
+        case BACKLIGHT: v4l2_ctrl.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case GAMMA: v4l2_ctrl.id = V4L2_CID_GAMMA; break;
-    } if (v4l2_ctrl.id==0) return false;
+        case COLOR_HUE: v4l2_ctrl.id = V4L2_CID_HUE; break;
+        case AUTO_HUE: v4l2_ctrl.id = V4L2_CID_HUE_AUTO; break;
+        case COLOR_RED: v4l2_ctrl.id = V4L2_CID_RED_BALANCE; break;
+        case COLOR_BLUE: v4l2_ctrl.id = V4L2_CID_BLUE_BALANCE; break;
+        default: return 0;
+    }
 
     if ((ioctl(cameraID, VIDIOC_G_CTRL, &v4l2_ctrl)) < 0) {
         return 0;
-    } return v4l2_ctrl.value;
+    } else return v4l2_ctrl.value;
 }
 
-int V4Linux2Camera::getMaxCameraSetting(int mode) {
+bool V4Linux2Camera::setDefaultCameraSetting(int mode) {
+    return setCameraSetting(mode,getDefaultCameraSetting(mode));
+}
 
-    v4l2_query.id = 0;
+int V4Linux2Camera::getDefaultCameraSetting(int mode) {
+
+    if (!hasCameraSetting(mode)) return 0;
+    v4l2_queryctrl v4l2_query;
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
         case CONTRAST: v4l2_query.id = V4L2_CID_CONTRAST; break;
-        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
-        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
         case SHARPNESS: v4l2_query.id = V4L2_CID_SHARPNESS; break;
+        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
+        case AUTO_GAIN: v4l2_query.id = V4L2_CID_AUTOGAIN; break;
+        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
+        case AUTO_EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_AUTO; break;
+        case FOCUS: v4l2_query.id = V4L2_CID_FOCUS_ABSOLUTE; break;
+        case AUTO_FOCUS: v4l2_query.id = V4L2_CID_FOCUS_AUTO; break;
+        case WHITE: v4l2_query.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
+        case AUTO_WHITE: v4l2_query.id = V4L2_CID_AUTO_WHITE_BALANCE; break;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
-    } if (v4l2_query.id==0) return 0;
+        case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
+        case AUTO_HUE: v4l2_query.id = V4L2_CID_HUE_AUTO; break;
+        case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
+        case COLOR_BLUE: v4l2_query.id = V4L2_CID_BLUE_BALANCE; break;
+        default: return 0;
+    }
+
+    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+        return 0;
+    } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
+        return 0;
+    } else if (v4l2_query.type & V4L2_CTRL_TYPE_INTEGER) {
+        return v4l2_query.default_value;
+    }
+
+    return 0;
+}
+
+int V4Linux2Camera::getMaxCameraSetting(int mode) {
+
+    if (!hasCameraSetting(mode)) return 0;
+    v4l2_queryctrl v4l2_query;
+
+    switch (mode) {
+        case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
+        case CONTRAST: v4l2_query.id = V4L2_CID_CONTRAST; break;
+        case SHARPNESS: v4l2_query.id = V4L2_CID_SHARPNESS; break;
+        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
+        case AUTO_GAIN: return 1;
+        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
+        case AUTO_EXPOSURE: return 1;
+        case FOCUS: v4l2_query.id = V4L2_CID_FOCUS_ABSOLUTE; break;
+        case AUTO_FOCUS: return 1;
+        case WHITE: v4l2_query.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
+        case AUTO_WHITE: return 1;
+        case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
+        case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
+        case AUTO_HUE: return 1;
+        case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
+        case COLOR_BLUE: v4l2_query.id = V4L2_CID_BLUE_BALANCE; break;
+        default: return 0;
+    }
 
     if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
         return 0;
@@ -697,20 +823,34 @@ int V4Linux2Camera::getMaxCameraSetting(int mode) {
 }
 
 int V4Linux2Camera::getMinCameraSetting(int mode) {
-    v4l2_query.id = 0;
+
+    if (!hasCameraSetting(mode)) return 0;
+    struct v4l2_queryctrl v4l2_query = {0};
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
         case CONTRAST: v4l2_query.id = V4L2_CID_CONTRAST; break;
-        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
-        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
         case SHARPNESS: v4l2_query.id = V4L2_CID_SHARPNESS; break;
+        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
+        case AUTO_GAIN: return 0;
+        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
+        case AUTO_EXPOSURE: return 0;
+        case FOCUS: v4l2_query.id = V4L2_CID_FOCUS_ABSOLUTE; break;
+        case AUTO_FOCUS: return 0;
+        case WHITE: v4l2_query.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
+        case AUTO_WHITE: return 0;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
-    } if (v4l2_query.id==0) return 0;
+        case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
+        case AUTO_HUE: return 0;
+        case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
+        case COLOR_BLUE: v4l2_query.id = V4L2_CID_BLUE_BALANCE; break;
+        default: return 0;
+    }
 
     if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
-        return 0;
     } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
+        return 0;
         return 0;
     } else if (v4l2_query.flags & V4L2_CTRL_TYPE_BOOLEAN) {
         return 1;
@@ -722,16 +862,29 @@ int V4Linux2Camera::getMinCameraSetting(int mode) {
 }
 
 int V4Linux2Camera::getCameraSettingStep(int mode) {
-    v4l2_query.id = 0;
+
+    struct v4l2_queryctrl v4l2_query = {0};
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
         case CONTRAST: v4l2_query.id = V4L2_CID_CONTRAST; break;
-        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
-        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
         case SHARPNESS: v4l2_query.id = V4L2_CID_SHARPNESS; break;
+        case GAIN: v4l2_query.id = V4L2_CID_GAIN; break;
+        case AUTO_GAIN: return 1;
+        case EXPOSURE: v4l2_query.id = V4L2_CID_EXPOSURE_ABSOLUTE; break;
+        case AUTO_EXPOSURE: return 1;
+        case FOCUS: v4l2_query.id = V4L2_CID_FOCUS_ABSOLUTE; break;
+        case AUTO_FOCUS: return 1;
+        case WHITE: v4l2_query.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
+        case AUTO_WHITE: return 1;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
-    } if (v4l2_query.id==0) return 0;
+        case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
+        case AUTO_HUE: return 1;
+        case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
+        case COLOR_BLUE: v4l2_query.id = V4L2_CID_BLUE_BALANCE; break;
+        default: return 0;
+    }
 
     if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
         return 0;

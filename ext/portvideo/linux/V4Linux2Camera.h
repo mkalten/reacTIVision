@@ -73,8 +73,6 @@ private:
     v4l2_requestbuffers v4l2_reqbuffers;
     v4l2_format v4l2_form;
     v4l2_streamparm v4l2_parm;
-    v4l2_control v4l2_ctrl;
-    v4l2_queryctrl v4l2_query;
 
     struct Buffers {
       void *start;
