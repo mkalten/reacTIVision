@@ -35,6 +35,8 @@
 
 #define SAT(c) \
 if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
+#define HIBYTE(x) (unsigned char)((x)>>8)
+
 #define SETTING_DEFAULT -1
 #define SETTING_AUTO -2
 #define SETTING_MIN -3
@@ -159,8 +161,15 @@ protected:
     bool settingsDialog;
     int currentCameraSetting;
 
+	void crop(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
+	void flip(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
+	void flip_crop(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
+
     void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
     void crop_rgb2gray(int width, unsigned char *src, unsigned char *dest);
+	void flip_rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
+    void flip_crop_rgb2gray(int width, unsigned char *src, unsigned char *dest);
+
     void uyvy2gray(int width, int height, unsigned char *src, unsigned char *dest);
     void crop_uyvy2gray(int width, unsigned char *src, unsigned char *dest);
     void yuyv2gray(int width, int height, unsigned char *src, unsigned char *dest);

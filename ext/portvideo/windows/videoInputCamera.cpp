@@ -119,55 +119,14 @@ unsigned char* videoInputCamera::getFrame()
 
 	unsigned char *dest = cam_buffer;
 	if (!colour) {
-		unsigned char r,g,b;
 
-		if (config.frame) {
-			    src += 3*(config.frame_yoff*cam_width);
-				dest += frame_width*frame_height-1;
-                int xend = (cam_width-(frame_width+config.frame_xoff));
+		if (config.frame) flip_crop_rgb2gray(cam_width,src,dest);
+		else flip_rgb2gray(cam_width,cam_height,src,dest);
 
-                for (int i=0;i<frame_height;i++) {
-
-                    src +=  3*config.frame_xoff;
-                    for (int j=frame_width;j>0;j--) {
- 						r = *src++;
-						g = *src++;
-						b = *src++;
-						*dest-- = hibyte(r * 77 + g * 151 + b * 28);
-                    }
-                    src +=  3*xend;
-                }
-		} else {
-			int size = cam_width*cam_height;
-			dest += size-1;
-			for(int i=size;i>0;i--) {
-				r = *src++;
-				g = *src++;
-				b = *src++;
-				*dest-- = hibyte(r * 77 + g * 151 + b * 28);
-			}
-		}
 	} else {
-		if (config.frame) {
-			    src += 3*config.frame_yoff*cam_width;
-				dest += 3*frame_width*frame_height-1;
-                int xend = (cam_width-(frame_width+config.frame_xoff));
 
-                for (int i=0;i<frame_height;i++) {
-
-                    src +=  3*config.frame_xoff;
-                    for (int j=3*frame_width;j>0;j--) {
- 						*dest-- = *src++;
-	                }
-                    src +=  3*xend;
-                }
-		} else {
-			int size = bytes*cam_width*cam_height;
-			dest += size-1;
-			for(int i=size;i>0;i--) {
-				*dest-- = *src++;
-			}
-		}
+		if (config.frame) flip_crop(cam_width,cam_height,src,dest,bytes);
+		else flip(cam_width,cam_height,src,dest,bytes);
 	}
 
 		lost_frames = 0;

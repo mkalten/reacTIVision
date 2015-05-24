@@ -432,7 +432,7 @@ void CameraEngine::crop_uyvy2gray(int cam_w, unsigned char *cam_buf, unsigned ch
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
 
-    for (int i=0;i<frm_h;i++) {
+    for (int i=frm_h;i>0;i--) {
 
         cam_buf +=  2*x_off;
         for (int j=frm_w/2;j>0;j--) {
@@ -465,7 +465,7 @@ void CameraEngine::crop_yuyv2gray(int cam_w, unsigned char *cam_buf, unsigned ch
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
 
-    for (int i=0;i<frm_h;i++) {
+    for (int i=frm_h;i>0;i--) {
 
         cam_buf +=  2*x_off;
         for (int j=frm_w/2;j>0;j--) {
@@ -524,7 +524,7 @@ void CameraEngine::crop_uyvy2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
 
-    for (int i=0;i<frm_h;i++) {
+    for (int i=frm_h;i>0;i--) {
 
         cam_buf +=  2*x_off;
         for (int j=frm_w/2;j>0;j--) {
@@ -572,7 +572,7 @@ void CameraEngine::crop_yuyv2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
 
-    for (int i=0;i<frm_h;i++) {
+    for (int i=frm_h;i>0;i--) {
 
         cam_buf +=  2*x_off;
         for (int j=frm_w/2;j>0;j--) {
@@ -614,7 +614,7 @@ void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     cam_buf += y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
 
-    for (int i=0;i<frm_h;i++) {
+    for (int i=frm_h;i>0;i--) {
 
         cam_buf += x_off;
         for (int j=frm_w;j>0;j--) {
@@ -627,20 +627,84 @@ void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     }
 }
 
+void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
+
+	if(!config.frame) return;
+    int x_off = config.frame_xoff;
+    int y_off = config.frame_yoff;
+    int frm_w = config.frame_width;
+    int frm_h = config.frame_height;
+
+	cam_buf += b*y_off*cam_w;
+    int xend = (cam_w-(frm_w+x_off));
+
+    for (int i=frm_h;i>0;i--) {
+
+		cam_buf +=  b*x_off;
+        for (int j=b*frm_w;j>0;j--) {
+ 			*frm_buf++ = *cam_buf++;
+	    }
+        cam_buf +=  b*xend;
+    }
+}
+
+void CameraEngine::flip(int width, int height, unsigned char *src, unsigned char *dest, int b) {
+
+		int size = b*width*height;
+		dest += size-1;
+		for(int i=size;i>0;i--) {
+			*dest-- = *src++;
+		}
+}
+
+void CameraEngine::flip_crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
+
+	if(!config.frame) return;
+    int x_off = config.frame_xoff;
+    int y_off = config.frame_yoff;
+    int frm_w = config.frame_width;
+    int frm_h = config.frame_height;
+
+	cam_buf += b*y_off*cam_w;
+	frm_buf += b*frm_w*frm_h-1;
+    int xend = (cam_w-(frm_w+x_off));
+
+    for (int i=frm_h;i>0;i--) {
+
+		cam_buf +=  b*x_off;
+        for (int j=b*frm_w;j>0;j--) {
+ 			*frm_buf-- = *cam_buf++;
+	    }
+        cam_buf +=  b*xend;
+    }
+}
+
 void CameraEngine::rgb2gray(int width, int height, unsigned char *src, unsigned char *dest) {
 
-    int Y,R,G,B;
-    for (int i=width*height;i>0;i++) {
+    int R,G,B;
+    for (int i=width*height;i>0;i--) {
 
         R = *src++;
         G = *src++;
         B = *src++;
-        Y = 0.2126*R + 0.7152*G + 0.0722*B;
-        SAT(Y);
-        *dest++ = Y;
+        *dest++ =  HIBYTE(R*77 + G*151 + B*28);
     }
 }
 
+void CameraEngine::flip_rgb2gray(int width, int height, unsigned char *src, unsigned char *dest) {
+
+	int size = width*height;
+	dest += size-1;
+
+    int R,G,B;
+    for (int i=size;i>0;i--) {
+
+        R = *src++;
+        G = *src++;
+        B = *src++;
+        *dest-- =  HIBYTE(R*77 + G*151 + B*28);
+    }
+}
 void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
     if(!config.frame) return;
@@ -649,22 +713,46 @@ void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned cha
     int frm_w = config.frame_width;
     int frm_h = config.frame_height;
 
-    cam_buf += y_off*cam_w;
+    cam_buf += 3*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
 
-    int Y,R,G,B;
-    for (int i=0;i<frm_h;i++) {
+    int R,G,B;
+    for (int i=frm_h;i>0;i--) {
 
-        cam_buf += x_off;
+        cam_buf += 3*x_off;
         for (int j=frm_w;j>0;j--) {
             R = *cam_buf++;
             G = *cam_buf++;
             B = *cam_buf++;
-            Y = 0.2126*R + 0.7152*G + 0.0722*B;
-            SAT(Y);
-            *frm_buf++ = Y;
+            *frm_buf++ = HIBYTE(R*77 + G*151 + B*28);
         }
-        cam_buf +=  x_end;
+        cam_buf +=  3*x_end;
+    }
+}
+
+void CameraEngine::flip_crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
+
+    if(!config.frame) return;
+    int x_off = config.frame_xoff;
+    int y_off = config.frame_yoff;
+    int frm_w = config.frame_width;
+    int frm_h = config.frame_height;
+
+    cam_buf += 3*y_off*cam_w;
+    int x_end = cam_w-(frm_w+x_off);
+	frm_buf += frm_w*frm_h-1;
+
+    int R,G,B;
+    for (int i=frm_h;i>0;i--) {
+
+        cam_buf += 3*x_off;
+        for (int j=frm_w;j>0;j--) {
+            R = *cam_buf++;
+            G = *cam_buf++;
+            B = *cam_buf++;
+            *frm_buf-- = HIBYTE(R*77 + G*151 + B*28);
+        }
+        cam_buf +=  3*x_end;
     }
 }
 
@@ -715,7 +803,7 @@ void CameraEngine::cropFrame(unsigned char *cambuf, unsigned char *cropbuf, int 
     unsigned char *src = cambuf + bytes*(config.frame_yoff*config.cam_width + config.frame_xoff);
     unsigned char *dest = cropbuf;
 
-    for (int i=0;i<config.frame_height;i++) {
+    for (int i=config.frame_height;i>0;i--) {
         memcpy(dest, src, bytes*config.frame_width);
 
         src += bytes*config.cam_width;
