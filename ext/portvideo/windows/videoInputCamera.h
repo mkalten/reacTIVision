@@ -24,7 +24,8 @@
 #include <stdlib.h>
 #include "../common/CameraEngine.h"
 
-#define hibyte(x) (unsigned char)((x)>>8)
+#define FLAGS_AUTO        0X0001L
+#define FLAGS_MANUAL      0X0002L
 
 class videoInputCamera : public CameraEngine
 {
@@ -55,8 +56,6 @@ public:
 	int getDefaultCameraSetting(int mode);
 	bool hasCameraSetting(int mode);
     bool hasCameraSettingAuto(int mode);
-
-	void updateSettings();
 
 	void control(int key);
 	bool showSettingsDialog(bool lock);

@@ -198,6 +198,24 @@ bool videoInputCamera::hasCameraSettingAuto(int mode) {
 }
 
 bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {
+
+	long value=0;
+	long setting = FLAGS_MANUAL;
+	if (flag) setting = FLAGS_AUTO;
+
+	switch (mode) {
+		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID, VI->propBrightness, value, setting, false); break;
+		case GAIN: VI->setVideoSettingFilter(cameraID, VI->propGain, value, setting, false); break;
+		case EXPOSURE: VI->setVideoSettingFilter(cameraID, VI->propExposure, value, setting, false); break;
+		case SHARPNESS: VI->setVideoSettingFilter(cameraID, VI->propSharpness, value, setting, false); break;
+		case FOCUS: VI->setVideoSettingFilter(cameraID, VI->propFocus, value, setting, false); break;
+		case GAMMA: VI->setVideoSettingFilter(cameraID, VI->propGamma, value, setting, false); break;
+		case WHITE: VI->setVideoSettingFilter(cameraID, VI->propWhiteBalance, value, setting, false); break;
+		case BACKLIGHT: VI->setVideoSettingFilter(cameraID, VI->propBacklightCompensation, value, setting, false); break;
+		case COLOR_HUE: VI->setVideoSettingFilter(cameraID, VI->propHue, value, setting, false); break;
+		default: return false;
+	}
+
 	return true;
 }
 
@@ -213,10 +231,14 @@ bool videoInputCamera::getCameraSettingAuto(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cameraID, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cameraID, VI->propGamma, min, max,  step, value, flags, default); break;
-		default: return 0;
+		case WHITE: VI->setVideoSettingFilter(cameraID, VI->propWhiteBalance, value, flags, false); break;
+		case BACKLIGHT: VI->setVideoSettingFilter(cameraID, VI->propBacklightCompensation, value, flags, false); break;
+		case COLOR_HUE: VI->setVideoSettingFilter(cameraID, VI->propHue, value, flags, false); break;
+		default: return false;
 	} 
 
-	return (int)flags;
+	if (flags==FLAGS_AUTO) return true;
+	else return false;
 }
 
 
@@ -224,20 +246,19 @@ bool videoInputCamera::setCameraSetting(int mode, int setting) {
 
 	int current_setting = getCameraSetting(mode);
 	if (setting==current_setting) return true;
-	setCameraSettingAuto(mode,false);
 
-	long flags = 1;
+	long flags = FLAGS_MANUAL;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID, VI->propBrightness, setting, NULL, false); break;
-		case GAIN: VI->setVideoSettingFilter(cameraID, VI->propGain, setting, NULL, false); break;
+		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID, VI->propBrightness, setting, flags, false); break;
+		case GAIN: VI->setVideoSettingFilter(cameraID, VI->propGain, setting, flags, false); break;
 		case EXPOSURE: VI->setVideoSettingFilter(cameraID, VI->propExposure, setting, flags, false); break;
-		case SHARPNESS: VI->setVideoSettingFilter(cameraID, VI->propSharpness, setting, NULL, false); break;
-		case FOCUS: VI->setVideoSettingFilter(cameraID, VI->propFocus, setting, NULL, false); break;
-		case GAMMA: VI->setVideoSettingFilter(cameraID, VI->propGamma, setting, NULL, false); break;
-		case WHITE: VI->setVideoSettingFilter(cameraID, VI->propWhiteBalance, setting, NULL, false); break;
-		case BACKLIGHT: VI->setVideoSettingFilter(cameraID, VI->propBacklightCompensation, setting, NULL, false); break;
-		case COLOR_HUE: VI->setVideoSettingFilter(cameraID, VI->propHue, setting, NULL, false); break;
+		case SHARPNESS: VI->setVideoSettingFilter(cameraID, VI->propSharpness, setting, flags, false); break;
+		case FOCUS: VI->setVideoSettingFilter(cameraID, VI->propFocus, setting, flags, false); break;
+		case GAMMA: VI->setVideoSettingFilter(cameraID, VI->propGamma, setting, flags, false); break;
+		case WHITE: VI->setVideoSettingFilter(cameraID, VI->propWhiteBalance, setting, flags, false); break;
+		case BACKLIGHT: VI->setVideoSettingFilter(cameraID, VI->propBacklightCompensation, setting, flags, false); break;
+		case COLOR_HUE: VI->setVideoSettingFilter(cameraID, VI->propHue, setting, flags, false); break;
 	}
 
 	return true;
@@ -255,6 +276,9 @@ int videoInputCamera::getCameraSetting(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cameraID, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cameraID, VI->propGamma, min, max,  step, value, flags, default); break;
+		case WHITE: VI->getVideoSettingFilter(cameraID, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+		case BACKLIGHT:  VI->getVideoSettingFilter(cameraID, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+		case COLOR_HUE: VI->getVideoSettingFilter(cameraID, VI->propHue, min, max,  step, value, flags, default); break;
 		default: return 0;
 	} 
 
@@ -273,6 +297,9 @@ int videoInputCamera::getMaxCameraSetting(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cameraID, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cameraID, VI->propGamma, min, max,  step, value, flags, default); break;
+		case WHITE: VI->getVideoSettingFilter(cameraID, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+		case BACKLIGHT:  VI->getVideoSettingFilter(cameraID, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+		case COLOR_HUE: VI->getVideoSettingFilter(cameraID, VI->propHue, min, max,  step, value, flags, default); break;
 		default: return 0;
 	} 
 
@@ -291,6 +318,9 @@ int videoInputCamera::getMinCameraSetting(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cameraID, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cameraID, VI->propGamma, min, max,  step, value, flags, default); break;
+		case WHITE: VI->getVideoSettingFilter(cameraID, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+		case BACKLIGHT:  VI->getVideoSettingFilter(cameraID, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+		case COLOR_HUE: VI->getVideoSettingFilter(cameraID, VI->propHue, min, max,  step, value, flags, default); break;
 		default: return 0;
 	} 
 
@@ -309,6 +339,9 @@ int videoInputCamera::getCameraSettingStep(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cameraID, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cameraID, VI->propGamma, min, max,  step, value, flags, default); break;
+		case WHITE: VI->getVideoSettingFilter(cameraID, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+		case BACKLIGHT:  VI->getVideoSettingFilter(cameraID, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+		case COLOR_HUE: VI->getVideoSettingFilter(cameraID, VI->propHue, min, max,  step, value, flags, default); break;
 		default: return 0;
 	} 
 
@@ -318,14 +351,18 @@ int videoInputCamera::getCameraSettingStep(int mode) {
 bool videoInputCamera::setDefaultCameraSetting(int mode) {
     
 	long value=0;
+	long flags=0;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID,  VI->propBrightness, value, NULL, true); break;
-		case GAIN: VI->setVideoSettingFilter(cameraID,  VI->propGain, value, NULL, true); break;
-		case EXPOSURE: VI->setVideoSettingFilter(cameraID,  VI->propExposure, value, NULL, true); break;
-		case SHARPNESS:VI->setVideoSettingFilter(cameraID,  VI->propSharpness, value, NULL, true); break;
-		case FOCUS: VI->setVideoSettingFilter(cameraID,  VI->propFocus, value, NULL, true); break;
-		case GAMMA: VI->setVideoSettingFilter(cameraID,  VI->propGamma, value, NULL, true); break;
+		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID,  VI->propBrightness, value, flags, true); break;
+		case GAIN: VI->setVideoSettingFilter(cameraID,  VI->propGain, value, flags, true); break;
+		case EXPOSURE: VI->setVideoSettingFilter(cameraID,  VI->propExposure, value, flags, true); break;
+		case SHARPNESS:VI->setVideoSettingFilter(cameraID,  VI->propSharpness, value, flags, true); break;
+		case FOCUS: VI->setVideoSettingFilter(cameraID,  VI->propFocus, value, flags, true); break;
+		case GAMMA: VI->setVideoSettingFilter(cameraID,  VI->propGamma, value, flags, true); break;
+		case WHITE: VI->setVideoSettingFilter(cameraID, VI->propWhiteBalance, value, flags, true); break;
+		case BACKLIGHT: VI->setVideoSettingFilter(cameraID, VI->propBacklightCompensation, value, flags, true); break;
+		case COLOR_HUE: VI->setVideoSettingFilter(cameraID, VI->propHue, value, flags, true); break;
 		default: return false;
 	}
 
@@ -344,55 +381,11 @@ int videoInputCamera::getDefaultCameraSetting(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cameraID, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cameraID, VI->propGamma, min, max,  step, value, flags, default); break;
+		case WHITE: VI->getVideoSettingFilter(cameraID, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+		case BACKLIGHT:  VI->getVideoSettingFilter(cameraID, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+		case COLOR_HUE: VI->getVideoSettingFilter(cameraID, VI->propHue, min, max,  step, value, flags, default); break;
 		default: return 0;
 	} 
 
 	return (int)default;
-}
-
-void videoInputCamera::updateSettings()  {
- 
-    int brightness = getCameraSetting(BRIGHTNESS);
-    if (brightness==getMinCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MIN;
-    if (brightness==getMaxCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MAX;
-    if (brightness==getDefaultCameraSetting(BRIGHTNESS)) config.brightness=SETTING_DEFAULT;
-   //printf("brightness %d\n",brightness);
-    
-    int contrast = getCameraSetting(CONTRAST);
-    if (contrast==getMinCameraSetting(CONTRAST)) config.contrast=SETTING_MIN;
-    if (contrast==getMaxCameraSetting(CONTRAST)) config.contrast=SETTING_MAX;
-    if (contrast==getDefaultCameraSetting(CONTRAST)) config.contrast=SETTING_DEFAULT;
-   //printf("contrast %d\n",contrast);
-    
-    int gain = getCameraSetting(GAIN);
-    if (gain==getMinCameraSetting(GAIN)) config.gain=SETTING_MIN;
-    if (gain==getMaxCameraSetting(GAIN)) config.gain=SETTING_MAX;
-    if (gain==getDefaultCameraSetting(GAIN)) config.gain=SETTING_DEFAULT;
-    //printf("gain %d\n",gain);
-    
-    int exposure = getCameraSetting(EXPOSURE);
-    if (exposure==getMinCameraSetting(EXPOSURE)) config.exposure=SETTING_MIN;
-    if (exposure==getMaxCameraSetting(EXPOSURE)) config.exposure=SETTING_MAX;
-    if (exposure==getDefaultCameraSetting(EXPOSURE)) config.exposure=SETTING_DEFAULT;
-    if (getCameraSettingAuto(EXPOSURE)==true) config.exposure=SETTING_AUTO;
-    //printf("exposure %d\n",exposure);
-    
-    int sharpness = getCameraSetting(SHARPNESS);
-    if (sharpness==getMinCameraSetting(SHARPNESS)) config.sharpness=SETTING_MIN;
-    if (sharpness==getMaxCameraSetting(SHARPNESS)) config.sharpness=SETTING_MAX;
-    if (sharpness==getDefaultCameraSetting(SHARPNESS)) config.sharpness=SETTING_DEFAULT;
-    //printf("sharpness %d\n",sharpness);
-
-    int focus = getCameraSetting(FOCUS);
-    if (focus==getMinCameraSetting(FOCUS)) config.focus=SETTING_MIN;
-    if (focus==getMaxCameraSetting(FOCUS)) config.focus=SETTING_MAX;
-    if (focus==getDefaultCameraSetting(FOCUS)) config.focus=SETTING_DEFAULT;
-    //printf("focus %d\n",focus);
-    
-    int gamma = getCameraSetting(GAMMA);
-    if (gamma==getMinCameraSetting(GAMMA)) config.gamma=SETTING_MIN;
-    if (gamma==getMaxCameraSetting(GAMMA)) config.gamma=SETTING_MAX;
-    if (getCameraSettingAuto(GAMMA)==true) config.gamma=SETTING_AUTO;
-    if (gamma==getDefaultCameraSetting(GAMMA)) config.gamma=SETTING_DEFAULT;
-    //printf("gamma %d\n",gamma);
 }
