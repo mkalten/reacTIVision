@@ -217,6 +217,27 @@ bool videoInputCamera::showSettingsDialog(bool lock) {
 	return lock;
 }
 
+bool videoInputCamera::hasCameraSetting(int mode) {
+	switch (mode) {
+		case BRIGHTNESS:
+		case GAIN:
+		case EXPOSURE:
+		case SHARPNESS:
+		case FOCUS:
+		case GAMMA:
+		case WHITE:
+		case BACKLIGHT:
+		case COLOR_HUE:
+			return true;
+		default:
+			return false;
+	}
+}
+
+bool videoInputCamera::hasCameraSettingAuto(int mode) {
+	return true;
+}
+
 bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {
 	return true;
 }
@@ -255,7 +276,9 @@ bool videoInputCamera::setCameraSetting(int mode, int setting) {
 		case SHARPNESS: VI->setVideoSettingFilter(cameraID, VI->propSharpness, setting, NULL, false); break;
 		case FOCUS: VI->setVideoSettingFilter(cameraID, VI->propFocus, setting, NULL, false); break;
 		case GAMMA: VI->setVideoSettingFilter(cameraID, VI->propGamma, setting, NULL, false); break;
-		default: return false;
+		case WHITE: VI->setVideoSettingFilter(cameraID, VI->propWhiteBalance, setting, NULL, false); break;
+		case BACKLIGHT: VI->setVideoSettingFilter(cameraID, VI->propBacklightCompensation, setting, NULL, false); break;
+		case COLOR_HUE: VI->setVideoSettingFilter(cameraID, VI->propHue, setting, NULL, false); break;
 	}
 
 	return true;
