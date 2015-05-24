@@ -156,7 +156,7 @@ unsigned char*  PS3EyeCamera::getFrame() {
     } else {
         
          if (config.frame)
-             crop_yuyv2gray(cam_width, frame_width, frame_height, config.frame_xoff, config.frame_yoff, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+             crop_yuyv2gray(cam_width, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
          else
              yuyv2gray(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
     }

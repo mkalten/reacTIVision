@@ -495,9 +495,7 @@ void yuv2rgb_conv(int Y1, int Y2, int U, int V, unsigned char *dest) {
 
 void CameraEngine::uyvy2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
 
-			int R,G,B;
-			int Y1,Y2;
-			int U,V;
+			int Y1,Y2,U,V;
 
 			for(int i=cam_height*cam_width/2;i>0;i--) {
 
@@ -521,9 +519,7 @@ void CameraEngine::crop_uyvy2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     int frm_w = config.frame_width;
     int frm_h = config.frame_height;
 
-    int R,G,B;
-    int Y1,Y2;
-    int U,V;
+    int Y1,Y2,U,V;
 
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
@@ -548,13 +544,10 @@ void CameraEngine::crop_uyvy2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
 
 void CameraEngine::yuyv2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
 
-			int R,G,B;
-			int Y1,Y2;
-			int U,V;
+			int Y1,Y2,U,V;
 
 			for(int i=cam_height*cam_width/2;i>0;i--) {
 
-				// U and V are +-0.5
                 Y1 = *src++;
                 U  = *src++ - 128;
                 Y2 = *src++;
@@ -574,9 +567,7 @@ void CameraEngine::crop_yuyv2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     int frm_w = config.frame_width;
     int frm_h = config.frame_height;
 
-    int R,G,B;
-    int Y1,Y2;
-    int U,V;
+    int Y1,Y2,U,V;
 
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
@@ -638,10 +629,13 @@ void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
 
 void CameraEngine::rgb2gray(int width, int height, unsigned char *src, unsigned char *dest) {
 
-    int Y;
+    int Y,R,G,B;
     for (int i=width*height;i>0;i++) {
 
-        Y = 0.2126*(*src++) + 0.7152*(*src++) + 0.0722*(*src++);
+        R = *src++;
+        G = *src++;
+        B = *src++;
+        Y = 0.2126*R + 0.7152*G + 0.0722*B;
         SAT(Y);
         *dest++ = Y;
     }
@@ -658,12 +652,15 @@ void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned cha
     cam_buf += y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
 
-    int Y;
+    int Y,R,G,B;
     for (int i=0;i<frm_h;i++) {
 
         cam_buf += x_off;
         for (int j=frm_w;j>0;j--) {
-            Y = 0.2126*(*cam_buf++) + 0.7152*(*cam_buf++) + 0.0722*(*cam_buf++);
+            R = *cam_buf++;
+            G = *cam_buf++;
+            B = *cam_buf++;
+            Y = 0.2126*R + 0.7152*G + 0.0722*B;
             SAT(Y);
             *frm_buf++ = Y;
         }
