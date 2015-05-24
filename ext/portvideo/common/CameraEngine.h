@@ -67,7 +67,7 @@ public:
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
 
-    enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
+    enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
     enum CropMode { CROP_NONE, CROP_RECT, CROP_SQUARE, CROP_WIDE};
 
     virtual int getCameraSettingStep(int mode) = 0;
@@ -125,6 +125,7 @@ protected:
         int focus;
         int gamma;
         int white;
+        int powerline;
         int backlight;
 
         int hue;
@@ -207,8 +208,9 @@ protected:
     int default_exposure;
     int default_focus;
     int default_gamma;
-    int default_backlight;
+    int default_powerline;
     int default_white;
+    int default_backlight;
 
     int default_hue;
     int default_red;

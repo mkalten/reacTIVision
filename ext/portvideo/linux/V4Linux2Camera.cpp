@@ -28,6 +28,8 @@ V4Linux2Camera::V4Linux2Camera(const char* cfg) : CameraEngine(cfg)
     crop_buffer = NULL;
     running = false;
     buffers_initialized = false;
+
+    memset(&v4l2_auto_ctrl,0,sizeof(v4l2_auto_ctrl));
 }
 
 V4Linux2Camera::~V4Linux2Camera(void)
@@ -565,58 +567,48 @@ static int xioctl(int fd, int request, void * arg)
 bool V4Linux2Camera::getCameraSettingAuto(int mode) {
 
     if (!hasCameraSetting(mode)) return false;
-    v4l2_ext_control v4l2_ctrl[2];
-    memset(&v4l2_ctrl, 0, sizeof (v4l2_ctrl));
+    //v4l2_ext_control v4l2_ctrl[2];
+    //v4l2_control v4l2_ctrl;
+    //memset(&v4l2_ctrl, 0, sizeof (v4l2_ctrl));
 
     switch (mode) {
         case GAIN: return getCameraSetting(AUTO_GAIN);
         case EXPOSURE:
-            v4l2_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
-            v4l2_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
-            //v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
-            //v4l2_ctrl[1].value = V4L2_EXPOSURE_AUTO;
-          break;
+            v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
+            v4l2_auto_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
+           break;
         case WHITE: return getCameraSetting(AUTO_WHITE);
-        case FOCUS: /*v4l2_ctrl.id = V4L2_CID_FOCUS_AUTO;*/ break;
         case COLOR_HUE: return getCameraSetting(AUTO_HUE);
         default: return false;
     }
 
-    /*if ((xioctl(cameraID, VIDIOC_S_EXT_CTRLS, &v4l2_ctrl[1])) < 0) {
-
-        printf("Unable to Gset AUTO mode: %s\n" , strerror(errno));
-        return false;
-    }*/
-
-    if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_ctrl)) < 0) {
-        // printf("Unable to Gget AUTO mode: %s\n" , strerror(errno));
+    if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
+        printf("Unable to get AUTO mode: %s\n" , strerror(errno));
         return false;
     }
 
     if (mode==EXPOSURE) {
-        //printf("get auto mode: %d %d\n",v4l2_ctrl[0].value,v4l2_ctrl[1].value);
-        return (v4l2_ctrl[1].value<1);
-    } else return v4l2_ctrl[1].value;
+        printf("get auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
+        return (v4l2_auto_ctrl[1].value<1);
+    } else return false;
 }
 
 bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
 
     if (!hasCameraSetting(mode)) return false;
-    v4l2_ext_control v4l2_ctrl[2];
-    memset(&v4l2_ctrl, 0, sizeof (v4l2_ctrl));
 
     switch (mode) {
         case GAIN:
            return(setCameraSetting(AUTO_GAIN,flag));
         case EXPOSURE:
-            v4l2_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
-            v4l2_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
+            v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
+            v4l2_auto_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
             if (flag==true) {
-                v4l2_ctrl[0].value = V4L2_EXPOSURE_AUTO;
-                v4l2_ctrl[1].value = V4L2_EXPOSURE_AUTO;
+                v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+                v4l2_auto_ctrl[1].value = V4L2_EXPOSURE_AUTO;
             } else {
-                v4l2_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
-                v4l2_ctrl[1].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
+                v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
+                v4l2_auto_ctrl[1].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
            }
             break;
         case WHITE:
@@ -625,21 +617,17 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
             return(setCameraSetting(AUTO_HUE,flag));
         default: return false;
     }
-    if ((xioctl(cameraID, VIDIOC_S_EXT_CTRLS, &v4l2_ctrl)) < 0) {
-        //printf("Unable to Sset AUTO mode: %s\n" , strerror(errno));
-        return false;
-    } else return true;
-
-    /*if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_ctrl)) < 0) {
-        printf("Unable to Sget AUTO mode: %s\n" , strerror(errno));
+    if ((xioctl(cameraID, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
+        sprintf("Unable to set AUTO mode: %s\n" , strerror(errno));
         return false;
     }
 
     if (mode==EXPOSURE) {
-        printf("set auto mode: %d %d\n",v4l2_ctrl[0].value,v4l2_ctrl[1].value);
+        printf("set auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
+        return true;
     }
 
-    return true*/
+    return false;
 }
 
 bool V4Linux2Camera::hasCameraSetting(int mode) {
@@ -659,6 +647,7 @@ bool V4Linux2Camera::hasCameraSetting(int mode) {
         case FOCUS: v4l2_query.id = V4L2_CID_FOCUS_ABSOLUTE; break;
         case AUTO_FOCUS: return hasCameraSettingAuto(FOCUS);
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return hasCameraSettingAuto(COLOR_HUE);
@@ -693,6 +682,7 @@ bool V4Linux2Camera::setCameraSetting(int mode, int setting) {
         case FOCUS: v4l2_ctrl.id = V4L2_CID_FOCUS_ABSOLUTE; break;
         case AUTO_FOCUS: return setCameraSettingAuto(FOCUS,setting);
         case BACKLIGHT: v4l2_ctrl.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case POWERLINE: v4l2_ctrl.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case GAMMA: v4l2_ctrl.id = V4L2_CID_GAMMA; break;
         case COLOR_HUE: v4l2_ctrl.id = V4L2_CID_HUE; break;
         case AUTO_HUE: v4l2_ctrl.id = V4L2_CID_HUE_AUTO; break;
@@ -725,6 +715,7 @@ int V4Linux2Camera::getCameraSetting(int mode) {
         case FOCUS: v4l2_ctrl.id = V4L2_CID_FOCUS_ABSOLUTE; break;
         case AUTO_FOCUS: return getCameraSettingAuto(FOCUS);
         case BACKLIGHT: v4l2_ctrl.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case POWERLINE: v4l2_ctrl.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case GAMMA: v4l2_ctrl.id = V4L2_CID_GAMMA; break;
         case COLOR_HUE: v4l2_ctrl.id = V4L2_CID_HUE; break;
         case AUTO_HUE: v4l2_ctrl.id = V4L2_CID_HUE_AUTO; break;
@@ -761,6 +752,7 @@ int V4Linux2Camera::getDefaultCameraSetting(int mode) {
         case AUTO_WHITE: v4l2_query.id = V4L2_CID_AUTO_WHITE_BALANCE; break;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: v4l2_query.id = V4L2_CID_HUE_AUTO; break;
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
@@ -798,6 +790,7 @@ int V4Linux2Camera::getMaxCameraSetting(int mode) {
         case AUTO_WHITE: return 1;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return 1;
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
@@ -837,6 +830,7 @@ int V4Linux2Camera::getMinCameraSetting(int mode) {
         case AUTO_WHITE: return 0;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return 0;
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
@@ -874,6 +868,7 @@ int V4Linux2Camera::getCameraSettingStep(int mode) {
         case WHITE: v4l2_query.id = V4L2_CID_WHITE_BALANCE_TEMPERATURE; break;
         case AUTO_WHITE: return 1;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
+        case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return 1;

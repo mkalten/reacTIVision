@@ -109,6 +109,7 @@ void CameraEngine::showInterface(UserInterface *interface) {
         case GAMMA:         settingText = "Gamma";      break;
         case AUTO_WHITE:    settingText = "Auto White"; break;
         case WHITE:         settingText = "White Balance"; break;
+        case POWERLINE:     settingText = "Powerline Frequency"; break;
         case BACKLIGHT:     settingText = "Backlight Compensation"; break;
         case AUTO_HUE:      settingText = "Auto Hue";  break;
         case COLOR_HUE:     settingText = "Color Hue";  break;
@@ -147,6 +148,7 @@ void CameraEngine::readSettings() {
     config.shutter = SETTING_AUTO;
     config.focus = SETTING_AUTO;
     config.white = SETTING_AUTO;
+    config.powerline = SETTING_DEFAULT;
     config.backlight = SETTING_AUTO;
     config.hue = SETTING_AUTO;
     config.blue = SETTING_DEFAULT;
@@ -162,6 +164,7 @@ void CameraEngine::readSettings() {
     default_focus = SETTING_AUTO;
     default_gamma = SETTING_AUTO;
     default_white = SETTING_AUTO;
+    default_powerline = SETTING_DEFAULT;
     default_backlight = SETTING_AUTO;
     default_hue = SETTING_AUTO;
     default_red = SETTING_DEFAULT;
@@ -293,6 +296,7 @@ void CameraEngine::readSettings() {
         config.shutter = readAttribute(settings_element, "shutter");
         config.focus = readAttribute(settings_element, "focus");
         config.white = readAttribute(settings_element, "white");
+        config.powerline = readAttribute(settings_element, "powerline");
         config.backlight = readAttribute(settings_element, "backlight");
         config.gamma = readAttribute(settings_element, "gamma");
 
@@ -384,6 +388,8 @@ void CameraEngine::saveSettings() {
         else settings_element->DeleteAttribute("shutter");
         if (hasCameraSetting(WHITE)) saveAttribute(settings_element, "white", config.white);
         else settings_element->DeleteAttribute("white");
+        if (hasCameraSetting(POWERLINE)) saveAttribute(settings_element, "powerline", config.powerline);
+        else settings_element->DeleteAttribute("powerline");
         if (hasCameraSetting(BACKLIGHT)) saveAttribute(settings_element, "backlight", config.backlight);
         else settings_element->DeleteAttribute("backlight");
         if (hasCameraSetting(GAMMA)) saveAttribute(settings_element, "gamma", config.gamma);
@@ -854,6 +860,7 @@ void CameraEngine::applyCameraSettings() {
     applyCameraSetting(SHUTTER,config.shutter);
     applyCameraSetting(FOCUS,config.focus);
     applyCameraSetting(WHITE,config.white);
+    applyCameraSetting(POWERLINE,config.powerline);
     applyCameraSetting(BACKLIGHT,config.backlight);
     applyCameraSetting(GAMMA,config.gamma);
 
@@ -886,6 +893,7 @@ void CameraEngine::updateSettings() {
     config.focus = updateSetting(FOCUS);
     config.white = updateSetting(WHITE);
     config.backlight = updateSetting(BACKLIGHT);
+    config.powerline = updateSetting(POWERLINE);
     config.gamma = updateSetting(GAMMA);
 
     config.hue = updateSetting(COLOR_HUE);
