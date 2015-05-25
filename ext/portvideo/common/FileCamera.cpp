@@ -22,14 +22,10 @@
 #include <windows.h>
 #endif 
 
-FileCamera::FileCamera(const char* cfg): CameraEngine(cfg)
+FileCamera::FileCamera(CameraConfig *cam_cfg): CameraEngine(cfg)
 {
-	cameraID = -1;
-	
 	cam_buffer = NULL;
-
 	sprintf(cameraName,"FileCamera");
-
 	running=false;
 }
 
@@ -39,9 +35,9 @@ FileCamera::~FileCamera()
 }
 
 bool FileCamera::findCamera() {
-	readSettings();
+
 	//if (config.file==NULL) return false;
-	FILE* imagefile=fopen(config.file, "rb");
+	FILE* imagefile=fopen(cfg->file, "rb");
 	if (imagefile==NULL) return false;
 	fclose(imagefile);
 	return true;
@@ -54,7 +50,7 @@ bool FileCamera::initCamera() {
 	char *param;
 	
 	//if (config.file==NULL) return false;
-	FILE*  imagefile=fopen(config.file, "r");
+	FILE*  imagefile=fopen(cfg->file, "r");
 	if (imagefile==NULL) return false;
 
  	char *result = fgets(header,32,imagefile);
@@ -63,14 +59,14 @@ bool FileCamera::initCamera() {
 		
 	result = fgets(header,32,imagefile);
 	while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
-	param = strtok(header," "); if (param) cam_width = atoi(param);
-	param = strtok(NULL," "); if (param) cam_height =  atoi(param);
+	param = strtok(header," "); if (param) cfg->cam_width = atoi(param);
+	param = strtok(NULL," "); if (param) cfg->cam_height =  atoi(param);
 	param = strtok(NULL," "); if (param) gray = atoi(param);
 
-	if (cam_height==0) 	{ 
+	if (cfg->cam_height==0) 	{ 
 		result = fgets(header,32,imagefile);
 		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
-		param = strtok(header," "); if (param) cam_height = atoi(param);
+		param = strtok(header," "); if (param) cfg->cam_height = atoi(param);
 		param = strtok(NULL," "); if (param) gray = atoi(param);
 	}
 
@@ -80,19 +76,16 @@ bool FileCamera::initCamera() {
 		param = strtok(header," "); if (param) gray = atoi(param);
 	}
 
-	if ((cam_width==0) || (cam_height==0) ) return false; 
+	if ((cfg->cam_width==0) || (cfg->cam_height==0) ) return false; 
 
-	cam_buffer = new unsigned char[cam_width*cam_height*bytes];		
-	size_t size = fread(cam_buffer, bytes,  cam_width*cam_height, imagefile);
-	if ((int)size!=cam_width*cam_height*bytes) std::cerr << "wrong image lenght" << std::endl;
+	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];		
+	size_t size = fread(cam_buffer, bytes,  cfg->cam_width*cfg->cam_height, imagefile);
+	if ((int)size!=cfg->cam_width*cfg->cam_height*bytes) std::cerr << "wrong image lenght" << std::endl;
 	fclose(imagefile);
 
-	config.cam_width = cam_width;
-	config.cam_height = cam_height;
-
 	bytes = 1;
-	colour = false;
-	fps = 10;
+	cfg->color = false;
+	cfg->cam_fps = 10;
 	
 	return true;
 }
@@ -172,5 +165,14 @@ int FileCamera::getMinCameraSetting(int mode) {
 bool FileCamera::showSettingsDialog(bool lock) {
 	return lock;
 }
+
+bool FileCamera::hasCameraSetting(int mode) {
+	return false;
+}
+
+bool FileCamera::hasCameraSettingAuto(int mode) {
+	return false;
+}
+
 #endif
 

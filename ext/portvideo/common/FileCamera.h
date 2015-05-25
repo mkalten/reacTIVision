@@ -30,7 +30,7 @@
 class FileCamera : public CameraEngine
 {
 public:
-	FileCamera(const char* cfg);
+	FileCamera(CameraConfig *cam_cfg);
 	~FileCamera();
 
 	bool findCamera();
@@ -51,10 +51,10 @@ public:
 	int getCameraSetting(int mode);
 	int getMaxCameraSetting(int mode);
 	int getMinCameraSetting(int mode);
+	bool hasCameraSetting(int mode);
+    bool hasCameraSettingAuto(int mode);
 	bool showSettingsDialog(bool lock);
 
-//private:
-//	char *image_file;
 };
 
 #endif

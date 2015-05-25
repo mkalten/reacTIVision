@@ -37,7 +37,7 @@
 class FolderCamera : public CameraEngine
 {
 public:
-	FolderCamera(const char* cfg);
+	FolderCamera(CameraConfig *cam_cfg);
 	~FolderCamera();
 
 	bool findCamera();
@@ -58,6 +58,8 @@ public:
     int getCameraSetting(int mode);
     int getMaxCameraSetting(int mode);
     int getMinCameraSetting(int mode);
+	bool hasCameraSetting(int mode);
+    bool hasCameraSettingAuto(int mode);
     bool showSettingsDialog(bool lock);
 
 private:
