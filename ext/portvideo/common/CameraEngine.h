@@ -63,24 +63,24 @@ struct CameraConfig {
     int device;
     char file[255];
     char folder[255];
-    
+
     bool color;
     bool compress;
     bool frame;
-    
+
     int cam_width;
     int cam_height;
     float cam_fps;
-    
+
     int frame_xoff;
     int frame_yoff;
     int frame_width;
     int frame_height;
-    
+
     int brightness;
     int contrast;
     int sharpness;
-    
+
     int gain;
     int shutter;
     int exposure;
@@ -89,7 +89,7 @@ struct CameraConfig {
     int white;
     int powerline;
     int backlight;
-    
+
     int hue;
     int red;
     int blue;
@@ -99,11 +99,11 @@ struct CameraConfig {
 class CameraEngine
 {
 public:
-    
+
     CameraEngine(CameraConfig *cam_cfg) {
         cfg = cam_cfg;
         settingsDialog=false;
-        
+
         if (cfg->color) bytes = 3;
         else bytes = 1;
     }
@@ -187,12 +187,11 @@ protected:
     int updateSetting(int mode);
 
     void setupFrame();
-    //void cropFrame(unsigned char *src, unsigned char *dest, int bytes);
 
     int max_width, min_width;
     int max_height, min_height;
     int max_fps, min_fps;
-    
+
     int default_brightness;
     int default_contrast;
     int default_sharpness;

@@ -340,61 +340,23 @@ void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     }
 }
 
-/*void CameraEngine::cropFrame(unsigned char *cambuf, unsigned char *cropbuf, int bytes) {
- 
- if(!cfg->frame) return;
- 
- unsigned char *src = cambuf + bytes*(cfg->frame_yoff*cfg->cam_width + cfg->frame_xoff);
- unsigned char *dest = cropbuf;
- 
- for (int i=cfg->frame_height;i>0;i--) {
- memcpy(dest, src, bytes*cfg->frame_width);
- 
- src += bytes*cfg->cam_width;
- dest += bytes*cfg->frame_width;
- }
- }*/
+void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
 
-
-/*void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
- 
     if(!cfg->frame) return;
     int x_off = cfg->frame_xoff;
     int y_off = cfg->frame_yoff;
     int frm_w = cfg->frame_width;
     int frm_h = cfg->frame_height;
- 
-    cam_buf += cam_buf + b*(x_off*cam_w + y_off);
- 
-    for (int i=frm_h;i>0;i--) {
-        memcpy(cam_buf, frm_buf, b*cam_w);
- 
-        src += b*cam_w;
-        dest += b*frm_w;
-    }
- }*/
 
-
-void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
-
-	if(!cfg->frame) return;
-    int x_off = cfg->frame_xoff;
-    int y_off = cfg->frame_yoff;
-    int frm_w = cfg->frame_width;
-    int frm_h = cfg->frame_height;
-
-	cam_buf += b*y_off*cam_w;
-    int xend = (cam_w-(frm_w+x_off));
+    cam_buf += b*(y_off*cam_w + x_off);
 
     for (int i=frm_h;i>0;i--) {
+        memcpy(frm_buf, cam_buf, b*cam_w);
 
-		cam_buf +=  b*x_off;
-        for (int j=b*frm_w;j>0;j--) {
- 			*frm_buf++ = *cam_buf++;
-	    }
-        cam_buf +=  b*xend;
+        cam_buf += b*cam_w;
+        frm_buf += b*frm_w;
     }
-}
+ }
 
 void CameraEngine::flip(int width, int height, unsigned char *src, unsigned char *dest, int b) {
 

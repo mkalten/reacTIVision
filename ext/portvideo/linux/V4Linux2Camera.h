@@ -19,7 +19,7 @@
 #ifndef V4Linux2Camera_H
 #define V4Linux2Camera_H
 
-#include "../common/CameraEngine.h"
+#include "CameraEngine.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,7 +36,7 @@
 class V4Linux2Camera : public CameraEngine
 {
 public:
-	V4Linux2Camera(const char *cfg);
+	V4Linux2Camera(CameraConfig *cam_cfg);
 	~V4Linux2Camera();
 
 	static void listDevices();

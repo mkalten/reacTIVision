@@ -18,12 +18,8 @@
 
 #include "V4Linux2Camera.h"
 
-V4Linux2Camera::V4Linux2Camera(const char* cfg) : CameraEngine(cfg)
+V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
 {
-    cameraID = -1;
-
-    comps = new int;
-
     cam_buffer = NULL;
     crop_buffer = NULL;
     running = false;
@@ -41,7 +37,7 @@ V4Linux2Camera::~V4Linux2Camera(void)
 
 bool V4Linux2Camera::initCamera() {
 
-    if (cameraID < 0) return false;
+    if (cfg->device < 0) return false;
     memset(&v4l2_form, 0, sizeof(v4l2_format));
 
     // select pixelformat
@@ -50,23 +46,21 @@ bool V4Linux2Camera::initCamera() {
         memset(&fmtdesc, 0, sizeof(v4l2_fmtdesc));
         fmtdesc.index = i;
         fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        if (-1 == ioctl(cameraID,VIDIOC_ENUM_FMT,&fmtdesc)) break;
+        if (-1 == ioctl(cfg->device,VIDIOC_ENUM_FMT,&fmtdesc)) break;
 
-        if ((config.compress) && (fmtdesc.pixelformat==V4L2_PIX_FMT_MJPEG)) {
+        if ((cfg->compress) && (fmtdesc.pixelformat==V4L2_PIX_FMT_MJPEG)) {
             v4l2_form.fmt.pix.pixelformat = fmtdesc.pixelformat;
             break;
-        } else if (!(config.compress) && ((fmtdesc.pixelformat==V4L2_PIX_FMT_YUYV) || (fmtdesc.pixelformat==V4L2_PIX_FMT_YUYV) || (fmtdesc.pixelformat==V4L2_PIX_FMT_UYVY) || (fmtdesc.pixelformat==V4L2_PIX_FMT_YUV420) || (fmtdesc.pixelformat==V4L2_PIX_FMT_YUV410 || (fmtdesc.pixelformat==V4L2_PIX_FMT_GREY)))) {
+        } else if (!(cfg->compress) && ((fmtdesc.pixelformat==V4L2_PIX_FMT_YUYV) || (fmtdesc.pixelformat==V4L2_PIX_FMT_YUYV) || (fmtdesc.pixelformat==V4L2_PIX_FMT_UYVY) || (fmtdesc.pixelformat==V4L2_PIX_FMT_YUV420) || (fmtdesc.pixelformat==V4L2_PIX_FMT_YUV410 || (fmtdesc.pixelformat==V4L2_PIX_FMT_GREY)))) {
             v4l2_form.fmt.pix.pixelformat = fmtdesc.pixelformat;
             break;
         }
     }
 
-    cam_width = 0;
-    cam_height = 0;
-    unsigned int max_width = 0;
-    unsigned int max_height = 0;
-    unsigned int min_width = INT_MAX;
-    unsigned int min_height = INT_MAX;
+    max_width = 0;
+    max_height = 0;
+    min_width = INT_MAX;
+    min_height = INT_MAX;
 
     // select size
     for (int i=0;;i++) {
@@ -74,28 +68,25 @@ bool V4Linux2Camera::initCamera() {
         memset(&frmsize, 0, sizeof(v4l2_frmsizeenum));
         frmsize.index = i;
         frmsize.pixel_format  = v4l2_form.fmt.pix.pixelformat;
-        if (-1 == ioctl(cameraID,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
+        if (-1 == ioctl(cfg->device,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
 
         if (frmsize.discrete.width>max_width) max_width=frmsize.discrete.width;
         if (frmsize.discrete.height>max_height) max_height=frmsize.discrete.height;
         if (frmsize.discrete.width<min_width) min_width=frmsize.discrete.width;
         if (frmsize.discrete.height<min_height) min_height=frmsize.discrete.height;
 
-        if ((config.cam_width==(int)frmsize.discrete.width) && (config.cam_height==(int)frmsize.discrete.height)) {
-            cam_width = frmsize.discrete.width;
-            cam_height = frmsize.discrete.height;
+        if ((cfg->cam_width==(int)frmsize.discrete.width) && (cfg->cam_height==(int)frmsize.discrete.height)) {
+            cfg->cam_width = frmsize.discrete.width;
+            cfg->cam_height = frmsize.discrete.height;
             break;
         }
     }
 
-    if (config.cam_width==SETTING_MAX) cam_width = max_width;
-    if (config.cam_height==SETTING_MAX) cam_height = max_height;
-    if (config.cam_width==SETTING_MIN) cam_width = min_width;
-    if (config.cam_height==SETTING_MIN) cam_height = min_height;
-    if (cam_width==0) cam_width = min_width;
-    if (cam_height==0) cam_height = min_height;
+    if (cfg->cam_width==SETTING_MAX) cfg->cam_width = max_width;
+    if (cfg->cam_height==SETTING_MAX) cfg->cam_height = max_height;
+    if (cfg->cam_width==SETTING_MIN) cfg->cam_width = min_width;
+    if (cfg->cam_height==SETTING_MIN) cfg->cam_height = min_height;
 
-    fps = 0;
     float max_fps = 0;
     float min_fps = INT_MAX;
 
@@ -106,9 +97,9 @@ bool V4Linux2Camera::initCamera() {
         memset(&frmival, 0, sizeof(v4l2_frmivalenum));
         frmival.index = i;
         frmival.pixel_format = v4l2_form.fmt.pix.pixelformat;
-        frmival.width = cam_width;
-        frmival.height = cam_height;
-        if (-1 == ioctl(cameraID,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
+        frmival.width = cfg->cam_width;
+        frmival.height = cfg->cam_height;
+        if (-1 == ioctl(cfg->device,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
 
         float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
         if(frm_fps==last_fps) break;
@@ -118,29 +109,28 @@ bool V4Linux2Camera::initCamera() {
         if(frm_fps<min_fps) min_fps = frm_fps;
     }
 
-    if (config.cam_fps==SETTING_MAX) fps = max_fps;
-    if (config.cam_fps==SETTING_MIN) fps = min_fps;
-    if (config.cam_fps>max_fps) fps = max_fps;
-    if (config.cam_fps<min_fps) fps = min_fps;
-    if (fps==0) fps = config.cam_fps;
+    if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps;
+    if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps;
+    if (cfg->cam_fps>max_fps) cfg->cam_fps = max_fps;
+    if (cfg->cam_fps<min_fps) cfg->cam_fps = min_fps;
 
     // try to set the desired dimensions
-    v4l2_form.fmt.pix.width  = cam_width;
-    v4l2_form.fmt.pix.height = cam_height;
+    v4l2_form.fmt.pix.width  = cfg->cam_width;
+    v4l2_form.fmt.pix.height = cfg->cam_height;
     v4l2_parm.parm.capture.timeperframe.numerator = 1;
-    v4l2_parm.parm.capture.timeperframe.denominator = int(fps);
+    v4l2_parm.parm.capture.timeperframe.denominator = int(cfg->cam_fps);
 
     v4l2_form.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (-1 == ioctl (cameraID, VIDIOC_S_FMT, &v4l2_form)) {
+    if (-1 == ioctl (cfg->device, VIDIOC_S_FMT, &v4l2_form)) {
         printf("error setting pixel format: %s\n" , strerror(errno));
         return false;
     }
 
     // use the settings we got from the driver
     pixelformat = v4l2_form.fmt.pix.pixelformat;
-    cam_width = v4l2_form.fmt.pix.width;
-    cam_height = v4l2_form.fmt.pix.height;
-    fps = v4l2_parm.parm.capture.timeperframe.denominator;
+    cfg->cam_width = v4l2_form.fmt.pix.width;
+    cfg->cam_height = v4l2_form.fmt.pix.height;
+    cfg->cam_fps = v4l2_parm.parm.capture.timeperframe.denominator;
 
     if (v4l2_form.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG) _jpegDecompressor = tjInitDecompress();
 
@@ -155,8 +145,8 @@ bool V4Linux2Camera::initCamera() {
     }
 
     setupFrame();
-    if (config.frame) crop_buffer = new unsigned char[frame_width*frame_height*bytes];
-    cam_buffer = new unsigned char[cam_width*cam_height*bytes];
+    if (cfg->frame) crop_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*bytes];
+    cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];
     buffers_initialized = true;
     return true;
 }
@@ -245,8 +235,7 @@ void V4Linux2Camera::listDevices() {
 
 bool V4Linux2Camera::findCamera() {
 
-    readSettings();
-    if (config.device<0) config.device=0;
+    if (cfg->device<0) cfg->device=0;
 
     struct dirent **v4l2_devices;
     int device_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
@@ -257,7 +246,7 @@ bool V4Linux2Camera::findCamera() {
     else printf("%d V4Linux2 devices found\n",device_count);
 
     char v4l2_device[128];
-    sprintf(v4l2_device,"/dev/video%d",config.device);
+    sprintf(v4l2_device,"/dev/video%d",cfg->device);
 
     int fd = open(v4l2_device, O_RDWR);
     if (fd < 0) {
@@ -308,11 +297,11 @@ bool V4Linux2Camera::findCamera() {
         return false;
     }
 
-    if ((config.compress==true) && (valid_compressed_format==false)) config.compress = false;
-    if ((config.compress==false) && (valid_uncompressed_format==false)) config.compress = true;
+    if ((cfg->compress==true) && (valid_compressed_format==false)) cfg->compress = false;
+    if ((cfg->compress==false) && (valid_uncompressed_format==false)) cfg->compress = true;
 
     sprintf(cameraName, "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
-    cameraID = fd;
+    cfg->device = fd;
     return true;
 }
 
@@ -324,7 +313,7 @@ bool V4Linux2Camera::startCamera() {
         v4l2_buf.memory      = V4L2_MEMORY_MMAP;
         v4l2_buf.index       = i;
 
-        if (-1 == ioctl (cameraID, VIDIOC_QBUF, &v4l2_buf)) {
+        if (-1 == ioctl (cfg->device, VIDIOC_QBUF, &v4l2_buf)) {
             printf("Error queuing buffer: %s\n",  strerror(errno));
             exit(0);
         }
@@ -333,7 +322,7 @@ bool V4Linux2Camera::startCamera() {
     enum v4l2_buf_type type;
     memset(&type, 0, sizeof(v4l2_buf_type));
     type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (ioctl(cameraID, VIDIOC_STREAMON, &type) < 0) {
+    if (ioctl(cfg->device, VIDIOC_STREAMON, &type) < 0) {
         printf("Cannot start camera: %s\n", strerror(errno));
         return false;
     }
@@ -345,9 +334,9 @@ bool V4Linux2Camera::startCamera() {
 
 unsigned char* V4Linux2Camera::getFrame()  {
 
-    if (cameraID==-1) return NULL;
+    if (cfg->device<0) return NULL;
 
-    if (ioctl(cameraID, VIDIOC_DQBUF, &v4l2_buf)<0) {
+    if (ioctl(cfg->device, VIDIOC_DQBUF, &v4l2_buf)<0) {
         running = false;
         return NULL;
     }
@@ -355,88 +344,88 @@ unsigned char* V4Linux2Camera::getFrame()  {
     unsigned char *raw_buffer = (unsigned char*)buffers[v4l2_buf.index].start;
     if (raw_buffer==NULL) return NULL;
 
-    if(colour) {
-        if (config.frame) {
+    if(cfg->color) {
+        if (cfg->frame) {
          if (pixelformat==V4L2_PIX_FMT_YUYV)
-            crop_yuyv2rgb(cam_width,raw_buffer,crop_buffer);
+            crop_yuyv2rgb(cfg->cam_width,raw_buffer,crop_buffer);
          else if (pixelformat==V4L2_PIX_FMT_UYVY)
-            crop_uyvy2rgb(cam_width,raw_buffer,crop_buffer);
+            crop_uyvy2rgb(cfg->cam_width,raw_buffer,crop_buffer);
          else if (pixelformat==V4L2_PIX_FMT_YUV420) { //TODO
          } else if (pixelformat==V4L2_PIX_FMT_YUV410) { //TODO
          } else if (pixelformat==V4L2_PIX_FMT_GREY)
-            crop_gray2rgb(cam_width,raw_buffer, crop_buffer);
+            crop_gray2rgb(cfg->cam_width,raw_buffer, crop_buffer);
          else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_RGB, TJFLAG_FASTDCT);
-                cropFrame(cam_buffer,crop_buffer,3);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
+                crop(cfg->cam_width, cfg->cam_height,cam_buffer,crop_buffer,3);
          }
 
         } else {
          if (pixelformat==V4L2_PIX_FMT_YUYV)
-            yuyv2rgb(cam_width,cam_height,raw_buffer,cam_buffer);
+            yuyv2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
          else if (pixelformat==V4L2_PIX_FMT_UYVY)
-            uyvy2rgb(cam_width,cam_height,raw_buffer,cam_buffer);
+            uyvy2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
          else if (pixelformat==V4L2_PIX_FMT_YUV420) { //TODO
          } else if (pixelformat==V4L2_PIX_FMT_YUV410) { //TODO
          } else if (pixelformat==V4L2_PIX_FMT_GREY)
-            gray2rgb(cam_width,cam_height,raw_buffer,cam_buffer);
+            gray2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
          else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
          }
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_RGB, TJFLAG_FASTDCT);
+                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
 
         }
 
     } else {
-        if (config.frame) {
+        if (cfg->frame) {
             if (pixelformat==V4L2_PIX_FMT_YUYV)
-                crop_yuyv2gray(cam_width,raw_buffer,crop_buffer);
+                crop_yuyv2gray(cfg->cam_width,raw_buffer,crop_buffer);
             else if (pixelformat==V4L2_PIX_FMT_UYVY)
-                crop_uyvy2gray(cam_width,raw_buffer,crop_buffer);
+                crop_uyvy2gray(cfg->cam_width,raw_buffer,crop_buffer);
             else if (pixelformat==V4L2_PIX_FMT_YUV420)
-                cropFrame(raw_buffer,crop_buffer,1);
+                crop(cfg->cam_width, cfg->cam_height,raw_buffer,crop_buffer,1);
             else if (pixelformat==V4L2_PIX_FMT_YUV410)
-                cropFrame(raw_buffer,crop_buffer,1);
+                crop(cfg->cam_width, cfg->cam_height,raw_buffer,crop_buffer,1);
             else if (pixelformat==V4L2_PIX_FMT_GREY)
-                cropFrame(raw_buffer,crop_buffer,1);
+                crop(cfg->cam_width, cfg->cam_height,raw_buffer,crop_buffer,1);
             else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
 
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
-                cropFrame(cam_buffer,crop_buffer,1);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
+                crop(cfg->cam_width, cfg->cam_height,cam_buffer,crop_buffer,1);
             }
         } else {
-            if (pixelformat==V4L2_PIX_FMT_YUYV) yuyv2gray(cam_width, cam_height, raw_buffer, cam_buffer);
-            else if (pixelformat==V4L2_PIX_FMT_UYVY) uyvy2gray(cam_width, cam_height, raw_buffer, cam_buffer);
-            else if (pixelformat==V4L2_PIX_FMT_YUV420) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
-            else if (pixelformat==V4L2_PIX_FMT_YUV410) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
+            if (pixelformat==V4L2_PIX_FMT_YUYV) yuyv2gray(cfg->cam_width, cfg->cam_height, raw_buffer, cam_buffer);
+            else if (pixelformat==V4L2_PIX_FMT_UYVY) uyvy2gray(cfg->cam_width, cfg->cam_height, raw_buffer, cam_buffer);
+            else if (pixelformat==V4L2_PIX_FMT_YUV420) memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
+            else if (pixelformat==V4L2_PIX_FMT_YUV410) memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
             //else if (pixelformat==V4L2_PIX_FMT_GREY) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
             else if (pixelformat==V4L2_PIX_FMT_MJPEG)  {
 
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
             }
         }
     }
 
-    if (-1 == ioctl (cameraID, VIDIOC_QBUF, &v4l2_buf)) {
+    if (-1 == ioctl (cfg->device, VIDIOC_QBUF, &v4l2_buf)) {
         printf("cannot unqueue buffer: %s\n", strerror(errno));
         return NULL;
     }
 
-    if (config.frame) return crop_buffer;
-    else if ((!colour) && (pixelformat==V4L2_PIX_FMT_GREY)) return raw_buffer;
+    if (cfg->frame) return crop_buffer;
+    else if ((!cfg->color) && (pixelformat==V4L2_PIX_FMT_GREY)) return raw_buffer;
     else return cam_buffer;
 }
 
 bool V4Linux2Camera::stopCamera() {
     enum v4l2_buf_type type;
     type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    if (ioctl(cameraID, VIDIOC_STREAMOFF, &type) < 0) {
+    if (ioctl(cfg->device, VIDIOC_STREAMOFF, &type) < 0) {
         //printf("cannot stop camera: %s\n", strerror(errno));
         return false;
     }
@@ -457,10 +446,9 @@ bool V4Linux2Camera::resetCamera()
 
 bool V4Linux2Camera::closeCamera() {
 
-    if (cameraID >= 0) {
+    if (cfg->device >= 0) {
         if (buffers_initialized) unmapBuffers();
-        close(cameraID);
-        cameraID = -1;
+        close(cfg->device);
 
         return true;
     } else return false;
@@ -474,7 +462,7 @@ bool V4Linux2Camera::requestBuffers() {
     v4l2_reqbuffers.memory = V4L2_MEMORY_MMAP;
     v4l2_reqbuffers.count = nr_of_buffers;
 
-    if (-1 == ioctl (cameraID, VIDIOC_REQBUFS, &v4l2_reqbuffers)) {
+    if (-1 == ioctl (cfg->device, VIDIOC_REQBUFS, &v4l2_reqbuffers)) {
         if (errno == EINVAL)
             printf ("video capturing or mmap-streaming is not supported\n");
         else
@@ -501,7 +489,7 @@ bool V4Linux2Camera::mapBuffers() {
         v4l2_buf.memory = V4L2_MEMORY_MMAP;
         v4l2_buf.index = i;
 
-        if (-1 == ioctl (cameraID, VIDIOC_QUERYBUF, &v4l2_buf)) {
+        if (-1 == ioctl (cfg->device, VIDIOC_QUERYBUF, &v4l2_buf)) {
             printf("Unable to query buffer: %s\n",  strerror(errno));
             return false;
         }
@@ -510,7 +498,7 @@ bool V4Linux2Camera::mapBuffers() {
         buffers[i].start = mmap (NULL, v4l2_buf.length,
                                  PROT_READ | PROT_WRITE, /* recommended */
                                  MAP_SHARED,             /* recommended */
-                                 cameraID, v4l2_buf.m.offset);
+                                 cfg->device, v4l2_buf.m.offset);
 
         if (MAP_FAILED == buffers[i].start) {
             /* If you do not exit here you should unmap() and free()
@@ -546,7 +534,7 @@ bool V4Linux2Camera::hasCameraSettingAuto(int mode) {
         default: return false;
     }
 
-    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+    if (( ioctl(cfg->device, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
         return false;
     } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
         return false;
@@ -582,13 +570,13 @@ bool V4Linux2Camera::getCameraSettingAuto(int mode) {
         default: return false;
     }
 
-    if ((xioctl(cameraID, VIDIOC_G_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
+    if ((xioctl(cfg->device, VIDIOC_G_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
         printf("Unable to get AUTO mode: %s\n" , strerror(errno));
         return false;
     }
 
     if (mode==EXPOSURE) {
-        printf("get auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
+        //printf("get auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
         return (v4l2_auto_ctrl[1].value<1);
     } else return false;
 }
@@ -617,13 +605,13 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
             return(setCameraSetting(AUTO_HUE,flag));
         default: return false;
     }
-    if ((xioctl(cameraID, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
+    if ((xioctl(cfg->device, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
         sprintf("Unable to set AUTO mode: %s\n" , strerror(errno));
         return false;
     }
 
     if (mode==EXPOSURE) {
-        printf("set auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
+        //printf("set auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
         return true;
     }
 
@@ -656,7 +644,7 @@ bool V4Linux2Camera::hasCameraSetting(int mode) {
         default: return false;
     }
 
-    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+    if (( ioctl(cfg->device, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
         return false;
     } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
         return false;
@@ -691,7 +679,7 @@ bool V4Linux2Camera::setCameraSetting(int mode, int setting) {
         default: return false;
     }
 
-    if ((ioctl(cameraID, VIDIOC_S_CTRL, &v4l2_ctrl)) < 0) {
+    if ((ioctl(cfg->device, VIDIOC_S_CTRL, &v4l2_ctrl)) < 0) {
         //printf("Unable to set value: %s\n" , strerror(errno));
         return false;
     } return true;
@@ -724,7 +712,7 @@ int V4Linux2Camera::getCameraSetting(int mode) {
         default: return 0;
     }
 
-    if ((ioctl(cameraID, VIDIOC_G_CTRL, &v4l2_ctrl)) < 0) {
+    if ((ioctl(cfg->device, VIDIOC_G_CTRL, &v4l2_ctrl)) < 0) {
         return 0;
     } else return v4l2_ctrl.value;
 }
@@ -760,7 +748,7 @@ int V4Linux2Camera::getDefaultCameraSetting(int mode) {
         default: return 0;
     }
 
-    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+    if (( ioctl(cfg->device, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
         return 0;
     } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
         return 0;
@@ -798,7 +786,7 @@ int V4Linux2Camera::getMaxCameraSetting(int mode) {
         default: return 0;
     }
 
-    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+    if (( ioctl(cfg->device, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
         return 0;
     } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
         return 0;
@@ -838,7 +826,7 @@ int V4Linux2Camera::getMinCameraSetting(int mode) {
         default: return 0;
     }
 
-    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+    if (( ioctl(cfg->device, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
     } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
         return 0;
         return 0;
@@ -877,7 +865,7 @@ int V4Linux2Camera::getCameraSettingStep(int mode) {
         default: return 0;
     }
 
-    if (( ioctl(cameraID, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
+    if (( ioctl(cfg->device, VIDIOC_QUERYCTRL, &v4l2_query)) < 0) {
         return 0;
     } else if (v4l2_query.flags & V4L2_CTRL_FLAG_DISABLED) {
         return 0;
