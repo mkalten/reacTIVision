@@ -22,7 +22,7 @@
 #include <videoInput.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../common/CameraEngine.h"
+#include "CameraEngine.h"
 
 #define FLAGS_AUTO        0X0001L
 #define FLAGS_MANUAL      0X0002L
@@ -31,7 +31,7 @@ class videoInputCamera : public CameraEngine
 {
 
 public:
-	videoInputCamera(const char* config_file);
+	videoInputCamera(CameraConfig *cam_cfg);
 	~videoInputCamera();
 
 	static void listDevices();

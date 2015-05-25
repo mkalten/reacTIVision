@@ -35,7 +35,7 @@
 
 #define SAT(c) \
 if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
-#define HIBYTE(x) (unsigned char)((x)>>8)
+#define HBT(x) (unsigned char)((x)>>8)
 
 #define SETTING_DEFAULT -1
 #define SETTING_AUTO    -2

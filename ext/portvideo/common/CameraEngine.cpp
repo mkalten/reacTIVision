@@ -435,7 +435,7 @@ void CameraEngine::rgb2gray(int width, int height, unsigned char *src, unsigned 
         R = *src++;
         G = *src++;
         B = *src++;
-        *dest++ =  HIBYTE(R*77 + G*151 + B*28);
+        *dest++ =  HBT(R*77 + G*151 + B*28);
     }
 }
 
@@ -450,7 +450,7 @@ void CameraEngine::flip_rgb2gray(int width, int height, unsigned char *src, unsi
         R = *src++;
         G = *src++;
         B = *src++;
-        *dest-- =  HIBYTE(R*77 + G*151 + B*28);
+        *dest-- =  HBT(R*77 + G*151 + B*28);
     }
 }
 void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
@@ -472,7 +472,7 @@ void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned cha
             R = *cam_buf++;
             G = *cam_buf++;
             B = *cam_buf++;
-            *frm_buf++ = HIBYTE(R*77 + G*151 + B*28);
+            *frm_buf++ = HBT(R*77 + G*151 + B*28);
         }
         cam_buf +=  3*x_end;
     }
@@ -498,7 +498,7 @@ void CameraEngine::flip_crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigne
             R = *cam_buf++;
             G = *cam_buf++;
             B = *cam_buf++;
-            *frm_buf-- = HIBYTE(R*77 + G*151 + B*28);
+            *frm_buf-- = HBT(R*77 + G*151 + B*28);
         }
         cam_buf +=  3*x_end;
     }

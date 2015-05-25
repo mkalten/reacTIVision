@@ -202,7 +202,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 #endif
     }
     
-    XMLDocument xml_settings;
+    tinyxml2::XMLDocument xml_settings;
     xml_settings.LoadFile(cfgfile);
     if( xml_settings.Error() )
     {
@@ -359,7 +359,7 @@ void CameraTool::saveSettings(const char* cfgfile) {
 #endif
     }
     
-    XMLDocument xml_settings;
+    tinyxml2::XMLDocument xml_settings;
     xml_settings.LoadFile(cfgfile);
     if( xml_settings.Error() )
     {
