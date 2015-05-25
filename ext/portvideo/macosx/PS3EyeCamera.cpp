@@ -20,15 +20,6 @@
 #include "PS3EyeCamera.h"
 #include "ps3eye.h"
 
-PS3EyeCamera::PS3EyeCamera(const char* config_file):CameraEngine(config_file)
-{
-    cam_buffer = NULL;
-}
-
-PS3EyeCamera::~PS3EyeCamera() {
-    if (cam_buffer!=NULL) delete []cam_buffer;
-}
-
 void PS3EyeCamera::listDevices() {
     using namespace ps3eye;
     
@@ -57,18 +48,15 @@ void PS3EyeCamera::listDevices() {
 bool PS3EyeCamera::findCamera() {
     using namespace ps3eye;
 
-    readSettings();
-
     // list out the devices
     std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
     
     if (devices.size() > 0)
     {
-        cameraID = config.device;
-        if (cameraID>=devices.size()) return false;
-        else if (cameraID < 0) cameraID = 0;
+        if (cfg->device >= devices.size()) cfg->device = devices.size()-1;
+        else if (cfg->device < 0) cfg->device = 0;
         
-        eye = devices.at(config.device);
+        eye = devices.at(cfg->device);
         sprintf(cameraName, "PS3Eye");
     } else printf("no PS3Eye cameras found\n");
 
@@ -77,44 +65,42 @@ bool PS3EyeCamera::findCamera() {
 
 bool PS3EyeCamera::initCamera() {
     // check config parameters
-    if (config.cam_width == SETTING_MIN || config.cam_width == 320 || config.cam_height == SETTING_MIN || config.cam_height == 240) {
+    if (cfg->cam_width == SETTING_MIN || cfg->cam_width == 320 || cfg->cam_height == SETTING_MIN || cfg->cam_height == 240) {
 
-        config.cam_width = cam_width = 320;
-        config.cam_height = cam_height =  240;
+        cfg->cam_width =  320;
+        cfg->cam_height = 240;
         
-        if (config.cam_fps==SETTING_MAX) config.cam_fps = 150;
-        else if (config.cam_fps==SETTING_MIN) config.cam_fps = 30;
-        else if (config.cam_fps<30) config.cam_fps = fps = 30;
-        else if (config.cam_fps>150) config.cam_fps = fps = 150;
-        else fps = config.cam_fps;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 150;
+        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 30;
+        else if (cfg->cam_fps<30) cfg->cam_fps = 30;
+        else if (cfg->cam_fps>150) cfg->cam_fps = 150;
         
-    } else if (config.cam_width == SETTING_MAX || config.cam_width == 640 || config.cam_height == SETTING_MAX || config.cam_height == 480 ) {
+    } else if (cfg->cam_width == SETTING_MAX || cfg->cam_width == 640 || cfg->cam_height == SETTING_MAX || cfg->cam_height == 480 ) {
         
-        config.cam_width =  cam_width =  640;
-        config.cam_height = cam_height = 480;
+        cfg->cam_width =  640;
+        cfg->cam_height = 480;
         
-        if (config.cam_fps==SETTING_MAX) config.cam_fps = fps = 60;
-        else if (config.cam_fps==SETTING_MIN) config.cam_fps = fps = 15;
-        else if (config.cam_fps<15) config.cam_fps = fps = 15;
-        else if (config.cam_fps>60) config.cam_fps = fps = 60;
-        else fps = config.cam_fps;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 60;
+        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 15;
+        else if (cfg->cam_fps<15) cfg->cam_fps = 15;
+        else if (cfg->cam_fps>60) cfg->cam_fps = 60;
         
     } else {
-        config.cam_width = cam_width = 640;
-        config.cam_height = cam_height = 480;
-        config.cam_fps = fps = 60;
+        cfg->cam_width =  640;
+        cfg->cam_height = 480;
+        cfg->cam_fps = 60;
     }
     
     // init camera
-    eye->init( config.cam_width, config.cam_height, config.cam_fps );
-    config.cam_fps = fps = eye->getFrameRate();
+    eye->init( cfg->cam_width, cfg->cam_height, cfg->cam_fps );
+    cfg->cam_fps = eye->getFrameRate();
     
     applyCameraSettings();
     
     // do the rest
     setupFrame();
-    if (config.frame) cam_buffer = new unsigned char[cam_width*cam_height*bytes];
-    else cam_buffer = new unsigned char[frame_width*frame_height*bytes];
+    if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];
+    else cam_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*bytes];
     return true;
 }
 
@@ -151,14 +137,18 @@ unsigned char*  PS3EyeCamera::getFrame() {
         PS3EYECam::updateDevices();
     }
     
-    if (colour) {
-        yuyv2rgb(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+    if (cfg->color) {
+        if (cfg->frame)
+            crop_yuyv2rgb(cfg->cam_width, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+        else
+            yuyv2rgb(cfg->cam_width, cfg->cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+            
     } else {
         
-         if (config.frame)
-             crop_yuyv2gray(cam_width, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+         if (cfg->frame)
+             crop_yuyv2gray(cfg->cam_width, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
          else
-             yuyv2gray(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+             yuyv2gray(cfg->cam_width, cfg->cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
     }
     
     return cam_buffer;

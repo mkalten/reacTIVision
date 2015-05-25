@@ -48,7 +48,7 @@ class AVfoundationCamera : public CameraEngine
 {
 
 public:
-	AVfoundationCamera(const char* config_file);
+    AVfoundationCamera(CameraConfig* cam_cfg);
     ~AVfoundationCamera();
 	
     static void listDevices();

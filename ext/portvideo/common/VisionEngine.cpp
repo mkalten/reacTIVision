@@ -345,9 +345,9 @@ void VisionEngine::initFrameProcessors() {
     }
 }
 
-void VisionEngine::setupCamera(const char *camera_config) {
+void VisionEngine::setupCamera(CameraConfig *config) {
     
-    camera_ = CameraTool::findCamera(camera_config);
+    camera_ = CameraTool::getCamera(config);
     if (camera_ == NULL) {
         allocateBuffers();
         return;
@@ -407,8 +407,9 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
 , width_( WIDTH )
 , height_( HEIGHT )
 {
-    configuration_ = config;
-    setupCamera(config->camera_config);
+    app_config_ = config;
+    camera_config_ = CameraTool::readSettings(config->camera_config);
+    setupCamera(camera_config_);
     displayBuffer_ = NULL;
     
     lastTime_ = currentSeconds();

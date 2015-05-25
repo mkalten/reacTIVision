@@ -18,6 +18,9 @@
 
 #include "CameraTool.h"
 
+
+CameraConfig CameraTool::cam_cfg;
+
 void CameraTool::listDevices() {
 
 #ifdef WIN32
@@ -42,57 +45,384 @@ void CameraTool::listDevices() {
 #endif
     
 }
-	
-CameraEngine* CameraTool::findCamera(const char* config_file) {
 
-	CameraEngine* camera = NULL;
-	
-	#ifndef NDEBUG
-	camera = new FileCamera(config_file);
-	if( !camera->findCamera() ) delete camera;
-	else return camera;
+CameraEngine* CameraTool::getDefaultCamera() {
+    
+    resetCameraConfig();
+    
+#ifdef WIN32
+    CameraEngine *camera = new videoInputCamera(&cam_cfg);
+    if( !camera->findCamera() ) delete camera;
+    else return camera;
+#endif
+    
+#ifdef __APPLE__
+    CameraEngine *camera = new AVfoundationCamera(&cam_cfg);
+    if( !camera->findCamera()) delete camera;
+    else return camera;
+#endif
+    
+#ifdef LINUX 
+    CameraEngine *camera = new V4Linux2Camera(&cam_cfg);
+    if( !camera->findCamera()) delete camera;
+    else return camera;
+#endif
+    
+    return NULL;
+}
 
-	camera = new FolderCamera(config_file);
-	if( !camera->findCamera() ) delete camera;
-	else return camera;
-	#endif
-	
-	#ifdef WIN32
-	camera = new videoInputCamera(config_file);
-	if( !camera->findCamera() ) delete camera;
-	else return camera;
-	#endif
-
-	#ifdef __APPLE__
-	camera = new DC1394Camera(config_file);
-	if( !camera->findCamera() ) delete camera;
-	else return camera;
-
-	#ifndef MAC_OS_X_VERSION_10_6
-		camera = new MacVdigCamera(config_file);
-		if( !camera->findCamera()) delete camera;
-		else return camera;	
-	#else
-        camera = new PS3EyeCamera(config_file);
+CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
+    
+    CameraEngine* camera = NULL;
+    
+#ifndef NDEBUG
+    if (cam_cfg->driver==DRIVER_FILE) {
+        camera = new FileCamera(cam_cfg);
+        if( !camera->findCamera() ) delete camera;
+        else return camera;
+    }
+    
+    if (cam_cfg->driver==DRIVER_FOLDER) {
+        camera = new FolderCamera(cam_cfg);
+        if( !camera->findCamera() ) delete camera;
+        else return camera;
+    }
+#endif
+    
+#ifdef WIN32
+    camera = new videoInputCamera(cam_cfg);
+    if( !camera->findCamera() ) delete camera;
+    else return camera;
+#endif
+    
+#ifdef __APPLE__
+    
+    if (cam_cfg->driver==DRIVER_DC1394) {
+        camera = new DC1394Camera(cam_cfg);
+        if( !camera->findCamera() ) delete camera;
+        else return camera;
+    }
+    
+    if (cam_cfg->driver==DRIVER_PS3EYE) {
+        camera = new PS3EyeCamera(cam_cfg);
         if( !camera->findCamera()) delete camera;
         else return camera;
+    }
     
-		camera = new AVfoundationCamera(config_file);
-		if( !camera->findCamera()) delete camera;
-		else return camera;
-	#endif
-
-	#endif		
-		
-	#ifdef LINUX
-	camera = new DC1394Camera(config_file);
-	if( !camera->findCamera() ) delete camera;
-	else return camera;
-	
-	camera = new V4Linux2Camera(config_file);
-	if( !camera->findCamera()) delete camera;
-	else return camera;
-	#endif
-	
-	return NULL;
+    // default driver
+    camera = new AVfoundationCamera(cam_cfg);
+    if( !camera->findCamera()) delete camera;
+    else return camera;
+#endif
+    
+#ifdef LINUX
+    
+    if (cam_cfg->driver==DRIVER_DC1394) {
+        camera = new DC1394Camera(cam_cfg);
+        if( !camera->findCamera() ) delete camera;
+        else return camera;
+    }
+    
+    // default driver
+    camera = new V4Linux2Camera(cam_cfg);
+    if( !camera->findCamera()) delete camera;
+    else return camera;
+    
+#endif
+    
+    return NULL;
 }
+
+void CameraTool::resetCameraConfig() {
+
+    sprintf(cam_cfg.file,"none");
+    sprintf(cam_cfg.folder,"none");
+    
+    cam_cfg.driver = DRIVER_DEFAULT;
+    cam_cfg.device = 0;
+    cam_cfg.color = false;
+    cam_cfg.compress = false;
+    
+    cam_cfg.cam_width = SETTING_MAX;
+    cam_cfg.cam_height = SETTING_MAX;
+    cam_cfg.cam_fps = SETTING_MAX;
+    
+    cam_cfg.frame = false;
+    cam_cfg.frame_xoff = 0;
+    cam_cfg.frame_yoff = 0;
+    cam_cfg.frame_width = SETTING_MAX;
+    cam_cfg.frame_height = SETTING_MAX;
+    
+    cam_cfg.brightness = SETTING_DEFAULT;
+    cam_cfg.contrast = SETTING_DEFAULT;
+    cam_cfg.sharpness = SETTING_DEFAULT;
+    cam_cfg.gain = SETTING_AUTO;
+    
+    cam_cfg.exposure = SETTING_AUTO;
+    cam_cfg.shutter = SETTING_AUTO;
+    cam_cfg.focus = SETTING_AUTO;
+    cam_cfg.white = SETTING_AUTO;
+    cam_cfg.gamma = SETTING_AUTO;
+    cam_cfg.powerline = SETTING_DEFAULT;
+    cam_cfg.backlight = SETTING_AUTO;
+    
+    cam_cfg.hue = SETTING_AUTO;
+    cam_cfg.blue = SETTING_DEFAULT;
+    cam_cfg.red = SETTING_DEFAULT;
+    cam_cfg.green = SETTING_DEFAULT;
+    
+}
+
+CameraConfig* CameraTool::readSettings(const char* cfgfile) {
+    
+    resetCameraConfig();
+    
+#ifdef __APPLE__
+    char path[1024];
+    char full_path[1024];
+#endif
+    
+    if (strcmp( cfgfile, "none" ) == 0) {
+#ifdef __APPLE__
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
+        CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
+        CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
+        CFRelease( mainBundleURL);
+        CFRelease( cfStringRef);
+        sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
+        cfgfile = full_path;
+#elif !defined WIN32
+        if (access ("./camera.xml", F_OK )==0) cfgfile = "./camera.xml";
+        else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) cfgfile = "/usr/share/reacTIVision/camera.xml";
+        else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) cfgfile = "/usr/local/share/camera.xml";
+        else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) cfgfile = "/opt/share/reacTIVision/camera.xml";
+#else
+        cfgfile = "./camera.xml";
+#endif
+    }
+    
+    XMLDocument xml_settings;
+    xml_settings.LoadFile(cfgfile);
+    if( xml_settings.Error() )
+    {
+        std::cout << "Error loading camera configuration file: " << cfgfile << std::endl;
+        return NULL;
+    }
+    
+    XMLHandle docHandle( &xml_settings );
+    XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
+    XMLElement* camera_element = camera.ToElement();
+    
+    if( camera_element==NULL )
+    {
+        std::cout << "Error loading camera configuration file: " << cfgfile << std::endl;
+        return NULL;
+    }
+    
+    if(camera_element->Attribute("driver")!=NULL) {
+        if (strcmp(camera_element->Attribute("driver"), "dc1394" ) == 0) cam_cfg.driver=DRIVER_DC1394;
+        else if (strcmp(camera_element->Attribute("driver"), "ps3eye" ) == 0) cam_cfg.driver=DRIVER_PS3EYE;
+    }
+    
+    if(camera_element->Attribute("id")!=NULL) {
+        if (strcmp(camera_element->Attribute("id"), "auto" ) == 0) cam_cfg.device=SETTING_AUTO;
+        else cam_cfg.device = atoi(camera_element->Attribute("id"));
+    }
+    
+    if(camera_element->Attribute("file")!=NULL) {
+#ifdef __APPLE__
+        sprintf(cam_cfg.file,"%s/../%s",path,camera_element->Attribute("file"));
+#else
+        sprintf(cam_cfg.file,"%s",camera_element->Attribute("file"));
+#endif
+    }
+    if(camera_element->Attribute("folder")!=NULL) {
+#ifdef __APPLE__
+        sprintf(cam_cfg.folder,"%s/../%s",path,camera_element->Attribute("folder"));
+#else
+        sprintf(cam_cfg.folder,"%s",camera_element->Attribute("folder"));
+#endif
+    }
+    
+    XMLElement* image_element = camera.FirstChildElement("capture").ToElement();
+    
+    if (image_element!=NULL) {
+        if ((image_element->Attribute("color")!=NULL) && ( strcmp( image_element->Attribute("color"), "true" ) == 0 )) cam_cfg.color = true;
+        
+        if ((image_element->Attribute("compress")!=NULL) && ( strcmp( image_element->Attribute("compress"), "true" ) == 0)) cam_cfg.compress = true;
+        
+        if(image_element->Attribute("width")!=NULL) {
+            if (strcmp( image_element->Attribute("width"), "max" ) == 0) cam_cfg.cam_width = SETTING_MAX;
+            else cam_cfg.cam_width = atoi(image_element->Attribute("width"));
+        }
+        if(image_element->Attribute("height")!=NULL) {
+            if (strcmp( image_element->Attribute("height"), "max" ) == 0) cam_cfg.cam_height = SETTING_MAX;
+            else cam_cfg.cam_height = atoi(image_element->Attribute("height"));
+        }
+        if(image_element->Attribute("fps")!=NULL) {
+            if (strcmp( image_element->Attribute("fps"), "max" ) == 0) cam_cfg.cam_fps = SETTING_MAX;
+            else cam_cfg.cam_fps = atof(image_element->Attribute("fps"));
+        }
+    }
+    
+    XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
+    if (frame_element!=NULL) {
+        cam_cfg.frame = true;
+        
+        if(frame_element->Attribute("width")!=NULL) {
+            if (strcmp( frame_element->Attribute("width"), "max" ) == 0) cam_cfg.frame_width = SETTING_MAX;
+            else if (strcmp( frame_element->Attribute("width"), "min" ) == 0) cam_cfg.frame_width = 0;
+            else cam_cfg.frame_width = atoi(frame_element->Attribute("width"));
+        }
+        
+        if(frame_element->Attribute("height")!=NULL) {
+            if (strcmp( frame_element->Attribute("height"), "max" ) == 0) cam_cfg.frame_height = SETTING_MAX;
+            else if (strcmp( frame_element->Attribute("height"), "min" ) == 0) cam_cfg.frame_height = 0;
+            else cam_cfg.frame_height = atoi(frame_element->Attribute("height"));
+        }
+        
+        
+        if(frame_element->Attribute("xoff")!=NULL) {
+            if (strcmp( frame_element->Attribute("xoff"), "max" ) == 0) cam_cfg.frame_xoff = SETTING_MAX;
+            else if (strcmp( frame_element->Attribute("xoff"), "min" ) == 0) cam_cfg.frame_xoff = 0;
+            else cam_cfg.frame_xoff = atoi(frame_element->Attribute("xoff"));
+        }
+        
+        if(frame_element->Attribute("yoff")!=NULL) {
+            if (strcmp( frame_element->Attribute("yoff"), "max" ) == 0) cam_cfg.frame_yoff = SETTING_MAX;
+            else if (strcmp( frame_element->Attribute("yoff"), "min" ) == 0) cam_cfg.frame_yoff = 0;
+            else cam_cfg.frame_yoff = atoi(frame_element->Attribute("yoff"));
+        }
+    }
+    
+    XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
+    if (settings_element!=NULL) {
+        
+        cam_cfg.brightness = readAttribute(settings_element, "brightness");
+        cam_cfg.contrast = readAttribute(settings_element, "contrast");
+        cam_cfg.sharpness = readAttribute(settings_element, "sharpness");
+        cam_cfg.gain = readAttribute(settings_element, "gain");
+        cam_cfg.exposure = readAttribute(settings_element, "exposure");
+        cam_cfg.shutter = readAttribute(settings_element, "shutter");
+        cam_cfg.focus = readAttribute(settings_element, "focus");
+        cam_cfg.white = readAttribute(settings_element, "white");
+        cam_cfg.powerline = readAttribute(settings_element, "powerline");
+        cam_cfg.backlight = readAttribute(settings_element, "backlight");
+        cam_cfg.gamma = readAttribute(settings_element, "gamma");
+        
+        if (cam_cfg.color) {
+            cam_cfg.hue = readAttribute(settings_element, "hue");
+            cam_cfg.red = readAttribute(settings_element, "red");
+            cam_cfg.green = readAttribute(settings_element, "green");
+            cam_cfg.blue = readAttribute(settings_element, "blue");
+        } else {
+            cam_cfg.hue = SETTING_OFF;
+            cam_cfg.red = SETTING_OFF;
+            cam_cfg.green = SETTING_OFF;
+            cam_cfg.blue = SETTING_OFF;
+        }
+    }
+    
+    return &cam_cfg;
+}
+
+int CameraTool::readAttribute(XMLElement* settings,const char *attribute) {
+    
+    if(settings->Attribute(attribute)!=NULL) {
+        if (strcmp(settings->Attribute(attribute), "min" ) == 0) return SETTING_MIN;
+        else if (strcmp(settings->Attribute(attribute), "max" ) == 0) return SETTING_MAX;
+        else if (strcmp(settings->Attribute(attribute), "auto" ) == 0) return SETTING_AUTO;
+        else if (strcmp(settings->Attribute(attribute), "default" ) == 0) return SETTING_DEFAULT;
+        else return atoi(settings->Attribute(attribute));
+    }
+    
+    return SETTING_DEFAULT;
+}
+
+void CameraTool::saveSettings(const char* cfgfile) {
+    
+    if (strcmp( cfgfile, "none" ) == 0) {
+#ifdef __APPLE__
+        char path[1024];
+        char full_path[1024];
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
+        CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
+        CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
+        CFRelease( mainBundleURL);
+        CFRelease( cfStringRef);
+        sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
+        cfgfile = full_path;
+#else
+        cfgfile = "./camera.xml";
+#endif
+    }
+    
+    XMLDocument xml_settings;
+    xml_settings.LoadFile(cfgfile);
+    if( xml_settings.Error() )
+    {
+        std::cout << "Error saving camera configuration file: " << cfgfile << std::endl;
+        return;
+    }
+    
+    XMLHandle docHandle( &xml_settings );
+    XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
+    XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
+    
+    if (settings_element!=NULL) {
+        
+        if (cam_cfg.brightness!=SETTING_OFF) saveAttribute(settings_element, "brightness", cam_cfg.brightness);
+        else settings_element->DeleteAttribute("brightness");
+        if (cam_cfg.contrast!=SETTING_OFF) saveAttribute(settings_element, "contrast", cam_cfg.contrast);
+        else settings_element->DeleteAttribute("contrast");
+        if (cam_cfg.brightness!=SETTING_OFF) saveAttribute(settings_element, "sharpness", cam_cfg.sharpness);
+        else settings_element->DeleteAttribute("sharpness");
+        if (cam_cfg.gain!=SETTING_OFF) saveAttribute(settings_element, "gain", cam_cfg.gain);
+        else settings_element->DeleteAttribute("gain");
+        
+        if (cam_cfg.exposure!=SETTING_OFF) saveAttribute(settings_element, "exposure", cam_cfg.exposure);
+        else settings_element->DeleteAttribute("exposure");
+        if (cam_cfg.focus!=SETTING_OFF) saveAttribute(settings_element, "focus", cam_cfg.focus);
+        else settings_element->DeleteAttribute("focus");
+        if (cam_cfg.shutter!=SETTING_OFF) saveAttribute(settings_element, "shutter", cam_cfg.shutter);
+        else settings_element->DeleteAttribute("shutter");
+        if (cam_cfg.white!=SETTING_OFF) saveAttribute(settings_element, "white", cam_cfg.white);
+        else settings_element->DeleteAttribute("white");
+        if (cam_cfg.backlight!=SETTING_OFF) saveAttribute(settings_element, "backlight", cam_cfg.backlight);
+        else settings_element->DeleteAttribute("backlight");
+        if (cam_cfg.powerline!=SETTING_OFF) saveAttribute(settings_element, "powerline", cam_cfg.powerline);
+        else settings_element->DeleteAttribute("powerline");
+        if (cam_cfg.gamma!=SETTING_OFF) saveAttribute(settings_element, "gamma", cam_cfg.gamma);
+        else settings_element->DeleteAttribute("gamma");
+        
+        if (cam_cfg.hue!=SETTING_OFF) saveAttribute(settings_element, "hue", cam_cfg.hue);
+        else settings_element->DeleteAttribute("hue");
+        if (cam_cfg.red!=SETTING_OFF) saveAttribute(settings_element, "red", cam_cfg.red);
+        else settings_element->DeleteAttribute("red");
+        if (cam_cfg.green!=SETTING_OFF) saveAttribute(settings_element, "green", cam_cfg.green);
+        else settings_element->DeleteAttribute("green");
+        if (cam_cfg.blue!=SETTING_OFF) saveAttribute(settings_element, "blue", cam_cfg.green);
+        else settings_element->DeleteAttribute("blue");
+
+    }
+    
+    xml_settings.SaveFile(cfgfile);
+    if( xml_settings.Error() ) std::cout << "Error saving camera configuration file: "  << cfgfile << std::endl;
+    
+}
+
+void CameraTool::saveAttribute(XMLElement* settings,const char *attribute,int config) {
+    
+    if (config==SETTING_MIN) settings->SetAttribute(attribute,"min");
+    else if (config==SETTING_MAX) settings->SetAttribute(attribute,"max");
+    else if (config==SETTING_AUTO) settings->SetAttribute(attribute,"auto");
+    else if (config==SETTING_DEFAULT) settings->SetAttribute(attribute,"default");
+    else {
+        char value[64];
+        sprintf(value,"%d",config);
+        settings->SetAttribute(attribute,value);
+    }
+}
+

@@ -23,7 +23,7 @@ bool CameraEngine::showSettingsDialog(bool lock) {
     if (settingsDialog) {
         settingsDialog = false;
         updateSettings();
-        saveSettings();
+        //CameraTool::saveSettings(this,cfg);
         return false;
     } else if (!lock) {
         currentCameraSetting = -1;
@@ -63,7 +63,7 @@ void CameraEngine::control(unsigned char key) {
         case SETTING_PREVIOUS:
             currentCameraSetting--;
             if(currentCameraSetting<0) {
-                if (colour) currentCameraSetting=COLOR_BLUE;
+                if (cfg->color) currentCameraSetting=COLOR_BLUE;
                 else currentCameraSetting=BACKLIGHT;
             }
             if ((!hasCameraSetting(currentCameraSetting)) || (getCameraSettingAuto(currentCameraSetting)))
@@ -71,8 +71,8 @@ void CameraEngine::control(unsigned char key) {
             break;
         case SETTING_NEXT:
             currentCameraSetting++;
-            if ((colour) && (currentCameraSetting>COLOR_BLUE)) currentCameraSetting=0;
-            else if ((!colour) && (currentCameraSetting>BACKLIGHT)) currentCameraSetting=0;
+            if ((cfg->color) && (currentCameraSetting>COLOR_BLUE)) currentCameraSetting=0;
+            else if ((!cfg->color) && (currentCameraSetting>BACKLIGHT)) currentCameraSetting=0;
             if ((!hasCameraSetting(currentCameraSetting)) || (getCameraSettingAuto(currentCameraSetting)))
                 control(SETTING_NEXT);
             break;
@@ -124,299 +124,6 @@ void CameraEngine::showInterface(UserInterface *interface) {
     interface->displayControl(displayText, ctrl_min, ctrl_max, ctrl_val);
 }
 
-void CameraEngine::readSettings() {
-
-    config.device = 0;
-    config.color = false;
-    config.compress = false;
-    config.cam_width = SETTING_MAX;
-    config.cam_height = SETTING_MAX;
-    config.cam_fps = SETTING_MAX;
-    config.frame = false;
-    config.frame_xoff = 0;
-    config.frame_yoff = 0;
-    config.frame_width = SETTING_MAX;
-    config.frame_height = SETTING_MAX;
-    sprintf(config.file,"none");
-    sprintf(config.folder,"none");
-    config.brightness = SETTING_DEFAULT;
-    config.contrast = SETTING_DEFAULT;
-    config.sharpness = SETTING_DEFAULT;
-    config.gain = SETTING_AUTO;
-    config.gamma = SETTING_AUTO;
-    config.exposure = SETTING_AUTO;
-    config.shutter = SETTING_AUTO;
-    config.focus = SETTING_AUTO;
-    config.white = SETTING_AUTO;
-    config.powerline = SETTING_DEFAULT;
-    config.backlight = SETTING_AUTO;
-    config.hue = SETTING_AUTO;
-    config.blue = SETTING_DEFAULT;
-    config.red = SETTING_DEFAULT;
-    config.green = SETTING_DEFAULT;
-
-    default_brightness = SETTING_DEFAULT;
-    default_contrast = SETTING_DEFAULT;
-    default_sharpness = SETTING_DEFAULT;
-    default_gain = SETTING_AUTO;
-    default_exposure = SETTING_AUTO;
-    default_shutter = SETTING_AUTO;
-    default_focus = SETTING_AUTO;
-    default_gamma = SETTING_AUTO;
-    default_white = SETTING_AUTO;
-    default_powerline = SETTING_DEFAULT;
-    default_backlight = SETTING_AUTO;
-    default_hue = SETTING_AUTO;
-    default_red = SETTING_DEFAULT;
-    default_blue = SETTING_DEFAULT;
-    default_green = SETTING_DEFAULT;
-
-#ifdef __APPLE__
-    char path[1024];
-#endif
-
-    if (strcmp( config_file, "none" ) == 0) {
-#ifdef __APPLE__
-        CFBundleRef mainBundle = CFBundleGetMainBundle();
-        CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
-        CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-        CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
-        CFRelease( mainBundleURL);
-        CFRelease( cfStringRef);
-        sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
-        config_file = full_path;
-#elif !defined WIN32
-        if (access ("./camera.xml", F_OK )==0) config_file = "./camera.xml";
-        else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) config_file = "/usr/share/reacTIVision/camera.xml";
-        else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) config_file = "/usr/local/share/camera.xml";
-        else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) config_file = "/opt/share/reacTIVision/camera.xml";
-#else
-        config_file = "./camera.xml";
-#endif
-    }
-
-    XMLDocument xml_settings;
-    xml_settings.LoadFile( config_file);
-    if( xml_settings.Error() )
-    {
-        std::cout << "Error loading camera configuration file: " << config_file << std::endl;
-        return;
-    }
-
-    XMLHandle docHandle( &xml_settings );
-    XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
-    XMLElement* camera_element = camera.ToElement();
-
-
-    if( camera_element==NULL )
-    {
-        std::cout << "Error loading camera configuration file: " << config_file << std::endl;
-        return;
-    }
-
-    if(camera_element->Attribute("id")!=NULL) {
-        if (strcmp(camera_element->Attribute("id"), "auto" ) == 0) config.device=SETTING_AUTO;
-        else config.device = atoi(camera_element->Attribute("id"));
-    }
-
-    if(camera_element->Attribute("file")!=NULL) {
-#ifdef __APPLE__
-        sprintf(config.file,"%s/../%s",path,camera_element->Attribute("file"));
-#else
-        sprintf(config.file,"%s",camera_element->Attribute("file"));
-#endif
-    }
-    if(camera_element->Attribute("folder")!=NULL) {
-#ifdef __APPLE__
-        sprintf(config.folder,"%s/../%s",path,camera_element->Attribute("folder"));
-#else
-        sprintf(config.folder,"%s",camera_element->Attribute("folder"));
-#endif
-    }
-
-    XMLElement* image_element = camera.FirstChildElement("capture").ToElement();
-
-    if (image_element!=NULL) {
-        if ((image_element->Attribute("color")!=NULL) && ( strcmp( image_element->Attribute("color"), "true" ) == 0 )) config.color = true;
-
-        if ((image_element->Attribute("compress")!=NULL) && ( strcmp( image_element->Attribute("compress"), "true" ) == 0)) config.compress = true;
-
-        if(image_element->Attribute("width")!=NULL) {
-            if (strcmp( image_element->Attribute("width"), "max" ) == 0) config.cam_width = SETTING_MAX;
-            else config.cam_width = atoi(image_element->Attribute("width"));
-        }
-        if(image_element->Attribute("height")!=NULL) {
-            if (strcmp( image_element->Attribute("height"), "max" ) == 0) config.cam_height = SETTING_MAX;
-            else config.cam_height = atoi(image_element->Attribute("height"));
-        }
-        if(image_element->Attribute("fps")!=NULL) {
-            if (strcmp( image_element->Attribute("fps"), "max" ) == 0) config.cam_fps = SETTING_MAX;
-            else config.cam_fps = atof(image_element->Attribute("fps"));
-        }
-    }
-
-    XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
-    if (frame_element!=NULL) {
-        config.frame = true;
-
-        if(frame_element->Attribute("width")!=NULL) {
-            if (strcmp( frame_element->Attribute("width"), "max" ) == 0) config.frame_width = SETTING_MAX;
-            else if (strcmp( frame_element->Attribute("width"), "min" ) == 0) config.frame_width = 0;
-            else config.frame_width = atoi(frame_element->Attribute("width"));
-        }
-
-        if(frame_element->Attribute("height")!=NULL) {
-            if (strcmp( frame_element->Attribute("height"), "max" ) == 0) config.frame_height = SETTING_MAX;
-            else if (strcmp( frame_element->Attribute("height"), "min" ) == 0) config.frame_height = 0;
-            else config.frame_height = atoi(frame_element->Attribute("height"));
-        }
-
-
-        if(frame_element->Attribute("xoff")!=NULL) {
-            if (strcmp( frame_element->Attribute("xoff"), "max" ) == 0) config.frame_xoff = SETTING_MAX;
-            else if (strcmp( frame_element->Attribute("xoff"), "min" ) == 0) config.frame_xoff = 0;
-            else config.frame_xoff = atoi(frame_element->Attribute("xoff"));
-        }
-
-        if(frame_element->Attribute("yoff")!=NULL) {
-            if (strcmp( frame_element->Attribute("yoff"), "max" ) == 0) config.frame_yoff = SETTING_MAX;
-            else if (strcmp( frame_element->Attribute("yoff"), "min" ) == 0) config.frame_yoff = 0;
-            else config.frame_yoff = atoi(frame_element->Attribute("yoff"));
-        }
-    }
-
-    XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
-    if (settings_element!=NULL) {
-
-        config.brightness = readAttribute(settings_element, "brightness");
-        config.contrast = readAttribute(settings_element, "contrast");
-        config.sharpness = readAttribute(settings_element, "sharpness");
-        config.gain = readAttribute(settings_element, "gain");
-        config.exposure = readAttribute(settings_element, "exposure");
-        config.shutter = readAttribute(settings_element, "shutter");
-        config.focus = readAttribute(settings_element, "focus");
-        config.white = readAttribute(settings_element, "white");
-        config.powerline = readAttribute(settings_element, "powerline");
-        config.backlight = readAttribute(settings_element, "backlight");
-        config.gamma = readAttribute(settings_element, "gamma");
-
-        if (config.color) {
-            config.hue = readAttribute(settings_element, "hue");
-            config.red = readAttribute(settings_element, "red");
-            config.green = readAttribute(settings_element, "green");
-            config.blue = readAttribute(settings_element, "blue");
-        }
-    }
-
-    cam_width = config.cam_width;
-    cam_height = config.cam_height;
-    colour = config.color;
-    bytes = (colour?3:1);
-}
-
-int CameraEngine::readAttribute(XMLElement* settings,const char *attribute) {
-
-    if(settings->Attribute(attribute)!=NULL) {
-        if (strcmp(settings->Attribute(attribute), "min" ) == 0) return SETTING_MIN;
-        else if (strcmp(settings->Attribute(attribute), "max" ) == 0) return SETTING_MAX;
-        else if (strcmp(settings->Attribute(attribute), "auto" ) == 0) return SETTING_AUTO;
-        else if (strcmp(settings->Attribute(attribute), "default" ) == 0) return SETTING_DEFAULT;
-        else return atoi(settings->Attribute(attribute));
-    }
-
-    return SETTING_DEFAULT;
-}
-
-void CameraEngine::saveAttribute(XMLElement* settings,const char *attribute,int config) {
-
-    if (config==SETTING_MIN) settings->SetAttribute(attribute,"min");
-    else if (config==SETTING_MAX) settings->SetAttribute(attribute,"max");
-    else if (config==SETTING_AUTO) settings->SetAttribute(attribute,"auto");
-    else if (config==SETTING_DEFAULT) settings->SetAttribute(attribute,"default");
-    else {
-        char value[64];
-        sprintf(value,"%d",config);
-        settings->SetAttribute(attribute,value);
-    }
-}
-
-void CameraEngine::saveSettings() {
-
-    if (strcmp( config_file, "none" ) == 0) {
-#ifdef __APPLE__
-        char path[1024];
-        CFBundleRef mainBundle = CFBundleGetMainBundle();
-        CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
-        CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-        CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
-        CFRelease( mainBundleURL);
-        CFRelease( cfStringRef);
-        sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
-        config_file = full_path;
-#else
-        config_file = "./camera.xml";
-#endif
-    }
-
-    XMLDocument xml_settings;
-    xml_settings.LoadFile(config_file);
-    if( xml_settings.Error() )
-    {
-        std::cout << "Error loading camera configuration file: " << config_file << std::endl;
-        return;
-    }
-
-    XMLHandle docHandle( &xml_settings );
-    XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
-    XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
-
-    if (settings_element!=NULL) {
-
-        if (hasCameraSetting(BRIGHTNESS)) saveAttribute(settings_element, "brightness", config.brightness);
-        else settings_element->DeleteAttribute("brightness");
-        if (hasCameraSetting(CONTRAST)) saveAttribute(settings_element, "contrast", config.contrast);
-        else settings_element->DeleteAttribute("contrast");
-        if (hasCameraSetting(SHARPNESS)) saveAttribute(settings_element, "sharpness", config.sharpness);
-        else settings_element->DeleteAttribute("sharpness");
-        if (hasCameraSetting(GAIN)) saveAttribute(settings_element, "gain", config.gain);
-        else settings_element->DeleteAttribute("gain");
-        if (hasCameraSetting(EXPOSURE)) saveAttribute(settings_element, "exposure", config.exposure);
-        else settings_element->DeleteAttribute("exposure");
-        if (hasCameraSetting(FOCUS)) saveAttribute(settings_element, "focus", config.focus);
-        else settings_element->DeleteAttribute("focus");
-        if (hasCameraSetting(SHUTTER)) saveAttribute(settings_element, "shutter", config.shutter);
-        else settings_element->DeleteAttribute("shutter");
-        if (hasCameraSetting(WHITE)) saveAttribute(settings_element, "white", config.white);
-        else settings_element->DeleteAttribute("white");
-        if (hasCameraSetting(POWERLINE)) saveAttribute(settings_element, "powerline", config.powerline);
-        else settings_element->DeleteAttribute("powerline");
-        if (hasCameraSetting(BACKLIGHT)) saveAttribute(settings_element, "backlight", config.backlight);
-        else settings_element->DeleteAttribute("backlight");
-        if (hasCameraSetting(GAMMA)) saveAttribute(settings_element, "gamma", config.gamma);
-        else settings_element->DeleteAttribute("gamma");
-
-        if (colour) {
-            if (hasCameraSetting(COLOR_HUE)) saveAttribute(settings_element, "hue", config.hue);
-            else settings_element->DeleteAttribute("hue");
-            if (hasCameraSetting(COLOR_RED)) saveAttribute(settings_element, "red", config.red);
-            else settings_element->DeleteAttribute("red");
-            if (hasCameraSetting(COLOR_GREEN)) saveAttribute(settings_element, "green", config.green);
-            else settings_element->DeleteAttribute("green");
-            if (hasCameraSetting(COLOR_BLUE)) saveAttribute(settings_element, "blue", config.green);
-            else settings_element->DeleteAttribute("blue");
-        } else {
-            settings_element->DeleteAttribute("hue");
-            settings_element->DeleteAttribute("red");
-            settings_element->DeleteAttribute("green");
-            settings_element->DeleteAttribute("blue");
-        }
-    }
-
-    xml_settings.SaveFile(config_file);
-    if( xml_settings.Error() ) std::cout << "Error saving camera configuration file: "  << config_file << std::endl;
-
-}
-
 void CameraEngine::uyvy2gray(int width, int height, unsigned char *src, unsigned char *dest) {
 
     for (int i=height*width/2;i>0;i--) {
@@ -429,11 +136,11 @@ void CameraEngine::uyvy2gray(int width, int height, unsigned char *src, unsigned
 
 void CameraEngine::crop_uyvy2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
-    if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
@@ -462,11 +169,11 @@ void CameraEngine::yuyv2gray(int width, int height, unsigned char *src, unsigned
 
 void CameraEngine::crop_yuyv2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
-    if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
     cam_buf += 2*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
@@ -503,7 +210,7 @@ void CameraEngine::uyvy2rgb(int width, int height, unsigned char *src, unsigned 
 
 			int Y1,Y2,U,V;
 
-			for(int i=cam_height*cam_width/2;i>0;i--) {
+			for(int i=width*height/2;i>0;i--) {
 
 				// U and V are +-0.5
                 U  = *src++ - 128;
@@ -519,11 +226,11 @@ void CameraEngine::uyvy2rgb(int width, int height, unsigned char *src, unsigned 
 
 void CameraEngine::crop_uyvy2rgb(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
-    if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
     int Y1,Y2,U,V;
 
@@ -552,7 +259,7 @@ void CameraEngine::yuyv2rgb(int width, int height, unsigned char *src, unsigned 
 
 			int Y1,Y2,U,V;
 
-			for(int i=cam_height*cam_width/2;i>0;i--) {
+			for(int i=width*height/2;i>0;i--) {
 
                 Y1 = *src++;
                 U  = *src++ - 128;
@@ -567,11 +274,11 @@ void CameraEngine::yuyv2rgb(int width, int height, unsigned char *src, unsigned 
 
 void CameraEngine::crop_yuyv2rgb(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
-    if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
     int Y1,Y2,U,V;
 
@@ -611,11 +318,11 @@ void CameraEngine::gray2rgb(int width, int height, unsigned char *src, unsigned 
 
 void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
-    if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
     cam_buf += y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
@@ -633,13 +340,48 @@ void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     }
 }
 
+/*void CameraEngine::cropFrame(unsigned char *cambuf, unsigned char *cropbuf, int bytes) {
+ 
+ if(!cfg->frame) return;
+ 
+ unsigned char *src = cambuf + bytes*(cfg->frame_yoff*cfg->cam_width + cfg->frame_xoff);
+ unsigned char *dest = cropbuf;
+ 
+ for (int i=cfg->frame_height;i>0;i--) {
+ memcpy(dest, src, bytes*cfg->frame_width);
+ 
+ src += bytes*cfg->cam_width;
+ dest += bytes*cfg->frame_width;
+ }
+ }*/
+
+
+/*void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
+ 
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
+ 
+    cam_buf += cam_buf + b*(x_off*cam_w + y_off);
+ 
+    for (int i=frm_h;i>0;i--) {
+        memcpy(cam_buf, frm_buf, b*cam_w);
+ 
+        src += b*cam_w;
+        dest += b*frm_w;
+    }
+ }*/
+
+
 void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
 
-	if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+	if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
 	cam_buf += b*y_off*cam_w;
     int xend = (cam_w-(frm_w+x_off));
@@ -665,11 +407,11 @@ void CameraEngine::flip(int width, int height, unsigned char *src, unsigned char
 
 void CameraEngine::flip_crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
 
-	if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+	if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
 	cam_buf += b*y_off*cam_w;
 	frm_buf += b*frm_w*frm_h-1;
@@ -713,11 +455,11 @@ void CameraEngine::flip_rgb2gray(int width, int height, unsigned char *src, unsi
 }
 void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
-    if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
     cam_buf += 3*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
@@ -738,11 +480,11 @@ void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned cha
 
 void CameraEngine::flip_crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
 
-    if(!config.frame) return;
-    int x_off = config.frame_xoff;
-    int y_off = config.frame_yoff;
-    int frm_w = config.frame_width;
-    int frm_h = config.frame_height;
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
 
     cam_buf += 3*y_off*cam_w;
     int x_end = cam_w-(frm_w+x_off);
@@ -764,57 +506,39 @@ void CameraEngine::flip_crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigne
 
 void CameraEngine::setupFrame() {
 
-    if(!config.frame) {
-
-        frame_width = cam_width;
-        frame_height = cam_height;
+    if(!cfg->frame) {
+        cfg->frame_width = cfg->cam_width;
+        cfg->frame_height = cfg->cam_height;
         return;
     }
 
     // size sanity check
-    if (config.frame_width%2!=0) config.frame_width--;
-    if (config.frame_height%2!=0) config.frame_height--;
+    if (cfg->frame_width%2!=0) cfg->frame_width--;
+    if (cfg->frame_height%2!=0) cfg->frame_height--;
 
-    if (config.frame_width<=0) config.frame_width = cam_width;
-    if (config.frame_height<=0) config.frame_height = cam_height;
+    if (cfg->frame_width<=0) cfg->frame_width = cfg->cam_width;
+    if (cfg->frame_height<=0) cfg->frame_height = cfg->cam_height;
 
-    if (config.frame_width > config.cam_width) config.frame_width = config.cam_width;
-    if (config.frame_height > config.cam_height) config.frame_height = config.cam_height;
+    if (cfg->frame_width > cfg->cam_width) cfg->frame_width = cfg->cam_width;
+    if (cfg->frame_height > cfg->cam_height) cfg->frame_height = cfg->cam_height;
 
     // no cropping if same size
-    if ((config.frame_width==config.cam_width) && (config.frame_height==config.cam_height)) {
+    if ((cfg->frame_width==cfg->cam_width) && (cfg->frame_height==cfg->cam_height)) {
 
-        frame_width = cam_width;
-        frame_height = cam_height;
-        config.frame = false;
+        cfg->frame_width = cfg->cam_width;
+        cfg->frame_height = cfg->cam_height;
+        cfg->frame = false;
         return;
     }
 
     // offset sanity check
-    int xdiff = config.cam_width-config.frame_width;
-    if (xdiff<0) config.frame_xoff = 0;
-    else if (config.frame_xoff > xdiff) config.frame_xoff = xdiff;
-    int ydiff = config.cam_height-config.frame_height;
-    if (ydiff<0) config.frame_yoff = 0;
-    else if (config.frame_yoff > ydiff) config.frame_yoff = ydiff;
+    int xdiff = cfg->cam_width-cfg->frame_width;
+    if (xdiff<0) cfg->frame_xoff = 0;
+    else if (cfg->frame_xoff > xdiff) cfg->frame_xoff = xdiff;
+    int ydiff = cfg->cam_height-cfg->frame_height;
+    if (ydiff<0) cfg->frame_yoff = 0;
+    else if (cfg->frame_yoff > ydiff) cfg->frame_yoff = ydiff;
 
-    frame_width = config.frame_width;
-    frame_height = config.frame_height;
-}
-
-void CameraEngine::cropFrame(unsigned char *cambuf, unsigned char *cropbuf, int bytes) {
-
-    if(!config.frame) return;
-
-    unsigned char *src = cambuf + bytes*(config.frame_yoff*config.cam_width + config.frame_xoff);
-    unsigned char *dest = cropbuf;
-
-    for (int i=config.frame_height;i>0;i--) {
-        memcpy(dest, src, bytes*config.frame_width);
-
-        src += bytes*config.cam_width;
-        dest += bytes*config.frame_width;
-    }
 }
 
 void CameraEngine::applyCameraSetting(int mode, int value) {
@@ -852,22 +576,22 @@ void CameraEngine::applyCameraSettings() {
 
     resetCameraSettings();
 
-    applyCameraSetting(BRIGHTNESS,config.brightness);
-    applyCameraSetting(CONTRAST,config.contrast);
-    applyCameraSetting(SHARPNESS,config.sharpness);
-    applyCameraSetting(GAIN,config.gain);
-    applyCameraSetting(EXPOSURE,config.exposure);
-    applyCameraSetting(SHUTTER,config.shutter);
-    applyCameraSetting(FOCUS,config.focus);
-    applyCameraSetting(WHITE,config.white);
-    applyCameraSetting(POWERLINE,config.powerline);
-    applyCameraSetting(BACKLIGHT,config.backlight);
-    applyCameraSetting(GAMMA,config.gamma);
+    applyCameraSetting(BRIGHTNESS,cfg->brightness);
+    applyCameraSetting(CONTRAST,cfg->contrast);
+    applyCameraSetting(SHARPNESS,cfg->sharpness);
+    applyCameraSetting(GAIN,cfg->gain);
+    applyCameraSetting(EXPOSURE,cfg->exposure);
+    applyCameraSetting(SHUTTER,cfg->shutter);
+    applyCameraSetting(FOCUS,cfg->focus);
+    applyCameraSetting(WHITE,cfg->white);
+    applyCameraSetting(POWERLINE,cfg->powerline);
+    applyCameraSetting(BACKLIGHT,cfg->backlight);
+    applyCameraSetting(GAMMA,cfg->gamma);
 
-    applyCameraSetting(COLOR_HUE,config.red);
-    applyCameraSetting(COLOR_RED,config.red);
-    applyCameraSetting(COLOR_GREEN,config.green);
-    applyCameraSetting(COLOR_BLUE,config.blue);
+    applyCameraSetting(COLOR_HUE,cfg->red);
+    applyCameraSetting(COLOR_RED,cfg->red);
+    applyCameraSetting(COLOR_GREEN,cfg->green);
+    applyCameraSetting(COLOR_BLUE,cfg->blue);
 }
 
 int CameraEngine::updateSetting(int mode) {
@@ -883,22 +607,22 @@ int CameraEngine::updateSetting(int mode) {
 
 void CameraEngine::updateSettings() {
 
-    config.brightness = updateSetting(BRIGHTNESS);
-    config.contrast = updateSetting(CONTRAST);
-    config.sharpness = updateSetting(SHARPNESS);
+    cfg->brightness = updateSetting(BRIGHTNESS);
+    cfg->contrast = updateSetting(CONTRAST);
+    cfg->sharpness = updateSetting(SHARPNESS);
 
-    config.gain = updateSetting(GAIN);
-    config.exposure = updateSetting(EXPOSURE);
-    config.shutter = updateSetting(SHUTTER);
-    config.focus = updateSetting(FOCUS);
-    config.white = updateSetting(WHITE);
-    config.backlight = updateSetting(BACKLIGHT);
-    config.powerline = updateSetting(POWERLINE);
-    config.gamma = updateSetting(GAMMA);
+    cfg->gain = updateSetting(GAIN);
+    cfg->exposure = updateSetting(EXPOSURE);
+    cfg->shutter = updateSetting(SHUTTER);
+    cfg->focus = updateSetting(FOCUS);
+    cfg->white = updateSetting(WHITE);
+    cfg->backlight = updateSetting(BACKLIGHT);
+    cfg->powerline = updateSetting(POWERLINE);
+    cfg->gamma = updateSetting(GAMMA);
 
-    config.hue = updateSetting(COLOR_HUE);
-    config.red = updateSetting(COLOR_RED);
-    config.green = updateSetting(COLOR_GREEN);
-    config.blue = updateSetting(COLOR_BLUE);
+    cfg->hue = updateSetting(COLOR_HUE);
+    cfg->red = updateSetting(COLOR_RED);
+    cfg->green = updateSetting(COLOR_GREEN);
+    cfg->blue = updateSetting(COLOR_BLUE);
 
 }

@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include "DC1394Camera.h"
     #ifndef MAC_OS_X_VERSION_10_6
-    #include ".legacy/MacVdigCamera.h"
+    #include "./legacy/MacVdigCamera.h"
 	#else
 	#include "AVfoundationCamera.h"
     #include "PS3EyeCamera.h"
@@ -49,13 +49,28 @@
 #endif
 
 #include <iostream>
+#include "tinyxml2.h"
+
+using namespace tinyxml2;
 
 class CameraTool
 {
 public:
-	
-	static CameraEngine* findCamera(const char* config_file);
+    
+    static CameraEngine* getCamera(CameraConfig* config);
+    static CameraEngine* getDefaultCamera();
+
 	static void listDevices();
+
+    static CameraConfig* readSettings(const char* config_file);
+    static void saveSettings(const char* config_file);
+    
+private:
+    
+    static CameraConfig cam_cfg;
+    static void resetCameraConfig();
+    static int readAttribute(tinyxml2::XMLElement* settings,const char *attribute);
+    static void saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config);
 };
 
 #endif

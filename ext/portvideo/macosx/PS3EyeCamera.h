@@ -27,8 +27,12 @@
 class PS3EyeCamera : public CameraEngine
 {
 public:
-    PS3EyeCamera(const char* config_file);
-    ~PS3EyeCamera();
+    PS3EyeCamera(CameraConfig* cam_cfg):CameraEngine(cam_cfg) {
+        cam_buffer = NULL;
+    };
+    ~PS3EyeCamera() {
+        if (cam_buffer!=NULL) delete []cam_buffer;
+    };
     
     static void listDevices();
     

@@ -54,7 +54,7 @@ public:
 	~VisionEngine() {
         if (camera_) delete camera_;
         if (interface_) {
-		configuration_->display_mode=interface_->getDisplayMode();
+		app_config_->display_mode=interface_->getDisplayMode();
 		delete interface_;
 	}
     };
@@ -110,12 +110,8 @@ protected:
     void startThread();
     void stopThread();
     
-    void setupCamera(const char *camera_config);
+    void setupCamera(CameraConfig *cam_cfg);
     void teardownCamera();
-
-	unsigned char* sourceBuffer_;
-	unsigned char* destBuffer_;
-    unsigned char* displayBuffer_;
     
 #ifndef NDEBUG
     void saveBuffer(unsigned char* buffer);
@@ -136,7 +132,11 @@ private:
 	int fps_;
 	int bytesPerSourcePixel_;
 	int bytesPerDestPixel_;
-
+    
+    unsigned char* sourceBuffer_;
+    unsigned char* destBuffer_;
+    unsigned char* displayBuffer_;
+    
 	std::vector<FrameProcessor*> processorList;
 	std::vector<FrameProcessor*>::iterator frame;
 
@@ -146,7 +146,8 @@ private:
     HANDLE cameraThread;
 #endif
     
-    application_settings *configuration_;
+    application_settings *app_config_;
+    CameraConfig *camera_config_;
 
 	std::string app_name_;
 	std::vector<std::string> help_text;

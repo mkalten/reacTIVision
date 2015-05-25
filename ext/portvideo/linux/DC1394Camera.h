@@ -26,7 +26,7 @@
 class DC1394Camera : public CameraEngine
 {
 public:
-	DC1394Camera(const char* cfg);
+    DC1394Camera(CameraConfig* cam_cfg);
 	~DC1394Camera();
 	
     static void listDevices();

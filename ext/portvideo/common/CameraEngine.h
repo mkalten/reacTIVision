@@ -38,22 +38,74 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define HIBYTE(x) (unsigned char)((x)>>8)
 
 #define SETTING_DEFAULT -1
-#define SETTING_AUTO -2
-#define SETTING_MIN -3
-#define SETTING_MAX -4
+#define SETTING_AUTO    -2
+#define SETTING_MIN     -3
+#define SETTING_MAX     -4
+#define SETTING_OFF     -5
+
+#define DRIVER_DEFAULT 0
+#define DRIVER_DC1394  1
+#define DRIVER_PS3EYE  2
+#define DRIVER_RASPI   3
+#define DRIVER_UVCCAM  4
+#define DRIVER_FILE    10
+#define DRIVER_FOLDER  11
 
 #define VALUE_UP 79
 #define VALUE_DOWN 80
 #define SETTING_NEXT 81
 #define SETTING_PREVIOUS 82
 
+enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
+
+struct CameraConfig {
+    int driver;
+    int device;
+    char file[255];
+    char folder[255];
+    
+    bool color;
+    bool compress;
+    bool frame;
+    
+    int cam_width;
+    int cam_height;
+    float cam_fps;
+    
+    int frame_xoff;
+    int frame_yoff;
+    int frame_width;
+    int frame_height;
+    
+    int brightness;
+    int contrast;
+    int sharpness;
+    
+    int gain;
+    int shutter;
+    int exposure;
+    int focus;
+    int gamma;
+    int white;
+    int powerline;
+    int backlight;
+    
+    int hue;
+    int red;
+    int blue;
+    int green;
+};
+
 class CameraEngine
 {
 public:
-    CameraEngine(const char* cfg) {
-        config_file = cfg;
+    
+    CameraEngine(CameraConfig *cam_cfg) {
+        cfg = cam_cfg;
         settingsDialog=false;
-        crop_frame=false;
+        
+        if (cfg->color) bytes = 3;
+        else bytes = 1;
     }
 
     virtual ~CameraEngine() {};
@@ -66,9 +118,6 @@ public:
     virtual bool resetCamera() = 0;
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
-
-    enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
-    enum CropMode { CROP_NONE, CROP_RECT, CROP_SQUARE, CROP_WIDE};
 
     virtual int getCameraSettingStep(int mode) = 0;
     virtual int getMinCameraSetting(int mode) = 0;
@@ -86,77 +135,23 @@ public:
     virtual void control(unsigned char key);
     virtual void showInterface(UserInterface *uiface);
 
-    int getId() { return cameraID; }
-    int getFps() { return (int)floor(fps+0.5f); }
-    int getWidth() { return frame_width; }
-    int getHeight() { return frame_height; }
-    bool getColour() { return colour; }
+    int getId() { return cfg->device; }
+    int getFps() { return (int)floor(cfg->cam_fps+0.5f); }
+    int getWidth() { return cfg->frame_width; }
+    int getHeight() { return cfg->frame_height; }
+    bool getColour() { return cfg->color; }
     char* getName() { return cameraName; }
 
 protected:
-    int cameraID;
+
     char cameraName[256];
+    CameraConfig *cfg;
 
-    struct portvideo_settings {
-        int device;
-        char file[255];
-        char folder[255];
-
-        bool color;
-        bool compress;
-        bool frame;
-
-        int cam_width;
-        int cam_height;
-        float cam_fps;
-
-        int frame_xoff;
-        int frame_yoff;
-        int frame_width;
-        int frame_height;
-
-        int brightness;
-        int contrast;
-        int sharpness;
-
-        int gain;
-        int shutter;
-        int exposure;
-        int focus;
-        int gamma;
-        int white;
-        int powerline;
-        int backlight;
-
-        int hue;
-        int red;
-        int blue;
-        int green;
-    };
-
-    portvideo_settings config;
-    const char* config_file;
-
-    char* image_file;
-#ifdef __APPLE__
-    char full_path[1024];
-#endif
-
-    bool crop_frame;
+    int bytes;
     unsigned char* crop_buffer;
-    int crop_xoff, crop_yoff;
-
     unsigned char* cam_buffer;
 
-    int cam_width, cam_height;
-    int frame_width, frame_height;
-    float fps;
-
-    bool colour;
-    int bytes;
-
-    int timeout;
-    int lost_frames;
+    int lost_frames, timeout;
 
     bool running;
     bool settingsDialog;
@@ -185,11 +180,6 @@ protected:
     void yuyv2rgb(int width, int height, unsigned char *src, unsigned char *dest);
     void crop_yuyv2rgb(int width, unsigned char *src, unsigned char *dest);
 
-    void readSettings();
-    int readAttribute(tinyxml2::XMLElement* settings,const char *attribute);
-    void saveSettings();
-    void saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config);
-
     void resetCameraSettings();
     void applyCameraSettings();
     void applyCameraSetting(int mode, int value);
@@ -197,8 +187,12 @@ protected:
     int updateSetting(int mode);
 
     void setupFrame();
-    void cropFrame(unsigned char *src, unsigned char *dest, int bytes);
+    //void cropFrame(unsigned char *src, unsigned char *dest, int bytes);
 
+    int max_width, min_width;
+    int max_height, min_height;
+    int max_fps, min_fps;
+    
     int default_brightness;
     int default_contrast;
     int default_sharpness;

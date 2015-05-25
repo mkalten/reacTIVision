@@ -18,10 +18,8 @@
 
 #include "DC1394Camera.h"
 
-DC1394Camera::DC1394Camera(const char* cfg) : CameraEngine(cfg)
+DC1394Camera::DC1394Camera(CameraConfig* cam_cfg):CameraEngine(cam_cfg)
 {
-	cameraID = -1;
-
 	cam_buffer = NULL;
 	camera=NULL;
 	list=NULL;
@@ -131,14 +129,8 @@ bool DC1394Camera::findCamera() {
 	} else if (list->num == 1) printf("1 DC1394 camera found\n");
     else printf("%d DC1394 camera found\n", list->num);
 
-	readSettings();
-    cameraID = config.device;
-    if (cameraID<0) cameraID=0;
-
-    if (cameraID>=(int)list->num) {
-        dc1394_free(d);
-        return false;
-    }
+    if (cfg->device < 0) cfg->device = 0;
+    else if (cfg->device >= (int)list->num) cfg->device = (int)list->num - 1;
 
 	return true;
 }
@@ -147,7 +139,7 @@ bool DC1394Camera::initCamera() {
 
 	//if (cameraID < 0) return false;
 
-	camera = dc1394_camera_new (d, list->ids[cameraID].guid);
+	camera = dc1394_camera_new (d, list->ids[cfg->device].guid);
 	if (!camera) {
 		fprintf (stderr, "Failed to initialize Firewire camera\n");
 		return false;
@@ -162,7 +154,7 @@ bool DC1394Camera::initCamera() {
 	dc1394video_mode_t video_mode = DC1394_VIDEO_MODE_FORMAT7_0;
 
 	dc1394color_coding_t preferred_coding = DC1394_COLOR_CODING_MONO8;
-	if(colour) preferred_coding = DC1394_COLOR_CODING_RGB8;
+	if(cfg->color) preferred_coding = DC1394_COLOR_CODING_RGB8;
 	dc1394color_coding_t YUV411_coding = DC1394_COLOR_CODING_YUV411;
 	dc1394color_coding_t YUV422_coding = DC1394_COLOR_CODING_YUV422;
 
@@ -192,7 +184,7 @@ bool DC1394Camera::initCamera() {
 		dc1394_video_set_iso_speed(camera, DC1394_ISO_SPEED_400);
 	}
 
-	if (config.frame) {
+	if (cfg->frame) {
 
 		dc1394format7mode_t f7_mode;
 		if ( dc1394_format7_get_mode_info(camera,video_mode, &f7_mode) !=DC1394_SUCCESS) {
@@ -207,19 +199,19 @@ bool DC1394Camera::initCamera() {
 		dc1394_format7_get_max_image_size(camera, video_mode, &F7_xmax, &F7_ymax);
 		dc1394_format7_get_packet_parameters(camera, video_mode, &F7_bmin, &F7_bmax);
 
-		if (config.frame_xoff==SETTING_MAX) config.frame_xoff = F7_xmax;
-		if (config.frame_yoff==SETTING_MAX) config.frame_yoff = F7_ymax;
+		if (cfg->frame_xoff==SETTING_MAX) cfg->frame_xoff = F7_xmax;
+		if (cfg->frame_yoff==SETTING_MAX) cfg->frame_yoff = F7_ymax;
 
-		uint32_t F7_x = config.frame_xoff;
-		uint32_t F7_y = config.frame_yoff;
+		uint32_t F7_x = cfg->frame_xoff;
+		uint32_t F7_y = cfg->frame_yoff;
 
-		uint32_t F7_w = config.frame_width;
-		if (config.frame_width==SETTING_MAX) F7_w = F7_xmax;
+		uint32_t F7_w = cfg->frame_width;
+		if (cfg->frame_width==SETTING_MAX) F7_w = F7_xmax;
 		if (F7_w>(F7_xmax-F7_x)) F7_w=F7_xmax-F7_x;
         if (F7_w%2!=0) F7_w--; // only even numbers
 
-		uint32_t F7_h = config.frame_height;
-		if (config.frame_height==SETTING_MAX) F7_h = F7_ymax;
+		uint32_t F7_h = cfg->frame_height;
+		if (cfg->frame_height==SETTING_MAX) F7_h = F7_ymax;
 		if (F7_h>(F7_ymax-F7_y)) F7_h=F7_ymax-F7_y;
         if (F7_h%2!=0) F7_h--; // only even numbers
 
@@ -247,11 +239,11 @@ bool DC1394Camera::initCamera() {
 			return false;
 		}
 
-		if ((config.cam_width!=SETTING_MAX) || (config.cam_height!=SETTING_MAX)) {
+		if ((cfg->cam_width!=SETTING_MAX) || (cfg->cam_height!=SETTING_MAX)) {
 			for (int i=video_modes.num-1;i>=0;i--) {
 				if (!dc1394_is_video_mode_scalable(video_modes.modes[i])) {
 					dc1394_get_color_coding_from_video_mode(camera,video_modes.modes[i], &coding);
-					if ((config.cam_width==width_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN]) && (config.cam_height==height_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN])) {
+					if ((cfg->cam_width==width_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN]) && (cfg->cam_height==height_table[video_modes.modes[i]-DC1394_VIDEO_MODE_MIN])) {
 						if ((coding==preferred_coding) || (coding==YUV411_coding) || (coding==YUV422_coding)) {
 						 video_mode=video_modes.modes[i];
 						 break;
@@ -295,7 +287,7 @@ bool DC1394Camera::initCamera() {
 
 		framerate=framerates.framerates[framerates.num-1];
 		for (unsigned int i=0;i<framerates.num;i++) {
-			if (config.cam_fps == framerate_table[framerates.framerates[i]-DC1394_FRAMERATE_MIN]) {
+			if (cfg->cam_fps == framerate_table[framerates.framerates[i]-DC1394_FRAMERATE_MIN]) {
 				framerate=framerates.framerates[i];
 				break;
 			}
@@ -303,7 +295,7 @@ bool DC1394Camera::initCamera() {
 
 		dc1394_video_set_framerate(camera, framerate);
 		dc1394_video_get_framerate(camera, &framerate);
-		this->fps = framerate_table[framerate-DC1394_FRAMERATE_MIN];
+		cfg->cam_fps = framerate_table[framerate-DC1394_FRAMERATE_MIN];
 
 		dc1394_video_set_mode(camera, video_mode);
 		dc1394_video_set_framerate(camera, framerate);
@@ -319,10 +311,10 @@ bool DC1394Camera::initCamera() {
 	unsigned int w, h;
 	dc1394_get_image_size_from_video_mode(camera, video_mode, &w, &h);
 
-    cam_width  = frame_width  = w;
-	cam_height = frame_height = h;
+    cfg->cam_width  = cfg->frame_width  = w;
+	cfg->cam_height = cfg->frame_height = h;
 
-	cam_buffer = new unsigned char[cam_width*cam_height*bytes];
+	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];
 
     applyCameraSettings();
 	return true;
@@ -344,10 +336,10 @@ unsigned char* DC1394Camera::getFrame()
 	lost_frames=0;
 	timeout = 2000;
 
-	if (colour) {
+	if (cfg->color) {
 		if (coding==DC1394_COLOR_CODING_RGB8) return frame->image;
 		else if (coding==DC1394_COLOR_CODING_YUV411) {
-            uyvy2rgb(cam_width, cam_height, (unsigned char*)frame->image, cam_buffer);
+            uyvy2rgb(cfg->cam_width, cfg->cam_height, (unsigned char*)frame->image, cam_buffer);
             return cam_buffer;
 		} else { return NULL; }
 	} else {
@@ -356,14 +348,14 @@ unsigned char* DC1394Camera::getFrame()
 		else if (coding==DC1394_COLOR_CODING_YUV411) {
 			unsigned char *src = (unsigned char*)frame->image;
 			unsigned char *dest = cam_buffer;
-            int size = cam_height*cam_width/2;
+            int size = cfg->cam_height*cfg->cam_width/2;
 			for(int i=size;i>0;i--) {
 				src++;
 				*dest++ = *src++;
 				*dest++ = *src++;
 			} return cam_buffer;
 		} else if (coding==DC1394_COLOR_CODING_YUV422) {
-		    uyvy2gray(cam_width, cam_height, (unsigned char*)frame->image, cam_buffer);
+		    uyvy2gray(cfg->cam_width, cfg->cam_height, (unsigned char*)frame->image, cam_buffer);
             return cam_buffer;
 		} else { return NULL; }
 	}
@@ -484,13 +476,13 @@ bool DC1394Camera::setCameraSetting(int mode, int setting) {
 
 	dc1394feature_t feature = (dc1394feature_t)-1;
 	switch (mode) {
-		case BRIGHTNESS: feature = DC1394_FEATURE_BRIGHTNESS; config.brightness = setting; break;
-		case GAIN: feature = DC1394_FEATURE_GAIN; config.gain = setting; break;
-		case SHUTTER: feature = DC1394_FEATURE_SHUTTER; config.shutter = setting; break;
-		case EXPOSURE: feature = DC1394_FEATURE_EXPOSURE; config.exposure = setting; break;
-		case SHARPNESS: feature = DC1394_FEATURE_SHARPNESS; config.sharpness = setting; break;
-		case FOCUS: feature = DC1394_FEATURE_FOCUS; config.focus = setting; break;
-		case GAMMA: feature = DC1394_FEATURE_GAMMA; config.gamma = setting; break;
+		case BRIGHTNESS: feature = DC1394_FEATURE_BRIGHTNESS; cfg->brightness = setting; break;
+		case GAIN: feature = DC1394_FEATURE_GAIN; cfg->gain = setting; break;
+		case SHUTTER: feature = DC1394_FEATURE_SHUTTER; cfg->shutter = setting; break;
+		case EXPOSURE: feature = DC1394_FEATURE_EXPOSURE; cfg->exposure = setting; break;
+		case SHARPNESS: feature = DC1394_FEATURE_SHARPNESS; cfg->sharpness = setting; break;
+		case FOCUS: feature = DC1394_FEATURE_FOCUS; cfg->focus = setting; break;
+		case GAMMA: feature = DC1394_FEATURE_GAMMA; cfg->gamma = setting; break;
 	} if (feature<0) return 0;
 
 	uint32_t value = (uint32_t)setting;

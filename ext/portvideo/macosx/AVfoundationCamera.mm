@@ -54,7 +54,7 @@
     
     if(bytes==3) color = true;
     else color = false;
-
+    
     buffer = new unsigned char[frm_width*frm_height*bytes];
     return self;
 }
@@ -73,7 +73,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         unsigned char *dest = buffer;
         
         if (color) {
-
+            
             if (crop) {
                 unsigned char *src_buf = src + 3*(yoff*cam_width + xoff);
                 
@@ -90,7 +90,7 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             }
             
         } else {
-
+            
             if (crop) {
                 
                 src += 2*(yoff*cam_width);
@@ -141,21 +141,19 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
 }
 @end
 
-AVfoundationCamera::AVfoundationCamera(const char* cfg):CameraEngine(cfg)
+AVfoundationCamera::AVfoundationCamera(CameraConfig *cam_cfg):CameraEngine(cam_cfg)
 {
-	cameraID = -1;
-	
     disconnected = false;
-	running=false;
-	lost_frames=0;
-	
+    running=false;
+    lost_frames=0;
+    
     timeout = 1000;
 }
 
 AVfoundationCamera::~AVfoundationCamera()
 {
     updateSettings();
-    saveSettings();
+    //CameraTool::saveSettings(this,cfg);
     
     if (uvcController) [uvcController release];
     if (selectedVideoDevice) [selectedVideoDevice release];
@@ -218,7 +216,7 @@ void AVfoundationCamera::listDevices() {
                 else if (codec==40)printf("\t\tformat: MONO8\n"); // probably incorrect workaround
                 else printf("\t\tformat: other (%s)\n",FourCC2Str(codec));
             } last_codec=codec;
-
+            
             CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
             printf("\t\t\t%dx%d ",dim.width,dim.height);
             
@@ -245,7 +243,6 @@ bool AVfoundationCamera::findCamera() {
     int capacity = [dev_list0 count] + [dev_list1 count];
     if (capacity==0)  {
         std::cout << "no AVFoundation cameras found" << std::endl;
-        cameraID = -1;
         [session release];
         return false;
     }  else if (capacity==1) std::cout << "1 AVFoundation camera found" << std::endl;
@@ -255,43 +252,40 @@ bool AVfoundationCamera::findCamera() {
     for (AVCaptureDevice* dev in dev_list0) [videoDevices addObject:dev];
     for (AVCaptureDevice* dev in dev_list1) [videoDevices addObject:dev];
     
-    readSettings();
-    cameraID = config.device;
-    if (cameraID<0) cameraID = 0;
-    else if (cameraID>=[videoDevices count]) cameraID = [videoDevices count]-1;
-
-    selectedVideoDevice = [videoDevices objectAtIndex:cameraID];
+    if (cfg->device < 0) cfg->device = 0;
+    else if (cfg->device >= [videoDevices count]) cfg->device = [videoDevices count]-1;
+    
+    selectedVideoDevice = [videoDevices objectAtIndex:cfg->device];
     if (selectedVideoDevice==NULL) {
-        cameraID = -1;
-        [session release];
+         [session release];
         return false;
     }
     
     if ([selectedVideoDevice localizedName]!=NULL)
         sprintf(cameraName,"%s",[[selectedVideoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
     else sprintf(cameraName,"unknown");
-
+    
     return true;
 }
 
 bool AVfoundationCamera::initCamera() {
-
+    
     NSError *error = nil;
     videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:selectedVideoDevice error:&error];
     if (videoDeviceInput == nil) {
         return false;
     }
-   
+    
     int max_width = 0;
     int max_height = 0;
     
     int min_width = INT_MAX;
     int min_height = INT_MAX;
-
+    
     videoDeviceFormats = [selectedVideoDevice formats];
     for (AVCaptureDeviceFormat* format in videoDeviceFormats) {
         
-         CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
+        CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
         //localizedName = [NSString stringWithFormat:@"%@, %d x %d", formatName, dimensions.width, dimensions.height];
         
         if ((dim.width>=max_width) && (dim.height>=max_height)) {
@@ -305,14 +299,14 @@ bool AVfoundationCamera::initCamera() {
         }
     }
     
-    if (config.cam_width==SETTING_MAX) config.cam_width = max_width;
-    if (config.cam_height==SETTING_MAX) config.cam_height = max_height;
- 
-    if (config.cam_width>max_width) config.cam_width = max_width;
-    if (config.cam_height>max_height) config.cam_height = max_height;
-
-    if (config.cam_width<min_width) config.cam_width = min_width;
-    if (config.cam_height<min_height) config.cam_height = min_height;
+    if (cfg->cam_width==SETTING_MAX) cfg->cam_width = max_width;
+    if (cfg->cam_height==SETTING_MAX) cfg->cam_height = max_height;
+    
+    if (cfg->cam_width>max_width) cfg->cam_width = max_width;
+    if (cfg->cam_height>max_height) cfg->cam_height = max_height;
+    
+    if (cfg->cam_width<min_width) cfg->cam_width = min_width;
+    if (cfg->cam_height<min_height) cfg->cam_height = min_height;
     
     AVCaptureDeviceFormat *lastFormat;
     for (AVCaptureDeviceFormat *format in videoDeviceFormats) {
@@ -320,34 +314,33 @@ bool AVfoundationCamera::initCamera() {
         lastFormat = format;
         CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
         
-        if ((dim.width!=config.cam_width) || (dim.height!=config.cam_height)) continue; // wrong size
+        if ((dim.width!=cfg->cam_width) || (dim.height!=cfg->cam_height)) continue; // wrong size
         
         bool compressed=false;
         int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
         if ((codec=='dmb1') || (codec=='avc1')) compressed=true;
         
-        if (compressed!=config.compress) continue; // wrong compression
+        if (compressed!=cfg->compress) continue; // wrong compression
         
-        if ((config.cam_fps==SETTING_MAX) || (config.cam_fps==SETTING_MIN)) {
+        if ((cfg->cam_fps==SETTING_MAX) || (cfg->cam_fps==SETTING_MIN)) {
             float max_fps = 0;
             float min_fps = 0;
             for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
                 float frames = round([frameRateRange maxFrameRate]*100)/100.0f;
                 if (frames>max_fps) max_fps = frames;
                 if (frames<min_fps) min_fps = frames;
-
+                
             }
-            if (config.cam_fps==SETTING_MAX) config.cam_fps = max_fps;
-            if (config.cam_fps==SETTING_MIN) config.cam_fps = min_fps;
+            if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps;
+            if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps;
         }
         
         bool found = false;
         AVFrameRateRange *lastRange=NULL;
         for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
             float framerate = round([frameRateRange maxFrameRate]*100)/100.0f;
-            if (framerate==config.cam_fps) { // found exact framerate
+            if (framerate==cfg->cam_fps) { // found exact framerate
                 selectedFrameRateRange = frameRateRange;
-                fps = config.cam_fps;
                 found = true;
                 //printf("\t\tselected: %dx%d, %dfps\n",dim.width,dim.height,frames);
                 break;
@@ -355,16 +348,16 @@ bool AVfoundationCamera::initCamera() {
                 if (lastRange==NULL) continue;
                 float lastrate = round([lastRange maxFrameRate]*100)/100.0f;
                 
-                if (((config.cam_fps<lastrate) && (config.cam_fps>framerate)) || ((config.cam_fps>lastrate) && (config.cam_fps<framerate))) {
-                    float diff_last = fabs(config.cam_fps-lastrate);
-                    float diff_current = fabs(config.cam_fps-framerate);
+                if (((cfg->cam_fps<lastrate) && (cfg->cam_fps>framerate)) || ((cfg->cam_fps>lastrate) && (cfg->cam_fps<framerate))) {
+                    float diff_last = fabs(cfg->cam_fps-lastrate);
+                    float diff_current = fabs(cfg->cam_fps-framerate);
                     
                     if(diff_last<diff_current) {
                         selectedFrameRateRange = lastRange;
-                        fps = lastrate;
+                        cfg->cam_fps = lastrate;
                     } else {
                         selectedFrameRateRange = frameRateRange;
-                        fps = framerate;
+                        cfg->cam_fps = framerate;
                     }
                 }
                 found = true;
@@ -375,7 +368,7 @@ bool AVfoundationCamera::initCamera() {
         
         if (found) break;
     }
- 
+    
     [selectedVideoDevice lockForConfiguration:&error];
     [selectedVideoDevice setActiveFormat:lastFormat];
     if ([[[selectedVideoDevice activeFormat] videoSupportedFrameRateRanges] containsObject:selectedFrameRateRange]) {
@@ -383,30 +376,30 @@ bool AVfoundationCamera::initCamera() {
         [selectedVideoDevice setActiveVideoMinFrameDuration:[selectedFrameRateRange minFrameDuration]];
     }
     [selectedVideoDevice unlockForConfiguration];
- 
+    
     selectedVideoDeviceFormat = [selectedVideoDevice activeFormat];
-
+    
     CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[selectedVideoDeviceFormat formatDescription]);
     
-    cam_width =  dimensions.width;
-    cam_height = dimensions.height;
+    cfg->cam_width =  dimensions.width;
+    cfg->cam_height = dimensions.height;
     
     for (AVFrameRateRange *frameRateRange in [selectedVideoDeviceFormat videoSupportedFrameRateRanges])
     {
         selectedFrameRateRange = frameRateRange;
-        fps =[selectedFrameRateRange maxFrameRate];
-
+        cfg->cam_fps =[selectedFrameRateRange maxFrameRate];
+        
         if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [selectedVideoDevice activeVideoMinFrameDuration])) break;
     }
     
     videoOutput = [[AVCaptureVideoDataOutput alloc] init];
     
     unsigned int pixelformat = kCVPixelFormatType_422YpCbCr8_yuvs;
-    if (colour) pixelformat = kCVPixelFormatType_24RGB;
+    if (cfg->color) pixelformat = kCVPixelFormatType_24RGB;
     
     NSDictionary *pixelBufferOptions = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        [NSNumber numberWithDouble:cam_width], (id)kCVPixelBufferWidthKey,
-                                        [NSNumber numberWithDouble:cam_height], (id)kCVPixelBufferHeightKey,
+                                        [NSNumber numberWithDouble:cfg->cam_width], (id)kCVPixelBufferWidthKey,
+                                        [NSNumber numberWithDouble:cfg->cam_height], (id)kCVPixelBufferHeightKey,
                                         //[NSNumber numberWithUnsignedInt:kCVPixelFormatType_422YpCbCr8_yuvs ], (id)kCVPixelBufferPixelFormatTypeKey,
                                         [NSNumber numberWithUnsignedInt: pixelformat ], (id)kCVPixelBufferPixelFormatTypeKey,
                                         nil];
@@ -421,14 +414,14 @@ bool AVfoundationCamera::initCamera() {
     // configure output.
     setupFrame();
     dispatch_queue_t queue = dispatch_queue_create("queue", NULL);
-    if (config.frame) {
-        grabber = [[FrameGrabber alloc] initWithCropSize:cam_width :cam_height :bytes :frame_width :frame_height :config.frame_xoff :config.frame_yoff];
+    if (cfg->frame) {
+        grabber = [[FrameGrabber alloc] initWithCropSize:cfg->cam_width :cfg->cam_height :bytes :cfg->frame_width :cfg->frame_height :cfg->frame_xoff :cfg->frame_yoff];
     } else {
-        grabber = [[FrameGrabber alloc] initWithCameraSize:cam_width :cam_height: bytes];
+        grabber = [[FrameGrabber alloc] initWithCameraSize:cfg->cam_width :cfg->cam_height: bytes];
     }
     [videoOutput setSampleBufferDelegate:grabber queue:queue];
     dispatch_release(queue);
-
+    
     NSString *uniqueID = [selectedVideoDevice uniqueID];
     if (uniqueID!=NULL) {
         uvcController = [[VVUVCController alloc] initWithDeviceIDString:[selectedVideoDevice uniqueID]];
@@ -440,21 +433,21 @@ bool AVfoundationCamera::initCamera() {
 }
 
 unsigned char* AVfoundationCamera::getFrame()
-{	
+{
     unsigned char *cambuffer = [grabber getFrame];
-	if (cambuffer!=NULL) {
-		timeout=100;
-		lost_frames=0;
+    if (cambuffer!=NULL) {
+        timeout=100;
+        lost_frames=0;
         return cambuffer;
-	} else {
-		usleep(10000);
-		lost_frames++;
+    } else {
+        usleep(10000);
+        lost_frames++;
         if (lost_frames>timeout) {
             disconnected=true;
             running=false;
         }
-		return NULL;		
-	}
+        return NULL;
+    }
     
     return NULL;
 }
@@ -462,35 +455,35 @@ unsigned char* AVfoundationCamera::getFrame()
 bool AVfoundationCamera::startCamera()
 {
     [session startRunning];
- 	running = true;
-	return true;
+    running = true;
+    return true;
 }
 
 bool AVfoundationCamera::stopCamera()
 {
-
+    
     [session stopRunning];
-	running=false;
-	return true;
+    running=false;
+    return true;
 }
 
 bool AVfoundationCamera::stillRunning() {
-	return running;
+    return running;
 }
 
 bool AVfoundationCamera::resetCamera()
 {
-  return (stopCamera() && startCamera());
+    return (stopCamera() && startCamera());
 }
 
 bool AVfoundationCamera::closeCamera()
 {
     if (!disconnected) {
         updateSettings();
-        saveSettings();
+        //CameraTool::saveSettings(this,cfg);
     }
     [session release];
-	return true;
+    return true;
 }
 
 bool AVfoundationCamera::showSettingsDialog(bool lock) {
@@ -525,7 +518,7 @@ bool AVfoundationCamera::getCameraSettingAuto(int mode) {
     
     if (uvcController==NULL) return false;
     if (!hasCameraSettingAuto(mode)) return false;
-
+    
     switch (mode) {
         case EXPOSURE:
             if ([uvcController autoExposureMode]>UVC_AEMode_Manual) return true;
@@ -566,9 +559,9 @@ bool AVfoundationCamera::setCameraSettingAuto(int mode, bool flag) {
 }
 
 bool AVfoundationCamera::hasCameraSetting(int mode) {
-
+    
     if (uvcController==NULL) return false;
-
+    
     switch (mode) {
         case BRIGHTNESS:
             return [uvcController brightSupported];
@@ -639,7 +632,7 @@ int AVfoundationCamera::getCameraSetting(int mode) {
     if (uvcController==NULL) return 0;
     if (!hasCameraSetting(mode)) return 0;
     if (getCameraSettingAuto(mode)) return 0;
-
+    
     switch (mode) {
         case BRIGHTNESS:
             return [uvcController bright];
@@ -660,16 +653,16 @@ int AVfoundationCamera::getCameraSetting(int mode) {
         case COLOR_HUE:
             return [uvcController hue];
     }
-
+    
     return 0;
 }
 
 int AVfoundationCamera::getMaxCameraSetting(int mode) {
-
+    
     if (uvcController==NULL) return 0;
     if (!hasCameraSetting(mode)) return 0;
     if (getCameraSettingAuto(mode)) return 0;
-
+    
     switch (mode) {
         case BRIGHTNESS:    return [uvcController maxBright];
         case CONTRAST:      return [uvcController maxContrast];
@@ -686,11 +679,11 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
 }
 
 int AVfoundationCamera::getMinCameraSetting(int mode) {
- 
+    
     if (uvcController==NULL) return 0;
     if (!hasCameraSetting(mode)) return 0;
     if (getCameraSettingAuto(mode)) return 0;
-
+    
     switch (mode) {
         case BRIGHTNESS:    return [uvcController minBright];
         case CONTRAST:      return [uvcController minContrast];
@@ -707,10 +700,10 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
 }
 
 bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
-
+    
     if (uvcController==NULL) return false;
     if (!hasCameraSetting(mode)) return false;
-
+    
     switch (mode) {
         case BRIGHTNESS:
             [uvcController resetBright];
@@ -750,7 +743,7 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
             break;
             
     }
-
+    
     return false;
 }
 
