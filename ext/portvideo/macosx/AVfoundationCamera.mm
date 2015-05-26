@@ -171,7 +171,7 @@ AVfoundationCamera::~AVfoundationCamera()
     
     if (videoDevice) [videoDevice release];
     if (videoOutput) [videoOutput release];
-    if (grabber) [grabber release];
+    if (grabber)     [grabber release];
 }
 
 std::list<CameraConfig> AVfoundationCamera::findDevices() {
@@ -366,6 +366,8 @@ bool AVfoundationCamera::findCamera() {
 }
 
 bool AVfoundationCamera::initCamera() {
+    
+     if (!videoDevice) return false;
     
     session = [[AVCaptureSession alloc] init];
     if (session==NULL) return false;

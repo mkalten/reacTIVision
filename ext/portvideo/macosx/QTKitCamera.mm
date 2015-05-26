@@ -276,9 +276,6 @@ void QTKitCamera::listDevices() {
 
 bool QTKitCamera::findCamera() {
     
-    //Create the capture session
-    captureSession = [[QTCaptureSession alloc] init];
-    
     NSError *error;
     NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
     NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
@@ -335,6 +332,9 @@ bool QTKitCamera::initCamera() {
     NSError *error;
     
     if (!captureDevice) return false;
+    
+    //Create the capture session
+    captureSession = [[QTCaptureSession alloc] init];
     
     // Add the video device to the session as device input
     captureDeviceInput = [[QTCaptureDeviceInput alloc] initWithDevice:captureDevice];
@@ -396,7 +396,6 @@ bool QTKitCamera::initCamera() {
     [captureDecompressedVideoOutput setDelegate:grabber];
     success = [captureSession addOutput:captureDecompressedVideoOutput error:&error];
     if (!success) return false;
-    
     
     return true;
 }
