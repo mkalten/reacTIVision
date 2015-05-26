@@ -100,10 +100,7 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     camera = new videoInputCamera(cam_cfg);
     if( !camera->findCamera() ) {
         delete camera;
-        initCameraConfig(cam_cfg);
-        camera = new videoInputCamera(cam_cfg);
-        if( !camera->findCamera()) delete camera;
-        else return camera;
+        return getDefaultCamera();
     } else return camera;
     
 #endif
@@ -127,20 +124,14 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     camera = new AVfoundationCamera(cam_cfg);
     if( !camera->findCamera()) {
         delete camera;
-        initCameraConfig(cam_cfg);
-        camera = new AVfoundationCamera(cam_cfg);
-        if( !camera->findCamera()) delete camera;
-        else return camera;
+        return getDefaultCamera();
     } else return camera;
 #else
     // default driver
     camera = new QTKitCamera(cam_cfg);
     if( !camera->findCamera()) {
         delete camera;
-        initCameraConfig(cam_cfg);
-        camera = new QTKitCamera(cam_cfg);
-        if( !camera->findCamera()) delete camera;
-        else return camera;
+        return getDefaultCamera();
     } else return camera;
 #endif
 #endif
@@ -157,10 +148,7 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     camera = new V4Linux2Camera(cam_cfg);
     if( !camera->findCamera()) {
         delete camera;
-        initCameraConfig(cam_cfg);
-        camera = new V4Linux2Camera(cam_cfg);
-        if( !camera->findCamera()) delete camera;
-        else return camera;
+        return return getDefaultCamera();
     } else return camera;
     
 #endif
