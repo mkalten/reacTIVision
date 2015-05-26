@@ -152,8 +152,8 @@ bool PS3EyeCamera::initCamera() {
         cfg->cam_width =  320;
         cfg->cam_height = 240;
         
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 150;
-        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 30;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps = 150;
+        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps = 30;
         else if (cfg->cam_fps<30) cfg->cam_fps = 30;
         else if (cfg->cam_fps>150) cfg->cam_fps = 150;
         
@@ -162,8 +162,8 @@ bool PS3EyeCamera::initCamera() {
         cfg->cam_width =  640;
         cfg->cam_height = 480;
         
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 60;
-        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 15;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps = 60;
+        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps = 15;
         else if (cfg->cam_fps<15) cfg->cam_fps = 15;
         else if (cfg->cam_fps>60) cfg->cam_fps = 60;
         
@@ -179,7 +179,6 @@ bool PS3EyeCamera::initCamera() {
     cfg->cam_width = eye->getWidth();
     cfg->cam_height = eye->getHeight();
     cfg->cam_fps = eye->getFrameRate();
-    applyCameraSettings();
     
     // do the rest
     setupFrame();
@@ -190,6 +189,7 @@ bool PS3EyeCamera::initCamera() {
 
 bool PS3EyeCamera::startCamera() {
     eye->start();
+    applyCameraSettings();
     running = true;
     return true;
 }
@@ -254,11 +254,13 @@ bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
 
     switch (mode) {
         case GAIN:
+        case EXPOSURE:
+        case WHITE:
             eye->setAutogain(flag);
             return true;
-        case WHITE:
+        /*case WHITE:
             eye->setAutoWhiteBalance(flag);
-            return true;
+            return true;*/
     }
 
     return false;
@@ -267,10 +269,12 @@ bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
 bool PS3EyeCamera::getCameraSettingAuto(int mode) {
 
     switch (mode) {
-        case GAIN:
-            return eye->getAutogain();
         case WHITE:
-            return eye->getAutoWhiteBalance();
+        case GAIN:
+        case EXPOSURE:
+            return eye->getAutogain();
+        /*case WHITE:
+            return eye->getAutoWhiteBalance();*/
     }
     
     return false;
@@ -281,16 +285,19 @@ bool PS3EyeCamera::hasCameraSetting(int mode) {
     switch (mode) {
         case GAIN:
         case AUTO_GAIN:
+        case AUTO_EXPOSURE:
+        case AUTO_WHITE:
         case EXPOSURE:
         case SHARPNESS:
         case BRIGHTNESS:
         case CONTRAST:
-        case AUTO_WHITE:
         case COLOR_HUE:
         case COLOR_RED:
         case COLOR_BLUE:
         case COLOR_GREEN:
             return true;
+        default:
+            return false;
     }
     return false;
 }
@@ -298,6 +305,11 @@ bool PS3EyeCamera::hasCameraSetting(int mode) {
 bool PS3EyeCamera::setCameraSetting(int mode, int value) {
 
     switch (mode) {
+        case AUTO_GAIN:
+        case AUTO_EXPOSURE:
+        case AUTO_WHITE:
+            eye->setAutogain(value);
+            return true;
         case GAIN:
             eye->setGain(value);
             return true;
@@ -334,6 +346,10 @@ int PS3EyeCamera::getCameraSetting(int mode) {
     switch (mode) {
         case GAIN:
             return eye->getGain();
+        case AUTO_GAIN:
+        case AUTO_EXPOSURE:
+        case AUTO_WHITE:
+            return eye->getAutogain();
         case EXPOSURE:
             return eye->getExposure();
         case SHARPNESS:
@@ -357,6 +373,10 @@ int PS3EyeCamera::getCameraSetting(int mode) {
 int PS3EyeCamera::getMaxCameraSetting(int mode) {
     
     switch (mode) {
+        case AUTO_GAIN:
+        case AUTO_EXPOSURE:
+        case AUTO_WHITE:
+            return 1;
         case GAIN:
             return 63;
         case EXPOSURE:
@@ -382,6 +402,14 @@ bool PS3EyeCamera::setDefaultCameraSetting(int mode) {
         case GAIN:
             eye->setGain(getDefaultCameraSetting(mode));
             return true;
+        case AUTO_GAIN:
+        case AUTO_WHITE:
+        case AUTO_EXPOSURE:
+            eye->setAutogain(getDefaultCameraSetting(mode));
+            return true;
+        /*case AUTO_WHITE:
+            eye->setAutoWhiteBalance(getDefaultCameraSetting(mode));
+            return true;*/
         case EXPOSURE:
             eye->setExposure(getDefaultCameraSetting(mode));
             return true;
@@ -392,7 +420,7 @@ bool PS3EyeCamera::setDefaultCameraSetting(int mode) {
             eye->setBrightness(getDefaultCameraSetting(mode));
             return true;
         case CONTRAST:
-            eye->setBrightness(getDefaultCameraSetting(mode));
+            eye->setContrast(getDefaultCameraSetting(mode));
             return true;
         case COLOR_HUE:
             eye->setHue(getDefaultCameraSetting(mode));
@@ -405,28 +433,27 @@ bool PS3EyeCamera::setDefaultCameraSetting(int mode) {
             return true;
         case COLOR_GREEN:
             eye->setGreenBalance(getDefaultCameraSetting(mode));
-        return true;    }
+            return true;
+        }
     return false;
 }
 
 int PS3EyeCamera::getDefaultCameraSetting(int mode) {
     switch (mode) {
-        case GAIN:
-            return 0;
+        case AUTO_GAIN:
+        case AUTO_EXPOSURE:
+        case AUTO_WHITE:
+            return 1;
         case EXPOSURE:
-            return 128;
-        case SHARPNESS:
-            return 32;
-        case BRIGHTNESS:
-            return 32;
-        case CONTRAST:
             return 64;
+        case BRIGHTNESS:
+        case CONTRAST:
+        case SHARPNESS:
+        case GAIN:
+            return 32;
         case COLOR_HUE:
-            return 128;
         case COLOR_RED:
-            return 128;
         case COLOR_BLUE:
-            return 128;
         case COLOR_GREEN:
             return 128;
     }
