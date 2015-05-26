@@ -88,6 +88,13 @@ char* SDLinterface::checkRenderDriver() {
     return (char*)fallback;
 }
 
+
+void SDLinterface::setVsync(bool sync) {
+    
+    if (sync) SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+    else      SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+}
+
 bool SDLinterface::setupWindow() {
     
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
@@ -100,7 +107,7 @@ bool SDLinterface::setupWindow() {
     
     SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, renderdriver);
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderdriver);
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
     
     SDL_CreateWindowAndRenderer(width_,height_,0,&window_,&renderer_);
     

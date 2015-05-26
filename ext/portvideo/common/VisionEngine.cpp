@@ -91,7 +91,10 @@ void VisionEngine::saveBuffer(unsigned char* buffer) {
 // the principal program sequence
 void VisionEngine::start() {
     
-    if (interface_) displayBuffer_ = interface_->openDisplay(this);
+    if (interface_) {
+        displayBuffer_ = interface_->openDisplay(this);
+        if (fps_>60) interface_->setVsync(false);
+    }
     
     if(camera_==NULL ) {
         if (interface_) interface_->displayError("No camera found!");

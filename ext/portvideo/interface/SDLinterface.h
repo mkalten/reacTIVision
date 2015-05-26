@@ -71,6 +71,8 @@ public:
     void displayControl(const char *title, int min, int max, int value);
     void displayError(const char* error);
     void drawMark(int xpos, int ypos, const char *mark, int state);
+    
+    void setVsync(bool sync);
 
 protected:
 	
