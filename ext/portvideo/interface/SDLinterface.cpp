@@ -98,7 +98,8 @@ void SDLinterface::setVsync(bool sync) {
 bool SDLinterface::setupWindow() {
     
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
-        printf("SDL could not be initialized: %s\n", SDL_GetError());
+        //printf("SDL could not be initialized: %s\n", SDL_GetError());
+        printf("SDLinterface not available!\n");
         return false;
     }
     

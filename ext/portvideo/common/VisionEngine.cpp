@@ -92,8 +92,12 @@ void VisionEngine::saveBuffer(unsigned char* buffer) {
 void VisionEngine::start() {
     
     if (interface_) {
-        displayBuffer_ = interface_->openDisplay(this);
         if (fps_>60) interface_->setVsync(false);
+        displayBuffer_ = interface_->openDisplay(this);
+	if (displayBuffer_==NULL) {
+		delete interface_;
+		interface_ = NULL;
+	}
     }
     
     if(camera_==NULL ) {
