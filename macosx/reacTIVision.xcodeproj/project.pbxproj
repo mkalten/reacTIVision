@@ -10,7 +10,7 @@
 		B200D5491B0E25EA00249D8B /* VisionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D5471B0E25EA00249D8B /* VisionEngine.cpp */; };
 		B200D54B1B0E45D500249D8B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B200D54A1B0E45D500249D8B /* CoreMedia.framework */; };
 		B200D5571B0E4E1300249D8B /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D5541B0E4E1300249D8B /* tinyxml2.cpp */; };
-		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; };
+		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; };
 		B21683D519F3965500F07F0D /* VVUVCKit.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B21683D619F3965500F07F0D /* USBBusProber.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -524,7 +524,7 @@
 		B297D3E9097536E2004AB0FE /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -551,7 +551,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -571,6 +571,7 @@
 		B297D3EA097536E2004AB0FE /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -592,7 +593,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
@@ -613,6 +614,7 @@
 		B297D3EB097536E2004AB0FE /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -631,7 +633,7 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = reacTIVision;
