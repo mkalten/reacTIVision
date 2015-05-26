@@ -21,6 +21,10 @@
 #include "CameraEngine.h"
 #import <QTKit/QTKit.h>
 
+#ifndef kCVPixelFormatType_422YpCbCr8_yuvs
+#define kCVPixelFormatType_422YpCbCr8_yuvs 2037741171
+#endif
+
 @interface FrameGrabber : NSObject //: NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     bool new_frame;
