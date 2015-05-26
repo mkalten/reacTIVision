@@ -87,13 +87,6 @@ private:
     AVCaptureSession			*session;
     AVCaptureDeviceInput		*videoDeviceInput;
     AVCaptureVideoDataOutput    *videoOutput;
-    
-    NSMutableArray			*videoDevices;
-    AVCaptureDevice         *selectedVideoDevice;
-    
-    NSArray                 *videoDeviceFormats;
-    AVCaptureDeviceFormat   *selectedVideoDeviceFormat;
-    
-    AVFrameRateRange        *selectedFrameRateRange;
+    AVCaptureDevice             *videoDevice;
 };
 #endif
