@@ -306,8 +306,6 @@ void CameraEngine::crop_yuyv2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
 void CameraEngine::gray2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
 
              int size = width*height;
-             src  += size-1;
-             dest += 3*size-1;
              for (int i=size;i>0;i--) {
                     unsigned char pixel = *src++;
                     *dest++ = pixel;

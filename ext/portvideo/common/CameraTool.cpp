@@ -148,7 +148,7 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     camera = new V4Linux2Camera(cam_cfg);
     if( !camera->findCamera()) {
         delete camera;
-        return return getDefaultCamera();
+        return getDefaultCamera();
     } else return camera;
     
 #endif

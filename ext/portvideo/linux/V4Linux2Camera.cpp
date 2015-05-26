@@ -374,8 +374,8 @@ unsigned char* V4Linux2Camera::getFrame()  {
          else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
-         }
                 tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
+         }
 
         }
 
