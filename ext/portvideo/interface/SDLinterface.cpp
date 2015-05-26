@@ -100,7 +100,7 @@ bool SDLinterface::setupWindow() {
     
     SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, renderdriver);
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderdriver);
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
     
     SDL_CreateWindowAndRenderer(width_,height_,0,&window_,&renderer_);
     
