@@ -34,7 +34,11 @@
 #ifdef __APPLE__
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef __x86_64__
 #include "AVfoundationCamera.h"
+#else
+#include "QTKitCamera.h"
+#endif
 #include "DC1394Camera.h"
 #include "PS3EyeCamera.h"
 #endif
@@ -47,8 +51,6 @@
 #include <iostream>
 #include <vector>
 #include "tinyxml2.h"
-
-using namespace tinyxml2;
 
 class CameraTool
 {

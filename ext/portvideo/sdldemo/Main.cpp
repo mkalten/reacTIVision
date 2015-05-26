@@ -28,7 +28,6 @@
 #endif
 
 VisionEngine *engine;
-using namespace tinyxml2;
 
 static void terminate (int param)
 {
@@ -79,15 +78,15 @@ void readSettings(application_settings *config) {
 		return;
 	}
 
-	XMLHandle docHandle( &xml_settings );
-	XMLHandle config_root = docHandle.FirstChildElement("portvideo");
+	tinyxml2::XMLHandle docHandle( &xml_settings );
+	tinyxml2::XMLHandle config_root = docHandle.FirstChildElement("portvideo");
 
-	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
+	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if(camera_element!=NULL) {
 		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
 	}
 
-	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
+	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if(image_element!=NULL)
 	{
 		if(image_element->Attribute("display")!=NULL) {
@@ -115,15 +114,15 @@ void writeSettings(application_settings *config) {
 		return;
 	}
 
-	XMLHandle docHandle(&xml_settings);
-	XMLHandle config_root = docHandle.FirstChildElement("portvideo");
+	tinyxml2::XMLHandle docHandle(&xml_settings);
+	tinyxml2::XMLHandle config_root = docHandle.FirstChildElement("portvideo");
 
-	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
+	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL ) {
 		if(camera_element->Attribute("config")!=NULL) camera_element->SetAttribute("config",config->camera_config);
 	}
 
-	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
+	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if(image_element!=NULL)
     {
 		if(image_element->Attribute("display")!=NULL)  {

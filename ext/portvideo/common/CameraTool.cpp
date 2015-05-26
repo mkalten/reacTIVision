@@ -30,7 +30,11 @@ void CameraTool::listDevices() {
 #ifdef __APPLE__
     DC1394Camera::listDevices();
     PS3EyeCamera::listDevices();
+#ifdef __x86_64__
     AVfoundationCamera::listDevices();
+#else
+    QTKitCamera::listDevices();
+#endif
 #endif
     
 #ifdef LINUX
@@ -51,9 +55,15 @@ CameraEngine* CameraTool::getDefaultCamera() {
 #endif
     
 #ifdef __APPLE__
+    #ifdef __x86_64__
     CameraEngine *camera = new AVfoundationCamera(&cam_cfg);
     if( !camera->findCamera()) delete camera;
     else return camera;
+    #else
+    CameraEngine *camera = new QTKitCamera(&cam_cfg);
+    if( !camera->findCamera()) delete camera;
+    else return camera;
+    #endif
 #endif
     
 #ifdef LINUX 
@@ -111,7 +121,8 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
         if( !camera->findCamera()) delete camera;
         else return camera;
     }
-    
+
+#ifdef __x86_64__
     // default driver
     camera = new AVfoundationCamera(cam_cfg);
     if( !camera->findCamera()) {
@@ -121,7 +132,17 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
         if( !camera->findCamera()) delete camera;
         else return camera;
     } else return camera;
-    
+#else
+    // default driver
+    camera = new QTKitCamera(cam_cfg);
+    if( !camera->findCamera()) {
+        delete camera;
+        initCameraConfig(cam_cfg);
+        camera = new QTKitCamera(cam_cfg);
+        if( !camera->findCamera()) delete camera;
+        else return camera;
+    } else return camera;
+#endif
 #endif
     
 #ifdef LINUX
@@ -228,9 +249,9 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
         return NULL;
     }
     
-    XMLHandle docHandle( &xml_settings );
-    XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
-    XMLElement* camera_element = camera.ToElement();
+    tinyxml2::XMLHandle docHandle( &xml_settings );
+    tinyxml2::XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
+    tinyxml2::XMLElement* camera_element = camera.ToElement();
     
     if( camera_element==NULL )
     {
@@ -263,7 +284,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 #endif
     }
     
-    XMLElement* image_element = camera.FirstChildElement("capture").ToElement();
+    tinyxml2::XMLElement* image_element = camera.FirstChildElement("capture").ToElement();
     
     if (image_element!=NULL) {
         if ((image_element->Attribute("color")!=NULL) && ( strcmp( image_element->Attribute("color"), "true" ) == 0 )) cam_cfg.color = true;
@@ -284,7 +305,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
         }
     }
     
-    XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
+    tinyxml2::XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
     if (frame_element!=NULL) {
         cam_cfg.frame = true;
         
@@ -314,7 +335,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
         }
     }
     
-    XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
+    tinyxml2::XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
     if (settings_element!=NULL) {
         
         cam_cfg.brightness = readAttribute(settings_element, "brightness");
@@ -345,7 +366,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
     return &cam_cfg;
 }
 
-int CameraTool::readAttribute(XMLElement* settings,const char *attribute) {
+int CameraTool::readAttribute(tinyxml2::XMLElement* settings,const char *attribute) {
     
     if(settings->Attribute(attribute)!=NULL) {
         if (strcmp(settings->Attribute(attribute), "min" ) == 0) return SETTING_MIN;
@@ -385,9 +406,9 @@ void CameraTool::saveSettings(const char* cfgfile) {
         return;
     }
     
-    XMLHandle docHandle( &xml_settings );
-    XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
-    XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
+    tinyxml2::XMLHandle docHandle( &xml_settings );
+    tinyxml2::XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
+    tinyxml2::XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
     
     if (settings_element!=NULL) {
         
@@ -431,7 +452,7 @@ void CameraTool::saveSettings(const char* cfgfile) {
     
 }
 
-void CameraTool::saveAttribute(XMLElement* settings,const char *attribute,int config) {
+void CameraTool::saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config) {
     
     if (config==SETTING_MIN) settings->SetAttribute(attribute,"min");
     else if (config==SETTING_MAX) settings->SetAttribute(attribute,"max");
