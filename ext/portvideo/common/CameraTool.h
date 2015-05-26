@@ -34,13 +34,9 @@
 #ifdef __APPLE__
 #include <stdio.h>
 #include <stdlib.h>
+#include "AVfoundationCamera.h"
 #include "DC1394Camera.h"
-    #ifndef MAC_OS_X_VERSION_10_6
-    #include "./legacy/MacVdigCamera.h"
-	#else
-	#include "AVfoundationCamera.h"
-    #include "PS3EyeCamera.h"
-    #endif
+#include "PS3EyeCamera.h"
 #endif
 
 #ifndef NDEBUG
@@ -49,6 +45,7 @@
 #endif
 
 #include <iostream>
+#include <vector>
 #include "tinyxml2.h"
 
 using namespace tinyxml2;
@@ -60,15 +57,17 @@ public:
     static CameraEngine* getCamera(CameraConfig* config);
     static CameraEngine* getDefaultCamera();
 
+    static std::vector<CameraConfig> findDevices();
 	static void listDevices();
 
     static CameraConfig* readSettings(const char* config_file);
     static void saveSettings(const char* config_file);
     
+    static void initCameraConfig(CameraConfig *cfg);
+    
 private:
     
     static CameraConfig cam_cfg;
-    static void resetCameraConfig();
     static int readAttribute(tinyxml2::XMLElement* settings,const char *attribute);
     static void saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config);
 };

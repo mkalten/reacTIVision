@@ -25,7 +25,7 @@
 FileCamera::FileCamera(CameraConfig *cam_cfg): CameraEngine(cfg)
 {
 	cam_buffer = NULL;
-	sprintf(cameraName,"FileCamera");
+	sprintf(cfg->name,"FileCamera");
 	running=false;
 }
 
@@ -78,14 +78,14 @@ bool FileCamera::initCamera() {
 
 	if ((cfg->cam_width==0) || (cfg->cam_height==0) ) return false; 
 
-	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];		
-	size_t size = fread(cam_buffer, bytes,  cfg->cam_width*cfg->cam_height, imagefile);
-	if ((int)size!=cfg->cam_width*cfg->cam_height*bytes) std::cerr << "wrong image lenght" << std::endl;
+    cfg->buf_format =FORMAT_GRAY;
+    cfg->color = false;
+    cfg->cam_fps = 10;
+    
+	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
+	size_t size = fread(cam_buffer, cfg->buf_format,cfg->cam_width*cfg->cam_height, imagefile);
+	if ((int)size!=cfg->cam_width*cfg->cam_height*cfg->buf_format) std::cerr << "wrong image lenght" << std::endl;
 	fclose(imagefile);
-
-	bytes = 1;
-	cfg->color = false;
-	cfg->cam_fps = 10;
 	
 	return true;
 }

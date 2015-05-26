@@ -26,7 +26,7 @@
 FolderCamera::FolderCamera(CameraConfig *cam_cfg): CameraEngine(cfg)
 {
 	cam_buffer = NULL;
-	sprintf(cameraName,"FolderCamera");
+	sprintf(cfg->name,"FolderCamera");
 	running=false;
 }
 
@@ -108,11 +108,11 @@ bool FolderCamera::initCamera() {
 
 	fclose(imagefile);
 
-	bytes = 1;
+	cfg->buf_format = FORMAT_GRAY;
 	cfg->color = false;
 	cfg->cam_fps = 30;
 	
-	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];
+	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
 	image_iterator = image_list.begin();
 	return true;
 }
@@ -150,8 +150,8 @@ unsigned char* FolderCamera::getFrame()
 	}
 
 	if ((cfg->cam_width!=cfg->cam_width) || (cfg->cam_height!=cfg->cam_height) ) return NULL; 
-	size_t size = fread(cam_buffer, bytes,  cfg->cam_width*cfg->cam_height, imagefile);
-	if ((int)size!=cfg->cam_width*cfg->cam_height*bytes) std::cerr << "wrong image length" << std::endl;
+	size_t size = fread(cam_buffer, cfg->buf_format,  cfg->cam_width*cfg->cam_height, imagefile);
+	if ((int)size!=cfg->cam_width*cfg->cam_height*cfg->buf_format) std::cerr << "wrong image length" << std::endl;
 	fclose(imagefile);
 
 	image_iterator++;

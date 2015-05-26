@@ -1,6 +1,6 @@
 /*  portVideo, a cross platform camera framework
  Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
- PS3EyeCamera contributed 2014 by Sebestyén Gábor
+ PS3EyeCamera initially contributed 2014 by Sebestyén Gábor
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -17,12 +17,13 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef reacTIVision_PS3EyeCamera_h
-#define reacTIVision_PS3EyeCamera_h
-
-#include "ps3eye.h"
+#ifndef PS3EYECAMERA_H
+#define PS3EYECAMERA_H
 
 #include "CameraEngine.h"
+#include "ps3eye.h"
+
+using namespace ps3eye;
 
 class PS3EyeCamera : public CameraEngine
 {
@@ -34,6 +35,7 @@ public:
         if (cam_buffer!=NULL) delete []cam_buffer;
     };
     
+    static std::vector<CameraConfig> findDevices();
     static void listDevices();
     
     bool findCamera();
@@ -59,8 +61,6 @@ public:
 
 private:
     ps3eye::PS3EYECam::PS3EYERef eye;
-    
-    int _gain = 20;
 };
 
 #endif

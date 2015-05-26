@@ -19,13 +19,16 @@
 #ifndef CAMERAENGINE_H
 #define CAMERAENGINE_H
 
+#include <list>
 #include <fstream>
 #include <iostream>
+
 #include <limits.h>
-#include "tinyxml2.h"
 #include <math.h>
+
 #include "FrameProcessor.h"
 #include "UserInterface.h"
+#include "tinyxml2.h"
 
 #ifdef __APPLE__
 #include <CoreFoundation/CFBundle.h>
@@ -43,17 +46,34 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define SETTING_MAX     -4
 #define SETTING_OFF     -5
 
-#define DRIVER_DEFAULT 0
-#define DRIVER_DC1394  1
-#define DRIVER_PS3EYE  2
-#define DRIVER_RASPI   3
-#define DRIVER_UVCCAM  4
+#define FORMAT_UNSUPPORTED  -1
+#define FORMAT_UNKNOWN  0
+#define FORMAT_GRAY     1
+#define FORMAT_GRAY16   2
+#define FORMAT_RGB      3
+#define FORMAT_RGB16    4
+#define FORMAT_YUYV     5
+#define FORMAT_UYVY     6
+#define FORMAT_YUV      7
+#define FORMAT_420P     8
+#define FORMAT_410P     9
+#define FORMAT_JPEG    10
+#define FORMAT_MPEG    11
+#define FORMAT_H263    12
+#define FORMAT_H264    13
+#define FORMAT_DV      14
+
+#define DRIVER_DEFAULT  0
+#define DRIVER_DC1394   1
+#define DRIVER_PS3EYE   2
+#define DRIVER_RASPI    3
+#define DRIVER_UVCCAM   4
 #define DRIVER_FILE    10
 #define DRIVER_FOLDER  11
 
-#define VALUE_UP 79
-#define VALUE_DOWN 80
-#define SETTING_NEXT 81
+#define VALUE_INCREASE   79
+#define VALUE_DECREASE   80
+#define SETTING_NEXT     81
 #define SETTING_PREVIOUS 82
 
 enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
@@ -61,13 +81,19 @@ enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPO
 struct CameraConfig {
     int driver;
     int device;
-    char file[255];
-    char folder[255];
+    char name[256];
+    
+    char file[256];
+    char folder[256];
 
     bool color;
     bool compress;
     bool frame;
 
+    int cam_format;
+    int src_format;
+    int buf_format;
+    
     int cam_width;
     int cam_height;
     float cam_fps;
@@ -103,9 +129,17 @@ public:
     CameraEngine(CameraConfig *cam_cfg) {
         cfg = cam_cfg;
         settingsDialog=false;
-
-        if (cfg->color) bytes = 3;
-        else bytes = 1;
+        
+        max_width = 640;
+        max_height = 480;
+        max_fps = 30;
+        
+        min_width = 320;
+        min_height = 240;
+        min_fps = 15;
+        
+        if (cam_cfg->color) cam_cfg->buf_format=FORMAT_RGB;
+        else cam_cfg->buf_format=FORMAT_GRAY;
     }
 
     virtual ~CameraEngine() {};
@@ -139,16 +173,14 @@ public:
     int getFps() { return (int)floor(cfg->cam_fps+0.5f); }
     int getWidth() { return cfg->frame_width; }
     int getHeight() { return cfg->frame_height; }
-    bool getColour() { return cfg->color; }
-    char* getName() { return cameraName; }
+    bool getColor() { return cfg->color; }
+    char* getName() { return cfg->name; }
 
 protected:
 
-    char cameraName[256];
     CameraConfig *cfg;
 
-    int bytes;
-    unsigned char* crop_buffer;
+    unsigned char* frm_buffer;
     unsigned char* cam_buffer;
 
     int lost_frames, timeout;
@@ -190,7 +222,7 @@ protected:
 
     int max_width, min_width;
     int max_height, min_height;
-    int max_fps, min_fps;
+    float max_fps, min_fps;
 
     int default_brightness;
     int default_contrast;

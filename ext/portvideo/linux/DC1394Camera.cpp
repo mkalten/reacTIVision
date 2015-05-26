@@ -35,6 +35,11 @@ DC1394Camera::~DC1394Camera()
 	if (cam_buffer!=NULL) delete []cam_buffer;
 }
 
+std::list<CameraConfig> DC1394Camera::findDevices() {
+    std::list<CameraConfig> cfg_list;
+    return cfg_list;
+}
+
 void DC1394Camera::listDevices() {
     dc1394_t *d = dc1394_new();
     dc1394camera_list_t *list;
@@ -116,7 +121,6 @@ bool DC1394Camera::findCamera() {
 	 d = dc1394_new();
 
 	 if (dc1394_camera_enumerate (d, &list) != DC1394_SUCCESS) {
-		//fprintf (stderr, "failed to enumerate cameras\n");
 		fprintf (stderr, "no DC1394 cameras found\n");
 		dc1394_free(d);
 		return false;
@@ -127,7 +131,7 @@ bool DC1394Camera::findCamera() {
 		dc1394_free(d);
 		return false;
 	} else if (list->num == 1) printf("1 DC1394 camera found\n");
-    else printf("%d DC1394 camera found\n", list->num);
+    else printf("%d DC1394 cameras found\n", list->num);
 
     if (cfg->device < 0) cfg->device = 0;
     else if (cfg->device >= (int)list->num) cfg->device = (int)list->num - 1;
@@ -137,16 +141,16 @@ bool DC1394Camera::findCamera() {
 
 bool DC1394Camera::initCamera() {
 
-	//if (cameraID < 0) return false;
+	if (cfg->device < 0) return false;
 
 	camera = dc1394_camera_new (d, list->ids[cfg->device].guid);
 	if (!camera) {
-		fprintf (stderr, "Failed to initialize Firewire camera\n");
+		fprintf (stderr, "Failed to initialize DC1394 camera\n");
 		return false;
 	}
 	dc1394_camera_free_list (list);
 
-	sprintf(cameraName,"%s", camera->model);
+	sprintf(cfg->name,"%s", camera->model);
 
 	dc1394framerates_t framerates;
 	dc1394video_modes_t video_modes;
@@ -194,7 +198,6 @@ bool DC1394Camera::initCamera() {
 
 		uint32_t F7_xmax, F7_ymax = 0;
  		uint32_t F7_bmin, F7_bmax = 0;
-
 
 		dc1394_format7_get_max_image_size(camera, video_mode, &F7_xmax, &F7_ymax);
 		dc1394_format7_get_packet_parameters(camera, video_mode, &F7_bmin, &F7_bmax);
@@ -314,7 +317,7 @@ bool DC1394Camera::initCamera() {
     cfg->cam_width  = cfg->frame_width  = w;
 	cfg->cam_height = cfg->frame_height = h;
 
-	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];
+	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
 
     applyCameraSettings();
 	return true;

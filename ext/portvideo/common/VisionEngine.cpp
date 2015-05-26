@@ -304,7 +304,7 @@ void VisionEngine::allocateBuffers()
     bytesPerSourcePixel_ = 1;
     bytesPerDestPixel_ = 1;
     
-    if ((camera_!=NULL) && (camera_->getColour())) {
+    if ((camera_!=NULL) && (camera_->getColor())) {
         bytesPerSourcePixel_ = 3;
         bytesPerDestPixel_ = 3;
     }
@@ -384,9 +384,9 @@ void VisionEngine::teardownCamera()
 void VisionEngine::setInterface(UserInterface *uiface) {
     if (uiface!=NULL) {
         interface_ = uiface;
-        bool colour = false;
-        if (camera_) colour = camera_->getColour();
-        interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,colour);
+        bool color = false;
+        if (camera_) color = camera_->getColor();
+        interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,color);
     }
 }
 
@@ -408,7 +408,7 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
 , height_( HEIGHT )
 {
     app_config_ = config;
-    camera_config_ = CameraTool::readSettings(config->camera_config);
+    camera_config_ = CameraTool::readSettings(app_config_->camera_config);
     setupCamera(camera_config_);
     displayBuffer_ = NULL;
     

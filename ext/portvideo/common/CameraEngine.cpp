@@ -44,7 +44,7 @@ void CameraEngine::control(unsigned char key) {
 
     int step = 0;
     switch(key) {
-        case VALUE_DOWN:
+        case VALUE_DECREASE:
             step = getCameraSettingStep(currentCameraSetting);
             if (step==1) step = (int)((float)ctrl_max/256.0f);
             if (step<1) step=1;
@@ -52,7 +52,7 @@ void CameraEngine::control(unsigned char key) {
             if (ctrl_val<ctrl_min) ctrl_val=ctrl_min;
             setCameraSetting(currentCameraSetting,ctrl_val);
             break;
-        case VALUE_UP:
+        case VALUE_INCREASE:
             step = getCameraSettingStep(currentCameraSetting);
             if (step==1) step = (int)((float)ctrl_max/256.0f);
             if (step<1) step=1;

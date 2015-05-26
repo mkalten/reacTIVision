@@ -88,7 +88,7 @@
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
 		B24EA4F20015EB5000096D13 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		B260492208E9BF4B0095D4C8 /* SportVideo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SportVideo.icns; sourceTree = SOURCE_ROOT; };
-		B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PS3EyeCamera.cpp; sourceTree = "<group>"; };
+		B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = PS3EyeCamera.cpp; sourceTree = "<group>"; };
 		B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PS3EyeCamera.h; sourceTree = "<group>"; };
 		B260A1F01B0A624E0053F53D /* ps3eye.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ps3eye.cpp; path = ps3eye/ps3eye.cpp; sourceTree = "<group>"; };
 		B260A1F11B0A624E0053F53D /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ps3eye/ps3eye.h; sourceTree = "<group>"; };

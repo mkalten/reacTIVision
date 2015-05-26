@@ -29,6 +29,7 @@ public:
     DC1394Camera(CameraConfig* cam_cfg);
 	~DC1394Camera();
 	
+    static std::list<CameraConfig> findDevices();
     static void listDevices();
     
 	bool findCamera();

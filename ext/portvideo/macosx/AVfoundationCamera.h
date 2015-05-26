@@ -51,6 +51,7 @@ public:
     AVfoundationCamera(CameraConfig* cam_cfg);
     ~AVfoundationCamera();
 	
+    static std::list<CameraConfig> findDevices();
     static void listDevices();
 
 	bool findCamera();
@@ -81,7 +82,7 @@ private:
     bool disconnected;
     
     VVUVCController				*uvcController;
-    FrameGrabber *grabber;
+    FrameGrabber                *grabber;
     
     AVCaptureSession			*session;
     AVCaptureDeviceInput		*videoDeviceInput;

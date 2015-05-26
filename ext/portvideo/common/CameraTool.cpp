@@ -19,7 +19,7 @@
 #include "CameraTool.h"
 
 
-CameraConfig CameraTool::cam_cfg;
+CameraConfig CameraTool::cam_cfg = {};
 
 void CameraTool::listDevices() {
 
@@ -29,14 +29,8 @@ void CameraTool::listDevices() {
     
 #ifdef __APPLE__
     DC1394Camera::listDevices();
-    
-#ifndef MAC_OS_X_VERSION_10_6
-    MacVdigCamera::listDevices();
-#else
     PS3EyeCamera::listDevices();
     AVfoundationCamera::listDevices();
-#endif
-    
 #endif
     
 #ifdef LINUX
@@ -48,7 +42,7 @@ void CameraTool::listDevices() {
 
 CameraEngine* CameraTool::getDefaultCamera() {
     
-    resetCameraConfig();
+    initCameraConfig(&cam_cfg);
     
 #ifdef WIN32
     CameraEngine *camera = new videoInputCamera(&cam_cfg);
@@ -76,6 +70,7 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     CameraEngine* camera = NULL;
     
 #ifndef NDEBUG
+    
     if (cam_cfg->driver==DRIVER_FILE) {
         camera = new FileCamera(cam_cfg);
         if( !camera->findCamera() ) delete camera;
@@ -87,12 +82,20 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
         if( !camera->findCamera() ) delete camera;
         else return camera;
     }
+    
 #endif
     
 #ifdef WIN32
+    
     camera = new videoInputCamera(cam_cfg);
-    if( !camera->findCamera() ) delete camera;
-    else return camera;
+    if( !camera->findCamera() ) {
+        delete camera;
+        initCameraConfig(cam_cfg);
+        camera = new videoInputCamera(cam_cfg);
+        if( !camera->findCamera()) delete camera;
+        else return camera;
+    } else return camera;
+    
 #endif
     
 #ifdef __APPLE__
@@ -111,8 +114,14 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     
     // default driver
     camera = new AVfoundationCamera(cam_cfg);
-    if( !camera->findCamera()) delete camera;
-    else return camera;
+    if( !camera->findCamera()) {
+        delete camera;
+        initCameraConfig(cam_cfg);
+        camera = new AVfoundationCamera(cam_cfg);
+        if( !camera->findCamera()) delete camera;
+        else return camera;
+    } else return camera;
+    
 #endif
     
 #ifdef LINUX
@@ -125,57 +134,66 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     
     // default driver
     camera = new V4Linux2Camera(cam_cfg);
-    if( !camera->findCamera()) delete camera;
-    else return camera;
+    if( !camera->findCamera()) {
+        delete camera;
+        initCameraConfig(cam_cfg);
+        camera = new V4Linux2Camera(cam_cfg);
+        if( !camera->findCamera()) delete camera;
+        else return camera;
+    } else return camera;
     
 #endif
     
     return NULL;
 }
 
-void CameraTool::resetCameraConfig() {
+void CameraTool::initCameraConfig(CameraConfig *cfg) {
 
-    sprintf(cam_cfg.file,"none");
-    sprintf(cam_cfg.folder,"none");
+    sprintf(cfg->file,"none");
+    sprintf(cfg->folder,"none");
     
-    cam_cfg.driver = DRIVER_DEFAULT;
-    cam_cfg.device = 0;
-    cam_cfg.color = false;
-    cam_cfg.compress = false;
+    cfg->driver = DRIVER_DEFAULT;
+    cfg->device = 0;
+    cfg->cam_format = FORMAT_YUYV;
+    cfg->src_format = FORMAT_YUYV;
+    cfg->buf_format = FORMAT_GRAY;
     
-    cam_cfg.cam_width = SETTING_MAX;
-    cam_cfg.cam_height = SETTING_MAX;
-    cam_cfg.cam_fps = SETTING_MAX;
+    cfg->compress = false;
+    cfg->color = false;
+    cfg->frame = false;
     
-    cam_cfg.frame = false;
-    cam_cfg.frame_xoff = 0;
-    cam_cfg.frame_yoff = 0;
-    cam_cfg.frame_width = SETTING_MAX;
-    cam_cfg.frame_height = SETTING_MAX;
+    cfg->cam_width = SETTING_MAX;
+    cfg->cam_height = SETTING_MAX;
+    cfg->cam_fps = SETTING_MAX;
     
-    cam_cfg.brightness = SETTING_DEFAULT;
-    cam_cfg.contrast = SETTING_DEFAULT;
-    cam_cfg.sharpness = SETTING_DEFAULT;
-    cam_cfg.gain = SETTING_AUTO;
+    cfg->frame_xoff = 0;
+    cfg->frame_yoff = 0;
+    cfg->frame_width = SETTING_MAX;
+    cfg->frame_height = SETTING_MAX;
     
-    cam_cfg.exposure = SETTING_AUTO;
-    cam_cfg.shutter = SETTING_AUTO;
-    cam_cfg.focus = SETTING_AUTO;
-    cam_cfg.white = SETTING_AUTO;
-    cam_cfg.gamma = SETTING_AUTO;
-    cam_cfg.powerline = SETTING_DEFAULT;
-    cam_cfg.backlight = SETTING_AUTO;
+    cfg->brightness = SETTING_DEFAULT;
+    cfg->contrast = SETTING_DEFAULT;
+    cfg->sharpness = SETTING_DEFAULT;
+    cfg->gain = SETTING_AUTO;
     
-    cam_cfg.hue = SETTING_AUTO;
-    cam_cfg.blue = SETTING_DEFAULT;
-    cam_cfg.red = SETTING_DEFAULT;
-    cam_cfg.green = SETTING_DEFAULT;
+    cfg->exposure = SETTING_AUTO;
+    cfg->shutter = SETTING_AUTO;
+    cfg->focus = SETTING_AUTO;
+    cfg->white = SETTING_AUTO;
+    cfg->gamma = SETTING_AUTO;
+    cfg->powerline = SETTING_DEFAULT;
+    cfg->backlight = SETTING_AUTO;
+    
+    cfg->hue = SETTING_AUTO;
+    cfg->blue = SETTING_DEFAULT;
+    cfg->red = SETTING_DEFAULT;
+    cfg->green = SETTING_DEFAULT;
     
 }
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
     
-    resetCameraConfig();
+    initCameraConfig(&cam_cfg);
     
 #ifdef __APPLE__
     char path[1024];
