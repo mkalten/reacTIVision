@@ -83,8 +83,8 @@ void CameraEngine::control(unsigned char key) {
     }
 
     ctrl_val = getCameraSetting(currentCameraSetting);
-    ctrl_max =  getMaxCameraSetting(currentCameraSetting);
-    ctrl_min =  getMinCameraSetting(currentCameraSetting);
+    ctrl_max = getMaxCameraSetting(currentCameraSetting);
+    ctrl_min = getMinCameraSetting(currentCameraSetting);
 }
 
 void CameraEngine::showInterface(UserInterface *interface) {

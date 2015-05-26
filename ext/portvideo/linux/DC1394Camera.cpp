@@ -35,8 +35,8 @@ DC1394Camera::~DC1394Camera()
 	if (cam_buffer!=NULL) delete []cam_buffer;
 }
 
-std::list<CameraConfig> DC1394Camera::findDevices() {
-    std::list<CameraConfig> cfg_list;
+std::vector<CameraConfig> DC1394Camera::findDevices() {
+    std::vector<CameraConfig> cfg_list;
     return cfg_list;
 }
 

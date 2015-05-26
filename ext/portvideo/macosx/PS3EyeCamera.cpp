@@ -27,7 +27,10 @@ std::vector<CameraConfig> PS3EyeCamera::findDevices() {
     std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
     
     int count = (int)devices.size();
-    if (count==1) printf("1 PS3Eye camera found:\n");
+    if(count==0) {
+        printf("no PS3Eye camera found\n");
+        return cfg_list;
+    } else if (count==1) printf("1 PS3Eye camera found:\n");
     else printf("%d PS3Eye cameras found:\n",count);
     
     if (count > 0)
