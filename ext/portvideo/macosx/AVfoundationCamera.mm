@@ -156,6 +156,7 @@ AVfoundationCamera::AVfoundationCamera(CameraConfig *cam_cfg):CameraEngine(cam_c
     videoOutput = NULL;
     
     videoDevice = NULL;
+    grabber = NULL;
     //videoDeviceFormat = NULL;
 }
 
@@ -332,9 +333,6 @@ void AVfoundationCamera::listDevices() {
 
 bool AVfoundationCamera::findCamera() {
     
-    session = [[AVCaptureSession alloc] init];
-    if (session==NULL) return false;
-    
     NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
     
@@ -368,6 +366,9 @@ bool AVfoundationCamera::findCamera() {
 }
 
 bool AVfoundationCamera::initCamera() {
+    
+    session = [[AVCaptureSession alloc] init];
+    if (session==NULL) return false;
     
     NSError *error = nil;
     videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
@@ -489,8 +490,6 @@ bool AVfoundationCamera::initCamera() {
     }
     
     videoOutput = [[AVCaptureVideoDataOutput alloc] init];
-    
-    printf("%d\n",kCVPixelFormatType_422YpCbCr8_yuvs);
     
     unsigned int pixelformat = kCVPixelFormatType_422YpCbCr8_yuvs;
     if (cfg->color) pixelformat = kCVPixelFormatType_24RGB;
