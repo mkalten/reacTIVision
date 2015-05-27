@@ -17,7 +17,6 @@
  */
 
 #include "CameraEngine.h"
-using namespace tinyxml2;
 
 bool CameraEngine::showSettingsDialog(bool lock) {
     if (settingsDialog) {
@@ -191,37 +190,43 @@ void CameraEngine::crop_yuyv2gray(int cam_w, unsigned char *cam_buf, unsigned ch
     }
 }
 
-void yuv2rgb_conv(int Y1, int Y2, int U, int V, unsigned char *dest) {
+//void yuv2rgb_conv(int Y1, int Y2, int U, int V, unsigned char *dest) {
+void yuv2rgb_conv(int Y, int U, int V, unsigned char *dest) {
 
-				int R = (int)(Y1 + 1.370705f * V);
-				int G = (int)(Y1 - 0.698001f * V - 0.337633f * U);
-				int B = (int)(Y1 + 1.732446f * U);
+	/*int R = (int)(Y + 1.370705f * V);
+	int G = (int)(Y - 0.698001f * V - 0.337633f * U);
+	int B = (int)(Y + 1.732446f * U);*/
 
-				SAT(R);
-				SAT(G);
-				SAT(B);
+	// integer method is twice as fast
+	int C = 298*(Y - 16);
+	int R = (C + 409*V + 128) >> 8;
+	int G = (C - 100*U - 208*V + 128) >> 8;
+	int B = (C + 516*U + 128) >> 8;
 
-				*dest++ = R;
-                *dest++ = G;
-				*dest++ = B;
+	SAT(R);
+	SAT(G);
+	SAT(B);
+
+	*dest++ = R;
+        *dest++ = G;
+	*dest++ = B;
 }
 
 void CameraEngine::uyvy2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
 
-			int Y1,Y2,U,V;
+	int Y1,Y2,U,V;
 
-			for(int i=width*height/2;i>0;i--) {
-
-				// U and V are +-0.5
+	for(int i=width*height/2;i>0;i--) {
+		// U and V are +-0.5
                 U  = *src++ - 128;
                 Y1 = *src++;
                 V  = *src++ - 128;
                 Y2 = *src++;
 
-                yuv2rgb_conv(Y1,Y2,U,V,dest);
-                yuv2rgb_conv(Y1,Y2,U,V,dest+=3);
+                yuv2rgb_conv(Y1,U,V,dest);
+                yuv2rgb_conv(Y2,U,V,dest+=3);
                 dest+=3;
-			}
+	}
 }
 
 void CameraEngine::crop_uyvy2rgb(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
@@ -247,8 +252,8 @@ void CameraEngine::crop_uyvy2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
                 V  = *cam_buf++ - 128;
                 Y2 = *cam_buf++;
 
-                yuv2rgb_conv(Y1,Y2,U,V,frm_buf);
-                yuv2rgb_conv(Y1,Y2,U,V,frm_buf+=3);
+                yuv2rgb_conv(Y1,U,V,frm_buf);
+                yuv2rgb_conv(Y2,U,V,frm_buf+=3);
                 frm_buf+=3;
         }
         cam_buf +=  2*x_end;
@@ -266,8 +271,8 @@ void CameraEngine::yuyv2rgb(int width, int height, unsigned char *src, unsigned 
                 Y2 = *src++;
                 V  = *src++ - 128;
 
-                yuv2rgb_conv(Y1,Y2,U,V,dest);
-                yuv2rgb_conv(Y1,Y2,U,V,dest+=3);
+                yuv2rgb_conv(Y1,U,V,dest);
+                yuv2rgb_conv(Y2,U,V,dest+=3);
                 dest+=3;
         }
 }
@@ -295,8 +300,8 @@ void CameraEngine::crop_yuyv2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
                 Y2 = *cam_buf++;
                 V  = *cam_buf++ - 128;
 
-                yuv2rgb_conv(Y1,Y2,U,V,frm_buf);
-                yuv2rgb_conv(Y1,Y2,U,V,frm_buf+=3);
+                yuv2rgb_conv(Y1,U,V,frm_buf);
+                yuv2rgb_conv(Y2,U,V,frm_buf+=3);
                 frm_buf+=3;
         }
         cam_buf +=  2*x_end;
