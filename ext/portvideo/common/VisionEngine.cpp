@@ -214,7 +214,6 @@ void VisionEngine::mainLoop()
         
         //long total_time = currentMicroSeconds()-start_time;
         //frameStatistics(camera_time,processing_time,total_time);
-
     }
 }
 
@@ -329,9 +328,7 @@ void VisionEngine::freeBuffers()
 }
 
 void VisionEngine::addFrameProcessor(FrameProcessor *fp) {
-    
     processorList.push_back(fp);
-    if (interface_!=NULL) fp->addUserInterface(interface_);
 }
 
 
@@ -348,7 +345,10 @@ void VisionEngine::initFrameProcessors() {
         if(!success) {
             processorList.erase( frame );
             printf("removed frame processor\n");
-        } else frame++;
+        } else {
+    		if (interface_!=NULL) (*frame)->addUserInterface(interface_);
+		frame++;
+	}
     }
 }
 
