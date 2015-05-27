@@ -1,9 +1,9 @@
 TARGET = reacTIVision
-CSOURCES = $(shell ls ../ext/libfidtrack/*.c ../ext/portvideo/interface/*.c)  
+CSOURCES = $(shell ls ../ext/libfidtrack/*.c ../ext/portvideo/interface/*.c)
 COBJECTS = $(CSOURCES:.c=.o)
 CPPSOURCES = $(shell ls ../common/*.cpp ../ext/libfidtrack/*.cpp ../ext/portvideo/linux/*.cpp ../ext/portvideo/common/*.cpp ../ext/portvideo/interface/*.cpp ../ext/portvideo/tinyxml/*.cpp ) 
 CPPOBJECTS = $(CPPSOURCES:.cpp=.o)
-OSCSOURCES = $(shell ls ../ext/oscpack/ip/posix/*.cpp ../ext/oscpack/osc/*.cpp) 
+OSCSOURCES = $(shell ls ../ext/oscpack/ip/posix/*.cpp ../ext/oscpack/osc/*.cpp)
 OSCOBJECTS = $(OSCSOURCES:.cpp=.o)
 
 SDL_CFLAGS  := $(shell sdl2-config --cflags)
@@ -18,14 +18,23 @@ CXXFLAGS = $(CFLAGS)
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
 
-all:	$(TARGET) 
+all:	$(TARGET)
 
-$(TARGET) : $(CPPOBJECTS) $(COBJECTS) $(OSCOBJECTS) $(PMOBJECTS)
-	$(CXX) -o $@ $+ $(LIBS) 
+%.o: %.cpp
+	@echo [CXX] $@
+	@ $(CXX) $(CFLAGS) -o $@ -c $<
+%.o: %.c
+	@echo [CC] $@
+	@ $(CC) $(CFLAGS) -o $@ -c $<
+
+$(TARGET) : $(CPPOBJECTS) $(OSCOBJECTS) $(COBJECTS)
+	@echo [LD] $@
+	@ $(CXX) -o $@ $+ $(LIBS)
 #	strip $(TARGET)
 
 clean:
-	rm -f $(TARGET) $(CPPOBJECTS) $(COBJECTS) $(OSCOBJECTS) $(PMOBJECTS) core*
+	@echo [CLEAN] $(TARGET)
+	@ rm -f $(TARGET) $(CPPOBJECTS) $(OSCOBJECTS) $(COBJECTS) core*
 
 run:	$(TARGET)
 	./$(TARGET)
@@ -56,4 +65,3 @@ install: $(TARGET)
 	install -m 666 -c ../calibration/*.pdf $(DESTDIR)$(PREFIX)/share/$(TARGET)/calibration
 	install -d $(DESTDIR)$(PREFIX)/share/$(TARGET)/midi
 	install -m 666 -c ../midi/* $(DESTDIR)$(PREFIX)/share/$(TARGET)/midi
-

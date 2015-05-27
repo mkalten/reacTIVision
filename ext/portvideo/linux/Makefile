@@ -1,7 +1,7 @@
 TARGET = SportVideo
-CSOURCES = $(shell ls ../interface/*.c)  
+CSOURCES = $(shell ls ../interface/*.c)
 COBJECTS = $(CSOURCES:.c=.o)
-CPPSOURCES = $(shell ls ./*.cpp ../sdldemo/*.cpp ../common/*.cpp ../interface/*.cpp ../tinyxml/*.cpp) 
+CPPSOURCES = $(shell ls ./*.cpp ../sdldemo/*.cpp ../common/*.cpp ../interface/*.cpp ../tinyxml/*.cpp)
 CPPOBJECTS = $(CPPSOURCES:.cpp=.o)
 
 SDL_CFLAGS  := $(shell sdl2-config --cflags)
@@ -16,13 +16,23 @@ CXXFLAGS = $(CFLAGS)
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
 
-all:	$(TARGET) 
+all:	$(TARGET)
+
+%.o: %.cpp
+	@echo [CXX] $@
+	@ $(CXX) $(CFLAGS) -o $@ -c $<
+%.o: %.c
+	@echo [CC] $@
+	@ $(CC) $(CFLAGS) -o $@ -c $<
+
 
 $(TARGET) : $(CPPOBJECTS) $(COBJECTS)
-	$(CXX) -o $@ $+ $(LIBS) 
+	@echo [LD] $@
+	@ $(CXX) -o $@ $+ $(LIBS)
 
 clean:
-	rm -f $(TARGET) $(CPPOBJECTS) $(COBJECTS) core*
+	@echo [CLEAN] $(TARGET)
+	@ rm -f $(TARGET) $(CPPOBJECTS) $(COBJECTS) core*
 
 run:	$(TARGET)
 	./$(TARGET)
