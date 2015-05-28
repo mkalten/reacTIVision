@@ -72,6 +72,7 @@ public:
     virtual void closeDisplay() = 0;
     virtual void setVsync(bool sync) = 0;
     
+    virtual void setHelpText(std::vector<std::string> hlp) = 0;
     virtual void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color) = 0;
     virtual void processEvents() = 0;
     void setVerbose(bool verbose) { verbose_ = verbose; };

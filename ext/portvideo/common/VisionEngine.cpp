@@ -133,23 +133,7 @@ void VisionEngine::start() {
     if( camera_->startCamera() ) {
         
         startThread();
-        
-        // add the help message from all FrameProcessors
         initFrameProcessors();
-        for (frame = processorList.begin(); frame!=processorList.end(); frame++) {
-            std::vector<std::string> processor_text = (*frame)->getOptions();
-            if (processor_text.size()>0) help_text.push_back("");
-            for(std::vector<std::string>::iterator processor_line = processor_text.begin(); processor_line!=processor_text.end(); processor_line++) {
-                help_text.push_back(*processor_line);
-            }
-        }
-        
-        //print the help message
-        std::cout << std::endl;
-        for(std::vector<std::string>::iterator help_line = help_text.begin(); help_line!=help_text.end(); help_line++) {
-            std::cout << *help_line << std::endl;
-        } std::cout << std::endl;
-        
         mainLoop();
         endLoop();
         stopThread();
@@ -352,13 +336,24 @@ void VisionEngine::removeFrameProcessor(FrameProcessor *fp) {
 }
 
 void VisionEngine::initFrameProcessors() {
+    
+    std::vector<std::string> help_text;
     for (frame = processorList.begin(); frame!=processorList.end(); ) {
         bool success = (*frame)->init(width_ , height_, bytesPerSourcePixel_, bytesPerDestPixel_);
         if(success) {
-    		if (interface_!=NULL) (*frame)->addUserInterface(interface_);
+            
+            std::vector<std::string> processor_text = (*frame)->getOptions();
+            if (processor_text.size()>0) help_text.push_back("");
+            for(std::vector<std::string>::iterator processor_line = processor_text.begin(); processor_line!=processor_text.end(); processor_line++) {
+                help_text.push_back(*processor_line);
+            }
+            
+    		if (interface_) (*frame)->addUserInterface(interface_);
             frame++;
         }  else processorList.erase( frame );
     }
+    
+    if (interface_) interface_->setHelpText(help_text);
 }
 
 void VisionEngine::setupCamera(CameraConfig *config) {
@@ -432,24 +427,6 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
     cameraTime_ = processingTime_ = interfaceTime_ = totalTime_ = 0.0f;
     
     app_name_ = std::string(name);
-    
-    help_text.push_back("display:");
-    help_text.push_back("   n - no image");
-    help_text.push_back("   s - source image");
-    help_text.push_back("   t - target image");
-    help_text.push_back("   h - toggle help text");
-    help_text.push_back("  F1 - toggle fullscreen");
-    help_text.push_back("");
-    help_text.push_back("commands:");
-    help_text.push_back("   ESC - quit " + app_name_);
-    help_text.push_back("   v - verbose output");
-    help_text.push_back("   o - camera options");
-    help_text.push_back("   p - pause processing");
-#ifndef NDEBUG
-    help_text.push_back("debug options:");
-    help_text.push_back("   b - save buffer as PGM");
-    help_text.push_back("   m - save buffer sequence");
-#endif
 }
 
 

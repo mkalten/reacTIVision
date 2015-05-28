@@ -62,6 +62,7 @@ public:
     void updateDisplay();
     void closeDisplay();
     
+    void setHelpText(std::vector<std::string> hlp);
     void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color);
     void processEvents();
     void setDisplayMode(DisplayMode mode);

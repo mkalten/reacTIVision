@@ -150,7 +150,7 @@ private:
     CameraConfig *camera_config_;
 
 	std::string app_name_;
-	std::vector<std::string> help_text;
+	
     enum DisplayMode { NO_DISPLAY, SOURCE_DISPLAY, DEST_DISPLAY };
 };
 

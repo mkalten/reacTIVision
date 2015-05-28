@@ -195,13 +195,9 @@ void SDLinterface::processEvents()
                         sprintf(caption,"recording - %d FPS",current_fps_);
                         SDL_SetWindowTitle( window_, caption);
                     }
-                }
+                } else help_ = false;
 #endif
-                //else {
-                    help_ = false;
-                    engine_->event(event.key.keysym.scancode);
-                //}
-                
+                engine_->event(event.key.keysym.scancode);
                 break;
             case SDL_QUIT:
                 closeDisplay();
@@ -429,6 +425,19 @@ void SDLinterface::setDisplayMode(DisplayMode mode) {
     displayMode_ = mode;
 }
 
+void SDLinterface::setHelpText(std::vector<std::string> hlp) {
+    
+    for(std::vector<std::string>::iterator help_line = hlp.begin(); help_line!=hlp.end(); help_line++) {
+        help_text.push_back(*help_line);
+    }
+    
+    //print the help message
+    std::cout << std::endl;
+    for(std::vector<std::string>::iterator help_line = help_text.begin(); help_line!=help_text.end(); help_line++) {
+        std::cout << *help_line << std::endl;
+    } std::cout << std::endl;
+}
+
 SDLinterface::SDLinterface(const char* name, bool fullscreen)
 : error_( false )
 , pause_( false )
@@ -466,6 +475,7 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
     help_text.push_back("   o - camera options");
     help_text.push_back("   p - pause processing");
 #ifndef NDEBUG
+    help_text.push_back("");
     help_text.push_back("debug options:");
     help_text.push_back("   b - save buffer as PGM");
     help_text.push_back("   m - save buffer sequence");
