@@ -23,7 +23,7 @@
 #include <windows.h>
 #endif 
 
-FolderCamera::FolderCamera(CameraConfig *cam_cfg): CameraEngine(cfg)
+FolderCamera::FolderCamera(CameraConfig *cam_cfg): CameraEngine(cam_cfg)
 {
 	cam_buffer = NULL;
 	sprintf(cfg->name,"FolderCamera");
@@ -77,7 +77,8 @@ bool FolderCamera::initCamera() {
 		(void) closedir (dp);
 	} else return false;
 #endif
-
+    
+    if (image_list.size()==0) return false;
  	FILE*  imagefile=fopen(image_list.begin()->c_str(),"rb");
 	if (imagefile==NULL) return false;
 		
@@ -91,7 +92,7 @@ bool FolderCamera::initCamera() {
 	param = strtok(NULL," "); if (param) cfg->cam_height =  atoi(param);
 	param = strtok(NULL," "); if (param) gray = atoi(param);
 
-	if (cfg->cam_height==0) 	{ 
+	if (cfg->cam_height==0) 	{
 		result = fgets(header,32,imagefile);
 		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) cfg->cam_height = atoi(param);
@@ -110,10 +111,14 @@ bool FolderCamera::initCamera() {
 
 	cfg->buf_format = FORMAT_GRAY;
 	cfg->color = false;
-	cfg->cam_fps = 30;
-	
+    
+	if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 15;
+	if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 30;
+    
 	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
 	image_iterator = image_list.begin();
+    
+    setupFrame();
 	return true;
 }
 
@@ -158,14 +163,11 @@ unsigned char* FolderCamera::getFrame()
 	if(image_iterator == image_list.end()) image_iterator=image_list.begin();
 
 
-// simulate ~30fps
-
 #ifdef WIN32
-	Sleep(33);
+	Sleep((int)(1000/cfg->cam_fps));
 #else 
-	usleep( 33000 ); 
+	usleep( (int)(100000/cfg->cam_fps) );
 #endif
-
 
 	return cam_buffer;	
 }

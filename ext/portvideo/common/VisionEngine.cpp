@@ -68,6 +68,28 @@ static DWORD WINAPI getFrameFromCamera( LPVOID obj )
 #ifndef NDEBUG
 void VisionEngine::saveBuffer(unsigned char* buffer) {
     
+    struct stat info;
+#ifdef WIN32
+    if (stat(".\\recording",&info)!=0) {
+        std::string dir(".\\recording");
+        LPSECURITY_ATTRIBUTES attr = NULL;
+        CreateDirectory(dir.c_str(),attr);
+    }
+#elif defined __APPLE__
+    char path[1024];
+    char full_path[1024];
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
+    CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
+    CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
+    CFRelease( mainBundleURL);
+    CFRelease( cfStringRef);
+    sprintf(full_path,"%s/../recording",path);
+    if (stat(full_path,&info)!=0) mkdir(full_path,0777);
+#else
+    if (stat("./recording",&info)!=0) mkdir("./recording",0777);
+#endif
+    
     int zerosize = 16-(int)floor(log10((float)framenumber_));
     if (zerosize<0) zerosize = 0;
     char zero[255];
@@ -77,10 +99,12 @@ void VisionEngine::saveBuffer(unsigned char* buffer) {
     char fileName[256];
 #ifdef WIN32
     sprintf(fileName,".\\recording\\%s%ld.pgm",zero,framenumber_);
+#elif defined __APPLE__
+    sprintf(fileName,"%s/../recording/%s%ld.pgm",path,zero,framenumber_);
 #else
     sprintf(fileName,"./recording/%s%ld.pgm",zero,framenumber_);
 #endif
-    std::cout << fileName << std::endl;
+
     FILE*  imagefile=fopen(fileName, "w");
     fprintf(imagefile,"P5\n%u %u 255\n", width_, height_);
     fwrite((const char *)buffer, 1,  width_*height_, imagefile);
@@ -183,8 +207,8 @@ void VisionEngine::mainLoop()
         cameraReadBuffer = ringBuffer->getNextBufferToRead();
         // loop until we get access to a frame
         while (cameraReadBuffer==NULL) {
-            if(!running_) return;
             if (interface_) interface_->processEvents();
+            if(!running_) return;
             gosleep(1);
             cameraReadBuffer = ringBuffer->getNextBufferToRead();
             //if (cameraReadBuffer!=NULL) break;
@@ -195,23 +219,25 @@ void VisionEngine::mainLoop()
         for (frame = processorList.begin(); frame!=processorList.end(); frame++)
             (*frame)->process(cameraReadBuffer,destBuffer_,displayBuffer_);
         //long processing_time = currentMicroSeconds()-start_time;
-        
-#ifndef NDEBUG
-        if (recording_) {
-            if (interface_!=NULL) if (interface_->getDisplayMode()!=interface_->SOURCE_DISPLAY)
-                memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
-            saveBuffer(sourceBuffer_);
-        }
-#endif
-        if (interface_!=NULL) if (interface_->getDisplayMode()==interface_->SOURCE_DISPLAY)
+  
+        if (interface_) if (interface_->getDisplayMode()==interface_->SOURCE_DISPLAY)
             memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
         ringBuffer->readFinished();
         
-        if (interface_ && running_ ) {
+#ifndef NDEBUG
+        if (recording_) {
+            if (interface_) {
+                if (interface_->getDisplayMode()==interface_->SOURCE_DISPLAY)
+                    saveBuffer(sourceBuffer_);
+                else saveBuffer(destBuffer_);
+            }
+        }
+#endif
+
+        if (interface_ && running_) {
             camera_->showInterface(interface_);
             interface_->updateDisplay();
         }
-        
         //long total_time = currentMicroSeconds()-start_time;
         //frameStatistics(camera_time,processing_time,total_time);
     }
@@ -231,6 +257,11 @@ void VisionEngine::endLoop() {
 void VisionEngine::stop() {
     std::cout << "terminating " << app_name_ << " ... " << std::endl;
     running_ = false;
+    
+    /*while (processorList.size()) {
+       // printf("%d\n",processorList.size());
+     gosleep(1);
+    }*/
 }
 
 void VisionEngine::frameStatistics(long cameraTime, long processingTime, long totalTime) {
@@ -263,42 +294,23 @@ void VisionEngine::frameStatistics(long cameraTime, long processingTime, long to
 
 void VisionEngine::event(int key)
 {
-    //printf("%d\n",key);
+
     if( key == KEY_O ){
         display_lock_ = camera_->showSettingsDialog(display_lock_);
     }
 #ifndef NDEBUG
     else if( key == KEY_M ){
-        if (recording_) {
-            recording_ = false;
-        } else {
-            struct stat info;
-#ifdef WIN32
-            if (stat(".\\recording",&info)!=0) {
-                std::string dir(".\\recording");
-                LPSECURITY_ATTRIBUTES attr = NULL;
-                CreateDirectory(dir.c_str(),attr);
-            }
-#else
-            if (stat("./recording",&info)!=0) mkdir("./recording",0777);
-#endif
-            recording_ = true;
+        recording_ = !recording_;
+    } else if( key == KEY_B ){
+        if (interface_!=NULL) {
+            if (interface_->getDisplayMode()==interface_->SOURCE_DISPLAY)
+                saveBuffer(sourceBuffer_);
+            else saveBuffer(destBuffer_);
         }
-    } else if( key == KEY_M ){
-        struct stat info;
-#ifdef WIN32
-        if (stat(".\\recording",&info)!=0) {
-            std::string dir(".\\recording");
-            LPSECURITY_ATTRIBUTES attr = NULL;
-            CreateDirectory(dir.c_str(),attr);
-        }
-#else
-        if (stat("./recording",&info)!=0) mkdir("./recording",0777);
-#endif
-        saveBuffer(sourceBuffer_);
     }
 #endif
     
+    //printf("%d\n",key);
     camera_->control(key);
     for (frame = processorList.begin(); frame!=processorList.end(); frame++)
         display_lock_ = (*frame)->toggleFlag(key,display_lock_);
@@ -342,13 +354,10 @@ void VisionEngine::removeFrameProcessor(FrameProcessor *fp) {
 void VisionEngine::initFrameProcessors() {
     for (frame = processorList.begin(); frame!=processorList.end(); ) {
         bool success = (*frame)->init(width_ , height_, bytesPerSourcePixel_, bytesPerDestPixel_);
-        if(!success) {
-            processorList.erase( frame );
-            printf("removed frame processor\n");
-        } else {
+        if(success) {
     		if (interface_!=NULL) (*frame)->addUserInterface(interface_);
-		frame++;
-	}
+            frame++;
+        }  else processorList.erase( frame );
     }
 }
 

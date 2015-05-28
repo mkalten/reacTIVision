@@ -191,15 +191,16 @@ void SDLinterface::processEvents()
                         SDL_SetWindowTitle( window_, caption);
                     } else {
                         recording_ = true;
-                        std::string caption = app_name_ + " - recording";
-                        SDL_SetWindowTitle( window_, caption.c_str());
+                        char caption[24] = "";
+                        sprintf(caption,"recording - %d FPS",current_fps_);
+                        SDL_SetWindowTitle( window_, caption);
                     }
                 }
 #endif
-                else {
+                //else {
                     help_ = false;
                     engine_->event(event.key.keysym.scancode);
-                }
+                //}
                 
                 break;
             case SDL_QUIT:
@@ -298,7 +299,8 @@ void SDLinterface::showFrameRate() {
         current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
         
         char caption[24] = "";
-        sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
+        if (recording_) sprintf(caption,"recording - %d FPS",current_fps_);
+        else sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
         SDL_SetWindowTitle( window_, caption);
         
         lastTime_ = currentTime_;

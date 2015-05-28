@@ -22,7 +22,7 @@
 #include <windows.h>
 #endif 
 
-FileCamera::FileCamera(CameraConfig *cam_cfg): CameraEngine(cfg)
+FileCamera::FileCamera(CameraConfig *cam_cfg): CameraEngine(cam_cfg)
 {
 	cam_buffer = NULL;
 	sprintf(cfg->name,"FileCamera");
@@ -62,8 +62,8 @@ bool FileCamera::initCamera() {
 	param = strtok(header," "); if (param) cfg->cam_width = atoi(param);
 	param = strtok(NULL," "); if (param) cfg->cam_height =  atoi(param);
 	param = strtok(NULL," "); if (param) gray = atoi(param);
-
-	if (cfg->cam_height==0) 	{ 
+ 
+	if (cfg->cam_height==0) 	{
 		result = fgets(header,32,imagefile);
 		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) cfg->cam_height = atoi(param);
@@ -76,26 +76,27 @@ bool FileCamera::initCamera() {
 		param = strtok(header," "); if (param) gray = atoi(param);
 	}
 
-	if ((cfg->cam_width==0) || (cfg->cam_height==0) ) return false; 
+    if ((cfg->cam_width==0) || (cfg->cam_height==0) ) return false;
 
-    cfg->buf_format =FORMAT_GRAY;
+    cfg->buf_format = FORMAT_GRAY;
     cfg->color = false;
-    cfg->cam_fps = 10;
+    cfg->cam_fps = 1;
     
 	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
 	size_t size = fread(cam_buffer, cfg->buf_format,cfg->cam_width*cfg->cam_height, imagefile);
 	if ((int)size!=cfg->cam_width*cfg->cam_height*cfg->buf_format) std::cerr << "wrong image lenght" << std::endl;
 	fclose(imagefile);
-	
+    
+    setupFrame();
 	return true;
 }
 
 unsigned char* FileCamera::getFrame()
 {
 #ifdef WIN32
-	Sleep(100);
+	Sleep(1000);
 #else 
-	usleep( 100000 ); // simulate 10fps
+	usleep( 1000000 ); // do 1fps
 #endif
 	return cam_buffer;	
 }

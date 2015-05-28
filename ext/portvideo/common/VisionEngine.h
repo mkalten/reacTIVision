@@ -54,9 +54,9 @@ public:
 	~VisionEngine() {
         if (camera_) delete camera_;
         if (interface_) {
-		app_config_->display_mode=interface_->getDisplayMode();
-		delete interface_;
-	}
+            app_config_->display_mode=interface_->getDisplayMode();
+            delete interface_;
+        }
     };
 
 	void start();

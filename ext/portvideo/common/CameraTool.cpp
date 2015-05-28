@@ -250,6 +250,8 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
     if(camera_element->Attribute("driver")!=NULL) {
         if (strcmp(camera_element->Attribute("driver"), "dc1394" ) == 0) cam_cfg.driver=DRIVER_DC1394;
         else if (strcmp(camera_element->Attribute("driver"), "ps3eye" ) == 0) cam_cfg.driver=DRIVER_PS3EYE;
+        else if (strcmp(camera_element->Attribute("driver"), "file" ) == 0) cam_cfg.driver=DRIVER_FILE;
+        else if (strcmp(camera_element->Attribute("driver"), "folder" ) == 0) cam_cfg.driver=DRIVER_FOLDER;
     }
     
     if(camera_element->Attribute("id")!=NULL) {
