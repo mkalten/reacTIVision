@@ -105,7 +105,7 @@ void VisionEngine::saveBuffer(unsigned char* buffer, int bytes) {
 #elif defined __APPLE__
     sprintf(fileName,"%s/../recording/%s%ld.%s",path,zero,framenumber_,file_ext);
 #else
-    sprintf(fileName,"./recording/%s%ld.%",zero,framenumber_,file_ext);
+    sprintf(fileName,"./recording/%s%ld.%s",zero,framenumber_,file_ext);
 #endif
 
     FILE*  imagefile=fopen(fileName, "w");
