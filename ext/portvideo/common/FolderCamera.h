@@ -67,6 +67,7 @@ public:
 private:
 	std::vector<std::string> image_list;
 	std::vector<std::string>::iterator image_iterator;
+	unsigned char *file_buffer;
 	
 };
 

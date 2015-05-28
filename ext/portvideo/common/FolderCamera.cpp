@@ -26,6 +26,7 @@
 FolderCamera::FolderCamera(CameraConfig *cam_cfg): CameraEngine(cam_cfg)
 {
 	cam_buffer = NULL;
+	file_buffer = NULL;
 	sprintf(cfg->name,"FolderCamera");
 	running=false;
 }
@@ -33,11 +34,11 @@ FolderCamera::FolderCamera(CameraConfig *cam_cfg): CameraEngine(cam_cfg)
 FolderCamera::~FolderCamera()
 {
 	if (cam_buffer!=NULL) delete cam_buffer;
+	if (file_buffer!=NULL) delete file_buffer;
 }
 
 bool FolderCamera::findCamera() {
 	
-	//if (cfg->folder==NULL) return false;
 	struct stat info;
 	if (stat(cfg->folder,&info)!=0) return false;
 	return true;
@@ -45,7 +46,7 @@ bool FolderCamera::findCamera() {
 
 bool FolderCamera::initCamera() {
 	
-	int gray = 0;
+	int  max = 0;
 	char header[32];
 	char file_name[256];
 	char *param;
@@ -56,7 +57,7 @@ bool FolderCamera::initCamera() {
 	sprintf(buf, "%s\\*", cfg->folder);
 	HANDLE list = FindFirstFile(buf, &results);
 	while (FindNextFile(list, &results)) {
-		if (strstr(results.cFileName,".pgm")!=NULL) {
+		if ((strstr(results.cFileName,".pgm")!=NULL) || (strstr(results.cFileName,".ppm")!=NULL)) {
 			sprintf(file_name,"%s\\%s",cfg->folder,results.cFileName);
 			image_list.push_back(file_name);
 		}
@@ -68,7 +69,7 @@ bool FolderCamera::initCamera() {
 	dp = opendir (cfg->folder);
 	if (dp != NULL) {
 		while ((ep = readdir (dp))) {
-			if (strstr(ep->d_name,".pgm")!=NULL) {
+			if ((strstr(ep->d_name,".pgm")!=NULL) || (strstr(ep->d_name,".ppm")!=NULL)) {
 				sprintf(file_name,"%s/%s",cfg->folder,ep->d_name);
 				image_list.push_back(file_name);
 			}
@@ -83,81 +84,98 @@ bool FolderCamera::initCamera() {
 	
 	fgets(header,32,imagefile);
 	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
-	if (strstr(header,"P5")==NULL) return false;
+	if (strstr(header,"P5")!=NULL) cfg->cam_format = FORMAT_GRAY;
+	else if (strstr(header,"P6")!=NULL) cfg->cam_format = FORMAT_RGB;
+	else return false;
 	
 	fgets(header,32,imagefile);
 	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 	param = strtok(header," "); if (param) cfg->cam_width = atoi(param);
 	param = strtok(NULL," "); if (param) cfg->cam_height =  atoi(param);
-	param = strtok(NULL," "); if (param) gray = atoi(param);
+	param = strtok(NULL," "); if (param) max = atoi(param);
 	
 	if (cfg->cam_height==0) 	{
 		fgets(header,32,imagefile);
 		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) cfg->cam_height = atoi(param);
-		param = strtok(NULL," "); if (param) gray = atoi(param);
+		param = strtok(NULL," "); if (param) max = atoi(param);
 	}
 	
-	if (gray==0) {
+	if (max==0) {
 		fgets(header,32,imagefile);
 		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
-		param = strtok(header," "); if (param) gray = atoi(param);
+		param = strtok(header," "); if (param) max = atoi(param);
 	}
 	
-	if ((cfg->cam_width==0) || (cfg->cam_height==0) ) return false;
-	
 	fclose(imagefile);
+	if ((cfg->cam_width==0) || (cfg->cam_height==0) ) return false;
+	printf("%d %d\n",cfg->cam_width,cfg->cam_height);
 	
-	cfg->buf_format = FORMAT_GRAY;
-	cfg->color = false;
+	
+	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
+	if (cfg->cam_format!=cfg->buf_format) file_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->cam_format];
+	
+	image_iterator = image_list.begin();
 	
 	if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 15;
 	if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 30;
-	
-	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
-	image_iterator = image_list.begin();
-	
 	setupFrame();
 	return true;
 }
 
 unsigned char* FolderCamera::getFrame()
 {
-	int gray = 0;
+	int  max = 0;
 	char header[32];
 	char *param;
+	
+	int file_width =  0;
+	int file_height = 0;
 	
 	FILE* imagefile=fopen(image_iterator->c_str(),"r");
 	if (imagefile==NULL) return NULL;
 	
 	fgets(header,32,imagefile);
 	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
-	if (strstr(header,"P5")==NULL) return NULL;
+	if ((cfg->cam_format==FORMAT_RGB) && (strstr(header,"P6")==NULL)) return NULL;
+	else if  ((cfg->cam_format==FORMAT_GRAY) && (strstr(header,"P5")==NULL)) return NULL;
 	
 	fgets(header,32,imagefile);
 	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
-	param = strtok(header," "); if (param) cfg->cam_width = atoi(param);
-	param = strtok(NULL," "); if (param) cfg->cam_height =  atoi(param);
-	param = strtok(NULL," "); if (param) gray = atoi(param);
+	param = strtok(header," "); if (param) file_width = atoi(param);
+	param = strtok(NULL," "); if (param) file_height =  atoi(param);
+	param = strtok(NULL," "); if (param) max = atoi(param);
 	
 	if (cfg->cam_height==0) 	{
 		fgets(header,32,imagefile);
 		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) cfg->cam_height = atoi(param);
-		param = strtok(NULL," "); if (param) gray = atoi(param);
+		param = strtok(NULL," "); if (param) max = atoi(param);
 	}
 	
-	if (gray==0) {
+	if (max==0) {
 		fgets(header,32,imagefile);
 		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
-		param = strtok(header," "); if (param) gray = atoi(param);
+		param = strtok(header," "); if (param) max = atoi(param);
+	}
+
+	if ((file_width!=cfg->cam_width) || (file_height!=cfg->cam_height) ) return NULL;
+	
+	size_t size;
+	if (cfg->cam_format!=cfg->buf_format) {
+		unsigned char *file_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->cam_format];
+		size = fread(file_buffer, cfg->cam_format,cfg->cam_width*cfg->cam_height, imagefile);
+		
+		if (cfg->color) gray2rgb(cfg->cam_width, cfg->cam_height, file_buffer, cam_buffer);
+		else rgb2gray(cfg->cam_width, cfg->cam_height, file_buffer, cam_buffer);
+		delete []file_buffer;
+	} else {
+		size = fread(cam_buffer, cfg->cam_format,cfg->cam_width*cfg->cam_height, imagefile);
 	}
 	
-	if ((cfg->cam_width!=cfg->cam_width) || (cfg->cam_height!=cfg->cam_height) ) return NULL;
-	size_t size = fread(cam_buffer, cfg->buf_format,  cfg->cam_width*cfg->cam_height, imagefile);
-	if ((int)size!=cfg->cam_width*cfg->cam_height*cfg->buf_format) std::cerr << "wrong image length" << std::endl;
 	fclose(imagefile);
-	
+	if ((int)size!=cfg->cam_width*cfg->cam_height) return NULL;
+
 	image_iterator++;
 	if(image_iterator == image_list.end()) image_iterator=image_list.begin();
 	
@@ -165,7 +183,7 @@ unsigned char* FolderCamera::getFrame()
 #ifdef WIN32
 	Sleep((int)(1000/cfg->cam_fps));
 #else
-	usleep( (int)(100000/cfg->cam_fps) );
+	usleep( (int)(1000000/cfg->cam_fps) );
 #endif
 	
 	return cam_buffer;
