@@ -146,7 +146,7 @@ void CameraEngine::crop_uyvy2gray(int cam_w, unsigned char *cam_buf, unsigned ch
 
     for (int i=frm_h;i>0;i--) {
 
-        cam_buf +=  2*x_off;
+        cam_buf += 2*x_off;
         for (int j=frm_w/2;j>0;j--) {
             cam_buf++;
             *frm_buf++ = *cam_buf++;
@@ -208,7 +208,7 @@ void yuv2rgb_conv(int Y, int U, int V, unsigned char *dest) {
 	SAT(B);
 
 	*dest++ = R;
-        *dest++ = G;
+    *dest++ = G;
 	*dest++ = B;
 }
 
@@ -218,14 +218,14 @@ void CameraEngine::uyvy2rgb(int width, int height, unsigned char *src, unsigned 
 
 	for(int i=width*height/2;i>0;i--) {
 		// U and V are +-0.5
-                U  = *src++ - 128;
-                Y1 = *src++;
-                V  = *src++ - 128;
-                Y2 = *src++;
+        U  = *src++ - 128;
+        Y1 = *src++;
+        V  = *src++ - 128;
+        Y2 = *src++;
 
-                yuv2rgb_conv(Y1,U,V,dest);
-                yuv2rgb_conv(Y2,U,V,dest+=3);
-                dest+=3;
+        yuv2rgb_conv(Y1,U,V,dest);
+        yuv2rgb_conv(Y2,U,V,dest+=3);
+        dest+=3;
 	}
 }
 
@@ -246,35 +246,35 @@ void CameraEngine::crop_uyvy2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
 
         cam_buf +=  2*x_off;
         for (int j=frm_w/2;j>0;j--) {
-				// U and V are +-0.5
-                U  = *cam_buf++ - 128;
-                Y1 = *cam_buf++;
-                V  = *cam_buf++ - 128;
-                Y2 = *cam_buf++;
+            // U and V are +-0.5
+            U  = *cam_buf++ - 128;
+            Y1 = *cam_buf++;
+            V  = *cam_buf++ - 128;
+            Y2 = *cam_buf++;
 
-                yuv2rgb_conv(Y1,U,V,frm_buf);
-                yuv2rgb_conv(Y2,U,V,frm_buf+=3);
-                frm_buf+=3;
+            yuv2rgb_conv(Y1,U,V,frm_buf);
+            yuv2rgb_conv(Y2,U,V,frm_buf+=3);
+            frm_buf+=3;
         }
-        cam_buf +=  2*x_end;
+        cam_buf += 2*x_end;
     }
 }
 
 void CameraEngine::yuyv2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
 
-			int Y1,Y2,U,V;
+    int Y1,Y2,U,V;
 
-			for(int i=width*height/2;i>0;i--) {
+    for(int i=width*height/2;i>0;i--) {
 
-                Y1 = *src++;
-                U  = *src++ - 128;
-                Y2 = *src++;
-                V  = *src++ - 128;
+        Y1 = *src++;
+        U  = *src++ - 128;
+        Y2 = *src++;
+        V  = *src++ - 128;
 
-                yuv2rgb_conv(Y1,U,V,dest);
-                yuv2rgb_conv(Y2,U,V,dest+=3);
-                dest+=3;
-        }
+        yuv2rgb_conv(Y1,U,V,dest);
+        yuv2rgb_conv(Y2,U,V,dest+=3);
+        dest+=3;
+    }
 }
 
 void CameraEngine::crop_yuyv2rgb(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
@@ -294,29 +294,29 @@ void CameraEngine::crop_yuyv2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
 
         cam_buf +=  2*x_off;
         for (int j=frm_w/2;j>0;j--) {
-				// U and V are +-0.5
-                Y1 = *cam_buf++;
-                U  = *cam_buf++ - 128;
-                Y2 = *cam_buf++;
-                V  = *cam_buf++ - 128;
+            // U and V are +-0.5
+            Y1 = *cam_buf++;
+            U  = *cam_buf++ - 128;
+            Y2 = *cam_buf++;
+            V  = *cam_buf++ - 128;
 
-                yuv2rgb_conv(Y1,U,V,frm_buf);
-                yuv2rgb_conv(Y2,U,V,frm_buf+=3);
-                frm_buf+=3;
+            yuv2rgb_conv(Y1,U,V,frm_buf);
+            yuv2rgb_conv(Y2,U,V,frm_buf+=3);
+            frm_buf+=3;
         }
-        cam_buf +=  2*x_end;
+        cam_buf += 2*x_end;
     }
 }
 
 void CameraEngine::gray2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
 
-             int size = width*height;
-             for (int i=size;i>0;i--) {
-                    unsigned char pixel = *src++;
-                    *dest++ = pixel;
-                    *dest++ = pixel;
-                    *dest++ = pixel;
-             }
+    int size = width*height;
+    for (int i=size;i>0;i--) {
+        unsigned char pixel = *src++;
+            *dest++ = pixel;
+            *dest++ = pixel;
+            *dest++ = pixel;
+        }
 }
 
 void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
@@ -363,11 +363,11 @@ void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned c
 
 void CameraEngine::flip(int width, int height, unsigned char *src, unsigned char *dest, int b) {
 
-		int size = b*width*height;
-		dest += size-1;
-		for(int i=size;i>0;i--) {
-			*dest-- = *src++;
-		}
+    int size = b*width*height;
+    dest += size-1;
+    for(int i=size;i>0;i--) {
+        *dest-- = *src++;
+    }
 }
 
 void CameraEngine::flip_crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
@@ -400,7 +400,7 @@ void CameraEngine::rgb2gray(int width, int height, unsigned char *src, unsigned 
         R = *src++;
         G = *src++;
         B = *src++;
-        *dest++ =  HBT(R*77 + G*151 + B*28);
+        *dest++ = HBT(R*77 + G*151 + B*28);
     }
 }
 
@@ -415,7 +415,7 @@ void CameraEngine::flip_rgb2gray(int width, int height, unsigned char *src, unsi
         R = *src++;
         G = *src++;
         B = *src++;
-        *dest-- =  HBT(R*77 + G*151 + B*28);
+        *dest-- = HBT(R*77 + G*151 + B*28);
     }
 }
 void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned char *frm_buf) {
@@ -439,7 +439,7 @@ void CameraEngine::crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigned cha
             B = *cam_buf++;
             *frm_buf++ = HBT(R*77 + G*151 + B*28);
         }
-        cam_buf +=  3*x_end;
+        cam_buf += 3*x_end;
     }
 }
 
@@ -465,7 +465,7 @@ void CameraEngine::flip_crop_rgb2gray(int cam_w, unsigned char *cam_buf, unsigne
             B = *cam_buf++;
             *frm_buf-- = HBT(R*77 + G*151 + B*28);
         }
-        cam_buf +=  3*x_end;
+        cam_buf += 3*x_end;
     }
 }
 

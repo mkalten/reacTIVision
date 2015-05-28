@@ -95,7 +95,7 @@ bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 			show_grid = true;
 			if(interface_) {
 				prevMode = interface_->getDisplayMode();
-				interface_->setDisplayMode(interface_->DEST_DISPLAY);
+				interface_->setDisplayMode(DEST_DISPLAY);
 			}
 		} else {
 			show_grid = false;
@@ -270,7 +270,7 @@ void FiducialFinder::finish() {
 void FiducialFinder::drawObject(int id, int xpos, int ypos, unsigned char *disp, int state)
 {
     if ((interface_==NULL) || (disp==NULL)) return;
-	if (interface_->getDisplayMode()==interface_->NO_DISPLAY) return;
+	if (interface_->getDisplayMode()==NO_DISPLAY) return;
     
 	char id_str[8];
 	if(id>=0) sprintf(id_str,"%d",id);
@@ -282,7 +282,7 @@ void FiducialFinder::drawObject(int id, int xpos, int ypos, unsigned char *disp,
 void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest, unsigned char *disp) {
 
     if ((interface_==NULL) || (disp==NULL)) return;
-    if (interface_->getDisplayMode()==interface_->NO_DISPLAY) return;
+    if (interface_->getDisplayMode()==NO_DISPLAY) return;
 
 	//unsigned char* disp = (unsigned char*)(display->pixels);
 	int length = width*height;

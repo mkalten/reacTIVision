@@ -349,9 +349,9 @@ int main(int argc, char* argv[]) {
     if (!headless) {
         UserInterface *uiface = new SDLinterface(app_name,config.fullscreen);
         switch (config.display_mode) {
-            case 0: uiface->setDisplayMode(uiface->NO_DISPLAY); break;
-            case 1: uiface->setDisplayMode(uiface->SOURCE_DISPLAY); break;
-            case 2: uiface->setDisplayMode(uiface->DEST_DISPLAY); break;
+            case 0: uiface->setDisplayMode(NO_DISPLAY); break;
+            case 1: uiface->setDisplayMode(SOURCE_DISPLAY); break;
+            case 2: uiface->setDisplayMode(DEST_DISPLAY); break;
         }
         engine->setInterface(uiface);
     }

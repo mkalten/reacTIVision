@@ -104,7 +104,7 @@ protected:
 	
 	void sendTuioMessages();
 
-	UserInterface::DisplayMode prevMode;
+	DisplayMode prevMode;
 	bool show_settings;
 	
 private:

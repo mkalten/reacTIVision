@@ -241,7 +241,7 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 void FidtrackFinder::drawDisplay(unsigned char *disp) {
 
     if ((interface_==NULL) || (disp==NULL)) return;
-    if (interface_->getDisplayMode()==interface_->NO_DISPLAY) return;
+    if (interface_->getDisplayMode()==NO_DISPLAY) return;
 
 	FiducialFinder::displayControl();
 

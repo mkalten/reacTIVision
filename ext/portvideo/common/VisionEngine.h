@@ -104,7 +104,7 @@ protected:
 	void allocateBuffers();
 	void freeBuffers();
 
-	void mainLoop();    
+	void mainLoop();
     void startThread();
     void stopThread();
     
@@ -148,8 +148,6 @@ private:
     CameraConfig *camera_config_;
 
 	std::string app_name_;
-	
-    enum DisplayMode { NO_DISPLAY, SOURCE_DISPLAY, DEST_DISPLAY };
 };
 
 #endif

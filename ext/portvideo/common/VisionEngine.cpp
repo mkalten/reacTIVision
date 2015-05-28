@@ -209,14 +209,14 @@ void VisionEngine::mainLoop()
             (*frame)->process(cameraReadBuffer,destBuffer_,displayBuffer_);
         //long processing_time = currentMicroSeconds()-start_time;
   
-        if (interface_) if (interface_->getDisplayMode()==interface_->SOURCE_DISPLAY)
+        if (interface_) if (interface_->getDisplayMode()==SOURCE_DISPLAY)
             memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
         ringBuffer->readFinished();
         
 #ifndef NDEBUG
         if (recording_) {
             if (interface_) {
-                if (interface_->getDisplayMode()==interface_->SOURCE_DISPLAY)
+                if (interface_->getDisplayMode()==SOURCE_DISPLAY)
                     saveBuffer(sourceBuffer_);
                 else saveBuffer(destBuffer_);
             }
@@ -276,7 +276,7 @@ void VisionEngine::event(int key)
         recording_ = !recording_;
     } else if( key == KEY_B ){
         if (interface_!=NULL) {
-            if (interface_->getDisplayMode()==interface_->SOURCE_DISPLAY)
+            if (interface_->getDisplayMode()==SOURCE_DISPLAY)
                 saveBuffer(sourceBuffer_);
             else saveBuffer(destBuffer_);
         }

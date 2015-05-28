@@ -128,7 +128,7 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 
 			if(interface_) {
 				prevMode = interface_->getDisplayMode();
-				interface_->setDisplayMode(interface_->SOURCE_DISPLAY);
+				interface_->setDisplayMode(SOURCE_DISPLAY);
 			}
 		}
 	}
@@ -136,7 +136,7 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 	if(!calibration) return lock;
 
 	if ((flag==KEY_T) || (flag==KEY_N))  {
-		interface_->setDisplayMode(interface_->SOURCE_DISPLAY);
+		interface_->setDisplayMode(SOURCE_DISPLAY);
 	}
 
     if (flag==KEY_Q) {

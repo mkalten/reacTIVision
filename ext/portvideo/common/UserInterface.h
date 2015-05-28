@@ -56,6 +56,8 @@
 #define KEY_DOWN 81
 #define KEY_UP 82
 
+enum DisplayMode { NO_DISPLAY, SOURCE_DISPLAY, DEST_DISPLAY };
+
 class VisionEngine;
 class UserInterface
 {
@@ -63,7 +65,6 @@ public:
 	UserInterface() { verbose_ = false; };
 	virtual ~UserInterface() {};
     
-	enum DisplayMode { NO_DISPLAY, SOURCE_DISPLAY, DEST_DISPLAY };
     void setDisplayMode(DisplayMode mode) { displayMode_ = mode; };
     DisplayMode getDisplayMode() { return displayMode_; };
     
