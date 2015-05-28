@@ -295,8 +295,10 @@ void SDLinterface::showFrameRate() {
         current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
         
         char caption[24] = "";
+        sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
+#ifndef NDEBUG
         if (recording_) sprintf(caption,"recording - %d FPS",current_fps_);
-        else sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
+#endif
         SDL_SetWindowTitle( window_, caption);
         
         lastTime_ = currentTime_;
