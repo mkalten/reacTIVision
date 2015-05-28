@@ -407,15 +407,15 @@ void SDLinterface::drawMark(int xpos, int ypos, const char *mark, int state) {
     unsigned char* disp = (unsigned char*)(displayImage_->pixels);
     for (int i=1;i<3;i++) {
         pixel=4*(ypos*width_+(xpos+i));
-        if ((pixel>=0) && (pixel<width_*height_*3)) disp[pixel+state]=disp[pixel+3]=255;
+        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
         pixel=4*(ypos*width_+(xpos-i));
-        if ((pixel>=0) && (pixel<width_*height_*3)) disp[pixel+state]=disp[pixel+3]=255;
+        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
         pixel=4*((ypos+i)*width_+xpos);
-        if ((pixel>=0) && (pixel<width_*height_*3)) disp[pixel+state]=disp[pixel+3]=255;
+        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
         pixel=4*((ypos-i)*width_+xpos);
-        if ((pixel>=0) && (pixel<width_*height_*3)) disp[pixel+state]=disp[pixel+3]=255;
+        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
     }
-    
+
     FontTool::drawText(xpos,ypos,mark);
 }
 
