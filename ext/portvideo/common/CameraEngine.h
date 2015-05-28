@@ -79,6 +79,9 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 
 struct CameraConfig {
+    
+    char path[256];
+    
     int driver;
     int device;
     char name[256];

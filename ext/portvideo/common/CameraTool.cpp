@@ -229,6 +229,8 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 #endif
     }
     
+    sprintf(cam_cfg.path,"%s",cfgfile);
+    
     tinyxml2::XMLDocument xml_settings;
     xml_settings.LoadFile(cfgfile);
     if( xml_settings.Error() )
@@ -369,30 +371,13 @@ int CameraTool::readAttribute(tinyxml2::XMLElement* settings,const char *attribu
     return SETTING_DEFAULT;
 }
 
-void CameraTool::saveSettings(const char* cfgfile) {
-    
-    if (strcmp( cfgfile, "none" ) == 0) {
-#ifdef __APPLE__
-        char path[1024];
-        char full_path[1024];
-        CFBundleRef mainBundle = CFBundleGetMainBundle();
-        CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
-        CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-        CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
-        CFRelease( mainBundleURL);
-        CFRelease( cfStringRef);
-        sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
-        cfgfile = full_path;
-#else
-        cfgfile = "./camera.xml";
-#endif
-    }
+void CameraTool::saveSettings(CameraConfig *cfg) {
     
     tinyxml2::XMLDocument xml_settings;
-    xml_settings.LoadFile(cfgfile);
+    xml_settings.LoadFile(cfg->path);
     if( xml_settings.Error() )
     {
-        std::cout << "Error saving camera configuration file: " << cfgfile << std::endl;
+        std::cout << "Error saving camera configuration file: " << cfg->path << std::endl;
         return;
     }
     
@@ -402,43 +387,43 @@ void CameraTool::saveSettings(const char* cfgfile) {
     
     if (settings_element!=NULL) {
         
-        if (cam_cfg.brightness!=SETTING_OFF) saveAttribute(settings_element, "brightness", cam_cfg.brightness);
+        if (cfg->brightness!=SETTING_OFF) saveAttribute(settings_element, "brightness", cfg->brightness);
         else settings_element->DeleteAttribute("brightness");
-        if (cam_cfg.contrast!=SETTING_OFF) saveAttribute(settings_element, "contrast", cam_cfg.contrast);
+        if (cfg->contrast!=SETTING_OFF) saveAttribute(settings_element, "contrast", cfg->contrast);
         else settings_element->DeleteAttribute("contrast");
-        if (cam_cfg.brightness!=SETTING_OFF) saveAttribute(settings_element, "sharpness", cam_cfg.sharpness);
+        if (cfg->brightness!=SETTING_OFF) saveAttribute(settings_element, "sharpness", cfg->sharpness);
         else settings_element->DeleteAttribute("sharpness");
-        if (cam_cfg.gain!=SETTING_OFF) saveAttribute(settings_element, "gain", cam_cfg.gain);
+        if (cfg->gain!=SETTING_OFF) saveAttribute(settings_element, "gain", cfg->gain);
         else settings_element->DeleteAttribute("gain");
         
-        if (cam_cfg.exposure!=SETTING_OFF) saveAttribute(settings_element, "exposure", cam_cfg.exposure);
+        if (cfg->exposure!=SETTING_OFF) saveAttribute(settings_element, "exposure", cfg->exposure);
         else settings_element->DeleteAttribute("exposure");
-        if (cam_cfg.focus!=SETTING_OFF) saveAttribute(settings_element, "focus", cam_cfg.focus);
+        if (cfg->focus!=SETTING_OFF) saveAttribute(settings_element, "focus", cfg->focus);
         else settings_element->DeleteAttribute("focus");
-        if (cam_cfg.shutter!=SETTING_OFF) saveAttribute(settings_element, "shutter", cam_cfg.shutter);
+        if (cfg->shutter!=SETTING_OFF) saveAttribute(settings_element, "shutter", cfg->shutter);
         else settings_element->DeleteAttribute("shutter");
-        if (cam_cfg.white!=SETTING_OFF) saveAttribute(settings_element, "white", cam_cfg.white);
+        if (cfg->white!=SETTING_OFF) saveAttribute(settings_element, "white", cfg->white);
         else settings_element->DeleteAttribute("white");
-        if (cam_cfg.backlight!=SETTING_OFF) saveAttribute(settings_element, "backlight", cam_cfg.backlight);
+        if (cfg->backlight!=SETTING_OFF) saveAttribute(settings_element, "backlight", cfg->backlight);
         else settings_element->DeleteAttribute("backlight");
-        if (cam_cfg.powerline!=SETTING_OFF) saveAttribute(settings_element, "powerline", cam_cfg.powerline);
+        if (cfg->powerline!=SETTING_OFF) saveAttribute(settings_element, "powerline", cfg->powerline);
         else settings_element->DeleteAttribute("powerline");
-        if (cam_cfg.gamma!=SETTING_OFF) saveAttribute(settings_element, "gamma", cam_cfg.gamma);
+        if (cfg->gamma!=SETTING_OFF) saveAttribute(settings_element, "gamma", cfg->gamma);
         else settings_element->DeleteAttribute("gamma");
         
-        if (cam_cfg.hue!=SETTING_OFF) saveAttribute(settings_element, "hue", cam_cfg.hue);
+        if (cfg->hue!=SETTING_OFF) saveAttribute(settings_element, "hue", cfg->hue);
         else settings_element->DeleteAttribute("hue");
-        if (cam_cfg.red!=SETTING_OFF) saveAttribute(settings_element, "red", cam_cfg.red);
+        if (cfg->red!=SETTING_OFF) saveAttribute(settings_element, "red", cfg->red);
         else settings_element->DeleteAttribute("red");
-        if (cam_cfg.green!=SETTING_OFF) saveAttribute(settings_element, "green", cam_cfg.green);
+        if (cfg->green!=SETTING_OFF) saveAttribute(settings_element, "green", cfg->green);
         else settings_element->DeleteAttribute("green");
-        if (cam_cfg.blue!=SETTING_OFF) saveAttribute(settings_element, "blue", cam_cfg.green);
+        if (cfg->blue!=SETTING_OFF) saveAttribute(settings_element, "blue", cfg->green);
         else settings_element->DeleteAttribute("blue");
 
     }
     
-    xml_settings.SaveFile(cfgfile);
-    if( xml_settings.Error() ) std::cout << "Error saving camera configuration file: "  << cfgfile << std::endl;
+    xml_settings.SaveFile(cfg->path);
+    if( xml_settings.Error() ) std::cout << "Error saving camera configuration file: "  << cfg->path << std::endl;
     
 }
 

@@ -140,6 +140,7 @@ QTKitCamera::QTKitCamera(CameraConfig *cam_cfg):CameraEngine(cam_cfg)
 {
     cam_buffer = NULL;
     running=false;
+    disconnected = false;
     lost_frames=0;
     timeout = 1000;
 }
@@ -410,7 +411,10 @@ unsigned char* QTKitCamera::getFrame()
     } else {
         usleep(10000);
         lost_frames++;
-        if (lost_frames>timeout) running=false;
+        if (lost_frames>timeout) {
+            disconnected=true;
+            running=false;
+        }
         
         return NULL;		
     }
@@ -441,6 +445,12 @@ bool QTKitCamera::resetCamera()
 
 bool QTKitCamera::closeCamera()
 {
+    
+    if (!disconnected) {
+        updateSettings();
+        CameraTool::saveSettings(cfg);
+    }
+    
     [[captureDeviceInput device] close];
     return true;
 }

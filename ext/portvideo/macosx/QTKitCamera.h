@@ -82,6 +82,7 @@ public:
 
 private:
     
+    bool disconnected;
     FrameGrabber *grabber;
     
     QTCaptureSession                    *captureSession;

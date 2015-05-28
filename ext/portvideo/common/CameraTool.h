@@ -56,14 +56,14 @@ class CameraTool
 {
 public:
     
-    static CameraEngine* getCamera(CameraConfig* config);
+    static CameraEngine* getCamera(CameraConfig* cfg);
     static CameraEngine* getDefaultCamera();
 
     static std::vector<CameraConfig> findDevices();
 	static void listDevices();
 
-    static CameraConfig* readSettings(const char* config_file);
-    static void saveSettings(const char* config_file);
+    static CameraConfig* readSettings(const char* cfgfile);
+    static void saveSettings(CameraConfig* cfg);
     
     static void initCameraConfig(CameraConfig *cfg);
     

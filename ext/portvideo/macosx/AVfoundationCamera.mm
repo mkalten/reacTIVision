@@ -163,15 +163,10 @@ AVfoundationCamera::AVfoundationCamera(CameraConfig *cam_cfg):CameraEngine(cam_c
 AVfoundationCamera::~AVfoundationCamera()
 {
     
-    if (uvcController) {
-        updateSettings();
-        //CameraTool::saveSettings(this,cfg);
-        [uvcController release];
-    }
-    
-    if (videoDevice) [videoDevice release];
-    if (videoOutput) [videoOutput release];
-    if (grabber)     [grabber release];
+    if (uvcController) [uvcController release];
+    if (videoDevice)   [videoDevice release];
+    if (videoOutput)   [videoOutput release];
+    if (grabber)       [grabber release];
 }
 
 std::list<CameraConfig> AVfoundationCamera::findDevices() {
@@ -577,9 +572,9 @@ bool AVfoundationCamera::resetCamera()
 
 bool AVfoundationCamera::closeCamera()
 {
-    if (!disconnected) {
+    if ((uvcController) && (!disconnected)) {
         updateSettings();
-        //CameraTool::saveSettings(this,cfg);
+        CameraTool::saveSettings(cfg);
     }
     [session release];
     return true;

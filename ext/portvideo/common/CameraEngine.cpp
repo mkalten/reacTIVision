@@ -17,12 +17,13 @@
  */
 
 #include "CameraEngine.h"
+#include "CameraTool.h"
 
 bool CameraEngine::showSettingsDialog(bool lock) {
     if (settingsDialog) {
         settingsDialog = false;
         updateSettings();
-        //CameraTool::saveSettings(this,cfg);
+        CameraTool::saveSettings(cfg);
         return false;
     } else if (!lock) {
         currentCameraSetting = -1;
