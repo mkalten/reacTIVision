@@ -31,7 +31,7 @@
 #endif
 #include "CameraEngine.h"
 
-#include <vector>
+#include <list>
 #include <string>
 
 class FolderCamera : public CameraEngine
@@ -65,8 +65,8 @@ public:
 	void control(unsigned char key) {};
 	
 private:
-	std::vector<std::string> image_list;
-	std::vector<std::string>::iterator image_iterator;
+	std::list<std::string> image_list;
+	std::list<std::string>::iterator image_iterator;
 	unsigned char *file_buffer;
 	
 };

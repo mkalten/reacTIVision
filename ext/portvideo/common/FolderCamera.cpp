@@ -79,6 +79,7 @@ bool FolderCamera::initCamera() {
 #endif
 	
 	if (image_list.size()==0) return false;
+	image_list.sort();
 	FILE* imagefile=fopen(image_list.begin()->c_str(),"rb");
 	if (imagefile==NULL) return false;
 	
@@ -131,7 +132,7 @@ unsigned char* FolderCamera::getFrame()
 	
 	int file_width =  0;
 	int file_height = 0;
-	
+
 	FILE* imagefile=fopen(image_iterator->c_str(),"r");
 	if (imagefile==NULL) return NULL;
 	
