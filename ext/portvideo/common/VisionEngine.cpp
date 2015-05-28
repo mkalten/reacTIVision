@@ -66,8 +66,11 @@ static DWORD WINAPI getFrameFromCamera( LPVOID obj )
 }
 
 #ifndef NDEBUG
-void VisionEngine::saveBuffer(unsigned char* buffer) {
-    
+void VisionEngine::saveBuffer(unsigned char* buffer, int bytes) {
+	
+	const char *file_ext = "pgm";
+	if (bytes==3) file_ext = "ppm";
+	
     struct stat info;
 #ifdef WIN32
     if (stat(".\\recording",&info)!=0) {
@@ -98,16 +101,17 @@ void VisionEngine::saveBuffer(unsigned char* buffer) {
     
     char fileName[256];
 #ifdef WIN32
-    sprintf(fileName,".\\recording\\%s%ld.pgm",zero,framenumber_);
+    sprintf(fileName,".\\recording\\%s%ld.%s",zero,framenumber_,file_ext);
 #elif defined __APPLE__
-    sprintf(fileName,"%s/../recording/%s%ld.pgm",path,zero,framenumber_);
+    sprintf(fileName,"%s/../recording/%s%ld.%s",path,zero,framenumber_,file_ext);
 #else
-    sprintf(fileName,"./recording/%s%ld.pgm",zero,framenumber_);
+    sprintf(fileName,"./recording/%s%ld.%",zero,framenumber_,file_ext);
 #endif
 
     FILE*  imagefile=fopen(fileName, "w");
-    fprintf(imagefile,"P5\n%u %u 255\n", width_, height_);
-    fwrite((const char *)buffer, 1,  width_*height_, imagefile);
+    if (bytes==3) fprintf(imagefile,"P6\n%u %u 255\n", width_, height_);
+	else fprintf(imagefile,"P5\n%u %u 255\n", width_, height_);
+    fwrite((const char *)buffer, bytes,  width_*height_, imagefile);
     fclose(imagefile);
 }
 #endif
@@ -217,8 +221,8 @@ void VisionEngine::mainLoop()
         if (recording_) {
             if (interface_) {
                 if (interface_->getDisplayMode()==SOURCE_DISPLAY)
-                    saveBuffer(sourceBuffer_);
-                else saveBuffer(destBuffer_);
+                    saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
+                else saveBuffer(destBuffer_,bytesPerDestPixel_);
             }
         }
 #endif
@@ -277,8 +281,8 @@ void VisionEngine::event(int key)
     } else if( key == KEY_B ){
         if (interface_!=NULL) {
             if (interface_->getDisplayMode()==SOURCE_DISPLAY)
-                saveBuffer(sourceBuffer_);
-            else saveBuffer(destBuffer_);
+                saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
+            else saveBuffer(destBuffer_,bytesPerDestPixel_);
         }
     }
 #endif

@@ -112,7 +112,7 @@ protected:
     void teardownCamera();
     
 #ifndef NDEBUG
-    void saveBuffer(unsigned char* buffer);
+    void saveBuffer(unsigned char* buffer, int bytes);
     bool recording_;
 #endif
 
