@@ -132,10 +132,9 @@ void VisionEngine::start() {
     
     if( camera_->startCamera() ) {
         
-        startThread();
         initFrameProcessors();
+        startThread();
         mainLoop();
-        endLoop();
         stopThread();
         
     } else {
@@ -192,7 +191,13 @@ void VisionEngine::mainLoop()
         // loop until we get access to a frame
         while (cameraReadBuffer==NULL) {
             if (interface_) interface_->processEvents();
-            if(!running_) return;
+            if(!running_) {
+                if(error_) {
+                    if (interface_) interface_->displayError("Camera disconnected!");
+                    else printf("Camera disconnected!\n");
+                }
+                return;
+            }
             gosleep(1);
             cameraReadBuffer = ringBuffer->getNextBufferToRead();
             //if (cameraReadBuffer!=NULL) break;
@@ -227,25 +232,9 @@ void VisionEngine::mainLoop()
     }
 }
 
-void VisionEngine::endLoop() {
-    // finish all FrameProcessors
-    for (frame = processorList.begin(); frame!=processorList.end(); frame++)
-        (*frame)->finish();
-    
-    if(error_) {
-        if (interface_) interface_->displayError("Camera disconnected!");
-        else printf("Camera disconnected!\n");
-    }
-}
-
 void VisionEngine::stop() {
     std::cout << "terminating " << app_name_ << " ... " << std::endl;
     running_ = false;
-    
-    /*while (processorList.size()) {
-       // printf("%d\n",processorList.size());
-     gosleep(1);
-    }*/
 }
 
 void VisionEngine::frameStatistics(long cameraTime, long processingTime, long totalTime) {

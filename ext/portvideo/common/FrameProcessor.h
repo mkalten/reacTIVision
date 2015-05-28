@@ -93,7 +93,6 @@ public:
 
     virtual void addUserInterface(UserInterface *uiface) { interface_=uiface; };
     virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
-	virtual void finish() {};
     virtual bool setFlag(unsigned char flag, bool value, bool lock) { return lock; };
     virtual bool toggleFlag(unsigned char flag, bool lock) { return lock; };
 	std::vector<std::string> getOptions() { return help_text; }

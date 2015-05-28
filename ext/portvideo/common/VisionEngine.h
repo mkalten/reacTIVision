@@ -104,9 +104,7 @@ protected:
 	void allocateBuffers();
 	void freeBuffers();
 
-	void mainLoop();
-	void endLoop();
-    
+	void mainLoop();    
     void startThread();
     void stopThread();
     
