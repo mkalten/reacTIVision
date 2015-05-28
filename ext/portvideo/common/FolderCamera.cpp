@@ -39,11 +39,11 @@ bool FolderCamera::findCamera() {
 
 	//if (cfg->folder==NULL) return false;
 	struct stat info;
-	if (stat(cfg->folder,&info)!=0) return false;	
+	if (stat(cfg->folder,&info)!=0) return false;
 	return true;
 }
 
-bool FolderCamera::initCamera() {	
+bool FolderCamera::initCamera() {
 
 	int gray = 0;
 	char header[32];
@@ -60,7 +60,6 @@ bool FolderCamera::initCamera() {
 			sprintf(file_name,"%s\\%s",cfg->folder,results.cFileName);
 			image_list.push_back(file_name);
 		}
-		
 	}
 	FindClose(list);
 #else
@@ -77,31 +76,31 @@ bool FolderCamera::initCamera() {
 		(void) closedir (dp);
 	} else return false;
 #endif
-    
+
     if (image_list.size()==0) return false;
  	FILE*  imagefile=fopen(image_list.begin()->c_str(),"rb");
 	if (imagefile==NULL) return false;
-		
-	char *result = fgets(header,32,imagefile);
-	while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+
+	fgets(header,32,imagefile);
+	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 	if (strstr(header,"P5")==NULL) return false;
-		
-	result = fgets(header,32,imagefile);
-	while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+
+	fgets(header,32,imagefile);
+	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 	param = strtok(header," "); if (param) cfg->cam_width = atoi(param);
 	param = strtok(NULL," "); if (param) cfg->cam_height =  atoi(param);
 	param = strtok(NULL," "); if (param) gray = atoi(param);
 
 	if (cfg->cam_height==0) 	{
-		result = fgets(header,32,imagefile);
-		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+		fgets(header,32,imagefile);
+		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) cfg->cam_height = atoi(param);
 		param = strtok(NULL," "); if (param) gray = atoi(param);
 	}
 
 	if (gray==0) {
-		result = fgets(header,32,imagefile);
-		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+		fgets(header,32,imagefile);
+		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) gray = atoi(param);
 	}
 
@@ -117,8 +116,8 @@ bool FolderCamera::initCamera() {
     
 	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
 	image_iterator = image_list.begin();
-    
-    setupFrame();
+
+	setupFrame();
 	return true;
 }
 
@@ -130,27 +129,27 @@ unsigned char* FolderCamera::getFrame()
 
  	FILE*  imagefile=fopen(image_iterator->c_str(),"r");
 	if (imagefile==NULL) return NULL;
-		
-	char *result = fgets(header,32,imagefile);
-	while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+
+	fgets(header,32,imagefile);
+	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 	if (strstr(header,"P5")==NULL) return NULL;
-		
-	result = fgets(header,32,imagefile);
-	while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+
+	fgets(header,32,imagefile);
+	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 	param = strtok(header," "); if (param) cfg->cam_width = atoi(param);
 	param = strtok(NULL," "); if (param) cfg->cam_height =  atoi(param);
 	param = strtok(NULL," "); if (param) gray = atoi(param);
 
-	if (cfg->cam_height==0) 	{ 
-		result = fgets(header,32,imagefile);
-		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+	if (cfg->cam_height==0) 	{
+		fgets(header,32,imagefile);
+		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) cfg->cam_height = atoi(param);
 		param = strtok(NULL," "); if (param) gray = atoi(param);
 	}
 
 	if (gray==0) {
-		result = fgets(header,32,imagefile);
-		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+		fgets(header,32,imagefile);
+		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) gray = atoi(param);
 	}
 

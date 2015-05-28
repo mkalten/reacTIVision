@@ -71,10 +71,10 @@ bool V4Linux2Camera::initCamera() {
         frmsize.pixel_format  = v4l2_form.fmt.pix.pixelformat;
         if (-1 == ioctl(cfg->device,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
 
-        if (frmsize.discrete.width>max_width) max_width=frmsize.discrete.width;
-        if (frmsize.discrete.height>max_height) max_height=frmsize.discrete.height;
-        if (frmsize.discrete.width<min_width) min_width=frmsize.discrete.width;
-        if (frmsize.discrete.height<min_height) min_height=frmsize.discrete.height;
+        if ((int)frmsize.discrete.width>max_width) max_width=frmsize.discrete.width;
+        if ((int)frmsize.discrete.height>max_height) max_height=frmsize.discrete.height;
+        if ((int)frmsize.discrete.width<min_width) min_width=frmsize.discrete.width;
+        if ((int)frmsize.discrete.height<min_height) min_height=frmsize.discrete.height;
 
         if ((cfg->cam_width==(int)frmsize.discrete.width) && (cfg->cam_height==(int)frmsize.discrete.height)) {
             cfg->cam_width = frmsize.discrete.width;
@@ -607,7 +607,7 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
         default: return false;
     }
     if ((xioctl(cfg->device, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
-        sprintf("Unable to set AUTO mode: %s\n" , strerror(errno));
+        printf("Unable to set AUTO mode: %s\n",strerror(errno));
         return false;
     }
 
