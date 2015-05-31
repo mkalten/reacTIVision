@@ -62,9 +62,13 @@ std::vector<CameraConfig> PS3EyeCamera::findDevices() {
             
             cam_cfg.cam_width =  320;
             cam_cfg.cam_height = 240;
-            
+			
+			cam_cfg.cam_fps = 187;
+			cfg_list.push_back(cam_cfg);
             cam_cfg.cam_fps = 150;
             cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 137;
+			cfg_list.push_back(cam_cfg);
             cam_cfg.cam_fps = 125;
             cfg_list.push_back(cam_cfg);
             cam_cfg.cam_fps = 100;
@@ -155,10 +159,10 @@ bool PS3EyeCamera::initCamera() {
         cfg->cam_width =  320;
         cfg->cam_height = 240;
         
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps = 150;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps = 187;
         else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps = 30;
         else if (cfg->cam_fps<30) cfg->cam_fps = 30;
-        else if (cfg->cam_fps>150) cfg->cam_fps = 150;
+        else if (cfg->cam_fps>187) cfg->cam_fps = 187;
         
     } else if (cfg->cam_width == SETTING_MAX || cfg->cam_width == 640 || cfg->cam_height == SETTING_MAX || cfg->cam_height == 480 ) {
         
