@@ -220,24 +220,34 @@ std::list<CameraConfig> AVfoundationCamera::findDevices() {
             
             int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
             if (codec!=last_codec) {
-                if ((codec=='yuvs') || (codec=='2vuy'))
+				if ((codec=='yuvs') || (codec=='2vuy')) {
                     cam_cfg.cam_format = FORMAT_YUYV;
-                else if ((codec=='420v') || (codec=='420f'))
+					cam_cfg.compress = false;
+				} else if ((codec=='420v') || (codec=='420f')) {
                     cam_cfg.cam_format = FORMAT_420P;
-                else if ((codec=='jpeg') || (codec=='dmb1'))
+					cam_cfg.compress = false;
+				} else if ((codec=='jpeg') || (codec=='dmb1')) {
                     cam_cfg.cam_format = FORMAT_JPEG;
-                else if (codec=='avc1')
+					cam_cfg.compress = true;
+				} else if (codec=='avc1') {
                     cam_cfg.cam_format = FORMAT_H264;
-                else if (codec=='h263')
+					cam_cfg.compress = true;
+				} else if (codec=='h263') {
                     cam_cfg.cam_format = FORMAT_H263;
-                else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v'))
+					cam_cfg.compress = true;
+				} else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v')) {
                     cam_cfg.cam_format = FORMAT_MPEG;
-                else if ((codec=='dvc ') || (codec=='dvcp'))
+					cam_cfg.compress = true;
+				} else if ((codec=='dvc ') || (codec=='dvcp')) {
                     cam_cfg.cam_format = FORMAT_DV;
-                else if (codec==40)
+					cam_cfg.compress = false;
+				} else if (codec==40) {
                     cam_cfg.cam_format = FORMAT_GRAY; // probably incorrect workaround
-                else
+					cam_cfg.compress = false;
+				} else {
                     cam_cfg.cam_format = FORMAT_UNKNOWN;
+					cam_cfg.compress = false;
+				}
             } last_codec=codec;
             
             CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);

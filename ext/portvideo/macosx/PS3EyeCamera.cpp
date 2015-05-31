@@ -44,7 +44,7 @@ std::vector<CameraConfig> PS3EyeCamera::findDevices() {
             cam_cfg.driver = DRIVER_PS3EYE;
             cam_cfg.device = i;
             cam_cfg.cam_format = FORMAT_YUYV;
-            cam_cfg.src_format = FORMAT_YUYV;
+            cam_cfg.compress = false;
             
             cam_cfg.cam_width  = 640;
             cam_cfg.cam_height = 480;
