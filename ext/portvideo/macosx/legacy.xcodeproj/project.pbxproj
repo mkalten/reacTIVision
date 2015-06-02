@@ -28,6 +28,7 @@
 		B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B220851F078AFC4D0047913B /* SDLinterface.cpp */; };
 		B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208521078AFC4D0047913B /* RingBuffer.cpp */; };
 		B297D3E2097536E2004AB0FE /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E66E0959DA6F00A347C1 /* Main.cpp */; };
+		B2985D201B1E52AD00A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D1E1B1E52AD00A3172B /* ConsoleInterface.cpp */; };
 		B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29AE05A1B0A95050046E462 /* FrameInverter.cpp */; };
 		B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */ = {isa = PBXBuildFile; fileRef = B29AE05D1B0A999C0046E462 /* portvideo.xml */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
@@ -72,7 +73,7 @@
 		B2208522078AFC4D0047913B /* RingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RingBuffer.h; path = ../common/RingBuffer.h; sourceTree = SOURCE_ROOT; };
 		B2375E210CCE125700DE086D /* FontTool.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontTool.h; path = ../interface/FontTool.h; sourceTree = SOURCE_ROOT; };
 		B2375F3B0CCE305C00DE086D /* FontTool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FontTool.cpp; path = ../interface/FontTool.cpp; sourceTree = SOURCE_ROOT; };
-		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DC1394Camera.cpp; path = ../linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
+		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = DC1394Camera.cpp; path = ../linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
 		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
 		B24E06811B149B7800E42401 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
@@ -89,6 +90,8 @@
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B297D3ED097536E3004AB0FE /* SportVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2985D1E1B1E52AD00A3172B /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = ../common/ConsoleInterface.cpp; sourceTree = "<group>"; };
+		B2985D1F1B1E52AD00A3172B /* ConsoleInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleInterface.h; path = ../common/ConsoleInterface.h; sourceTree = "<group>"; };
 		B29AE05A1B0A95050046E462 /* FrameInverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameInverter.cpp; path = ../sdldemo/FrameInverter.cpp; sourceTree = "<group>"; };
 		B29AE05B1B0A95050046E462 /* FrameInverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameInverter.h; path = ../sdldemo/FrameInverter.h; sourceTree = "<group>"; };
 		B29AE05D1B0A999C0046E462 /* portvideo.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = portvideo.xml; sourceTree = "<group>"; };
@@ -222,6 +225,8 @@
 				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
 				B2208522078AFC4D0047913B /* RingBuffer.h */,
 				B220851B078AFC3D0047913B /* FrameProcessor.h */,
+				B2985D1E1B1E52AD00A3172B /* ConsoleInterface.cpp */,
+				B2985D1F1B1E52AD00A3172B /* ConsoleInterface.h */,
 				B200D5451B0E12BA00249D8B /* UserInterface.h */,
 			);
 			name = common;
@@ -334,6 +339,7 @@
 				B297D3E2097536E2004AB0FE /* Main.cpp in Sources */,
 				B2F024E10975394D00538C36 /* Resources.c in Sources */,
 				B2F024E30975394D00538C36 /* SFont.c in Sources */,
+				B2985D201B1E52AD00A3172B /* ConsoleInterface.cpp in Sources */,
 				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
 				B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */,
 				B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */,
