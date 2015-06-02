@@ -17,43 +17,20 @@
  */
 
 
-#ifndef SDLINTERFACE_H
-#define SDLINTERFACE_H
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#endif
-
-#include <sys/stat.h>
-
-#ifdef __APPLE__
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_thread.h>
-#else
-#include <SDL.h>
-#include <SDL_thread.h>
-#endif
-#include <time.h>
+#ifndef CONSOLENTERFACE_H
+#define CONSOLENTERFACE_H
 
 #include "UserInterface.h"
-#include "FontTool.h"
-#include "Resources.h"
+#include <termios.h>
 
-class SDLinterface: public UserInterface
+class ConsoleInterface: public UserInterface
 {
 
 public:
-	SDLinterface(const char* name, bool fullscreen);
-	~SDLinterface() {};
+	ConsoleInterface(const char* name);
+	~ConsoleInterface() {
+		tcsetattr(STDIN_FILENO, TCSANOW, &term_cfg);
+	};
 
 	unsigned char* openDisplay(VisionEngine *engine);
     void updateDisplay();
@@ -73,38 +50,22 @@ public:
     void setVsync(bool vsync);
 
 protected:
-	
-    bool setupWindow();
-    char* checkRenderDriver();
 
-    void allocateBuffers();
-	void freeBuffers();
-
-	void toggleFullScreen();
-	void drawHelp();
-    void showFrameRate();
+	void printHelp();
+    void printFrameRate();
 
 private:
     
-    SDL_Renderer *renderer_;
-    SDL_Window *window_;
-    SDL_Surface *displayImage_;
-    
     unsigned char* sourceBuffer_;
     unsigned char* destBuffer_;
+	unsigned char* displayBuffer_;
     
-    SDL_Texture *texture_;
-    SDL_Texture *display_;
-    
-    bool error_;
     bool pause_;
-    bool help_;
-#ifndef NDEBUG
-    bool recording_;
-#endif
-    bool fullscreen_;
-	bool vsync_;
-   
+	
+	termios term_cfg;
+	fd_set readset;
+	struct timeval tv;
+	
 	long frames_;
   	long lastTime_;
 	unsigned int cameraTime_, processingTime_, totalTime_;
@@ -112,8 +73,6 @@ private:
     
 	int width_;
 	int height_;
-	int bytesPerSourcePixel_;
-	int bytesPerDestPixel_;
 
 	std::string app_name_;
 	std::vector<std::string> help_text;

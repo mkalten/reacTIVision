@@ -20,6 +20,7 @@
 #include <Main.h>
 #include <string.h>
 #include <SDLinterface.h>
+#include <ConsoleInterface.h>
 #include <VisionEngine.h>
 #include <FrameInverter.h>
 
@@ -190,15 +191,18 @@ int main(int argc, char* argv[]) {
 
 	engine = new VisionEngine(app_name, &config);
  
+	UserInterface *uiface;
     if (!headless) {
-        UserInterface *uiface = new SDLinterface(app_name,config.fullscreen);
+        uiface = new SDLinterface(app_name,config.fullscreen);
         switch (config.display_mode) {
             case 0: uiface->setDisplayMode(NO_DISPLAY); break;
             case 1: uiface->setDisplayMode(SOURCE_DISPLAY); break;
             case 2: uiface->setDisplayMode(DEST_DISPLAY); break;
         }
-        engine->setInterface(uiface);
-    }
+	} else uiface = new ConsoleInterface(app_name);
+
+	engine->setInterface(uiface);
+
 
 	FrameProcessor *frameinverter = new FrameInverter();
     engine->addFrameProcessor(frameinverter);
@@ -208,7 +212,7 @@ int main(int argc, char* argv[]) {
 	engine->removeFrameProcessor(frameinverter);
 	delete frameinverter;
 
-    	delete engine;
+	delete engine;
 	writeSettings(&config);
 	return 0;
 }

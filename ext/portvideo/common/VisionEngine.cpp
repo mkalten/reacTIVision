@@ -18,6 +18,7 @@
 
 
 #include "VisionEngine.h"
+#include "ConsoleInterface.h"
 
 void gosleep(int ms=1) {
 #ifndef WIN32
@@ -119,18 +120,18 @@ void VisionEngine::saveBuffer(unsigned char* buffer, int bytes) {
 // the principal program sequence
 void VisionEngine::start() {
     
-    if (interface_) {
-        if (fps_>60) interface_->setVsync(false);
-        displayBuffer_ = interface_->openDisplay(this);
+
+	if (fps_>60) interface_->setVsync(false);
+	displayBuffer_ = interface_->openDisplay(this);
+	
 	if (displayBuffer_==NULL) {
 		delete interface_;
-		interface_ = NULL;
+		interface_ = new ConsoleInterface(app_name_.c_str());
+		displayBuffer_ = interface_->openDisplay(this);
 	}
-    }
-    
+
     if(camera_==NULL ) {
-        if (interface_) interface_->displayError("No camera found!");
-        else printf("No camera found!\n");
+        interface_->displayError("No camera found!");
         return;
     }
     
@@ -141,10 +142,7 @@ void VisionEngine::start() {
         mainLoop();
         stopThread();
         
-    } else {
-        if (interface_) interface_->displayError("Could not start camera!");
-        else printf("Could not start camera!");
-    }
+    } else interface_->displayError("Could not start camera!");
     
     teardownCamera();
     freeBuffers();
@@ -185,7 +183,7 @@ void VisionEngine::mainLoop()
         
         // do nothing if paused
         if (pause_){
-            if (interface_) interface_->processEvents();
+            interface_->processEvents();
             gosleep(1);
             continue;
         }
@@ -194,12 +192,9 @@ void VisionEngine::mainLoop()
         cameraReadBuffer = ringBuffer->getNextBufferToRead();
         // loop until we get access to a frame
         while (cameraReadBuffer==NULL) {
-            if (interface_) interface_->processEvents();
+            interface_->processEvents();
             if(!running_) {
-                if(error_) {
-                    if (interface_) interface_->displayError("Camera disconnected!");
-                    else printf("Camera disconnected!\n");
-                }
+                if(error_) interface_->displayError("Camera disconnected!");
                 return;
             }
             gosleep(1);
@@ -213,21 +208,19 @@ void VisionEngine::mainLoop()
             (*frame)->process(cameraReadBuffer,destBuffer_,displayBuffer_);
         //long processing_time = currentMicroSeconds()-start_time;
   
-        if (interface_) if (interface_->getDisplayMode()==SOURCE_DISPLAY)
+        if (interface_->getDisplayMode()==SOURCE_DISPLAY)
             memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
         ringBuffer->readFinished();
         
 #ifndef NDEBUG
         if (recording_) {
-            if (interface_) {
-                if (interface_->getDisplayMode()==SOURCE_DISPLAY)
-                    saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
-                else saveBuffer(destBuffer_,bytesPerDestPixel_);
-            }
+			if (interface_->getDisplayMode()==SOURCE_DISPLAY)
+				saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
+			else saveBuffer(destBuffer_,bytesPerDestPixel_);
         }
 #endif
 
-        if (interface_ && running_) {
+        if (running_) {
             camera_->showInterface(interface_);
             interface_->updateDisplay();
         }
@@ -279,11 +272,9 @@ void VisionEngine::event(int key)
     else if( key == KEY_M ){
         recording_ = !recording_;
     } else if( key == KEY_B ){
-        if (interface_!=NULL) {
-            if (interface_->getDisplayMode()==SOURCE_DISPLAY)
-                saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
-            else saveBuffer(destBuffer_,bytesPerDestPixel_);
-        }
+		if (interface_->getDisplayMode()==SOURCE_DISPLAY)
+			saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
+		else saveBuffer(destBuffer_,bytesPerDestPixel_);
     }
 #endif
     
@@ -341,12 +332,12 @@ void VisionEngine::initFrameProcessors() {
                 help_text.push_back(*processor_line);
             }
             
-    		if (interface_) (*frame)->addUserInterface(interface_);
+    		(*frame)->addUserInterface(interface_);
             frame++;
         }  else processorList.erase( frame );
     }
     
-    if (interface_) interface_->setHelpText(help_text);
+    interface_->setHelpText(help_text);
 }
 
 void VisionEngine::setupCamera(CameraConfig *config) {

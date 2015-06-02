@@ -44,11 +44,9 @@ void SDLinterface::updateDisplay()
         case NO_DISPLAY:
             break;
         case SOURCE_DISPLAY: {
-            //memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
             SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_*bytesPerSourcePixel_);
             SDL_RenderCopy(renderer_, texture_, NULL, NULL);
-            if (help_) drawHelp(sourceBuffer_);
-            //camera_->drawGUI(this);
+            if (help_) drawHelp();
             SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
             SDL_RenderCopy(renderer_, display_, NULL, NULL);
             SDL_FillRect(displayImage_, NULL, 0 );
@@ -58,8 +56,7 @@ void SDLinterface::updateDisplay()
         case DEST_DISPLAY: {
             SDL_UpdateTexture(texture_,NULL,destBuffer_,width_*bytesPerDestPixel_);
             SDL_RenderCopy(renderer_, texture_, NULL, NULL);
-            //camera_->drawGUI(this);
-            if (help_) drawHelp(destBuffer_);
+            if (help_) drawHelp();
             SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
             SDL_RenderCopy(renderer_, display_, NULL, NULL);
             SDL_FillRect(displayImage_, NULL, 0 );
@@ -90,10 +87,9 @@ char* SDLinterface::checkRenderDriver() {
 }
 
 
-void SDLinterface::setVsync(bool sync) {
+void SDLinterface::setVsync(bool vsync) {
     
-    if (sync) SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-    else      SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+	vsync_ = vsync;
 }
 
 bool SDLinterface::setupWindow() {
@@ -109,7 +105,8 @@ bool SDLinterface::setupWindow() {
     
     SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, renderdriver);
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderdriver);
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+    if (vsync_) SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+	else  SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
     
     SDL_CreateWindowAndRenderer(width_,height_,0,&window_,&renderer_);
     
@@ -341,7 +338,7 @@ void SDLinterface::displayError(const char* error)
     }
 }
 
-void SDLinterface::drawHelp(unsigned char* buffer)
+void SDLinterface::drawHelp()
 {
     int y = FontTool::getFontHeight()-3;
     
@@ -447,11 +444,11 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 #ifndef NDEBUG
 , recording_(false)
 #endif
+, vsync_( true )
 , frames_( 0 )
 , current_fps_( 0 )
 , width_( WIDTH )
 , height_( HEIGHT )
-
 {
     displayMode_ = DEST_DISPLAY;
     app_name_ = std::string(name);
