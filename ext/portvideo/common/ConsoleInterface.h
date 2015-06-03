@@ -22,6 +22,8 @@
 
 #include "UserInterface.h"
 #include <termios.h>
+#include <sys/select.h>
+#include <unistd.h>
 
 class ConsoleInterface: public UserInterface
 {

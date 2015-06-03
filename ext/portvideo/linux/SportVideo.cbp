@@ -95,6 +95,8 @@
 		<Unit filename="../common/RingBuffer.cpp" />
 		<Unit filename="../common/RingBuffer.h" />
 		<Unit filename="../common/UserInterface.h" />
+		<Unit filename="../common/ConsoleInterface.cpp" />
+		<Unit filename="../common/ConsoleInterface.h" />
 		<Unit filename="../common/VisionEngine.cpp" />
 		<Unit filename="../common/VisionEngine.h" />
 		<Unit filename="../sdldemo/Main.cpp" />

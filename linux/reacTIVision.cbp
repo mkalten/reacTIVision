@@ -128,6 +128,8 @@
 		<Unit filename="../ext/portvideo/common/UserInterface.h" />
 		<Unit filename="../ext/portvideo/interface/SDLinterface.cpp" />
 		<Unit filename="../ext/portvideo/interface/SDLinterface.h" />
+		<Unit filename="../ext/portvideo/interface/ConsoleInterface.cpp" />
+		<Unit filename="../ext/portvideo/interface/ConsoleInterface.h" />
 		<Unit filename="../ext/portvideo/interface/SFont.c">
 			<Option compilerVar="CC" />
 		</Unit>
