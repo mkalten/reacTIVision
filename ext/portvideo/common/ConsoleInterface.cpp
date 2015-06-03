@@ -40,7 +40,6 @@ unsigned char* ConsoleInterface::openDisplay(VisionEngine *engine) {
 void ConsoleInterface::closeDisplay()
 {
     engine_->stop();
-	if (displayBuffer_) delete[] displayBuffer_;
 }
 
 void ConsoleInterface::updateDisplay()
@@ -48,10 +47,6 @@ void ConsoleInterface::updateDisplay()
     processEvents();
     if (verbose_) printFrameRate();
 }
-
-void ConsoleInterface::setVsync(bool vsync) {
-}
-
 
 void ConsoleInterface::processEvents()
 {

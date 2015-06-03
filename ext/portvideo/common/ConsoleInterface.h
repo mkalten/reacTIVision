@@ -30,6 +30,7 @@ public:
 	ConsoleInterface(const char* name);
 	~ConsoleInterface() {
 		tcsetattr(STDIN_FILENO, TCSANOW, &term_cfg);
+		if (displayBuffer_) delete[] displayBuffer_;
 	};
 
 	unsigned char* openDisplay(VisionEngine *engine);
@@ -47,7 +48,7 @@ public:
     void displayError(const char* error);
     void drawMark(int xpos, int ypos, const char *mark, int state);
     
-    void setVsync(bool vsync);
+	void setVsync(bool vsync) {};
 
 protected:
 
