@@ -61,6 +61,7 @@ public:
 
     static std::vector<CameraConfig> findDevices();
 	static void listDevices();
+	static void printConfig(std::vector<CameraConfig>);
 
     static CameraConfig* readSettings(const char* cfgfile);
     static void saveSettings(CameraConfig* cfg);

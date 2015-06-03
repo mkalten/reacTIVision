@@ -162,52 +162,39 @@ AVfoundationCamera::AVfoundationCamera(CameraConfig *cam_cfg):CameraEngine(cam_c
 
 AVfoundationCamera::~AVfoundationCamera()
 {
-    
     if (uvcController) [uvcController release];
     if (videoDevice)   [videoDevice release];
     if (videoOutput)   [videoOutput release];
     if (grabber)       [grabber release];
 }
 
-std::list<CameraConfig> AVfoundationCamera::findDevices() {
-    std::list<CameraConfig> cfg_list;
+int AVfoundationCamera::getDeviceCount() {
+	
+	NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+	NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
+	return [dev_list0 count] + [dev_list1 count];
+}
+
+std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs() {
+    std::vector<CameraConfig> cfg_list;
+
+    int dev_count = getDeviceCount();
+    if (dev_count==0) return cfg_list;
+	
+    NSMutableArray *captureDevices = [NSMutableArray arrayWithCapacity:dev_count];
+	NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+	for (AVCaptureDevice* device in dev_list0) [captureDevices addObject:device];
+	NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
+    for (AVCaptureDevice* device in dev_list1)[captureDevices addObject:device];
     
-    AVCaptureSession *captureSession = [[AVCaptureSession alloc] init];
-    if (captureSession==NULL) return cfg_list;
-    
-    NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-    
-    int capacity = [dev_list0 count] + [dev_list1 count];
-    if (capacity==0)  {
-        std::cout << "no AVFoundation cameras found" << std::endl;
-        return cfg_list;
-    } else if (capacity==1) std::cout << "1 AVFoundation camera found:" << std::endl;
-    else std::cout << capacity << " AVFoundation cameras found:" << std::endl;
-    
-    NSMutableArray *captureDevices = [NSMutableArray arrayWithCapacity:capacity];
-    
-    unsigned int camID = 0;
-    for (AVCaptureDevice* device in dev_list0) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        [captureDevices addObject:device];
-        camID++;
-    }
-    
-    for (AVCaptureDevice* device in dev_list1) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        [captureDevices addObject:device];
-        camID++;
-    }
-    
-    camID = 0;
+    int cam_id = 0;
     for (AVCaptureDevice* device in captureDevices) {
         
         CameraConfig cam_cfg;
         CameraTool::initCameraConfig(&cam_cfg);
         
         cam_cfg.driver = DRIVER_DEFAULT;
-        cam_cfg.device = camID;
+        cam_cfg.device = cam_id;
 
         if ([device localizedName]!=NULL)
             sprintf(cam_cfg.name,"%s",[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
@@ -260,14 +247,14 @@ std::list<CameraConfig> AVfoundationCamera::findDevices() {
                 cfg_list.push_back(cam_cfg);
             }
         }
-        camID++;
+        cam_id++;
     }
-    
-    [captureSession release];
+	
+	[captureDevices release];
     return cfg_list;
 }
 
-void AVfoundationCamera::listDevices() {
+/*void AVfoundationCamera::listDevices() {
     
     AVCaptureSession *captureSession = [[AVCaptureSession alloc] init];
     if (captureSession==NULL) return;
@@ -279,29 +266,18 @@ void AVfoundationCamera::listDevices() {
     if (capacity==0)  {
         std::cout << "no AVFoundation cameras found" << std::endl;
         return;
-    } else if (capacity==1) std::cout << "1 AVFoundation camera found:" << std::endl;
-    else std::cout << capacity << " AVFoundation cameras found:" << std::endl;
+    } else if (capacity==1) std::cout << "1 AVFoundation camera found" << std::endl;
+    else std::cout << capacity << " AVFoundation cameras found" << std::endl;
     
     NSMutableArray *captureDevices = [NSMutableArray arrayWithCapacity:capacity];
-    
-    unsigned int camID = 0;
-    for (AVCaptureDevice* device in dev_list0) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        [captureDevices addObject:device];
-        camID++;
-    }
-    
-    for (AVCaptureDevice* device in dev_list1) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        [captureDevices addObject:device];
-        camID++;
-    }
-    
-    camID = 0;
+	for (AVCaptureDevice* dev in dev_list0) [captureDevices addObject:dev];
+	for (AVCaptureDevice* dev in dev_list1) [captureDevices addObject:dev];
+
+    unsigned int device_id = 0;
     for (AVCaptureDevice* device in captureDevices) {
         if ([device localizedName]!=NULL)
-            printf("\t%d: %s\n",camID,[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        else printf("\t%d: unknown\n",camID);
+            printf("\t%d: %s\n",device_id,[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
+        else printf("\t%d: unknown\n",device_id);
         
         NSArray *captureDeviceFormats = [device formats];
         
@@ -330,49 +306,58 @@ void AVfoundationCamera::listDevices() {
                 else printf("%'.1f|",fps);
             } printf("\b fps\n");
         }
-        camID++;
+        device_id++;
     }
-    
+	
+	[captureDevices release];
     [captureSession release];
+}*/
+
+CameraEngine* AVfoundationCamera::getCamera(CameraConfig *cam_cfg) {
+		
+	int dev_count = getDeviceCount();
+	if (dev_count==0) return NULL;
+	
+	if ((cam_cfg->device==SETTING_MIN) || (cam_cfg->device==SETTING_DEFAULT)) cam_cfg->device=0;
+	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=dev_count-1;
+	
+	std::vector<CameraConfig> cfg_list = AVfoundationCamera::getCameraConfigs();
+	int count = cfg_list.size();
+	if (count > 0) {
+		for (int i=0;i<count;i++) {
+			
+			if (cam_cfg->device != cfg_list[i].device) continue;
+			if (cam_cfg->compress != cfg_list[i].compress) continue;
+			
+			if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
+			if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
+			if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
+
+			return new AVfoundationCamera(cam_cfg);
+		}
+	}
+	
+	return NULL;
 }
 
-bool AVfoundationCamera::findCamera() {
-    
-    NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-    
-    int capacity = [dev_list0 count] + [dev_list1 count];
-    if (capacity==0)  {
-        std::cout << "no AVFoundation cameras found" << std::endl;
-        [session release];
-        return false;
-    }  else if (capacity==1) std::cout << "1 AVFoundation camera found" << std::endl;
-    else std::cout << capacity << " AVFoundation cameras found" << std::endl;
-    
-    
-    NSMutableArray *videoDevices = [NSMutableArray arrayWithCapacity:capacity];
+bool AVfoundationCamera::initCamera() {
+	
+    int dev_count = getDeviceCount();
+    if ((dev_count==0) || (cfg->device < 0) || (cfg->device>=dev_count)) return false;
+	
+    NSMutableArray *videoDevices = [NSMutableArray arrayWithCapacity:dev_count];
+	NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     for (AVCaptureDevice* dev in dev_list0) [videoDevices addObject:dev];
+	NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
     for (AVCaptureDevice* dev in dev_list1) [videoDevices addObject:dev];
-    
-    if (cfg->device < 0) cfg->device = 0;
-    else if (cfg->device >= [videoDevices count]) cfg->device = [videoDevices count]-1;
-    
+	
     videoDevice = [videoDevices objectAtIndex:cfg->device];
-    if (videoDevice==NULL) {
-         [session release];
-        return false;
-    } else [videoDevices release];
+    if (videoDevice==NULL) return false;
+    else [videoDevices release];
     
     if ([videoDevice localizedName]!=NULL)
         sprintf(cfg->name,"%s",[[videoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
     else sprintf(cfg->name,"unknown");
-    
-    return true;
-}
-
-bool AVfoundationCamera::initCamera() {
-    
-     if (!videoDevice) return false;
     
     session = [[AVCaptureSession alloc] init];
     if (session==NULL) return false;
@@ -499,14 +484,17 @@ bool AVfoundationCamera::initCamera() {
     videoOutput = [[AVCaptureVideoDataOutput alloc] init];
     
     unsigned int pixelformat = kCVPixelFormatType_422YpCbCr8_yuvs;
-    if (cfg->color) pixelformat = kCVPixelFormatType_24RGB;
+	cfg->src_format = FORMAT_YUYV;
+	if (cfg->color) {
+		pixelformat = kCVPixelFormatType_24RGB;
+		cfg->src_format = FORMAT_RGB;
+	}
     
     NSDictionary *pixelBufferOptions = [NSDictionary dictionaryWithObjectsAndKeys:
                                         [NSNumber numberWithDouble:cfg->cam_width], (id)kCVPixelBufferWidthKey,
                                         [NSNumber numberWithDouble:cfg->cam_height], (id)kCVPixelBufferHeightKey,
-                                        //[NSNumber numberWithUnsignedInt:kCVPixelFormatType_422YpCbCr8_yuvs ], (id)kCVPixelBufferPixelFormatTypeKey,
-                                        [NSNumber numberWithUnsignedInt: pixelformat ], (id)kCVPixelBufferPixelFormatTypeKey,
-                                        nil];
+                                        [NSNumber numberWithUnsignedInt: pixelformat ],
+										(id)kCVPixelBufferPixelFormatTypeKey, nil];
     
     
     [videoOutput setVideoSettings:pixelBufferOptions];

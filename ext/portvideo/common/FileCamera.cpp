@@ -34,13 +34,12 @@ FileCamera::~FileCamera()
 	if (cam_buffer!=NULL) delete cam_buffer;
 }
 
-bool FileCamera::findCamera() {
+CameraEngine* FileCamera::getCamera(CameraConfig *cam_cfg) {
 	
-	//if (config.file==NULL) return false;
-	FILE* imagefile=fopen(cfg->file, "rb");
+	FILE* imagefile=fopen(cam_cfg->file, "rb");
 	if (imagefile==NULL) return false;
 	fclose(imagefile);
-	return true;
+	return new FileCamera(cam_cfg);
 }
 
 bool FileCamera::initCamera() {

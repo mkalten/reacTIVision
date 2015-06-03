@@ -55,7 +55,7 @@ public:
 	static std::vector<CameraConfig> findDevices();
 	static void listDevices();
 	
-	bool findCamera();
+	static CameraEngine* getCamera(CameraConfig *cam_cfg);
 	bool initCamera();
 	bool startCamera();
 	unsigned char* getFrame();

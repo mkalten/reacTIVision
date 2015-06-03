@@ -21,21 +21,21 @@
 #include "CameraTool.h"
 #include "ps3eye.h"
 
-std::vector<CameraConfig> PS3EyeCamera::findDevices() {
+int PS3EyeCamera::getDeviceCount() {
+	std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
+	return (int)devices.size();
+}
+
+std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
     
     std::vector<CameraConfig> cfg_list;
-    std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
+	
+    int dev_count = getDeviceCount();
+    if(dev_count==0) return cfg_list;
     
-    int count = (int)devices.size();
-    if(count==0) {
-        printf("no PS3Eye camera found\n");
-        return cfg_list;
-    } else if (count==1) printf("1 PS3Eye camera found:\n");
-    else printf("%d PS3Eye cameras found:\n",count);
-    
-    if (count > 0)
+    if (dev_count > 0)
     {
-        for (int i=0;i<count;i++) {
+        for (int i=0;i<dev_count;i++) {
             
             CameraConfig cam_cfg;
             CameraTool::initCameraConfig(&cam_cfg);
@@ -45,20 +45,6 @@ std::vector<CameraConfig> PS3EyeCamera::findDevices() {
             cam_cfg.device = i;
             cam_cfg.cam_format = FORMAT_YUYV;
             cam_cfg.compress = false;
-            
-            cam_cfg.cam_width  = 640;
-            cam_cfg.cam_height = 480;
-            
-            cam_cfg.cam_fps = 60;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 50;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 40;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 30;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 15;
-            cfg_list.push_back(cam_cfg);
             
             cam_cfg.cam_width =  320;
             cam_cfg.cam_height = 240;
@@ -83,15 +69,29 @@ std::vector<CameraConfig> PS3EyeCamera::findDevices() {
             cfg_list.push_back(cam_cfg);
             cam_cfg.cam_fps = 30;
             cfg_list.push_back(cam_cfg);
+			
+			cam_cfg.cam_width  = 640;
+			cam_cfg.cam_height = 480;
+			
+			cam_cfg.cam_fps = 60;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 50;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 40;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 30;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 15;
+			cfg_list.push_back(cam_cfg);
         }
     } else {
         printf ("no PS3Eye cameras found\n");
     }
-    
+	
     return cfg_list;
 }
 
-void PS3EyeCamera::listDevices() {
+/*void PS3EyeCamera::listDevices() {
     
     std::vector<CameraConfig> cfg_list = PS3EyeCamera::findDevices();
     
@@ -126,35 +126,46 @@ void PS3EyeCamera::listDevices() {
         }
         
     }
-}
+}*/
 
-bool PS3EyeCamera::findCamera() {
+CameraEngine* PS3EyeCamera::getCamera(CameraConfig *cam_cfg) {
 
-    // list out the devices
-    std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
-    
-    if ((int)devices.size() > 0)
-    {
-        
-        if (devices.size() == 1) printf("1 PS3Eye camera found\n");
-        else printf("%d PS3Eye cameras found\n", (int)devices.size());
-        
-        if (cfg->device >= devices.size()) cfg->device = devices.size()-1;
-        else if (cfg->device < 0) cfg->device = 0;
-        
-        eye = devices.at(cfg->device);
-        sprintf(cfg->name, "PS3Eye");
-    } else {
-        printf("no PS3Eye cameras found\n");
-        return false;
-    }
+	int dev_count = getDeviceCount();
+	if (dev_count == 0) return NULL;
+	
+	if ((cam_cfg->device==SETTING_MIN) || (cam_cfg->device==SETTING_DEFAULT)) cam_cfg->device=0;
+	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=dev_count-1;
+	
+	std::vector<CameraConfig> cfg_list = PS3EyeCamera::getCameraConfigs();
+	int count = cfg_list.size();
+	if (count > 0) {
+		for (int i=0;i<count;i++) {
+			
+			if (cam_cfg->device != cfg_list[i].device) continue;
+			
+			if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
+			if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
+			if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
 
-    return eye != NULL;
+			return new PS3EyeCamera(cam_cfg);
+		}
+	}
+	
+	return NULL;
 }
 
 bool PS3EyeCamera::initCamera() {
+	
+	std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
+	int dev_count = (int)devices.size();
+	if (dev_count == 0) return false;
+	if ((cfg->device<0) || (cfg->device>=dev_count)) return false;
+	
+	eye = devices.at(cfg->device);
+	sprintf(cfg->name, "PS3Eye");
+	
     // check config parameters
-    if (cfg->cam_width == SETTING_MIN || cfg->cam_width == 320 || cfg->cam_height == SETTING_MIN || cfg->cam_height == 240) {
+    if ((cfg->cam_width == SETTING_MIN || cfg->cam_width == 320) && (cfg->cam_height == SETTING_MIN || cfg->cam_height == 240)) {
 
         cfg->cam_width =  320;
         cfg->cam_height = 240;
@@ -164,7 +175,7 @@ bool PS3EyeCamera::initCamera() {
         else if (cfg->cam_fps<30) cfg->cam_fps = 30;
         else if (cfg->cam_fps>187) cfg->cam_fps = 187;
         
-    } else if (cfg->cam_width == SETTING_MAX || cfg->cam_width == 640 || cfg->cam_height == SETTING_MAX || cfg->cam_height == 480 ) {
+    } else if ((cfg->cam_width == SETTING_MAX || cfg->cam_width == 640) && (cfg->cam_height == SETTING_MAX || cfg->cam_height == 480 )) {
         
         cfg->cam_width =  640;
         cfg->cam_height = 480;
@@ -174,12 +185,8 @@ bool PS3EyeCamera::initCamera() {
         else if (cfg->cam_fps<15) cfg->cam_fps = 15;
         else if (cfg->cam_fps>60) cfg->cam_fps = 60;
         
-    } else {
-        cfg->cam_width =  640;
-        cfg->cam_height = 480;
-        cfg->cam_fps = 60;
-    }
-    
+	} else return false;
+	
     // init camera
     eye->init( cfg->cam_width, cfg->cam_height, cfg->cam_fps );
     

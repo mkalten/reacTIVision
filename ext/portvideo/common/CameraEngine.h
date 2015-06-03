@@ -52,16 +52,21 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_GRAY16   2
 #define FORMAT_RGB      3
 #define FORMAT_RGB16    4
-#define FORMAT_YUYV     5
-#define FORMAT_UYVY     6
-#define FORMAT_YUV      7
-#define FORMAT_420P     8
-#define FORMAT_410P     9
-#define FORMAT_JPEG    10
-#define FORMAT_MPEG    11
-#define FORMAT_H263    12
-#define FORMAT_H264    13
-#define FORMAT_DV      14
+#define FORMAT_GRAY16S  5
+#define FORMAT_RGB16S   6
+#define FORMAT_RAW8		7
+#define FORMAT_RAW16    8
+#define FORMAT_YUYV    10
+#define FORMAT_UYVY    11
+#define FORMAT_YUV411  12
+#define FORMAT_YUV444  13
+#define FORMAT_420P    14
+#define FORMAT_410P    15
+#define FORMAT_JPEG    20
+#define FORMAT_MPEG    21
+#define FORMAT_H263    22
+#define FORMAT_H264    23
+#define FORMAT_DV      24
 
 #define DRIVER_DEFAULT  0
 #define DRIVER_DC1394   1
@@ -101,10 +106,11 @@ struct CameraConfig {
     int cam_height;
     float cam_fps;
 
-    int frame_xoff;
+	int frame_width;
+	int frame_height;
+	int frame_xoff;
     int frame_yoff;
-    int frame_width;
-    int frame_height;
+	int frame_mode;
 
     int brightness;
     int contrast;
@@ -145,9 +151,8 @@ public:
         else cam_cfg->buf_format=FORMAT_GRAY;
     }
 
-    virtual ~CameraEngine() {};
+	virtual ~CameraEngine() {};
 
-    virtual bool findCamera() = 0;
     virtual bool initCamera() = 0;
     virtual bool startCamera() = 0;
     virtual unsigned char* getFrame() = 0;

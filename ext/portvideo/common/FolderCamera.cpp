@@ -37,11 +37,11 @@ FolderCamera::~FolderCamera()
 	if (file_buffer!=NULL) delete file_buffer;
 }
 
-bool FolderCamera::findCamera() {
+CameraEngine* FolderCamera::getCamera(CameraConfig *cam_cfg) {
 	
 	struct stat info;
-	if (stat(cfg->folder,&info)!=0) return false;
-	return true;
+	if (stat(cam_cfg->folder,&info)!=0) return NULL;
+	return new FolderCamera(cam_cfg);
 }
 
 bool FolderCamera::initCamera() {

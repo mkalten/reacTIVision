@@ -33,7 +33,7 @@ public:
 	FileCamera(CameraConfig *cam_cfg);
 	~FileCamera();
 
-	bool findCamera();
+	static CameraEngine* getCamera(CameraConfig *cam_cfg);
 	bool initCamera();
 	bool startCamera();
 	unsigned char* getFrame();

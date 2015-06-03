@@ -21,25 +21,109 @@
 
 CameraConfig CameraTool::cam_cfg = {};
 
+void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
+	
+	int device = -1;
+	int width = -1;
+	int height = -1;
+	float fps = -1;
+	
+	const char* fstr[] =  { "unsupported", "mono8",  "mono16",  "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p", "jpeg", "mpeg", "h263", "h264", "dv" };
+	
+	for (int i=0;i<(int)cfg_list.size();i++) {
+		
+		if (cfg_list[i].device != device) {
+			printf("  %d: %s\n",i,cfg_list[i].name);
+			printf("    format: %s",fstr[cfg_list[i].cam_format]);
+			if(cfg_list[i].compress) printf(" (compressed)");
+			printf("\n");
+			device = cfg_list[i].device;
+			if (device>0) printf("\b fps\n");
+		}
+		
+		if ((cfg_list[i].cam_width != width) || (cfg_list[i].cam_height != height)) {
+			if (width>0) printf("\b fps\n");
+			printf("      %dx%d ",cfg_list[i].cam_width,cfg_list[i].cam_height);
+			width = cfg_list[i].cam_width;
+			height = cfg_list[i].cam_height;
+			fps = INT_MAX;
+		}
+		
+		if (cfg_list[i].cam_fps != fps) {
+			if(int(cfg_list[i].cam_fps)==cfg_list[i].cam_fps)
+				printf("%d|",int(cfg_list[i].cam_fps));
+			else printf("%'.1f|",cfg_list[i].cam_fps);
+			fps = cfg_list[i].cam_fps;
+		}
+	} printf("\b fps\n");
+	
+}
+
 void CameraTool::listDevices() {
 
+	int dev_count;
 #ifdef WIN32
-    videoInputCamera::listDevices();
+	dev_count = videoInputCamera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else {
+		if (dev_count==1) printf("1 system camera found:\n");
+		else  printf("%d system cameras found:\n",dev_count);
+		printConfig(videoInputCamera::getCameraConfigs());
+	}
 #endif
     
 #ifdef __APPLE__
-    DC1394Camera::listDevices();
-    PS3EyeCamera::listDevices();
+    dev_count = DC1394Camera::getDeviceCount();
+	if (dev_count==0) printf("no DC1394 camera found\n");
+	else {
+		if (dev_count==1) printf("1 DC1394 camera found:\n");
+		else  printf("%d DC1394 cameras found:\n",dev_count);
+		printConfig(DC1394Camera::getCameraConfigs());
+	}
+	
+    dev_count = PS3EyeCamera::getDeviceCount();
+	if (dev_count==0) printf("no PS3Eye camera found\n");
+	else {
+		if (dev_count==1) printf("1 PS3Eye camera found:\n");
+		else  printf("%d PS3Eye cameras found:\n",dev_count);
+		printConfig(PS3EyeCamera::getCameraConfigs());
+	}
+
 #ifdef __x86_64__
-    AVfoundationCamera::listDevices();
+    dev_count = AVfoundationCamera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else {
+		if (dev_count==1) printf("1 system camera found:\n");
+		else  printf("%d system cameras found:\n",dev_count);
+		printConfig(AVfoundationCamera::getCameraConfigs());
+	}
 #else
-    QTKitCamera::listDevices();
+	dev_count = QTKitCamera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else {
+		if (dev_count==1) printf("1 system camera found:\n");
+		else  printf("%d system cameras found:\n",dev_count);
+		printConfig(QTKitCamera::getCameraConfigs());
+	}
 #endif
 #endif
     
 #ifdef LINUX
-    DC1394Camera::listDevices();
-    V4Linux2Camera::listDevices();
+	dev_count = DC1394Camera::getDeviceCount();
+	if (dev_count==0) printf("no DC1394 camera found\n");
+	else {
+		if (dev_count==1) printf("1 DC1394 camera found:\n");
+		else  printf("%d DC1394 cameras found:\n",dev_count);
+		printConfig(DC1394Camera::getCameraConfigs());
+	}
+	
+	dev_count = V4Linux2Camera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else {
+		if (dev_count==1) printf("1 system camera found:\n");
+		else  printf("%d system cameras found:\n",dev_count);
+		printConfig(V4Linux2Camera::getCameraConfigs());
+	}
 #endif
     
 }
@@ -49,27 +133,19 @@ CameraEngine* CameraTool::getDefaultCamera() {
     initCameraConfig(&cam_cfg);
     
 #ifdef WIN32
-    CameraEngine *camera = new videoInputCamera(&cam_cfg);
-    if( !camera->findCamera() ) delete camera;
-    else return camera;
+    return videoInputCamera::getCamera(&cam_cfg);
 #endif
     
 #ifdef __APPLE__
     #ifdef __x86_64__
-    CameraEngine *camera = new AVfoundationCamera(&cam_cfg);
-    if( !camera->findCamera()) delete camera;
-    else return camera;
+	return AVfoundationCamera::getCamera(&cam_cfg);
     #else
-    CameraEngine *camera = new QTKitCamera(&cam_cfg);
-    if( !camera->findCamera()) delete camera;
-    else return camera;
+	return QTKitCamera::getCamera(&cam_cfg);
     #endif
 #endif
     
 #ifdef LINUX 
-    CameraEngine *camera = new V4Linux2Camera(&cam_cfg);
-    if( !camera->findCamera()) delete camera;
-    else return camera;
+	return V4Linux2Camera::getCamera(&cam_cfg);
 #endif
     
     return NULL;
@@ -78,79 +154,81 @@ CameraEngine* CameraTool::getDefaultCamera() {
 CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
     
     CameraEngine* camera = NULL;
-    
+	int dev_count;
+	
 #ifndef NDEBUG
     
     if (cam_cfg->driver==DRIVER_FILE) {
-        camera = new FileCamera(cam_cfg);
-        if( !camera->findCamera() ) delete camera;
-        else return camera;
+		camera = FileCamera::getCamera(cam_cfg);
+        if (camera) return camera;
     }
     
     if (cam_cfg->driver==DRIVER_FOLDER) {
-        camera = new FolderCamera(cam_cfg);
-        if( !camera->findCamera() ) delete camera;
-        else return camera;
+        camera = FolderCamera::getCamera(cam_cfg);
+        if (camera) return camera;
     }
     
 #endif
     
 #ifdef WIN32
-    
-    camera = new videoInputCamera(cam_cfg);
-    if( !camera->findCamera() ) {
-        delete camera;
-        return getDefaultCamera();
-    } else return camera;
-    
+	
+	dev_count = videoInputCamera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else camera = videoInputCamera::getCamera(cam_cfg);
+	if (camera) return camera;
+	else return getDefaultCamera();
+	
 #endif
     
 #ifdef __APPLE__
-    
+	
     if (cam_cfg->driver==DRIVER_DC1394) {
-        camera = new DC1394Camera(cam_cfg);
-        if( !camera->findCamera() ) delete camera;
-        else return camera;
+		dev_count = DC1394Camera::getDeviceCount();
+		if (dev_count==0) printf("no DC1394 camera found\n");
+		else camera = DC1394Camera::getCamera(cam_cfg);
+        if (camera) return camera;
     }
     
     if (cam_cfg->driver==DRIVER_PS3EYE) {
-        camera = new PS3EyeCamera(cam_cfg);
-        if( !camera->findCamera()) delete camera;
-        else return camera;
+		dev_count = PS3EyeCamera::getDeviceCount();
+		if (dev_count==0) printf("no PS3Eye camera found\n");
+		else camera = PS3EyeCamera::getCamera(cam_cfg);
+        if (camera) return camera;
     }
 
 #ifdef __x86_64__
     // default driver
-    camera = new AVfoundationCamera(cam_cfg);
-    if( !camera->findCamera()) {
-        delete camera;
-        return getDefaultCamera();
-    } else return camera;
+	dev_count = AVfoundationCamera::getDeviceCount();
+	if (dev_count==0) {
+		printf("no system camera found\n");
+		return NULL;
+	} else camera = AVfoundationCamera::getCamera(cam_cfg);
+    if (camera) return camera;
+	else return getDefaultCamera();
 #else
     // default driver
-    camera = new QTKitCamera(cam_cfg);
-    if( !camera->findCamera()) {
-        delete camera;
-        return getDefaultCamera();
-    } else return camera;
+	dev_count = QTKitCamera::getDeviceCount();
+	if (dev_count==0) {
+		printf("no system camera found\n");
+		return NULL;
+	} else camera = QTKitCamera::getCamera(cam_cfg);
+	if (camera) return camera;
+	else return getDefaultCamera();
 #endif
 #endif
     
 #ifdef LINUX
     
-    if (cam_cfg->driver==DRIVER_DC1394) {
-        camera = new DC1394Camera(cam_cfg);
-        if( !camera->findCamera() ) delete camera;
-        else return camera;
-    }
-    
+	if (cam_cfg->driver==DRIVER_DC1394) {
+		camera = DC1394Camera::getCamera(cam_cfg);
+		if (camera) return camera;
+	}
+	
     // default driver
-    camera = new V4Linux2Camera(cam_cfg);
-    if( !camera->findCamera()) {
-        delete camera;
-        return getDefaultCamera();
-    } else return camera;
-    
+    camera = V4Linux2Camera::getCamera(cam_cfg);
+	if (camera) return camera;
+	else return getDefaultCamera();
+	
 #endif
     
     return NULL;
@@ -168,18 +246,19 @@ void CameraTool::initCameraConfig(CameraConfig *cfg) {
     cfg->buf_format = FORMAT_GRAY;
     
     cfg->compress = false;
-    cfg->color = false;
+    //cfg->color = false;
     cfg->frame = false;
     
     cfg->cam_width = SETTING_MAX;
     cfg->cam_height = SETTING_MAX;
     cfg->cam_fps = SETTING_MAX;
-    
-    cfg->frame_xoff = 0;
-    cfg->frame_yoff = 0;
+	
     cfg->frame_width = SETTING_MAX;
     cfg->frame_height = SETTING_MAX;
-    
+	cfg->frame_xoff = 0;
+	cfg->frame_yoff = 0;
+	cfg->frame_mode = 0;
+	
     cfg->brightness = SETTING_DEFAULT;
     cfg->contrast = SETTING_DEFAULT;
     cfg->sharpness = SETTING_DEFAULT;
@@ -285,14 +364,17 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
         
         if(image_element->Attribute("width")!=NULL) {
             if (strcmp( image_element->Attribute("width"), "max" ) == 0) cam_cfg.cam_width = SETTING_MAX;
+			else if (strcmp( image_element->Attribute("width"), "min" ) == 0) cam_cfg.cam_width = SETTING_MIN;
             else cam_cfg.cam_width = atoi(image_element->Attribute("width"));
         }
         if(image_element->Attribute("height")!=NULL) {
             if (strcmp( image_element->Attribute("height"), "max" ) == 0) cam_cfg.cam_height = SETTING_MAX;
+			else if (strcmp( image_element->Attribute("height"), "min" ) == 0) cam_cfg.cam_height = SETTING_MIN;
             else cam_cfg.cam_height = atoi(image_element->Attribute("height"));
         }
         if(image_element->Attribute("fps")!=NULL) {
             if (strcmp( image_element->Attribute("fps"), "max" ) == 0) cam_cfg.cam_fps = SETTING_MAX;
+			else if (strcmp( image_element->Attribute("fps"), "min" ) == 0) cam_cfg.cam_fps = SETTING_MIN;
             else cam_cfg.cam_fps = atof(image_element->Attribute("fps"));
         }
     }
@@ -312,8 +394,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
             else if (strcmp( frame_element->Attribute("height"), "min" ) == 0) cam_cfg.frame_height = 0;
             else cam_cfg.frame_height = atoi(frame_element->Attribute("height"));
         }
-        
-        
+
         if(frame_element->Attribute("xoff")!=NULL) {
             if (strcmp( frame_element->Attribute("xoff"), "max" ) == 0) cam_cfg.frame_xoff = SETTING_MAX;
             else if (strcmp( frame_element->Attribute("xoff"), "min" ) == 0) cam_cfg.frame_xoff = 0;
@@ -325,8 +406,14 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
             else if (strcmp( frame_element->Attribute("yoff"), "min" ) == 0) cam_cfg.frame_yoff = 0;
             else cam_cfg.frame_yoff = atoi(frame_element->Attribute("yoff"));
         }
-    }
-    
+		
+		if(frame_element->Attribute("mode")!=NULL) {
+			if (strcmp( frame_element->Attribute("mode"), "max" ) == 0) cam_cfg.frame_mode = SETTING_MAX;
+			else if (strcmp( frame_element->Attribute("mode"), "min" ) == 0) cam_cfg.frame_mode = 0;
+			else cam_cfg.frame_mode = atoi(frame_element->Attribute("mode"));
+		}
+	}
+	
     tinyxml2::XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
     if (settings_element!=NULL) {
         

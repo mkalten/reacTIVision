@@ -51,10 +51,10 @@ public:
     AVfoundationCamera(CameraConfig* cam_cfg);
     ~AVfoundationCamera();
 	
-    static std::list<CameraConfig> findDevices();
-    static void listDevices();
-
-	bool findCamera();
+	static int getDeviceCount();
+	static std::vector<CameraConfig> getCameraConfigs();
+	static CameraEngine* getCamera(CameraConfig* cam_cfg);
+	
 	bool initCamera();
 	bool startCamera();
 	unsigned char* getFrame();

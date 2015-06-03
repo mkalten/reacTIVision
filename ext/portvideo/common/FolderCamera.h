@@ -40,7 +40,7 @@ public:
 	FolderCamera(CameraConfig *cam_cfg);
 	~FolderCamera();
 	
-	bool findCamera();
+	static CameraEngine* getCamera(CameraConfig *cam_cfg);
 	bool initCamera();
 	bool startCamera();
 	unsigned char* getFrame();

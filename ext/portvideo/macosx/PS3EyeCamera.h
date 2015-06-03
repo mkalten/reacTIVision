@@ -40,10 +40,10 @@ public:
         if (cam_buffer!=NULL) delete []cam_buffer;
     };
     
-    static std::vector<CameraConfig> findDevices();
-    static void listDevices();
-    
-    bool findCamera();
+	static int getDeviceCount();
+	static std::vector<CameraConfig> getCameraConfigs();
+	static CameraEngine* getCamera(CameraConfig* cam_cfg);
+	
     bool initCamera();
     bool startCamera();
     unsigned char* getFrame();

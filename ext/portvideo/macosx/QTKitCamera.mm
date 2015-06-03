@@ -193,24 +193,34 @@ std::vector<CameraConfig> QTKitCamera::findDevices() {
         for (QTFormatDescription* fd in [dev formatDescriptions]) {
             
             int32_t codec = [fd formatType];
-            if ((codec=='yuvs') || (codec=='2vuy'))
+			if ((codec=='yuvs') || (codec=='2vuy')) {
                 cam_cfg.cam_format = FORMAT_YUYV;
-            else if ((codec=='420v') || (codec=='420f'))
+				cam_cfg.compress = false;
+			} else if ((codec=='420v') || (codec=='420f')) {
                 cam_cfg.cam_format = FORMAT_420P;
-            else if ((codec=='jpeg') || (codec=='dmb1'))
+				cam_cfg.compress = false;
+			} else if ((codec=='jpeg') || (codec=='dmb1')) {
                 cam_cfg.cam_format = FORMAT_JPEG;
-            else if (codec=='avc1')
+				cam_cfg.compress = true;
+			} else if (codec=='avc1') {
                 cam_cfg.cam_format = FORMAT_H264;
-            else if (codec=='h263')
+				cam_cfg.compress = true;
+			} else if (codec=='h263') {
                 cam_cfg.cam_format = FORMAT_H263;
-            else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v'))
+				cam_cfg.compress = true;
+			} else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v')) {
                 cam_cfg.cam_format = FORMAT_MPEG;
-            else if ((codec=='dvc ') || (codec=='dvcp'))
+				cam_cfg.compress = true;
+			} else if ((codec=='dvc ') || (codec=='dvcp')) {
                 cam_cfg.cam_format = FORMAT_DV;
-            else if (codec==40)
+				cam_cfg.compress = false;
+			} else if (codec==40) {
                 cam_cfg.cam_format = FORMAT_GRAY; // probably incorrect workaround
-            else
+				cam_cfg.compress = false;
+			} else {
                 cam_cfg.cam_format = FORMAT_UNKNOWN;
+				cam_cfg.compress = false;
+			}
             
             NSSize size = [[fd attributeForKey:QTFormatDescriptionVideoEncodedPixelsSizeAttribute] sizeValue];
             cam_cfg.cam_width = (int)size.width;
@@ -221,7 +231,8 @@ std::vector<CameraConfig> QTKitCamera::findDevices() {
         }
         i++;
     }
-    
+	
+	[dev_list release];
     return cfg_list;
 }
 
@@ -275,7 +286,36 @@ void QTKitCamera::listDevices() {
 }
 
 
-bool QTKitCamera::findCamera() {
+CameraEngine* QTKitCamera::getCamera(CameraConfig *cam_cfg) {
+	
+	NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
+	NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
+	int capacity = [dev_list0 count] + [dev_list1 count];
+	if (capacity==0) return NULL;
+	
+	if ((cam_cfg->device==SETTING_MIN) || (cam_cfg->device==SETTING_DEFAULT)) cam_cfg->device=0;
+	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=capacity-1;
+	
+	std::vector<CameraConfig> cfg_list = QTKitCamera::findDevices();
+	int count = cfg_list.size();
+	if (count > 0) {
+		for (int i=0;i<count;i++) {
+			
+			if (cam_cfg->device != cfg_list[i].device) continue;
+			if (cam_cfg->compress != cfg_list[i].compress) continue;
+			
+			if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
+			if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
+			if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
+			
+			return new QTKitCamera(cam_cfg);
+		}
+	}
+	
+	return NULL;
+}
+
+bool QTKitCamera::initCamera() {
     
     NSError *error;
     NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
@@ -284,55 +324,15 @@ bool QTKitCamera::findCamera() {
     if (capacity==0) return false;
     
     NSMutableArray *dev_list = [NSMutableArray arrayWithCapacity:capacity];
-    
-    for (QTCaptureDevice* dev in dev_list0) {
-        [dev_list addObject:dev];
-    }
-    
-    for (QTCaptureDevice* dev in dev_list1) {
-        [dev_list addObject:dev];
-    }
-    
-    if (cfg->device<0) cfg->device=0;
-    if (cfg->device>=[dev_list count]) cfg->device = [dev_list count]-1;
-    
+    for (QTCaptureDevice* dev in dev_list0) [dev_list addObject:dev];
+	for (QTCaptureDevice* dev in dev_list1) [dev_list addObject:dev];
+	
+	//Get the capture device
     captureDevice = [dev_list objectAtIndex:cfg->device];
     [dev_list release];
     
-    if(!captureDevice) {
-        captureDevice= [QTCaptureDevice defaultInputDeviceWithMediaType:QTMediaTypeVideo];
-        cfg->device = 0;
-    }
-    
-    if (!captureDevice) {
-        captureDevice = [QTCaptureDevice defaultInputDeviceWithMediaType:QTMediaTypeMuxed];
-        cfg->device = 0;
-    }
-    
-    if (captureDevice) {
-        if (![captureDevice open:&error]) {
-            [captureSession release];
-            printf("no QTKit cameras found\n");
-            return false;
-        }
-    } else {
-        [captureSession release];
-        printf("no QTKit cameras found\n");
-        return false;
-    }
-    
-    if (cfg->device>=0) return true;
-    else {
-        printf("no QTKit cameras found\n");
-        return false;
-    }
-}
-
-bool QTKitCamera::initCamera() {
-    
-    NSError *error;
-    
-    if (!captureDevice) return false;
+	if (!captureDevice) return false;
+	if (![captureDevice open:&error]) return false;
     
     //Create the capture session
     captureSession = [[QTCaptureSession alloc] init];
@@ -355,11 +355,11 @@ bool QTKitCamera::initCamera() {
     if (cfg->color) pixelformat = kCVPixelFormatType_24RGB;
     
     [captureDecompressedVideoOutput setPixelBufferAttributes:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                              [NSNumber numberWithBool:YES], kCVPixelBufferOpenGLCompatibilityKey,
+                                                              [NSNumber numberWithBool:NO], kCVPixelBufferOpenGLCompatibilityKey,
                                                               [NSNumber numberWithFloat:cfg->cam_width], (id)kCVPixelBufferWidthKey,
                                                               [NSNumber numberWithFloat:cfg->cam_height], (id)kCVPixelBufferHeightKey,
-                                                              [NSNumber numberWithLong:pixelformat], (id)kCVPixelBufferPixelFormatTypeKey,
-                                                              nil]];
+                                                              [NSNumber numberWithLong:pixelformat],
+															  (id)kCVPixelBufferPixelFormatTypeKey, nil]];
     
     [captureDecompressedVideoOutput setAutomaticallyDropsLateVideoFrames:true];
     
@@ -395,10 +395,7 @@ bool QTKitCamera::initCamera() {
     }
     
     [captureDecompressedVideoOutput setDelegate:grabber];
-    success = [captureSession addOutput:captureDecompressedVideoOutput error:&error];
-    if (!success) return false;
-    
-    return true;
+    return [captureSession addOutput:captureDecompressedVideoOutput error:&error];
 }
 
 unsigned char* QTKitCamera::getFrame()
