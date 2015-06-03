@@ -106,6 +106,8 @@ std::vector<CameraConfig> DC1394Camera::getCameraConfigs() {
 				
 				cam_cfg.cam_width = F7_xmax;
 				cam_cfg.cam_height = F7_ymax;
+				cam_cfg.frame = true;
+				cam_cfg.frame_mode = (int)(video_modes.modes[i] - DC1394_VIDEO_MODE_FORMAT7_0);
 				cfg_list.push_back(cam_cfg);
 				
 			} else {
@@ -244,6 +246,7 @@ CameraEngine* DC1394Camera::getCamera(CameraConfig *cam_cfg) {
 			
 			if (cam_cfg->device != cfg_list[i].device) continue;
 			
+			if ((cam_cfg->frame) && (cam_cfg->frame_mode != cfg_list[i].frame_mode)) continue;
 			if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
 			if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
 			if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
