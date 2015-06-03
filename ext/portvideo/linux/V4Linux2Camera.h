@@ -77,6 +77,7 @@ private:
     v4l2_streamparm v4l2_parm;
 
     v4l2_ext_control v4l2_auto_ctrl[2];
+    int dev_id;
 
     struct Buffers {
       void *start;
