@@ -53,6 +53,7 @@
 		B297D3DE097536E2004AB0FE /* FidtrackFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E6660959DA6F00A347C1 /* FidtrackFinder.cpp */; };
 		B297D3E1097536E2004AB0FE /* FrameThresholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */; };
 		B297D3E2097536E2004AB0FE /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E66E0959DA6F00A347C1 /* Main.cpp */; };
+		B2985D231B1ECAFF00A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D211B1ECAFF00A3172B /* ConsoleInterface.cpp */; };
 		B2AEE8EC0DE5D15C00D51856 /* reacTIVision.xml in Resources */ = {isa = PBXBuildFile; fileRef = B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */; };
 		B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
@@ -111,7 +112,7 @@
 		B2208522078AFC4D0047913B /* RingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RingBuffer.h; path = ../ext/portvideo/common/RingBuffer.h; sourceTree = SOURCE_ROOT; };
 		B2375E210CCE125700DE086D /* FontTool.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontTool.h; path = ../ext/portvideo/interface/FontTool.h; sourceTree = SOURCE_ROOT; };
 		B2375F3B0CCE305C00DE086D /* FontTool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FontTool.cpp; path = ../ext/portvideo/interface/FontTool.cpp; sourceTree = SOURCE_ROOT; };
-		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DC1394Camera.cpp; path = ../ext/portvideo/linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
+		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = DC1394Camera.cpp; path = ../ext/portvideo/linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
 		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../ext/portvideo/linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = ../ext/portvideo/macosx/dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
 		B24EA4F20015EB5000096D13 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -167,6 +168,8 @@
 		B29545ED19E2FF80001111A6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = /System/Library/Frameworks/AVFoundation.framework; sourceTree = "<absolute>"; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B297D3ED097536E3004AB0FE /* reacTIVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reacTIVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2985D211B1ECAFF00A3172B /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = ../ext/portvideo/common/ConsoleInterface.cpp; sourceTree = "<group>"; };
+		B2985D221B1ECAFF00A3172B /* ConsoleInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleInterface.h; path = ../ext/portvideo/common/ConsoleInterface.h; sourceTree = "<group>"; };
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../common/Main.h; sourceTree = "<group>"; };
 		B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = reacTIVision.xml; sourceTree = SOURCE_ROOT; };
 		B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -385,6 +388,8 @@
 				B21D89E30CE7A0FE003B810C /* FileCamera.cpp */,
 				B21D89E40CE7A0FE003B810C /* FileCamera.h */,
 				B220851B078AFC3D0047913B /* FrameProcessor.h */,
+				B2985D211B1ECAFF00A3172B /* ConsoleInterface.cpp */,
+				B2985D221B1ECAFF00A3172B /* ConsoleInterface.h */,
 				B200D5461B0E25EA00249D8B /* UserInterface.h */,
 				B2208522078AFC4D0047913B /* RingBuffer.h */,
 				B2375F3B0CCE305C00DE086D /* FontTool.cpp */,
@@ -467,6 +472,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */,
+				B2985D231B1ECAFF00A3172B /* ConsoleInterface.cpp in Sources */,
 				B297D3BF097536E2004AB0FE /* FiducialFinder.cpp in Sources */,
 				B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */,
 				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
