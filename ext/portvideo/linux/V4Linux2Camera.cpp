@@ -18,6 +18,7 @@
  */
 
 #include "V4Linux2Camera.h"
+#include "CameraTool.h"
 
 V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
 {
@@ -163,86 +164,140 @@ int v4lfilter(const struct dirent *dir)
     return 0;
 }
 
-void V4Linux2Camera::listDevices() {
+int V4Linux2Camera::getDeviceCount() {
 
-    char v4l2_device[128];
-    v4l2_capability v4l2_caps;
-    struct dirent **v4l2_devices;
+	char v4l2_device[128];
+	v4l2_capability v4l2_caps;
+	memset(&v4l2_caps, 0, sizeof(v4l2_capability));
+	struct dirent **v4l2_devices;
 
-    int device_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
-    if (device_count==0) {
-        printf("no V4Linux2 devices found\n");
-        return;
-    }
+    	int dev_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
+    	if (dev_count==0) return 0;
+	
+	int cam_count = 0;
 
-    if (device_count==1) printf("1 V4Linux2 device found:\n");
-    else printf("%d V4Linux2 devices found:\n",device_count);
+	for (int i=0;i<dev_count;i++) {
+        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
 
-    for (int i=0;i<device_count;i++) {
-        sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
+        	int fd = open(v4l2_device, O_RDONLY);
+        	if (fd < 0) continue;
 
-        int fd = open(v4l2_device, O_RDONLY);
-        if (fd < 0) continue;
+        	
+       		if (ioctl(fd, VIDIOC_QUERYCAP, &v4l2_caps) < 0) {
+            		close(fd);
+            		continue;
+        	}
 
-        memset(&v4l2_caps, 0, sizeof(v4l2_capability));
-        if (ioctl(fd, VIDIOC_QUERYCAP, &v4l2_caps) < 0) {
-            printf("%s oops\n",v4l2_device);
-            close(fd);
-            continue;
-        }
+        	if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
+		    cam_count++;
+		}
 
-        if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
-            printf("\t%s: %s (%s)\n", v4l2_device, v4l2_caps.card, v4l2_caps.driver);
+		close(fd);
+	}
 
-            for (int x=0;;x++) {
-                struct v4l2_fmtdesc fmtdesc;
-                memset(&fmtdesc, 0, sizeof(v4l2_fmtdesc));
-                fmtdesc.index = x;
-                fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-                if (-1 == ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc)) break;
-                printf("\t\tformat: %s%s\n",  fmtdesc.description, fmtdesc.flags & V4L2_FMT_FLAG_COMPRESSED ? " (compressed)" : "");
-
-                for (int y=0;;y++) {
-                    struct v4l2_frmsizeenum frmsize;
-                    memset(&frmsize, 0, sizeof(v4l2_frmsizeenum));
-                    frmsize.index = y;
-                    frmsize.pixel_format  = fmtdesc.pixelformat;
-                    if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
-                    printf("\t\t\t %dx%d ",frmsize.discrete.width,frmsize.discrete.height);
-
-                    float last_fps=0.0f;
-                    for (int z=0;;z++) {
-                        struct v4l2_frmivalenum frmival;
-                        memset(&frmival, 0, sizeof(v4l2_frmivalenum));
-                        frmival.index = z;
-                        frmival.pixel_format = fmtdesc.pixelformat;
-                        frmival.width = frmsize.discrete.width;
-                        frmival.height = frmsize.discrete.height;
-                        if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
-
-                        float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
-                        if(frm_fps==last_fps) break;
-                        last_fps=frm_fps;
-
-                        if (int(frm_fps) == frm_fps) printf("%d|",int(frm_fps));
-                        else printf("%'.1f|",frm_fps);
-                    }  printf("\b fps\n");
-                }
-            }
-        }
-        close(fd);
-    }
+	return cam_count;
 }
 
-bool V4Linux2Camera::findCamera() {
+std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs() {
 
-    if (cfg->device<0) cfg->device=0;
+	std::vector<CameraConfig> cfg_list;
+
+	char v4l2_device[128];
+	v4l2_capability v4l2_caps;
+	memset(&v4l2_caps, 0, sizeof(v4l2_capability));
+	struct dirent **v4l2_devices;
+
+	int dev_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
+	if (dev_count==0) return cfg_list;
+
+	for (int i=0;i<dev_count;i++) {
+        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
+
+        	int fd = open(v4l2_device, O_RDONLY);
+        	if (fd < 0) continue;
+
+		if (ioctl(fd, VIDIOC_QUERYCAP, &v4l2_caps) < 0) {
+        		close(fd);
+			continue;
+        	}
+
+        	if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
+
+			CameraConfig cam_cfg;
+			CameraTool::initCameraConfig(&cam_cfg);
+		
+			cam_cfg.driver = DRIVER_DEFAULT;
+			cam_cfg.device = i;
+			sprintf(cam_cfg.name,"%s",v4l2_caps.card);
+	
+            		for (int x=0;;x++) {
+                		struct v4l2_fmtdesc fmtdesc;
+                		memset(&fmtdesc, 0, sizeof(v4l2_fmtdesc));
+                		fmtdesc.index = x;
+                		fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                		if (-1 == ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc)) break;
+              
+				if ( fmtdesc.flags & V4L2_FMT_FLAG_COMPRESSED) cam_cfg.compress = true;
+				else cam_cfg.compress = false;
+
+				if (fmtdesc.pixelformat==V4L2_PIX_FMT_GREY) cam_cfg.cam_format = FORMAT_GRAY;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_RGB24) cam_cfg.cam_format = FORMAT_RGB;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_YUYV) cam_cfg.cam_format = FORMAT_YUYV;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_UYVY) cam_cfg.cam_format = FORMAT_UYVY;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_YUV420) cam_cfg.cam_format = FORMAT_420P;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_YUV410) cam_cfg.cam_format = FORMAT_410P;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_MJPEG) cam_cfg.cam_format = FORMAT_JPEG;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_JPEG) cam_cfg.cam_format = FORMAT_JPEG;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_JPEG) cam_cfg.cam_format = FORMAT_JPEG;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_MPEG) cam_cfg.cam_format = FORMAT_MPEG;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_H263) cam_cfg.cam_format = FORMAT_H263;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_H264) cam_cfg.cam_format = FORMAT_H264;
+				else if (fmtdesc.pixelformat==V4L2_PIX_FMT_DV) cam_cfg.cam_format = FORMAT_DV;
+				else cam_cfg.cam_format = FORMAT_UNKNOWN;
+
+                		for (int y=0;;y++) {
+                    			struct v4l2_frmsizeenum frmsize;
+                    			memset(&frmsize, 0, sizeof(v4l2_frmsizeenum));
+                    			frmsize.index = y;
+                    			frmsize.pixel_format  = fmtdesc.pixelformat;
+                    			if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
+                    			cam_cfg.cam_width = frmsize.discrete.width;
+					cam_cfg.cam_height = frmsize.discrete.height;
+
+                    			float last_fps=0.0f;
+                    			for (int z=0;;z++) {
+                        			struct v4l2_frmivalenum frmival;
+                       				memset(&frmival, 0, sizeof(v4l2_frmivalenum));
+                        			frmival.index = z;
+                        			frmival.pixel_format = fmtdesc.pixelformat;
+                       				frmival.width = frmsize.discrete.width;
+                       				frmival.height = frmsize.discrete.height;
+                       				if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
+
+                        			float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
+                       				if(frm_fps==last_fps) break;
+                        			last_fps=frm_fps;
+
+                        			cam_cfg.cam_fps = frm_fps;
+                    			}  cfg_list.push_back(cam_cfg);
+                		}
+            		}
+        	}
+        	close(fd);
+	}
+
+	return cfg_list;
+}
+
+CameraEngine* V4Linux2Camera::getCamera(CameraConfig *cam_cfg) {
+
+    /*if (cfg->device<0) cfg->device=0;
 
     struct dirent **v4l2_devices;
     int device_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
     if (device_count==0) {
         printf("no V4Linux2 devices found\n");
-        return false;
+        return NULL;
     } else if (device_count==1) printf("1 V4Linux2 device found\n");
     else printf("%d V4Linux2 devices found\n",device_count);
 
@@ -252,26 +307,26 @@ bool V4Linux2Camera::findCamera() {
     int fd = open(v4l2_device, O_RDWR);
     if (fd < 0) {
         printf("no V4Linux2 device found at %s\n", v4l2_device);
-        return false;
+        return NULL;
     }
 
     memset(&v4l2_caps, 0, sizeof(v4l2_capability));
     if (ioctl(fd, VIDIOC_QUERYCAP, &v4l2_caps) < 0) {
         printf("%s does not support video capture\n",v4l2_device);
         close(fd);
-        return false;
+        return NULL;
     }
 
     if ((v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) == 0) {
         printf("%s does not support video capture\n",v4l2_device);
         close(fd);
-        return false;
+        return NULL;
     }
 
     if ((v4l2_caps.capabilities & V4L2_CAP_STREAMING) == 0) {
         printf("%s does not support memory streaming capture\n",v4l2_device);
         close(fd);
-        return false;
+        return NULL;
     }
 
     bool valid_compressed_format = false;
@@ -295,15 +350,15 @@ bool V4Linux2Camera::findCamera() {
     if ((valid_uncompressed_format==false) && (valid_compressed_format==false)) {
         printf("%s does not support any valid pixel format\n",v4l2_device);
         close(fd);
-        return false;
+        return NULL;
     }
 
     if ((cfg->compress==true) && (valid_compressed_format==false)) cfg->compress = false;
     if ((cfg->compress==false) && (valid_uncompressed_format==false)) cfg->compress = true;
 
     sprintf(cfg->name, "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
-    cfg->device = fd;
-    return true;
+    cfg->device = fd;*/
+    return NULL;
 }
 
 bool V4Linux2Camera::startCamera() {

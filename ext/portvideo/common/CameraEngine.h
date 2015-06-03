@@ -54,7 +54,7 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_RGB16    4
 #define FORMAT_GRAY16S  5
 #define FORMAT_RGB16S   6
-#define FORMAT_RAW8		7
+#define FORMAT_RAW8	7
 #define FORMAT_RAW16    8
 #define FORMAT_YUYV    10
 #define FORMAT_UYVY    11

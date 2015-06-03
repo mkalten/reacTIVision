@@ -245,7 +245,7 @@ CameraEngine* DC1394Camera::getCamera(CameraConfig *cam_cfg) {
 		for (int i=0;i<count;i++) {
 			
 			if (cam_cfg->device != cfg_list[i].device) continue;
-			
+			if (cam_cfg->frame_mode<0) cam_cfg->frame_mode=0;
 			if ((cam_cfg->frame) && (cam_cfg->frame_mode != cfg_list[i].frame_mode)) continue;
 			if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
 			if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
@@ -267,7 +267,7 @@ bool DC1394Camera::initCamera() {
 		return false;
 	}
 	
-	if ((list->num == 0) || (cfg->device<0) || (cfg->device>=list->num)) {
+	if ((list->num == 0) || (cfg->device<0) || (cfg->device>=(int)list->num)) {
 		dc1394_free(d);
 		return false;
 	}
@@ -316,7 +316,7 @@ bool DC1394Camera::initCamera() {
 	}
 
 	if (cfg->frame) {
-
+		if (cfg->frame_mode<0)  cfg->frame_mode=0;
 		video_mode = (dc1394video_mode_t)(DC1394_VIDEO_MODE_FORMAT7_0 + cfg->frame_mode);
 		dc1394format7mode_t f7_mode;
 		if ( dc1394_format7_get_mode_info(camera,video_mode, &f7_mode) !=DC1394_SUCCESS) {

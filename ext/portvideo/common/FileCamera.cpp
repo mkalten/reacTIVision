@@ -37,7 +37,7 @@ FileCamera::~FileCamera()
 CameraEngine* FileCamera::getCamera(CameraConfig *cam_cfg) {
 	
 	FILE* imagefile=fopen(cam_cfg->file, "rb");
-	if (imagefile==NULL) return false;
+	if (imagefile==NULL) return NULL;
 	fclose(imagefile);
 	return new FileCamera(cam_cfg);
 }

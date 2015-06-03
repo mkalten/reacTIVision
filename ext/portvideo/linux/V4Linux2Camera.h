@@ -40,9 +40,10 @@ public:
 	V4Linux2Camera(CameraConfig *cam_cfg);
 	~V4Linux2Camera();
 
-	static void listDevices();
+	static int getDeviceCount();
+	static std::vector<CameraConfig> getCameraConfigs();
+	static CameraEngine* getCamera(CameraConfig* cam_cfg);
 
-	bool findCamera();
 	bool initCamera();
 	bool startCamera();
 	unsigned char* getFrame();

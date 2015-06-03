@@ -27,20 +27,51 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 	int width = -1;
 	int height = -1;
 	float fps = -1;
-	
-	const char* fstr[] =  { "unsupported", "mono8",  "mono16",  "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p", "jpeg", "mpeg", "h263", "h264", "dv" };
+	int format = -1;	
+
+#define FORMAT_UNSUPPORTED  -1
+#define FORMAT_UNKNOWN  0
+#define FORMAT_GRAY     1
+#define FORMAT_GRAY16   2
+#define FORMAT_RGB      3
+#define FORMAT_RGB16    4
+#define FORMAT_GRAY16S  5
+#define FORMAT_RGB16S   6
+#define FORMAT_RAW8	7
+#define FORMAT_RAW16    8
+#define FORMAT_YUYV    10
+#define FORMAT_UYVY    11
+#define FORMAT_YUV411  12
+#define FORMAT_YUV444  13
+#define FORMAT_420P    14
+#define FORMAT_410P    15
+#define FORMAT_JPEG    20
+#define FORMAT_MPEG    21
+#define FORMAT_H263    22
+#define FORMAT_H264    23
+#define FORMAT_DV      24
+
+	const char* fstr[] =  { "unknown", "mono8",  "mono16",  "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p", "", "", "", "", "jpeg", "mpeg", "h263", "h264", "dv" };
 	
 	for (int i=0;i<(int)cfg_list.size();i++) {
 		
 		if (cfg_list[i].device != device) {
-			printf("  %d: %s\n",i,cfg_list[i].name);
-			printf("    format: %s",fstr[cfg_list[i].cam_format]);
-			if(cfg_list[i].compress) printf(" (compressed)");
-			printf("\n");
-			device = cfg_list[i].device;
-			if (device>0) printf("\b fps\n");
+			if (device>=0) printf("\b fps\n");
+			device = cfg_list[i].device;	
+			printf("  %d: %s\n",cfg_list[i].device,cfg_list[i].name);
+			format = -1;
 		}
 		
+		if (cfg_list[i].cam_format != format) {
+			if (format>=0) printf("\b fps\n");
+			format = cfg_list[i].cam_format;
+			if(cfg_list[i].frame_mode<0) printf("    format: %s",fstr[cfg_list[i].cam_format]);
+			else printf("    format7_%d: %s",cfg_list[i].frame_mode,fstr[cfg_list[i].cam_format]);
+			if(cfg_list[i].compress) printf(" (compressed)");
+			width = height = fps = -1;
+			printf("\n");
+		}
+
 		if ((cfg_list[i].cam_width != width) || (cfg_list[i].cam_height != height)) {
 			if (width>0) printf("\b fps\n");
 			printf("      %dx%d ",cfg_list[i].cam_width,cfg_list[i].cam_height);
@@ -257,7 +288,7 @@ void CameraTool::initCameraConfig(CameraConfig *cfg) {
     cfg->frame_height = SETTING_MAX;
 	cfg->frame_xoff = 0;
 	cfg->frame_yoff = 0;
-	cfg->frame_mode = 0;
+	cfg->frame_mode = -1;
 	
     cfg->brightness = SETTING_DEFAULT;
     cfg->contrast = SETTING_DEFAULT;
