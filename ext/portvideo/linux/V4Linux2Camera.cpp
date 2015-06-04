@@ -27,6 +27,7 @@ V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
     running = false;
     buffers_initialized = false;
 
+    cam_cfg->driver = DRIVER_DEFAULT;
     memset(&v4l2_auto_ctrl,0,sizeof(v4l2_auto_ctrl));
 }
 
