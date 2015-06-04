@@ -336,25 +336,6 @@ bool AVfoundationCamera::initCamera() {
     [videoDevice unlockForConfiguration];
 	
 	
-	/*AVCaptureDeviceFormat *captureFormat = [videoDevice activeFormat];
-	int32_t current_codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[captureFormat formatDescription]);
-	CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[captureFormat formatDescription]);
-	int current_width = dim.width;
-	int current_height = dim.width;
-	
-	float current_fps = 0;
-	for (AVFrameRateRange *frameRateRange in [captureFormat videoSupportedFrameRateRanges])
-	{
-		if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [videoDevice activeVideoMinFrameDuration])) {
-			current_fps = [frameRateRange maxFrameRate];
-			break;
-		}
-	}
-	
-	std::cout << " " << current_width << " " << current_height << " " << current_fps << " " << current_codec << " " << std::endl;*/
-	
-	
-	
     CMVideoDimensions dimensions =
     CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[[videoDevice activeFormat] formatDescription]);
     
@@ -364,7 +345,7 @@ bool AVfoundationCamera::initCamera() {
     for (AVFrameRateRange *frameRateRange in [[videoDevice activeFormat] videoSupportedFrameRateRanges])
     {
         //selectedFrameRateRange = frameRateRange;
-        cfg->cam_fps =[frameRateRange maxFrameRate];
+        cfg->cam_fps = roundf([frameRateRange maxFrameRate]*100)/100;
         if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [videoDevice activeVideoMinFrameDuration])) break;
     }
     

@@ -23,7 +23,10 @@ void CameraEngine::printInfo() {
 	printf("camera: %s\n",cfg->name);
 	printf("driver: %s\n",dstr[cfg->driver]);
 	printf("codec: %s\n",fstr[cfg->cam_format]);
-	if (cfg->cam_fps>0) printf("format: %dx%d, %dfps\n",cfg->frame_width,cfg->frame_height,(int)cfg->cam_fps);
+	if (cfg->cam_fps>0) {
+		if (cfg->cam_fps==(int)cfg->cam_fps) printf("format: %dx%d, %dfps\n",cfg->frame_width,cfg->frame_height,(int)cfg->cam_fps);
+		else printf("format: %dx%d, %.1ffps\n",cfg->frame_width,cfg->frame_height,cfg->cam_fps);
+	}
 	else printf("format: %dx%d\n",cfg->frame_width,cfg->frame_height);
 }
 

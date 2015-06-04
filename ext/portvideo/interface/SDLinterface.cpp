@@ -46,7 +46,8 @@ void SDLinterface::updateDisplay() {
 		
 		char format[256];
 		CameraConfig *cfg = &dev_list[selector_];
-		sprintf(format,"%s%d: %dx%d@%d (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
+		if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format,"%s%d: %dx%d@%d (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
+		else sprintf(format,"%s%d: %dx%d@%.1f (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
 		FontTool::drawText((width_- FontTool::getTextWidth(format))/2,height_/2,format);
 		SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
 		SDL_RenderCopy(renderer_, display_, NULL, NULL);

@@ -160,6 +160,8 @@ void VisionEngine::pause(bool pause) {
 
 void VisionEngine::reset(CameraConfig *cam_cfg) {
 	
+	pause_ = true;
+
 	teardownCamera();
 	freeBuffers();
 	CameraTool::setCameraConfig(cam_cfg);

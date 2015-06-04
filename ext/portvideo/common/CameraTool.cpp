@@ -554,8 +554,24 @@ void CameraTool::saveSettings() {
 	
 	tinyxml2::XMLHandle docHandle( &xml_settings );
 	tinyxml2::XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
-	tinyxml2::XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
+	tinyxml2::XMLElement* camera_element = camera.FirstChildElement("camera").ToElement();
 	
+	
+	if( camera_element!=NULL )
+	{
+		camera_element->SetAttribute("driver",dstr[cam_cfg.driver]);
+		camera_element->SetAttribute("id",cam_cfg.device);
+	}
+	
+	tinyxml2::XMLElement* image_element = camera.FirstChildElement("capture").ToElement();
+	if (image_element!=NULL) {
+		image_element->SetAttribute("format",fstr[cam_cfg.cam_format]);
+		image_element->SetAttribute("width",cam_cfg.cam_width);
+		image_element->SetAttribute("height",cam_cfg.cam_height);
+		image_element->SetAttribute("fps",cam_cfg.cam_fps);
+	}
+	
+	tinyxml2::XMLElement* settings_element = camera.FirstChildElement("settings").ToElement();
 	if (settings_element!=NULL) {
 		
 		if (cam_cfg.brightness!=SETTING_OFF) saveAttribute(settings_element, "brightness", cam_cfg.brightness);
