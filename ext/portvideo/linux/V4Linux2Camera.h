@@ -34,6 +34,11 @@
 #include <turbojpeg.h>
 #include <dirent.h>
 
+static unsigned int codec_table[] =  { 0, V4L2_PIX_FMT_GREY, 0,  V4L2_PIX_FMT_RGB24, 0, 0, 0, 0, 0, 0, V4L2_PIX_FMT_YUYV,
+V4L2_PIX_FMT_UYVY, 0, V4L2_PIX_FMT_YUV444, V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YUV410, 0, 0, 0, 0,V4L2_PIX_FMT_JPEG,
+V4L2_PIX_FMT_MJPEG, V4L2_PIX_FMT_MPEG1, V4L2_PIX_FMT_MPEG2, V4L2_PIX_FMT_MPEG4, V4L2_PIX_FMT_H263, V4L2_PIX_FMT_H264, 0, 0, 0,  V4L2_PIX_FMT_DV, 0 };
+
+
 class V4Linux2Camera : public CameraEngine
 {
 public:
@@ -41,7 +46,7 @@ public:
 	~V4Linux2Camera();
 
 	static int getDeviceCount();
-	static std::vector<CameraConfig> getCameraConfigs();
+	static std::vector<CameraConfig> getCameraConfigs(int dev_id=-1);
 	static CameraEngine* getCamera(CameraConfig* cam_cfg);
 
 	bool initCamera();
@@ -77,7 +82,7 @@ private:
     v4l2_streamparm v4l2_parm;
 
     v4l2_ext_control v4l2_auto_ctrl[2];
-    int dev_id;
+    int dev_handle;
 
     struct Buffers {
       void *start;
@@ -87,9 +92,7 @@ private:
     static const int nr_of_buffers = 3;
     Buffers buffers[nr_of_buffers];
     bool buffers_initialized;
-    int pixelformat;
-
-    int *comps;
+    unsigned int pixelformat;
 
 	tjhandle _jpegDecompressor;
 };
