@@ -143,6 +143,8 @@ QTKitCamera::QTKitCamera(CameraConfig *cam_cfg):CameraEngine(cam_cfg)
     disconnected = false;
     lost_frames=0;
     timeout = 1000;
+	
+	cam_cfg->driver = DRIVER_DEFAULT;
 }
 
 QTKitCamera::~QTKitCamera()
