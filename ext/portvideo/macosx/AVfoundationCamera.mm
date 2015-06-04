@@ -157,6 +157,8 @@ AVfoundationCamera::AVfoundationCamera(CameraConfig *cam_cfg):CameraEngine(cam_c
     
     videoDevice = NULL;
     grabber = NULL;
+	
+	cam_cfg->driver = DRIVER_DEFAULT;
 }
 
 AVfoundationCamera::~AVfoundationCamera()

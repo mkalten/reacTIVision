@@ -90,43 +90,6 @@ std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
     return cfg_list;
 }
 
-/*void PS3EyeCamera::listDevices() {
-    
-    std::vector<CameraConfig> cfg_list = PS3EyeCamera::findDevices();
-    
-    int device = INT_MIN;
-    int width = INT_MAX;
-    int height = INT_MAX;
-    int fps = INT_MAX;
-    
-    int count = cfg_list.size();
-    if (count > 0)
-    {
-        for (int i=0;i<count;i++) {
-            
-            if (cfg_list[i].device > device) {
-                printf("\t%d: PS3Eye\n",i);
-                printf("\t\tformat: YUV422\n");
-                device = cfg_list[i].device;
-                if (device>0) printf(" fps\n");
-            }
-            
-            if ((cfg_list[i].cam_width < width) && (cfg_list[i].cam_height < height)) {
-                printf("\t\t\t%dx%d ",cfg_list[i].cam_width,cfg_list[i].cam_height);
-                width = cfg_list[i].cam_width;
-                height = cfg_list[i].cam_height;
-                fps = INT_MAX;
-            }
-            
-            if (cfg_list[i].cam_fps < fps) {
-                printf("%d|",(int)cfg_list[i].cam_fps);
-                fps = cfg_list[i].cam_fps;
-            }
-        }
-        
-    }
-}*/
-
 CameraEngine* PS3EyeCamera::getCamera(CameraConfig *cam_cfg) {
 
 	int dev_count = getDeviceCount();

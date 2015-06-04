@@ -30,6 +30,7 @@ class PS3EyeCamera : public CameraEngine
 public:
     PS3EyeCamera(CameraConfig* cam_cfg):CameraEngine(cam_cfg) {
         cam_buffer = NULL;
+		cam_cfg->driver = DRIVER_PS3EYE;
     };
     ~PS3EyeCamera() {
         if (cam_buffer!=NULL) delete []cam_buffer;

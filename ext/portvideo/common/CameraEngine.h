@@ -83,6 +83,8 @@ static const char* fstr[] =  { "unknown", "mono8",  "mono16",  "rgb8", "rgb16", 
 #define DRIVER_FILE    10
 #define DRIVER_FOLDER  11
 
+static const char* dstr[] = { "default","dc1394","ps3eye","raspi","uvccam","","","","","","file","folder"};
+
 #define VALUE_INCREASE   79
 #define VALUE_DECREASE   80
 #define SETTING_NEXT     81
