@@ -154,162 +154,85 @@ QTKitCamera::~QTKitCamera()
     [grabber release];
 }
 
-std::vector<CameraConfig> QTKitCamera::findDevices() {
+int QTKitCamera::getDeviceCount() {
+	
+	NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
+	NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
+	return [dev_list0 count] + [dev_list1 count];
+}
+
+std::vector<CameraConfig> QTKitCamera::getCameraConfigs(int dev_id) {
     
     std::vector<CameraConfig> cfg_list;
-    
+	
+	int dev_count = getDeviceCount();
+	if (dev_count==0) return cfg_list;
+	
+	NSMutableArray *dev_list = [NSMutableArray arrayWithCapacity:dev_count];
+
     NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
+	for (QTCaptureDevice* dev in dev_list0) [dev_list addObject:dev];
     NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
-    int capacity = [dev_list0 count] + [dev_list1 count];
-    if (capacity==0) return cfg_list;
+	for (QTCaptureDevice* dev in dev_list1) [dev_list addObject:dev];
     
-    NSMutableArray *dev_list = [NSMutableArray arrayWithCapacity:capacity];
-    
-    for (QTCaptureDevice* dev in dev_list0) {
-        [dev_list addObject:dev];
-    }
-    
-    for (QTCaptureDevice* dev in dev_list1) {
-        [dev_list addObject:dev];
-    }
-    
-    int count = [dev_list count];
-    if(count==0) {
-        printf("no QTKit camera found\n");
-        return cfg_list;
-    } else if (count==1) printf("1 QTKit camera found:\n");
-    else printf("%d QTKit cameras found:\n",count);
-    
-    unsigned int i = 0;
+    int cam_id = -1;
     for (QTCaptureDevice* dev in dev_list) {
-        
+		cam_id ++;
+		if ((dev_id>=0) && (dev_id!=cam_id)) continue;
+		
         CameraConfig cam_cfg;
         CameraTool::initCameraConfig(&cam_cfg);
         
         sprintf(cam_cfg.name,"%s",[[dev localizedDisplayName] cStringUsingEncoding:1]);
         cam_cfg.driver = DRIVER_DEFAULT;
-        cam_cfg.device = i;
-        
+        cam_cfg.device = cam_id;
+		
         for (QTFormatDescription* fd in [dev formatDescriptions]) {
             
             int32_t codec = [fd formatType];
-			if ((codec=='yuvs') || (codec=='2vuy')) {
-                cam_cfg.cam_format = FORMAT_YUYV;
-				cam_cfg.compress = false;
-			} else if ((codec=='420v') || (codec=='420f')) {
-                cam_cfg.cam_format = FORMAT_420P;
-				cam_cfg.compress = false;
-			} else if ((codec=='jpeg') || (codec=='dmb1')) {
-                cam_cfg.cam_format = FORMAT_JPEG;
-				cam_cfg.compress = true;
-			} else if (codec=='avc1') {
-                cam_cfg.cam_format = FORMAT_H264;
-				cam_cfg.compress = true;
-			} else if (codec=='h263') {
-                cam_cfg.cam_format = FORMAT_H263;
-				cam_cfg.compress = true;
-			} else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v')) {
-                cam_cfg.cam_format = FORMAT_MPEG;
-				cam_cfg.compress = true;
-			} else if ((codec=='dvc ') || (codec=='dvcp')) {
-                cam_cfg.cam_format = FORMAT_DV;
-				cam_cfg.compress = false;
-			} else if (codec==40) {
-                cam_cfg.cam_format = FORMAT_GRAY; // probably incorrect workaround
-				cam_cfg.compress = false;
-			} else {
-                cam_cfg.cam_format = FORMAT_UNKNOWN;
-				cam_cfg.compress = false;
+			if (codec == '420f') codec = '420v';
+			
+			cam_cfg.cam_format = FORMAT_UNKNOWN;
+			for (int i=FORMAT_MAX;i>0;i--) {
+				if (codec == codec_table[i]) {
+					cam_cfg.cam_format = i;
+					break;
+				}
 			}
-            
+			
             NSSize size = [[fd attributeForKey:QTFormatDescriptionVideoEncodedPixelsSizeAttribute] sizeValue];
             cam_cfg.cam_width = (int)size.width;
             cam_cfg.cam_height = (int)size.height;
-            cam_cfg.cam_fps = SETTING_MAX;
+            cam_cfg.cam_fps = 30;
             
             cfg_list.push_back(cam_cfg);
         }
-        i++;
     }
 	
 	[dev_list release];
     return cfg_list;
 }
 
-void QTKitCamera::listDevices() {
-    
-    NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
-    NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
-    int capacity = [dev_list0 count] + [dev_list1 count];
-    if (capacity==0) return;
-    
-    NSMutableArray *dev_list = [NSMutableArray arrayWithCapacity:capacity];
-    
-    for (QTCaptureDevice* dev in dev_list0) {
-        [dev_list addObject:dev];
-    }
-    
-    for (QTCaptureDevice* dev in dev_list1) {
-        [dev_list addObject:dev];
-    }
-    
-    int count = [dev_list count];
-    if(count==0) {
-        printf("no QTKit camera found\n");
-        return;
-    } else if (count==1) printf("1 QTKit camera found:\n");
-    else printf("%d QTKit cameras found:\n",count);
-    
-    unsigned int i = 0;
-    for (QTCaptureDevice* dev in dev_list) {
-        printf("#%d: %s\n",i,[[dev localizedDisplayName] cStringUsingEncoding:1]);
-        i++;
-        
-        for (QTFormatDescription* fd in [dev formatDescriptions]) {
-            //printf("\t%s\n",[[fd localizedFormatSummary] cStringUsingEncoding:NSUTF8StringEncoding ]);
-            
-            int32_t codec = [fd formatType];
-            if ((codec=='yuvs') || (codec=='2vuy')) printf("\t\tformat: YUYV (%s)\n",FourCC2Str(codec));
-            else if ((codec=='420v') || (codec=='420f')) printf("\t\tformat: YUV420 (%s)\n",FourCC2Str(codec));
-            else if ((codec=='jpeg') || (codec=='dmb1')) printf("\t\tformat: JPEG (%s)\n",FourCC2Str(codec));
-            else if (codec=='avc1') printf("\t\tformat: H.264 (%s)\n",FourCC2Str(codec));
-            else if (codec=='h263') printf("\t\tformat: H.263 (%s)\n",FourCC2Str(codec));
-            else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v')) printf("\t\tformat: MPEG (%s)\n",FourCC2Str(codec));
-            else if ((codec=='dvc ') || (codec=='dvcp')) printf("\t\tformat: DVC (%s)\n",FourCC2Str(codec));
-            else if (codec==40)printf("\t\tformat: MONO8\n"); // probably incorrect workaround
-            else printf("\t\tformat: other (%s)\n",FourCC2Str(codec));
-            
-            NSSize size = [[fd attributeForKey:QTFormatDescriptionVideoEncodedPixelsSizeAttribute] sizeValue];
-            printf("\t\t\t%dx%d\n",(int)size.width,(int)size.height);
-        }
-    }
-}
-
-
 CameraEngine* QTKitCamera::getCamera(CameraConfig *cam_cfg) {
 	
-	NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
-	NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
-	int capacity = [dev_list0 count] + [dev_list1 count];
-	if (capacity==0) return NULL;
+	int dev_count = getDeviceCount();
+	if (dev_count==0) return NULL;
 	
 	if ((cam_cfg->device==SETTING_MIN) || (cam_cfg->device==SETTING_DEFAULT)) cam_cfg->device=0;
-	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=capacity-1;
+	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=dev_count-1;
+
+	std::vector<CameraConfig> cfg_list = QTKitCamera::getCameraConfigs(cam_cfg->device);
+	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
+	setMinMaxConfig(cam_cfg,cfg_list);
 	
-	std::vector<CameraConfig> cfg_list = QTKitCamera::findDevices();
-	int count = cfg_list.size();
-	if (count > 0) {
-		for (int i=0;i<count;i++) {
+	for (int i=0;i<cfg_list.size();i++) {
+		
+		if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
+		if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
+		if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
+		if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
 			
-			if (cam_cfg->device != cfg_list[i].device) continue;
-			if (cam_cfg->compress != cfg_list[i].compress) continue;
-			
-			if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
-			if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
-			if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
-			
-			return new QTKitCamera(cam_cfg);
-		}
+		return new QTKitCamera(cam_cfg);
 	}
 	
 	return NULL;
@@ -318,13 +241,13 @@ CameraEngine* QTKitCamera::getCamera(CameraConfig *cam_cfg) {
 bool QTKitCamera::initCamera() {
     
     NSError *error;
-    NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
-    NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
-    int capacity = [dev_list0 count] + [dev_list1 count];
-    if (capacity==0) return false;
-    
-    NSMutableArray *dev_list = [NSMutableArray arrayWithCapacity:capacity];
-    for (QTCaptureDevice* dev in dev_list0) [dev_list addObject:dev];
+	int dev_count = getDeviceCount();
+	if (dev_count==0) return false;
+	
+	NSMutableArray *dev_list = [NSMutableArray arrayWithCapacity:dev_count];
+	NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
+	for (QTCaptureDevice* dev in dev_list0) [dev_list addObject:dev];
+	NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
 	for (QTCaptureDevice* dev in dev_list1) [dev_list addObject:dev];
 	
 	//Get the capture device
@@ -347,9 +270,9 @@ bool QTKitCamera::initCamera() {
     captureDecompressedVideoOutput =
     [[QTCaptureDecompressedVideoOutput alloc] init];
     
-    if (cfg->cam_width==SETTING_MAX) cfg->cam_width = 640;
-    if (cfg->cam_height==SETTING_MAX) cfg->cam_height = 480;
-    if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 30;
+	std::vector<CameraConfig> cfg_list = getCameraConfigs(cfg->device);
+	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
+	setMinMaxConfig(cfg, cfg_list);
     
     int pixelformat = kCVPixelFormatType_422YpCbCr8_yuvs;
     if (cfg->color) pixelformat = kCVPixelFormatType_24RGB;
