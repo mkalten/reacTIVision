@@ -30,11 +30,6 @@ class PS3EyeCamera : public CameraEngine
 public:
     PS3EyeCamera(CameraConfig* cam_cfg):CameraEngine(cam_cfg) {
         cam_buffer = NULL;
-        
-        max_width = 640;
-        max_height = 480;
-        min_width = 320;
-        min_height = 240;
     };
     ~PS3EyeCamera() {
         if (cam_buffer!=NULL) delete []cam_buffer;

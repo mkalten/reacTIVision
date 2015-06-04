@@ -63,10 +63,17 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_420P    14
 #define FORMAT_410P    15
 #define FORMAT_JPEG    20
-#define FORMAT_MPEG    21
-#define FORMAT_H263    22
-#define FORMAT_H264    23
-#define FORMAT_DV      24
+#define FORMAT_MJPEG   21
+#define FORMAT_MPEG    22
+#define FORMAT_MPEG2   23
+#define FORMAT_MPEG4   24
+#define FORMAT_H263    25
+#define FORMAT_H264    26
+#define FORMAT_DVPAL   30
+#define FORMAT_DVNTSC  31
+#define FORMAT_MAX	   31
+
+static const char* fstr[] =  { "unknown", "mono8",  "mono16",  "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p", "", "", "", "", "jpeg", "mjpeg", "mpeg", "mpeg2", "mpeg4", "h263", "h264", "", "", "", "dvpal", "dvntsc" };
 
 #define DRIVER_DEFAULT  0
 #define DRIVER_DC1394   1
@@ -95,7 +102,7 @@ struct CameraConfig {
     char folder[256];
 
     bool color;
-    bool compress;
+    //bool compress;
     bool frame;
 
     int cam_format;
@@ -138,15 +145,7 @@ public:
     CameraEngine(CameraConfig *cam_cfg) {
         cfg = cam_cfg;
         settingsDialog=false;
-        
-        max_width = 640;
-        max_height = 480;
-        max_fps = 30;
-        
-        min_width = 320;
-        min_height = 240;
-        min_fps = 15;
-        
+                
         if (cam_cfg->color) cam_cfg->buf_format=FORMAT_RGB;
         else cam_cfg->buf_format=FORMAT_GRAY;
     }
@@ -160,6 +159,8 @@ public:
     virtual bool resetCamera() = 0;
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
+	
+	static void setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConfig> cfg_list);
 
     virtual int getCameraSettingStep(int mode) = 0;
     virtual int getMinCameraSetting(int mode) = 0;
@@ -227,10 +228,6 @@ protected:
     int updateSetting(int mode);
 
     void setupFrame();
-
-    int max_width, min_width;
-    int max_height, min_height;
-    float max_fps, min_fps;
 
     int default_brightness;
     int default_contrast;

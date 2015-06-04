@@ -157,7 +157,6 @@ AVfoundationCamera::AVfoundationCamera(CameraConfig *cam_cfg):CameraEngine(cam_c
     
     videoDevice = NULL;
     grabber = NULL;
-    //videoDeviceFormat = NULL;
 }
 
 AVfoundationCamera::~AVfoundationCamera()
@@ -175,7 +174,7 @@ int AVfoundationCamera::getDeviceCount() {
 	return [dev_list0 count] + [dev_list1 count];
 }
 
-std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs() {
+std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
     std::vector<CameraConfig> cfg_list;
 
     int dev_count = getDeviceCount();
@@ -187,8 +186,10 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs() {
 	NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
     for (AVCaptureDevice* device in dev_list1)[captureDevices addObject:device];
     
-    int cam_id = 0;
+    int cam_id = -1;
     for (AVCaptureDevice* device in captureDevices) {
+		cam_id ++;
+		if ((dev_id>=0) && (dev_id!=cam_id)) continue;
         
         CameraConfig cam_cfg;
         CameraTool::initCameraConfig(&cam_cfg);
@@ -204,37 +205,19 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs() {
         
         int32_t last_codec=0;
         for (AVCaptureDeviceFormat *format in captureDeviceFormats) {
-            
+						
             int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
+			
+			if (codec == '420f') codec = '420v';
+			
             if (codec!=last_codec) {
-				if ((codec=='yuvs') || (codec=='2vuy')) {
-                    cam_cfg.cam_format = FORMAT_YUYV;
-					cam_cfg.compress = false;
-				} else if ((codec=='420v') || (codec=='420f')) {
-                    cam_cfg.cam_format = FORMAT_420P;
-					cam_cfg.compress = false;
-				} else if ((codec=='jpeg') || (codec=='dmb1')) {
-                    cam_cfg.cam_format = FORMAT_JPEG;
-					cam_cfg.compress = true;
-				} else if (codec=='avc1') {
-                    cam_cfg.cam_format = FORMAT_H264;
-					cam_cfg.compress = true;
-				} else if (codec=='h263') {
-                    cam_cfg.cam_format = FORMAT_H263;
-					cam_cfg.compress = true;
-				} else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v')) {
-                    cam_cfg.cam_format = FORMAT_MPEG;
-					cam_cfg.compress = true;
-				} else if ((codec=='dvc ') || (codec=='dvcp')) {
-                    cam_cfg.cam_format = FORMAT_DV;
-					cam_cfg.compress = false;
-				} else if (codec==40) {
-                    cam_cfg.cam_format = FORMAT_GRAY; // probably incorrect workaround
-					cam_cfg.compress = false;
-				} else {
-                    cam_cfg.cam_format = FORMAT_UNKNOWN;
-					cam_cfg.compress = false;
+				for (int i=FORMAT_MAX;i>0;i--) {
+					if (codec == codec_table[i]) {
+						cam_cfg.cam_format = i;
+						break;
+					}
 				}
+				
             } last_codec=codec;
             
             CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
@@ -247,71 +230,11 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs() {
                 cfg_list.push_back(cam_cfg);
             }
         }
-        cam_id++;
     }
 	
 	[captureDevices release];
     return cfg_list;
 }
-
-/*void AVfoundationCamera::listDevices() {
-    
-    AVCaptureSession *captureSession = [[AVCaptureSession alloc] init];
-    if (captureSession==NULL) return;
-    
-    NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-    
-    int capacity = [dev_list0 count] + [dev_list1 count];
-    if (capacity==0)  {
-        std::cout << "no AVFoundation cameras found" << std::endl;
-        return;
-    } else if (capacity==1) std::cout << "1 AVFoundation camera found" << std::endl;
-    else std::cout << capacity << " AVFoundation cameras found" << std::endl;
-    
-    NSMutableArray *captureDevices = [NSMutableArray arrayWithCapacity:capacity];
-	for (AVCaptureDevice* dev in dev_list0) [captureDevices addObject:dev];
-	for (AVCaptureDevice* dev in dev_list1) [captureDevices addObject:dev];
-
-    unsigned int device_id = 0;
-    for (AVCaptureDevice* device in captureDevices) {
-        if ([device localizedName]!=NULL)
-            printf("\t%d: %s\n",device_id,[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        else printf("\t%d: unknown\n",device_id);
-        
-        NSArray *captureDeviceFormats = [device formats];
-        
-        int32_t last_codec=0;
-        for (AVCaptureDeviceFormat *format in captureDeviceFormats) {
-            
-            int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
-            if (codec!=last_codec) {
-                if ((codec=='yuvs') || (codec=='2vuy')) printf("\t\tformat: YUYV (%s)\n",FourCC2Str(codec));
-                else if ((codec=='420v') || (codec=='420f')) printf("\t\tformat: YUV420 (%s)\n",FourCC2Str(codec));
-                else if ((codec=='jpeg') || (codec=='dmb1')) printf("\t\tformat: JPEG (%s)\n",FourCC2Str(codec));
-                else if (codec=='avc1') printf("\t\tformat: H.264 (%s)\n",FourCC2Str(codec));
-                else if (codec=='h263') printf("\t\tformat: H.263 (%s)\n",FourCC2Str(codec));
-                else if ((codec=='mp4v') || (codec=='mp2v') || (codec=='mp1v')) printf("\t\tformat: MPEG (%s)\n",FourCC2Str(codec));
-                else if ((codec=='dvc ') || (codec=='dvcp')) printf("\t\tformat: DVC (%s)\n",FourCC2Str(codec));
-                else if (codec==40)printf("\t\tformat: MONO8\n"); // probably incorrect workaround
-                else printf("\t\tformat: other (%s)\n",FourCC2Str(codec));
-            } last_codec=codec;
-            
-            CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
-            printf("\t\t\t%dx%d ",dim.width,dim.height);
-            
-            for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
-                float fps = round([frameRateRange maxFrameRate]*100)/100.0f;
-                if(int(fps)==fps) printf("%d|",int(fps));
-                else printf("%'.1f|",fps);
-            } printf("\b fps\n");
-        }
-        device_id++;
-    }
-	
-	[captureDevices release];
-    [captureSession release];
-}*/
 
 CameraEngine* AVfoundationCamera::getCamera(CameraConfig *cam_cfg) {
 		
@@ -321,20 +244,18 @@ CameraEngine* AVfoundationCamera::getCamera(CameraConfig *cam_cfg) {
 	if ((cam_cfg->device==SETTING_MIN) || (cam_cfg->device==SETTING_DEFAULT)) cam_cfg->device=0;
 	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=dev_count-1;
 	
-	std::vector<CameraConfig> cfg_list = AVfoundationCamera::getCameraConfigs();
-	int count = cfg_list.size();
-	if (count > 0) {
-		for (int i=0;i<count;i++) {
-			
-			if (cam_cfg->device != cfg_list[i].device) continue;
-			if (cam_cfg->compress != cfg_list[i].compress) continue;
-			
-			if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
-			if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
-			if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
+	std::vector<CameraConfig> cfg_list = AVfoundationCamera::getCameraConfigs(cam_cfg->device);
+	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
+	setMinMaxConfig(cam_cfg,cfg_list);
+	
+	for (int i=0;i<cfg_list.size();i++) {
+		
+		if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
+		if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
+		if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
+		if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
 
-			return new AVfoundationCamera(cam_cfg);
-		}
+		return new AVfoundationCamera(cam_cfg);
 	}
 	
 	return NULL;
@@ -354,7 +275,7 @@ bool AVfoundationCamera::initCamera() {
     videoDevice = [videoDevices objectAtIndex:cfg->device];
     if (videoDevice==NULL) return false;
     else [videoDevices release];
-    
+	
     if ([videoDevice localizedName]!=NULL)
         sprintf(cfg->name,"%s",[[videoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
     else sprintf(cfg->name,"unknown");
@@ -364,40 +285,15 @@ bool AVfoundationCamera::initCamera() {
     
     NSError *error = nil;
     videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
-    if (videoDeviceInput == nil) {
-        return false;
-    }
-    
-    max_width = max_height = 0;
-    min_width = min_height = INT_MAX;
-    
-    NSArray *videoDeviceFormats = [videoDevice formats];
-    for (AVCaptureDeviceFormat* format in videoDeviceFormats) {
-        
-        CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
-        
-        if ((dim.width>=max_width) && (dim.height>=max_height)) {
-            max_width = dim.width;
-            max_height = dim.height;
-        }
-        
-        if ((dim.width<=min_width) && (dim.height<=min_height)) {
-            min_width = dim.width;
-            min_height = dim.height;
-        }
-    }
-    
-    if (cfg->cam_width==SETTING_MAX) cfg->cam_width = max_width;
-    if (cfg->cam_height==SETTING_MAX) cfg->cam_height = max_height;
-    
-    if (cfg->cam_width>max_width) cfg->cam_width = max_width;
-    if (cfg->cam_height>max_height) cfg->cam_height = max_height;
-    
-    if (cfg->cam_width<min_width) cfg->cam_width = min_width;
-    if (cfg->cam_height<min_height) cfg->cam_height = min_height;
-    
+    if (videoDeviceInput == NULL) return false;
+
+	std::vector<CameraConfig> cfg_list = getCameraConfigs(cfg->device);
+	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
+	setMinMaxConfig(cfg, cfg_list);
+	
     AVCaptureDeviceFormat *lastFormat = NULL;
     AVFrameRateRange *selectedFrameRateRange = NULL;
+	NSArray *videoDeviceFormats = [videoDevice formats];
     for (AVCaptureDeviceFormat *format in videoDeviceFormats) {
         
         lastFormat = format;
@@ -405,56 +301,30 @@ bool AVfoundationCamera::initCamera() {
         
         if ((dim.width!=cfg->cam_width) || (dim.height!=cfg->cam_height)) continue; // wrong size
         
-        bool compressed=false;
+        int cam_format=0;
         int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
-        if ((codec=='dmb1') || (codec=='avc1')) compressed=true;
+		for (int i=FORMAT_MAX;i>0;i--) {
+			if (codec == codec_table[i]) {
+				if (cfg->cam_format==i) {
+					cam_format = i;
+					break;
+				}
+			}
+		}
+		
+        if (!cam_format) continue; // wrong format
         
-        if (compressed!=cfg->compress) continue; // wrong compression
-        
-        if ((cfg->cam_fps==SETTING_MAX) || (cfg->cam_fps==SETTING_MIN)) {
-            max_fps = 0;
-            min_fps = 0;
-            for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
-                float frames = round([frameRateRange maxFrameRate]*100)/100.0f;
-                if (frames>max_fps) max_fps = frames;
-                if (frames<min_fps) min_fps = frames;
-            }
-            if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps;
-            if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps;
-        }
-        
-        bool found = false;
         AVFrameRateRange *lastRange = NULL;
         for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
             float framerate = round([frameRateRange maxFrameRate]*100)/100.0f;
             if (framerate==cfg->cam_fps) { // found exact framerate
                 selectedFrameRateRange = frameRateRange;
-                found = true;
-                //printf("\t\tselected: %dx%d, %dfps\n",dim.width,dim.height,frames);
-                break;
-            } else { // determine closest framerate
-                if (lastRange==NULL) continue;
-                float lastrate = round([lastRange maxFrameRate]*100)/100.0f;
-                
-                if (((cfg->cam_fps<lastrate) && (cfg->cam_fps>framerate)) || ((cfg->cam_fps>lastrate) && (cfg->cam_fps<framerate))) {
-                    float diff_last = fabs(cfg->cam_fps-lastrate);
-                    float diff_current = fabs(cfg->cam_fps-framerate);
-                    
-                    if(diff_last<diff_current) {
-                        selectedFrameRateRange = lastRange;
-                        cfg->cam_fps = lastrate;
-                    } else {
-                        selectedFrameRateRange = frameRateRange;
-                        cfg->cam_fps = framerate;
-                    }
-                }
-                found = true;
                 break;
             }
             lastRange = frameRateRange;
         }
         
-        if (found) break;
+        if (selectedFrameRateRange) break;
     }
     
     if (selectedFrameRateRange==NULL) return false;
@@ -466,7 +336,27 @@ bool AVfoundationCamera::initCamera() {
         [videoDevice setActiveVideoMinFrameDuration:[selectedFrameRateRange minFrameDuration]];
     }
     [videoDevice unlockForConfiguration];
-    
+	
+	
+	/*AVCaptureDeviceFormat *captureFormat = [videoDevice activeFormat];
+	int32_t current_codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[captureFormat formatDescription]);
+	CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[captureFormat formatDescription]);
+	int current_width = dim.width;
+	int current_height = dim.width;
+	
+	float current_fps = 0;
+	for (AVFrameRateRange *frameRateRange in [captureFormat videoSupportedFrameRateRanges])
+	{
+		if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [videoDevice activeVideoMinFrameDuration])) {
+			current_fps = [frameRateRange maxFrameRate];
+			break;
+		}
+	}
+	
+	std::cout << " " << current_width << " " << current_height << " " << current_fps << " " << current_codec << " " << std::endl;*/
+	
+	
+	
     CMVideoDimensions dimensions =
     CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[[videoDevice activeFormat] formatDescription]);
     
@@ -475,9 +365,8 @@ bool AVfoundationCamera::initCamera() {
     
     for (AVFrameRateRange *frameRateRange in [[videoDevice activeFormat] videoSupportedFrameRateRanges])
     {
-        selectedFrameRateRange = frameRateRange;
-        cfg->cam_fps =[selectedFrameRateRange maxFrameRate];
-        
+        //selectedFrameRateRange = frameRateRange;
+        cfg->cam_fps =[frameRateRange maxFrameRate];
         if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [videoDevice activeVideoMinFrameDuration])) break;
     }
     
@@ -495,8 +384,7 @@ bool AVfoundationCamera::initCamera() {
                                         [NSNumber numberWithDouble:cfg->cam_height], (id)kCVPixelBufferHeightKey,
                                         [NSNumber numberWithUnsignedInt: pixelformat ],
 										(id)kCVPixelBufferPixelFormatTypeKey, nil];
-    
-    
+	
     [videoOutput setVideoSettings:pixelBufferOptions];
     
     videoOutput.alwaysDiscardsLateVideoFrames = YES;
@@ -553,7 +441,6 @@ bool AVfoundationCamera::startCamera()
 
 bool AVfoundationCamera::stopCamera()
 {
-    
     [session stopRunning];
     running=false;
     return true;

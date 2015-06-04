@@ -28,30 +28,6 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 	int height = -1;
 	float fps = -1;
 	int format = -1;	
-
-#define FORMAT_UNSUPPORTED  -1
-#define FORMAT_UNKNOWN  0
-#define FORMAT_GRAY     1
-#define FORMAT_GRAY16   2
-#define FORMAT_RGB      3
-#define FORMAT_RGB16    4
-#define FORMAT_GRAY16S  5
-#define FORMAT_RGB16S   6
-#define FORMAT_RAW8	7
-#define FORMAT_RAW16    8
-#define FORMAT_YUYV    10
-#define FORMAT_UYVY    11
-#define FORMAT_YUV411  12
-#define FORMAT_YUV444  13
-#define FORMAT_420P    14
-#define FORMAT_410P    15
-#define FORMAT_JPEG    20
-#define FORMAT_MPEG    21
-#define FORMAT_H263    22
-#define FORMAT_H264    23
-#define FORMAT_DV      24
-
-	const char* fstr[] =  { "unknown", "mono8",  "mono16",  "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p", "", "", "", "", "jpeg", "mpeg", "h263", "h264", "dv" };
 	
 	for (int i=0;i<(int)cfg_list.size();i++) {
 		
@@ -67,7 +43,7 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 			format = cfg_list[i].cam_format;
 			if(cfg_list[i].frame_mode<0) printf("    format: %s",fstr[cfg_list[i].cam_format]);
 			else printf("    format7_%d: %s",cfg_list[i].frame_mode,fstr[cfg_list[i].cam_format]);
-			if(cfg_list[i].compress) printf(" (compressed)");
+			//if(cfg_list[i].compress) printf(" (default)");
 			width = height = fps = -1;
 			printf("\n");
 		}
@@ -272,18 +248,15 @@ void CameraTool::initCameraConfig(CameraConfig *cfg) {
     
     cfg->driver = DRIVER_DEFAULT;
     cfg->device = 0;
-    cfg->cam_format = FORMAT_YUYV;
+    cfg->cam_format = FORMAT_UNKNOWN;
     cfg->src_format = FORMAT_YUYV;
     cfg->buf_format = FORMAT_GRAY;
-    
-    cfg->compress = false;
-    //cfg->color = false;
-    cfg->frame = false;
-    
+        
     cfg->cam_width = SETTING_MAX;
     cfg->cam_height = SETTING_MAX;
     cfg->cam_fps = SETTING_MAX;
 	
+	cfg->frame = false;
     cfg->frame_width = SETTING_MAX;
     cfg->frame_height = SETTING_MAX;
 	cfg->frame_xoff = 0;
@@ -391,8 +364,12 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
     if (image_element!=NULL) {
         if ((image_element->Attribute("color")!=NULL) && ( strcmp( image_element->Attribute("color"), "true" ) == 0 )) cam_cfg.color = true;
         
-        if ((image_element->Attribute("compress")!=NULL) && ( strcmp( image_element->Attribute("compress"), "true" ) == 0)) cam_cfg.compress = true;
-        
+		if (image_element->Attribute("format")!=NULL) {
+			for (int i=FORMAT_MAX;i>0;i--) {
+				if (strcmp( image_element->Attribute("format"), fstr[i] ) == 0) cam_cfg.cam_format = i;
+			}
+		}
+		
         if(image_element->Attribute("width")!=NULL) {
             if (strcmp( image_element->Attribute("width"), "max" ) == 0) cam_cfg.cam_width = SETTING_MAX;
 			else if (strcmp( image_element->Attribute("width"), "min" ) == 0) cam_cfg.cam_width = SETTING_MIN;

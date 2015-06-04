@@ -44,7 +44,6 @@ std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
             cam_cfg.driver = DRIVER_PS3EYE;
             cam_cfg.device = i;
             cam_cfg.cam_format = FORMAT_YUYV;
-            cam_cfg.compress = false;
             
             cam_cfg.cam_width =  320;
             cam_cfg.cam_height = 240;
@@ -170,8 +169,8 @@ bool PS3EyeCamera::initCamera() {
         cfg->cam_width =  320;
         cfg->cam_height = 240;
         
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps = 187;
-        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps = 30;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 187;
+        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 30;
         else if (cfg->cam_fps<30) cfg->cam_fps = 30;
         else if (cfg->cam_fps>187) cfg->cam_fps = 187;
         
@@ -180,8 +179,8 @@ bool PS3EyeCamera::initCamera() {
         cfg->cam_width =  640;
         cfg->cam_height = 480;
         
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = max_fps = 60;
-        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = min_fps = 15;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps  = 60;
+        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps  = 15;
         else if (cfg->cam_fps<15) cfg->cam_fps = 15;
         else if (cfg->cam_fps>60) cfg->cam_fps = 60;
         

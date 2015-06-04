@@ -85,7 +85,6 @@ std::vector<CameraConfig> DC1394Camera::getCameraConfigs() {
 		cam_cfg.driver = DRIVER_DC1394;
 		cam_cfg.device = i;
 		sprintf(cam_cfg.name,"%s",camera->model);
-		cam_cfg.compress = false;
 		
 		dc1394video_modes_t video_modes;
 		

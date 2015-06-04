@@ -25,6 +25,9 @@
 
 #include "cameraEngine.h"
 
+static int32_t codec_table[] = { 0, 40,  0,  24, 0, 0, 0, 0, 0, 0, 'yuvs', '2vuy', 0, 'v308', '420v', '410v', 0, 0, 0, 0, 'dmb1', 'dmb1', 'mp1v', 'mp2v', 'mp4v', 'h263', 'avc1', 'dvcp', 'dvc ' };
+
+
 @interface FrameGrabber : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>
 {
     bool new_frame;
@@ -52,7 +55,7 @@ public:
     ~AVfoundationCamera();
 	
 	static int getDeviceCount();
-	static std::vector<CameraConfig> getCameraConfigs();
+	static std::vector<CameraConfig> getCameraConfigs(int dev_id = -1);
 	static CameraEngine* getCamera(CameraConfig* cam_cfg);
 	
 	bool initCamera();
