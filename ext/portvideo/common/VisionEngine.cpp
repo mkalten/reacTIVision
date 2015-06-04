@@ -149,6 +149,33 @@ void VisionEngine::start() {
     freeBuffers();
 }
 
+void VisionEngine::stop() {
+	std::cout << "terminating " << app_name_ << " ... " << std::endl;
+	running_ = false;
+}
+
+void VisionEngine::pause(bool pause) {
+	pause_ = pause;
+}
+
+void VisionEngine::reset(CameraConfig *cam_cfg) {
+	
+	teardownCamera();
+	freeBuffers();
+	CameraTool::setCameraConfig(cam_cfg);
+	setupCamera();
+	
+	if( camera_->startCamera() ) {
+		interface_->closeDisplay();
+		interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,camera_->getColor());
+		displayBuffer_ = interface_->openDisplay(this);
+		for (frame = processorList.begin(); frame!=processorList.end();frame++)
+			(*frame)->init(width_ , height_, bytesPerSourcePixel_, bytesPerDestPixel_);
+	} else interface_->displayError("Could not start camera!");
+	
+	pause_ = false;
+}
+
 void VisionEngine::startThread() {
     
     running_=true;
@@ -170,10 +197,6 @@ void VisionEngine::stopThread() {
     if( cameraThread ) pthread_join(cameraThread,NULL);
 #endif
     
-}
-
-void VisionEngine::pause(bool pause) {
-    pause_ = pause;
 }
 
 void VisionEngine::mainLoop()
@@ -228,11 +251,6 @@ void VisionEngine::mainLoop()
         //long total_time = currentMicroSeconds()-start_time;
         //frameStatistics(camera_time,processing_time,total_time);
     }
-}
-
-void VisionEngine::stop() {
-    std::cout << "terminating " << app_name_ << " ... " << std::endl;
-    running_ = false;
 }
 
 void VisionEngine::frameStatistics(long cameraTime, long processingTime, long totalTime) {
@@ -341,9 +359,9 @@ void VisionEngine::initFrameProcessors() {
     interface_->setHelpText(help_text);
 }
 
-void VisionEngine::setupCamera(CameraConfig *config) {
+void VisionEngine::setupCamera() {
     
-    camera_ = CameraTool::getCamera(config);
+    camera_ = CameraTool::getCamera(camera_config_);
     if (camera_ == NULL) {
         allocateBuffers();
         return;
@@ -403,7 +421,7 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
 {
     app_config_ = config;
     camera_config_ = CameraTool::readSettings(app_config_->camera_config);
-    setupCamera(camera_config_);
+    setupCamera();
     displayBuffer_ = NULL;
     
     lastTime_ = currentSeconds();

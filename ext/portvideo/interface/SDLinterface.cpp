@@ -27,18 +27,35 @@ unsigned char* SDLinterface::openDisplay(VisionEngine *engine) {
         SDL_RenderClear(renderer_);
 	SDL_RenderPresent(renderer_);
     } else displayMessage("starting camera");
+	select_ = false;
     return (unsigned char*)displayImage_->pixels;
 }
 
 void SDLinterface::closeDisplay()
 {
     error_ = false;
-    engine_->stop();
     freeBuffers();
 }
 
-void SDLinterface::updateDisplay()
-{
+void SDLinterface::updateDisplay() {
+
+	
+	if (select_) {
+		SDL_RenderClear(renderer_);
+		SDL_FillRect(displayImage_, NULL, 0 );
+		
+		char format[256];
+		CameraConfig *cfg = &dev_list[selector_];
+		sprintf(format,"%s (%s): %dx%d@%d",dstr[cfg->driver],fstr[cfg->cam_format],cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps);
+		FontTool::drawText((width_- FontTool::getTextWidth(format))/2,height_/2,format);
+		SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
+		SDL_RenderCopy(renderer_, display_, NULL, NULL);
+		SDL_RenderPresent(renderer_);
+		
+		SDL_Delay(10);
+		return;
+	}
+
     // update display
     switch( displayMode_ ) {
         case NO_DISPLAY:
@@ -101,7 +118,7 @@ bool SDLinterface::setupWindow() {
     }
     
     char *renderdriver = checkRenderDriver();
-    printf("render: %s\n",renderdriver);
+    printf("render: %s\n\n",renderdriver);
     
     SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, renderdriver);
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderdriver);
@@ -126,6 +143,24 @@ bool SDLinterface::setupWindow() {
     processEvents();
     
     return true;
+}
+
+void SDLinterface::selectCamera() {
+	
+	if (select_) {
+		engine_->pause(false);
+		select_ = false;
+		return;
+	}
+	
+	dev_list = CameraTool::findDevices();
+	selector_ = 0;
+	
+	std::string caption = app_name_ + " - select camera";
+	SDL_SetWindowTitle( window_, caption.c_str());
+	
+	engine_->pause(true);
+	select_ = true;
 }
 
 void SDLinterface::processEvents()
@@ -172,9 +207,24 @@ void SDLinterface::processEvents()
                         SDL_RenderClear(renderer_);
                         SDL_RenderPresent(renderer_);
                     }
-                } else if( event.key.keysym.sym == SDLK_h ){
+				} else if( event.key.keysym.sym == SDLK_u ){
+					selectCamera();
+				} else if( event.key.keysym.sym == SDLK_RETURN ){
+					if (select_) engine_->reset(&dev_list[selector_]);
+				} else if( event.key.keysym.sym == SDLK_UP ){
+					if (select_) {
+						selector_--;
+						if (selector_<0) selector_=dev_list.size()-1;
+					}
+				} else if( event.key.keysym.sym == SDLK_DOWN ){
+					if (select_) {
+						selector_++;
+						if (selector_==dev_list.size()) selector_=0;
+					}
+				} else if( event.key.keysym.sym == SDLK_h ){
                     help_=!help_;
                 } else if( event.key.keysym.sym == SDLK_ESCAPE ){
+					engine_->stop();
                     closeDisplay();
                     return;
                 }
@@ -194,14 +244,16 @@ void SDLinterface::processEvents()
                     }
                 } else help_ = false;
 #endif
-                engine_->event(event.key.keysym.scancode);
+                if (!select_) engine_->event(event.key.keysym.scancode);
                 break;
             case SDL_QUIT:
+				engine_->stop();
                 closeDisplay();
                 return;
         }
     }
-    
+	
+	if (select_) updateDisplay();
 }
 
 void SDLinterface::setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color)
@@ -431,7 +483,6 @@ void SDLinterface::setHelpText(std::vector<std::string> hlp) {
     }
     
     //print the help message
-    std::cout << std::endl;
     for(std::vector<std::string>::iterator help_line = help_text.begin(); help_line!=help_text.end(); help_line++) {
         std::cout << *help_line << std::endl;
     } std::cout << std::endl;
@@ -441,8 +492,9 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 : error_( false )
 , pause_( false )
 , help_( false )
+, select_( false )
 #ifndef NDEBUG
-, recording_(false)
+, recording_(false )
 #endif
 , vsync_( true )
 , frames_( 0 )
@@ -473,6 +525,7 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
     help_text.push_back("   v - verbose output");
     help_text.push_back("   o - camera options");
     help_text.push_back("   p - pause processing");
+	help_text.push_back("   u - update camera");
 #ifndef NDEBUG
     help_text.push_back("");
     help_text.push_back("debug options:");

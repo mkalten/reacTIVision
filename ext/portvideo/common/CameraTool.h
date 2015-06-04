@@ -64,9 +64,10 @@ public:
 	static void printConfig(std::vector<CameraConfig>);
 
     static CameraConfig* readSettings(const char* cfgfile);
-    static void saveSettings(CameraConfig* cfg);
+    static void saveSettings();
     
     static void initCameraConfig(CameraConfig *cfg);
+	static void setCameraConfig(CameraConfig *cfg);
     
 private:
     

@@ -72,7 +72,7 @@ bool CameraEngine::showSettingsDialog(bool lock) {
     if (settingsDialog) {
         settingsDialog = false;
         updateSettings();
-        CameraTool::saveSettings(cfg);
+        CameraTool::saveSettings();
         return false;
     } else if (!lock) {
         currentCameraSetting = -1;
@@ -611,6 +611,7 @@ void CameraEngine::applyCameraSettings() {
 
 int CameraEngine::updateSetting(int mode) {
 
+	if (!hasCameraSetting(mode)) return SETTING_OFF;
     if (getCameraSettingAuto(mode)) return SETTING_AUTO;
 
     int value = getCameraSetting(mode);
@@ -635,9 +636,10 @@ void CameraEngine::updateSettings() {
     cfg->powerline = updateSetting(POWERLINE);
     cfg->gamma = updateSetting(GAMMA);
 
-    cfg->hue = updateSetting(COLOR_HUE);
-    cfg->red = updateSetting(COLOR_RED);
-    cfg->green = updateSetting(COLOR_GREEN);
-    cfg->blue = updateSetting(COLOR_BLUE);
-
+	if (cfg->color) {
+		cfg->hue = updateSetting(COLOR_HUE);
+		cfg->red = updateSetting(COLOR_RED);
+		cfg->green = updateSetting(COLOR_GREEN);
+		cfg->blue = updateSetting(COLOR_BLUE);
+	}
 }

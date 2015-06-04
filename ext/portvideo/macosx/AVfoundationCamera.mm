@@ -457,7 +457,7 @@ bool AVfoundationCamera::closeCamera()
 {
     if ((uvcController) && (!disconnected)) {
         updateSettings();
-        CameraTool::saveSettings(cfg);
+        CameraTool::saveSettings();
     }
     [session release];
     return true;

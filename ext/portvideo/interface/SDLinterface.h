@@ -44,6 +44,7 @@
 #endif
 #include <time.h>
 
+#include "CameraTool.h"
 #include "UserInterface.h"
 #include "FontTool.h"
 #include "Resources.h"
@@ -83,6 +84,8 @@ protected:
 	void toggleFullScreen();
 	void drawHelp();
     void showFrameRate();
+	
+	void selectCamera();
 
 private:
     
@@ -99,6 +102,7 @@ private:
     bool error_;
     bool pause_;
     bool help_;
+	bool select_;
 #ifndef NDEBUG
     bool recording_;
 #endif
@@ -117,6 +121,9 @@ private:
 
 	std::string app_name_;
 	std::vector<std::string> help_text;
+	
+	std::vector<CameraConfig> dev_list;
+	int selector_;
 };
 
 #endif
