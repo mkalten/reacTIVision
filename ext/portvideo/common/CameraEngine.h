@@ -160,6 +160,7 @@ public:
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
 	
+	void printInfo();
 	static void setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConfig> cfg_list);
 
     virtual int getCameraSettingStep(int mode) = 0;

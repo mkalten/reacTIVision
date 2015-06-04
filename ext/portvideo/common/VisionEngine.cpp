@@ -354,9 +354,7 @@ void VisionEngine::setupCamera(CameraConfig *config) {
         height_ = camera_->getHeight();
         fps_ = camera_->getFps();
         
-        printf("camera: %s\n",camera_->getName());
-        if (fps_>0) printf("format: %dx%d, %dfps\n",width_,height_,fps_);
-        else printf("format: %dx%d\n",width_,height_);
+		camera_->printInfo();
     } else {
         printf("could not initialize camera\n");
         camera_->closeCamera();

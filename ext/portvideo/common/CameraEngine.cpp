@@ -19,6 +19,13 @@
 #include "CameraEngine.h"
 #include "CameraTool.h"
 
+void CameraEngine::printInfo() {
+	printf("camera: %s\n",cfg->name);
+	printf("codec: %s\n",fstr[cfg->cam_format]);
+	if (cfg->cam_fps>0) printf("format: %dx%d, %dfps\n",cfg->frame_width,cfg->frame_height,(int)cfg->cam_fps);
+	else printf("format: %dx%d\n",cfg->frame_width,cfg->frame_height);
+}
+
 void CameraEngine::setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConfig> cfg_list) {
 	if ((cam_cfg->cam_width>0) && (cam_cfg->cam_height>0) && (cam_cfg->cam_fps>0)) return;
 	
@@ -27,16 +34,16 @@ void CameraEngine::setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConf
 	int min_width = INT_MAX;
 	int min_height = INT_MAX;
 	float max_fps = 0;
-	float min_fps = INT_MAX;
+	float min_fps = 1024;
 	
 	for (int i=0;i<cfg_list.size();i++) {
 		if (cfg_list[i].cam_format!=cam_cfg->cam_format) continue; // wrong format
 		
 		if (cfg_list[i].cam_width>max_width) max_width = cfg_list[i].cam_width;
-		else if (cfg_list[i].cam_width<min_width) min_width = cfg_list[i].cam_width;
+		if (cfg_list[i].cam_width<min_width) min_width = cfg_list[i].cam_width;
 		
 		if (cfg_list[i].cam_height>max_height) max_height = cfg_list[i].cam_height;
-		else if (cfg_list[i].cam_width<min_height) min_height = cfg_list[i].cam_height;
+		if (cfg_list[i].cam_width<min_height) min_height = cfg_list[i].cam_height;
 	}
 	
 	if ((cam_cfg->cam_width==SETTING_MAX) || (cam_cfg->cam_width>max_width)) cam_cfg->cam_width = max_width;
@@ -51,7 +58,7 @@ void CameraEngine::setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConf
 		if ((cfg_list[i].cam_width!=cam_cfg->cam_width) || (cfg_list[i].cam_height!=cam_cfg->cam_height)) continue; // wrong size
 		
 		if (cfg_list[i].cam_fps>max_fps) max_fps = cfg_list[i].cam_fps;
-		else if (cfg_list[i].cam_fps<min_fps) min_fps = cfg_list[i].cam_fps;
+		if (cfg_list[i].cam_fps<min_fps) min_fps = cfg_list[i].cam_fps;
 	}
 	
 	if ((cam_cfg->cam_fps==SETTING_MAX) || (cam_cfg->cam_fps>max_fps)) cam_cfg->cam_fps = max_fps;
