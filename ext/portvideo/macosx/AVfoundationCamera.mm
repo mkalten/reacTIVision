@@ -202,24 +202,20 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
         else sprintf(cam_cfg.name,"unknown device");
         
         NSArray *captureDeviceFormats = [device formats];
-        
-        int32_t last_codec=0;
         for (AVCaptureDeviceFormat *format in captureDeviceFormats) {
 						
             int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
 			
 			if (codec == '420f') codec = '420v';
 			
-            if (codec!=last_codec) {
-				for (int i=FORMAT_MAX;i>0;i--) {
-					if (codec == codec_table[i]) {
-						cam_cfg.cam_format = i;
-						break;
-					}
+			cam_cfg.cam_format = FORMAT_UNKNOWN;
+			for (int i=FORMAT_MAX;i>0;i--) {
+				if (codec == codec_table[i]) {
+					cam_cfg.cam_format = i;
+					break;
 				}
-				
-            } last_codec=codec;
-            
+			}
+			
             CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
             
             cam_cfg.cam_width = dim.width;
