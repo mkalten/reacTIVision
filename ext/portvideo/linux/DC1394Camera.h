@@ -30,7 +30,7 @@ public:
 	~DC1394Camera();
 	
 	static int getDeviceCount();
-	static std::vector<CameraConfig> getCameraConfigs();
+	static std::vector<CameraConfig> getCameraConfigs(int dev_id=-1);
 	static CameraEngine* getCamera(CameraConfig* cam_cfg);
 	
 	bool initCamera();

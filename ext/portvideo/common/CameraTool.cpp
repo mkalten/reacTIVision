@@ -27,7 +27,8 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 	int width = -1;
 	int height = -1;
 	float fps = -1;
-	int format = -1;	
+	int format = -1;
+	int frame_mode = -1;
 	
 	for (int i=0;i<(int)cfg_list.size();i++) {
 		
@@ -38,7 +39,7 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 			format = -1;
 		}
 		
-		if (cfg_list[i].cam_format != format) {
+		if ((cfg_list[i].cam_format != format) || (cfg_list[i].frame_mode != frame_mode)) {
 			if (format>=0) printf("\b fps\n");
 			format = cfg_list[i].cam_format;
 			if(cfg_list[i].frame_mode<0) printf("    format: %s",fstr[cfg_list[i].cam_format]);
@@ -56,7 +57,8 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 			fps = INT_MAX;
 		}
 		
-		if (cfg_list[i].cam_fps != fps) {
+		if (cfg_list[i].frame_mode>=0) printf("max|");
+		else if (cfg_list[i].cam_fps != fps) {
 			if(int(cfg_list[i].cam_fps)==cfg_list[i].cam_fps)
 				printf("%d|",int(cfg_list[i].cam_fps));
 			else printf("%'.1f|",cfg_list[i].cam_fps);
