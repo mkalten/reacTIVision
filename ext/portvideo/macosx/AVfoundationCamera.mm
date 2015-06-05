@@ -224,7 +224,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
             cam_cfg.cam_height = dim.height;
             
             for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
-                cam_cfg.cam_fps = round([frameRateRange maxFrameRate]*100)/100.0f;
+                cam_cfg.cam_fps = roundf([frameRateRange maxFrameRate]*100)/100;
                 cfg_list.push_back(cam_cfg);
             }
         }

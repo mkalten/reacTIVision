@@ -322,6 +322,27 @@ void CameraTool::initCameraConfig(CameraConfig *cfg) {
 
 void CameraTool::setCameraConfig(CameraConfig *cfg) {
 	
+	if ((cam_cfg.driver != cfg->driver) || (cam_cfg.device != cfg->device)) {
+		
+		cam_cfg.brightness = SETTING_DEFAULT;
+		cam_cfg.contrast = SETTING_DEFAULT;
+		cam_cfg.sharpness = SETTING_DEFAULT;
+		cam_cfg.gain = SETTING_AUTO;
+		
+		cam_cfg.exposure = SETTING_AUTO;
+		cam_cfg.shutter = SETTING_AUTO;
+		cam_cfg.focus = SETTING_AUTO;
+		cam_cfg.white = SETTING_AUTO;
+		cam_cfg.gamma = SETTING_AUTO;
+		cam_cfg.powerline = SETTING_DEFAULT;
+		cam_cfg.backlight = SETTING_AUTO;
+		
+		cam_cfg.hue = SETTING_AUTO;
+		cam_cfg.blue = SETTING_DEFAULT;
+		cam_cfg.red = SETTING_DEFAULT;
+		cam_cfg.green = SETTING_DEFAULT;
+	}
+
 	cam_cfg.driver = cfg->driver;
 	cam_cfg.device = cfg->device;
 	cam_cfg.cam_format = cfg->cam_format;
@@ -330,33 +351,15 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 	cam_cfg.cam_height = cfg->cam_height;
 	cam_cfg.cam_fps = cfg->cam_fps;
 	
-	cfg->frame = false;
-	cfg->frame_width = SETTING_MAX;
-	cfg->frame_height = SETTING_MAX;
-	cfg->frame_xoff = 0;
-	cfg->frame_yoff = 0;
-	cfg->frame_mode = -1;
+	cam_cfg.frame = false;
+	cam_cfg.frame_width = SETTING_MAX;
+	cam_cfg.frame_height = SETTING_MAX;
+	cam_cfg.frame_xoff = 0;
+	cam_cfg.frame_yoff = 0;
+	cam_cfg.frame_mode = -1;
 	
-	cfg->brightness = SETTING_DEFAULT;
-	cfg->contrast = SETTING_DEFAULT;
-	cfg->sharpness = SETTING_DEFAULT;
-	cfg->gain = SETTING_AUTO;
-	
-	cfg->exposure = SETTING_AUTO;
-	cfg->shutter = SETTING_AUTO;
-	cfg->focus = SETTING_AUTO;
-	cfg->white = SETTING_AUTO;
-	cfg->gamma = SETTING_AUTO;
-	cfg->powerline = SETTING_DEFAULT;
-	cfg->backlight = SETTING_AUTO;
-	
-	cfg->hue = SETTING_AUTO;
-	cfg->blue = SETTING_DEFAULT;
-	cfg->red = SETTING_DEFAULT;
-	cfg->green = SETTING_DEFAULT;
-	
-	sprintf(cfg->file,"none");
-	sprintf(cfg->folder,"none");
+	sprintf(cam_cfg.file,"none");
+	sprintf(cam_cfg.folder,"none");
 }
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
