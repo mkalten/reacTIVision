@@ -370,7 +370,7 @@ bool QTKitCamera::closeCamera()
     
     if (!disconnected) {
         updateSettings();
-        CameraTool::saveSettings(cfg);
+        CameraTool::saveSettings();
     }
     
     [[captureDeviceInput device] close];

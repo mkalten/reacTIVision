@@ -35,6 +35,7 @@ DC1394Camera::DC1394Camera(CameraConfig* cam_cfg):CameraEngine(cam_cfg)
 
 DC1394Camera::~DC1394Camera()
 {
+        CameraTool::saveSettings();
 	if (cam_buffer!=NULL) delete []cam_buffer;
 }
 

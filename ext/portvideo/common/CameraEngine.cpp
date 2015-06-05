@@ -644,5 +644,10 @@ void CameraEngine::updateSettings() {
 		cfg->red = updateSetting(COLOR_RED);
 		cfg->green = updateSetting(COLOR_GREEN);
 		cfg->blue = updateSetting(COLOR_BLUE);
+	} else {
+		cfg->hue = SETTING_OFF;
+		cfg->red = SETTING_OFF;
+		cfg->green = SETTING_OFF;
+		cfg->blue = SETTING_OFF;
 	}
 }

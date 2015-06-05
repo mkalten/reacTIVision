@@ -33,6 +33,7 @@ V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
 
 V4Linux2Camera::~V4Linux2Camera(void)
 {
+    CameraTool::saveSettings();
     if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) tjDestroy(_jpegDecompressor);
     if (cam_buffer) delete []cam_buffer;
     if (frm_buffer) delete []frm_buffer;

@@ -557,7 +557,7 @@ void CameraTool::saveSettings() {
 	
 	tinyxml2::XMLHandle docHandle( &xml_settings );
 	tinyxml2::XMLHandle camera = docHandle.FirstChildElement("portvideo").FirstChildElement("camera");
-	tinyxml2::XMLElement* camera_element = camera.FirstChildElement("camera").ToElement();
+	tinyxml2::XMLElement* camera_element = camera.ToElement();
 	
 	
 	if( camera_element!=NULL )

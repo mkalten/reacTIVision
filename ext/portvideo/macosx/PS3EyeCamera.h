@@ -33,6 +33,7 @@ public:
 		cam_cfg->driver = DRIVER_PS3EYE;
     };
     ~PS3EyeCamera() {
+	CameraTool::saveSettings();
         if (cam_buffer!=NULL) delete []cam_buffer;
     };
     
