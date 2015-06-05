@@ -439,6 +439,7 @@ bool V4Linux2Camera::resetCamera()
 bool V4Linux2Camera::closeCamera() {
 
     if (dev_handle >= 0) {
+	updateSettings();
         if (buffers_initialized) unmapBuffers();
         close(dev_handle);
 

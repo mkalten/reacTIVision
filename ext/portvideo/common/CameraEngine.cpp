@@ -614,7 +614,7 @@ void CameraEngine::applyCameraSettings() {
 
 int CameraEngine::updateSetting(int mode) {
 
-	if (!hasCameraSetting(mode)) return SETTING_OFF;
+    if (!hasCameraSetting(mode)) return SETTING_OFF;
     if (getCameraSettingAuto(mode)) return SETTING_AUTO;
 
     int value = getCameraSetting(mode);

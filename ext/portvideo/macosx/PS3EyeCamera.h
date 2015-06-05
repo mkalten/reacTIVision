@@ -33,14 +33,15 @@ public:
 		cam_cfg->driver = DRIVER_PS3EYE;
     };
     ~PS3EyeCamera() {
+	updateSettings();
 	CameraTool::saveSettings();
         if (cam_buffer!=NULL) delete []cam_buffer;
     };
-    
+
 	static int getDeviceCount();
 	static std::vector<CameraConfig> getCameraConfigs();
 	static CameraEngine* getCamera(CameraConfig* cam_cfg);
-	
+
     bool initCamera();
     bool startCamera();
     unsigned char* getFrame();

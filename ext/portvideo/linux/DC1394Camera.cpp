@@ -460,13 +460,14 @@ bool DC1394Camera::resetCamera()
 
 bool DC1394Camera::closeCamera()
 {
+	updateSettings();
 	if (camera!=NULL) dc1394_camera_free(camera);
 	if (d!=NULL) dc1394_free(d);
 	return true;
 }
 
 bool DC1394Camera::hasCameraSetting(int mode) {
-	
+
 	dc1394feature_info_t info;
 	info.id = (dc1394feature_t)-1;
 	switch (mode) {

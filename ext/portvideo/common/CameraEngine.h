@@ -40,11 +40,11 @@
 if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define HBT(x) (unsigned char)((x)>>8)
 
-#define SETTING_DEFAULT -1
-#define SETTING_AUTO    -2
-#define SETTING_MIN     -3
-#define SETTING_MAX     -4
-#define SETTING_OFF     -5
+#define SETTING_DEFAULT -100000
+#define SETTING_AUTO    -200000
+#define SETTING_MIN     -300000
+#define SETTING_MAX     -400000
+#define SETTING_OFF     -500000
 
 #define FORMAT_UNSUPPORTED  -1
 #define FORMAT_UNKNOWN  0
