@@ -21,6 +21,18 @@
 #include "CameraTool.h"
 #include "ps3eye.h"
 
+
+PS3EyeCamera::PS3EyeCamera(CameraConfig* cam_cfg):CameraEngine(cam_cfg) {
+	cam_buffer = NULL;
+	cam_cfg->driver = DRIVER_PS3EYE;
+}
+
+PS3EyeCamera::~PS3EyeCamera() {
+	updateSettings();
+	CameraTool::saveSettings();
+	if (cam_buffer!=NULL) delete []cam_buffer;
+}
+
 int PS3EyeCamera::getDeviceCount() {
 	std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
 	return (int)devices.size();

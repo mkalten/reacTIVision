@@ -28,16 +28,9 @@ using namespace ps3eye;
 class PS3EyeCamera : public CameraEngine
 {
 public:
-    PS3EyeCamera(CameraConfig* cam_cfg):CameraEngine(cam_cfg) {
-        cam_buffer = NULL;
-		cam_cfg->driver = DRIVER_PS3EYE;
-    };
-    ~PS3EyeCamera() {
-	updateSettings();
-	CameraTool::saveSettings();
-        if (cam_buffer!=NULL) delete []cam_buffer;
-    };
-
+	PS3EyeCamera(CameraConfig* cam_cfg);
+	~PS3EyeCamera();
+	
 	static int getDeviceCount();
 	static std::vector<CameraConfig> getCameraConfigs();
 	static CameraEngine* getCamera(CameraConfig* cam_cfg);
