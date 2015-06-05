@@ -44,6 +44,13 @@ void SDLinterface::updateDisplay() {
 		SDL_RenderClear(renderer_);
 		SDL_FillRect(displayImage_, NULL, 0 );
 		
+		int y = FontTool::getFontHeight()-3;
+		FontTool::drawText(FontTool::getFontHeight(),y,"DOWN - next camera setting");
+		FontTool::drawText(FontTool::getFontHeight(),2*y,"UP - previous camera setting");
+		FontTool::drawText(FontTool::getFontHeight(),3*y,"");
+		FontTool::drawText(FontTool::getFontHeight(),4*y,"U - cancel camera selection");
+		FontTool::drawText(FontTool::getFontHeight(),5*y,"ENTER - apply camera selection");
+		
 		char format[256];
 		CameraConfig *cfg = &dev_list[selector_];
 		if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format,"%s%d: %dx%d@%d (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
