@@ -39,7 +39,6 @@ unsigned char* ConsoleInterface::openDisplay(VisionEngine *engine) {
 
 void ConsoleInterface::closeDisplay()
 {
-    engine_->stop();
 }
 
 void ConsoleInterface::updateDisplay()
@@ -62,7 +61,7 @@ void ConsoleInterface::processEvents()
 		switch(input) {
 				
 			case 'q':
-				closeDisplay();
+				engine_->stop();
 				break;
 			case 'h':
 				printHelp();
@@ -113,7 +112,7 @@ void ConsoleInterface::printMessage(std::string message)
 void ConsoleInterface::displayError(const char* error)
 {
 	std::cout <<  error << std::endl;
-	closeDisplay();
+	engine_->stop();
 }
 
 void ConsoleInterface::printHelp()

@@ -233,7 +233,6 @@ void SDLinterface::processEvents()
                     help_=!help_;
                 } else if( event.key.keysym.sym == SDLK_ESCAPE ){
 					engine_->stop();
-                    closeDisplay();
                     return;
                 }
                 
@@ -256,7 +255,6 @@ void SDLinterface::processEvents()
                 break;
             case SDL_QUIT:
 				engine_->stop();
-                closeDisplay();
                 return;
         }
     }

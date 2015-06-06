@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 	sprintf(config.file,"none");
 
 	const char *app_name = "SportVideo";
-	const char *version_no = "0.5";
+	const char *version_no = "0.6";
 
 	bool headless = false;
 

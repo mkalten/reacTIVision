@@ -152,6 +152,7 @@ void VisionEngine::start() {
 void VisionEngine::stop() {
 	std::cout << "terminating " << app_name_ << " ... " << std::endl;
 	running_ = false;
+	interface_->closeDisplay();
 }
 
 void VisionEngine::pause(bool pause) {
