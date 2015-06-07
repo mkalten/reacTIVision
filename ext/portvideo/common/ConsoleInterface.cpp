@@ -33,13 +33,7 @@ bool ConsoleInterface::openDisplay(VisionEngine *engine) {
 	tv.tv_sec = 0;
 	tv.tv_usec = 10;
 	
-	displayBuffer_ = new unsigned char[4*width_*height_];
-    return true;
-}
-
-unsigned char* ConsoleInterface::getDisplay()
-{
-	return displayBuffer_;
+	return true;
 }
 
 void ConsoleInterface::closeDisplay()
@@ -174,7 +168,6 @@ ConsoleInterface::ConsoleInterface(const char* name)
 	
     sourceBuffer_ = NULL;
     destBuffer_ = NULL;
-	displayBuffer_ = NULL;
 	
     help_text.push_back("commands:");
     help_text.push_back("   q - quit " + app_name_);

@@ -71,7 +71,6 @@ public:
     virtual bool openDisplay(VisionEngine *engine) = 0;
     virtual void updateDisplay() = 0;
     virtual void closeDisplay() = 0;
-	virtual unsigned char* getDisplay() = 0;
     virtual void setVsync(bool sync) = 0;
     
     virtual void setHelpText(std::vector<std::string> hlp) = 0;
@@ -84,6 +83,14 @@ public:
     virtual void displayControl(const char *title, int min, int max, int value) = 0;
     virtual void displayError(const char *message) = 0;
     virtual void drawMark(int xpos, int ypos, const char *mark, int state) = 0;
+	
+	virtual void setColor(unsigned char r, unsigned char g, unsigned char b) = 0;
+	virtual void drawPoint(int x,int y) = 0;
+	virtual void drawLine(int x1,int y1, int x2, int y2) = 0;
+	virtual void drawRect(int x,int y, int w, int h) = 0;
+	virtual void fillRect(int x,int y, int w, int h) = 0;
+	virtual void drawEllipse(int x,int y, int w, int h) = 0;
+	virtual void fillEllipse(int x,int y, int w, int h) = 0;
     
 protected:
 	bool verbose_;

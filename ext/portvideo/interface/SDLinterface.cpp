@@ -21,7 +21,8 @@
 
 
 void SDLinterface::drawText(int xpos, int ypos, const char* text) {
-	SFont_Write(displayImage_, sfont_, xpos,ypos,text);
+	
+	SFont_Write(renderer_, display_, sfont_, xpos,ypos,text);
 }
 
 int SDLinterface::textHeight() {
@@ -36,16 +37,15 @@ int SDLinterface::textWidth(const char *text) {
 bool SDLinterface::openDisplay(VisionEngine *engine) {
     engine_ = engine;
     if( !setupWindow() ) return false;
-    if (displayMode_==NO_DISPLAY) {
-        SDL_RenderClear(renderer_);
-	SDL_RenderPresent(renderer_);
-    } else displayMessage("starting camera");
+	SDL_RenderClear(renderer_);
+    if (displayMode_==NO_DISPLAY) SDL_RenderPresent(renderer_);
+    else displayMessage("starting camera");
 	select_ = false;
     return true;
 }
 
 unsigned char* SDLinterface::getDisplay() {
-	return (unsigned char*)displayImage_->pixels;
+	return NULL;
 }
 
 void SDLinterface::closeDisplay()
@@ -57,8 +57,9 @@ void SDLinterface::closeDisplay()
 void SDLinterface::updateDisplay() {
 	
 	if (select_) {
+		SDL_SetRenderTarget(renderer_, display_);
+		SDL_SetRenderDrawColor(renderer_,0,0,0,0);
 		SDL_RenderClear(renderer_);
-		SDL_FillRect(displayImage_, NULL, 0 );
 		
 		int y = textHeight()-3;
 		drawText(textHeight(),y,"DOWN - next camera setting");
@@ -72,7 +73,6 @@ void SDLinterface::updateDisplay() {
 		if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format,"%s%d: %dx%d@%d (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
 		else sprintf(format,"%s%d: %dx%d@%.1f (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
 		drawText((width_- textWidth(format))/2,height_/2,format);
-		SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
 		SDL_RenderCopy(renderer_, display_, NULL, NULL);
 		SDL_RenderPresent(renderer_);
 		
@@ -85,23 +85,29 @@ void SDLinterface::updateDisplay() {
         case NO_DISPLAY:
             break;
         case SOURCE_DISPLAY: {
+			SDL_SetRenderTarget(renderer_, NULL);
             SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_*bytesPerSourcePixel_);
             SDL_RenderCopy(renderer_, texture_, NULL, NULL);
             if (help_) drawHelp();
-            SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
             SDL_RenderCopy(renderer_, display_, NULL, NULL);
-            SDL_FillRect(displayImage_, NULL, 0 );
+			SDL_SetRenderTarget(renderer_, display_);
+			SDL_SetRenderDrawColor(renderer_,0,0,0,0);
+			SDL_RenderClear(renderer_);
+			SDL_SetRenderTarget(renderer_, NULL);
             SDL_RenderPresent(renderer_);
             break;
         }
         case DEST_DISPLAY: {
+			SDL_SetRenderTarget(renderer_, NULL);
             SDL_UpdateTexture(texture_,NULL,destBuffer_,width_*bytesPerDestPixel_);
             SDL_RenderCopy(renderer_, texture_, NULL, NULL);
             if (help_) drawHelp();
-            SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
-            SDL_RenderCopy(renderer_, display_, NULL, NULL);
-            SDL_FillRect(displayImage_, NULL, 0 );
-            SDL_RenderPresent(renderer_);
+			SDL_RenderCopy(renderer_, display_, NULL, NULL);
+			SDL_SetRenderTarget(renderer_, display_);
+			SDL_SetRenderDrawColor(renderer_,0,0,0,0);
+			SDL_RenderClear(renderer_);
+			SDL_SetRenderTarget(renderer_, NULL);
+			SDL_RenderPresent(renderer_);
             break;
         }
     }
@@ -206,10 +212,8 @@ void SDLinterface::processEvents()
                     SDL_RenderClear(renderer_);
                     SDL_RenderPresent(renderer_);
                 } else if( event.key.keysym.sym == SDLK_s ){
-                    SDL_FillRect(displayImage_, NULL, 0 );
-                    displayMode_ = SOURCE_DISPLAY;
+					displayMode_ = SOURCE_DISPLAY;
                 } else if( event.key.keysym.sym == SDLK_t ){
-                    SDL_FillRect(displayImage_, NULL, 0 );
                     displayMode_ = DEST_DISPLAY;
                 } else if( event.key.keysym.sym == SDLK_v ){
                     if (verbose_) {
@@ -303,32 +307,17 @@ void SDLinterface::setBuffers(unsigned char *src, unsigned char *dest, int width
 
 void SDLinterface::allocateBuffers()
 {
-    
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    Uint32 rmask = 0xff000000;
-    Uint32 gmask = 0x00ff0000;
-    Uint32 bmask = 0x0000ff00;
-    Uint32 amask = 0x000000ff;
-#else
-    Uint32 rmask = 0x000000ff;
-    Uint32 gmask = 0x0000ff00;
-    Uint32 bmask = 0x00ff0000;
-    Uint32 amask = 0xff000000;
-#endif
-    
     if (bytesPerSourcePixel_==3) texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STATIC,width_,height_);
     else texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
     
-    displayImage_ = SDL_CreateRGBSurface(0,width_,height_,32,rmask,gmask,bmask,amask);
-    SDL_SetSurfaceBlendMode(displayImage_, SDL_BLENDMODE_BLEND);
-    display_ = SDL_CreateTextureFromSurface(renderer_,displayImage_);
-    
-    sfont_ = SFont_InitDefaultFont();
+	display_ =  SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGBA8888 , SDL_TEXTUREACCESS_TARGET ,width_,height_);
+	SDL_SetTextureBlendMode(display_, SDL_BLENDMODE_BLEND);
+
+    sfont_ = SFont_InitDefaultFont(renderer_);
 }
 
 void SDLinterface::freeBuffers()
 {
-    SDL_FreeSurface(displayImage_);
     SDL_DestroyTexture(display_);
     SDL_DestroyTexture(texture_);
     SDL_DestroyRenderer(renderer_);
@@ -387,24 +376,27 @@ void SDLinterface::printMessage(std::string message)
 
 void SDLinterface::displayError(const char* error)
 {
-    SDL_SetWindowTitle(window_,app_name_.c_str());
-    SDL_RenderClear(renderer_);
-    
-    SDL_Rect *image_rect = new SDL_Rect();
-    image_rect->x = (width_-camera_rect.w)/2-47;
-    image_rect->y = (height_-camera_rect.h)/2-39;
-    image_rect->w = camera_rect.w;
-    image_rect->h = camera_rect.h;
-    SDL_BlitSurface(getCamera(), &camera_rect, displayImage_, image_rect);
-    delete image_rect;
-    
-    std::string error_message = "Press any key to exit "+app_name_+" ...";
+	SDL_SetRenderDrawColor(renderer_,0,0,0,0);
+	SDL_RenderClear(renderer_);
+	SDL_SetRenderTarget(renderer_, NULL);
+	SDL_RenderClear(renderer_);
+	
+	SDL_Rect cam_rect = { (width_-camera_rect.w)/2-camera_rect.w/2,(height_-camera_rect.h)/2-camera_rect.h/2,camera_rect.w,camera_rect.h };
+	SDL_Surface *cam_surface = getCamera();
+	SDL_Texture *cam_texture = SDL_CreateTextureFromSurface(renderer_, cam_surface);
+	SDL_RenderCopy(renderer_, cam_texture, NULL, &cam_rect);
+	
+	SDL_FreeSurface(cam_surface);
+	SDL_DestroyTexture(cam_texture);
+	
     drawText((width_- textWidth(error))/2,height_/2+60,error);
+	std::string error_message = "Press any key to exit "+app_name_+" ...";
     drawText((width_- textWidth(error_message.c_str()))/2,height_/2+80,error_message.c_str());
-    SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
+	
     SDL_RenderCopy(renderer_, display_, NULL, NULL);
     SDL_RenderPresent(renderer_);
-    
+	SDL_SetWindowTitle(window_,app_name_.c_str());
+	
     error_=true;
     while(error_) {
         processEvents();
@@ -427,67 +419,110 @@ void SDLinterface::drawHelp()
 
 void SDLinterface::displayMessage(const char *message)
 {
-    SDL_RenderClear(renderer_);
-    SDL_FillRect(displayImage_, NULL, 0 );
+	SDL_SetRenderTarget(renderer_, display_);
+	SDL_SetRenderDrawColor(renderer_,0,0,0,0);
+	SDL_RenderClear(renderer_);;
+	
     drawText((width_- textWidth(message))/2,height_/2,message);
-    SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
+	
     SDL_RenderCopy(renderer_, display_, NULL, NULL);
-    SDL_FillRect(displayImage_, NULL, 0 );
     SDL_RenderPresent(renderer_);
 }
 
 void SDLinterface::displayControl(const char *title, int min, int max, int value)
 {
-    
-    unsigned char* disp = (unsigned char*)(displayImage_->pixels);
-    
     int x_offset=width_/2-128;
     int y_offset=height_-100;
-    int range = max - min;
-    
+	int size = (int)(254*(((float)value-(float)min)/(float)(max-min)));
+
+	// draw the title
     drawText(x_offset+128-(textWidth(title)/2),y_offset-textHeight(),title);
-    
-    // draw the border
-    for (int i=x_offset;i<=(x_offset+256);i++) {
-        int pixel=(width_*y_offset+i)*4+1;
-        disp[pixel]=disp[pixel+2]=255;
-        pixel=(width_*(y_offset+25)+i)*4+1;
-        disp[pixel]=disp[pixel+2]=255;
-    }
-    for (int i=y_offset;i<(y_offset+25);i++) {
-        int pixel=(width_*i+x_offset)*4+1;
-        disp[pixel]=disp[pixel+2]=255;
-        pixel=(width_*i+x_offset+256)*4+1;
-        disp[pixel]=disp[pixel+2]=255;
-    }
-    
-    // draw the bar
-    int xpos = (int)(254*(((float)value-(float)min)/(float)range));
-    for (int i=x_offset+2;i<=(x_offset+xpos);i++) {
-        for (int j=y_offset+2;j<=(y_offset+23);j++) {
-            int pixel=(width_*j+i)*4+1;
-            disp[pixel]=disp[pixel+2]=255;
-        }
-    }
-    
+	
+	SDL_SetRenderTarget(renderer_, display_);
+	SDL_SetRenderDrawColor(renderer_,0,255,0,255);
+	
+	// draw the border
+	SDL_Rect border = {x_offset,y_offset,256,25};
+	SDL_RenderDrawRect(renderer_,&border);
+	// draw the bar
+	SDL_Rect bar = {x_offset+1,y_offset+1,size,23};
+	SDL_RenderFillRect(renderer_,&bar);
+	
+	SDL_SetRenderTarget(renderer_, NULL);
+	SDL_SetRenderDrawColor(renderer_,0,0,0,0);
 }
 
 void SDLinterface::drawMark(int xpos, int ypos, const char *mark, int state) {
 
-    int pixel = 0;
-    unsigned char* disp = (unsigned char*)(displayImage_->pixels);
-    for (int i=1;i<3;i++) {
-        pixel=4*(ypos*width_+(xpos+i));
-        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
-        pixel=4*(ypos*width_+(xpos-i));
-        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
-        pixel=4*((ypos+i)*width_+xpos);
-        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
-        pixel=4*((ypos-i)*width_+xpos);
-        if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
-    }
+	drawText(xpos,ypos,mark);
+	SDL_SetRenderTarget(renderer_, display_);
+	
+	switch (state) {
+		case 0:
+			SDL_SetRenderDrawColor(renderer_,255,0,0,255);
+			break;
+		case 1:
+			SDL_SetRenderDrawColor(renderer_,0,255,0,255);
+			break;
+		case 2:
+			SDL_SetRenderDrawColor(renderer_,0,0,255,255);
+			break;
+	}
+	
+	SDL_RenderDrawLine(renderer_, xpos+1, ypos, xpos+2, ypos);
+	SDL_RenderDrawLine(renderer_, xpos-1, ypos, xpos-2, ypos);
+	SDL_RenderDrawLine(renderer_, xpos, ypos+1, xpos, ypos+2);
+	SDL_RenderDrawLine(renderer_, xpos, ypos-1, xpos, ypos-2);
 
-    drawText(xpos,ypos,mark);
+	SDL_SetRenderTarget(renderer_, NULL);	
+}
+
+void SDLinterface::setColor(unsigned char r, unsigned char g, unsigned char b) {
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+	SDL_SetRenderDrawColor(renderer_,r,g,b,255);
+}
+
+void SDLinterface::drawPoint(int x,int y) {
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+	SDL_RenderDrawPoint(renderer_, x, y);
+}
+
+void SDLinterface::drawLine(int x1,int y1, int x2, int y2) {
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+	SDL_RenderDrawLine(renderer_, x1, y1, x2, y2);
+}
+
+void SDLinterface::drawRect(int x,int y, int w, int h) {
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+	SDL_Rect rect = {x,y,w,h};
+	SDL_RenderDrawRect(renderer_, &rect);
+}
+
+void SDLinterface::fillRect(int x,int y, int w, int h) {
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+	SDL_Rect rect = {x,y,w,h};
+	SDL_RenderFillRect(renderer_, &rect);
+}
+
+void SDLinterface::drawEllipse(int x,int y, int w, int h) {
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+
+	float step = 0.002 * width_/w;
+	
+	for (double a=M_PI/2;a>0;a-=step) {
+		
+		double X = cos(a)*w/2.0f;
+		double Y = sin(a)*h/2.0f;
+		drawPoint(x+X,y+Y);
+		drawPoint(x-X,y+Y);
+		drawPoint(x+X,y-Y);
+		drawPoint(x-X,y-Y);
+	}
+}
+
+void SDLinterface::fillEllipse(int x,int y, int w, int h) {
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+	SDL_RenderDrawPoint(renderer_, x, y);
 }
 
 void SDLinterface::setDisplayMode(DisplayMode mode) {

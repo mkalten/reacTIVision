@@ -272,15 +272,13 @@ void CalibrationEngine::drawDisplay() {
 	
 	if (interface_==NULL) return;
 	if (interface_->getDisplayMode()==NO_DISPLAY) return;
-	
-	unsigned char *display = interface_->getDisplay();
-	if (display==NULL) return;
 
     float x,y;
     int gx,gy;
     GridPoint gp;
 
 	// draw the circles
+	interface_->setColor(0, 0, 255);
 	int offset = (width-height)/2;
 	for (double a=-M_PI;a<M_PI;a+=0.005) {
 		int half = height/2;
@@ -294,10 +292,7 @@ void CalibrationEngine::drawDisplay() {
             gx = (int)(x + gp.x*cell_size_x);
             gy = (int)(y + gp.y*cell_size_y);
 
-            if ((gx>=0) && (gx<width) && (gy>=0) && (gy<height)) {
-                int pixel = (int)(gy*width+gx)*4;
-                display[pixel] = display[pixel+3] = 255;
-            }
+           interface_->drawPoint(gx, gy);
         }
         
         // extra circle
@@ -309,10 +304,7 @@ void CalibrationEngine::drawDisplay() {
             gx = (int)(x + gp.x*cell_size_x);
             gy = (int)(y + gp.y*cell_size_y);
             
-            if ((gx>=0) && (gx<width) && (gy>=0) && (gy<height)) {
-                int pixel = (int)(gy*width+gx)*4;
-                display[pixel] = display[pixel+3] = 255;
-            }
+            interface_->drawPoint(gx, gy);
         }
         
 		// outer circle
@@ -323,10 +315,7 @@ void CalibrationEngine::drawDisplay() {
 		gx = (int)(x + gp.x*cell_size_x);
 		gy = (int)(y + gp.y*cell_size_y);
 
-		if ((gx>=0) && (gx<width) && (gy>=0) && (gy<height)) {
-			int pixel = (int)(gy*width+gx)*4;
-			display[pixel] = display[pixel+3] = 255;
-		}
+		interface_->drawPoint(gx, gy);
 
 		// middle circle
 		x = offset+half+cos(a)*cell_size_x*2;
@@ -336,10 +325,7 @@ void CalibrationEngine::drawDisplay() {
 		gx = (int)(x + gp.x*cell_size_x);
 		gy = (int)(y + gp.y*cell_size_y);
 
-		if ((gx>=0) && (gx<width) && (gy>=0) && (gy<height)) {
-			int pixel = (int)(gy*width+gx)*4;
-			display[pixel] = display[pixel+3] = 255;
-		}
+		interface_->drawPoint(gx, gy);
 
 		// inner circle
 		x = offset+half+cos(a)*cell_size_x;
@@ -349,14 +335,11 @@ void CalibrationEngine::drawDisplay() {
 		gx = (int)(x + gp.x*cell_size_x);
 		gy = (int)(y + gp.y*cell_size_y);
 
-		if ((gx>=0) && (gx<width) && (gy>=0) && (gy<height)) {
-			int pixel = (int)(gy*width+gx)*4;
-			display[pixel] = display[pixel+3] = 255;
-		}
-
+		interface_->drawPoint(gx, gy);
 	}
 	
 	// draw the horizontal lines
+	interface_->setColor(0, 255, 0);
 	for (int i=0;i<grid_size_y;i++) {
 		float start_x = 0;
 		float start_y = i*cell_size_y;
@@ -370,11 +353,7 @@ void CalibrationEngine::drawDisplay() {
 			int gx = (int)(lx+gp.x*cell_size_x);
 			int gy = (int)(ly+gp.y*cell_size_y);
 
-			if ((gx>=0) && (gx<width) && (gy>=0) && (gy<height)) {
-				int pixel = (gy*width+gx)*4+1;
-				display[pixel] = display[pixel+2] = 255;
-				display[pixel-1] = 0;
-			}
+			interface_->drawPoint(gx, gy);
 		}
 	}
 
@@ -393,51 +372,30 @@ void CalibrationEngine::drawDisplay() {
 			int gx = (int)(lx+gp.x*cell_size_x);
 			int gy = (int)(ly+gp.y*cell_size_y);
 			
-			
-			if ((gx>=0) && (gx<width) && (gy>=0) && (gy<height)) {
-				int pixel = (gy*width+gx)*4+1;
-				display[pixel] = display[pixel+2] = 255;
-				display[pixel-1] = 0;
-			}
+			interface_->drawPoint(gx, gy);
 		}
 	}
 
 	// draw the red box for the selected point
+	interface_->setColor(255, 0, 0);
 	GridPoint p = grid->GetInterpolated(grid_xpos,grid_ypos);
 	gx = (int)(grid_xpos*cell_size_x + p.x*cell_size_x);
 	gy = (int)(grid_ypos*cell_size_y + p.y*cell_size_y);
 
-	for (int xx=gx-3;xx<=gx+3;xx++) {
-		for (int yy=gy-3;yy<=gy+3;yy++) {
-			if ((xx>=0) && (xx<width) && (yy>=0) && (yy<height)) {
-				int pixel = (yy*width+xx)*4+2;
-				display[pixel] = display[pixel+1] = 255;
-				display[pixel-1] = 0;
-				display[pixel-2] = 0;
-			}
-		}
-	}
+	interface_->fillRect(gx-3, gy-3,7,7);
 	
 	// draw the grid points
+	interface_->setColor(255, 0, 255);
 	for (int i=0;i<grid_size_x;i++) {
 		for (int j=0;j<grid_size_y;j++) {
 			GridPoint gp = grid->GetInterpolated(i,j);
 			int gx = (int)(i*cell_size_x + gp.x*cell_size_x);
 			int gy = (int)(j*cell_size_y + gp.y*cell_size_y);
 
-			for (int xx=gx-1;xx<=gx+1;xx++) {
-				for (int yy=gy-1;yy<=gy+1;yy++) {
-					if ((xx>=0) && (xx<width) && (yy>=0) && (yy<height)) {
-						int pixel = (yy*width+xx)*4;
-						display[pixel] = 0;
-						display[pixel+1] = 0;
-						display[pixel+2] = 0;
-					}
-				}
-			}
+			interface_->fillRect(gx-1, gy-1,3,3);
 		}
 	}
-    
+	
 }
 
 

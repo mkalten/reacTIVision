@@ -242,12 +242,9 @@ void FidtrackFinder::drawDisplay() {
 
     if (interface_==NULL) return;
     if (interface_->getDisplayMode()==NO_DISPLAY) return;
-	
-	unsigned char *disp = interface_->getDisplay();
-	if (disp==NULL) return;
 
 	FiducialFinder::displayControl();
-
+	
 	char displayText[64]; 
 	int settingValue = 0;
 	int maxValue = 0;
@@ -256,18 +253,8 @@ void FidtrackFinder::drawDisplay() {
 
 		// draw the finger
 		if( average_finger_size>0) {
-			int offset = (width-height)/2;
-			int half = height/2;
-			for (double a=-M_PI;a<M_PI;a+=0.02) {
-				
-				double x = offset+half+cos(a)*average_finger_size/2.0f;
-				double y = half+sin(a)*average_finger_size/2.0f;
-				
-				if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
-					int pixel = (int)y*width+(int)x;
-					disp[pixel*4] = disp[pixel*4+3] = 255;
-				}
-			}
+			interface_->setColor(0,0,255);
+			interface_->drawEllipse(width/2, height/2, average_finger_size,average_finger_size);
 		}
 		
 		sprintf(displayText,"finger size %d",average_finger_size);

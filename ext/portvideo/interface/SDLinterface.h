@@ -60,6 +60,7 @@ public:
     void updateDisplay();
     void closeDisplay();
 	unsigned char* getDisplay();
+	void setVsync(bool vsync);
     
     void setHelpText(std::vector<std::string> hlp);
     void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color);
@@ -71,8 +72,14 @@ public:
     void displayControl(const char *title, int min, int max, int value);
     void displayError(const char* error);
     void drawMark(int xpos, int ypos, const char *mark, int state);
-    
-    void setVsync(bool vsync);
+	
+	void setColor(unsigned char r, unsigned char g, unsigned char b);
+	void drawPoint(int x,int y);
+	void drawLine(int x1,int y1, int x2, int y2);
+	void drawRect(int x,int y, int w, int h);
+	void fillRect(int x,int y, int w, int h);
+	void drawEllipse(int x,int y, int w, int h);
+	void fillEllipse(int x,int y, int w, int h);
 
 protected:
 	
@@ -92,7 +99,6 @@ private:
     
     SDL_Renderer *renderer_;
     SDL_Window *window_;
-    SDL_Surface *displayImage_;
     
     unsigned char* sourceBuffer_;
     unsigned char* destBuffer_;

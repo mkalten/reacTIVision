@@ -284,18 +284,13 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
     if (interface_==NULL) return;
     if (interface_->getDisplayMode()==NO_DISPLAY) return;
 	
-	unsigned char* disp = interface_->getDisplay();
-	if (disp==NULL) return;
-	
-	int length = width*height;
-	int offset = (width-height)/2;
-	int half = height/2;
+	int size = width*height-1;
 
 	// delete the dest image
-	for (int i=0;i<length;i++) dest[i]=0;
+	for (int i=size;i>0;i--) dest[i]=0;
 
 	// distort the image
-	for (int i=length-1;i>=0;i--) {
+	for (int i=size;i>0;i--) {
 		if( (dmap[i].x>=0) && ( dmap[i].x<width) && (dmap[i].y>=0) && ( dmap[i].y<height) )
 			dest[dmap[i].y*width+dmap[i].x] = src[i];
 	}
@@ -319,59 +314,22 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 			}
 		}
 	}
-	
 	// draw the circles
-	for (double a=-M_PI;a<M_PI;a+=0.005) {
+	interface_->setColor(0, 0, 255);
+	interface_->drawEllipse(width/2, height/2,width,height);
+	interface_->drawEllipse(width/2, height/2,height,height);
+	interface_->drawEllipse(width/2, height/2,cell_width*4,cell_height*4);
+	interface_->drawEllipse(width/2, height/2,cell_width*2,cell_height*2);
 
-		// ellipse
-		float x = width/2+cos(a)*width/2;
-		float y = half+sin(a)*half;
-		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
-			int pixel = 4*((int)y*width+(int)x);
-			disp[pixel] = disp[pixel+3] = 255;
-		}
-		
-		// outer circle
-		x = offset+half+cos(a)*half;
-		y = half+sin(a)*half;
-		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
-			int pixel = 4*((int)y*width+(int)x);
-			disp[pixel] = disp[pixel+3] = 255;
-		}
-
-		// middle circle
-		x = offset+half+cos(a)*(half-cell_width);
-		y = half+sin(a)*(half-cell_height);
-		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
-			int pixel = 4*((int)y*width+(int)x);
-			disp[pixel] = disp[pixel+3] = 255;
-		}
-
-		// inner circle
-		x = offset+half+cos(a)*cell_width;
-		y = half+sin(a)*cell_height;
-		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
-			int pixel = 4*((int)y*width+(int)x);
-			disp[pixel] = disp[pixel+3] = 255;
-		}
-
-	}
-			
 	// draw the horizontal lines
+	interface_->setColor(0, 255, 0);
 	for (int i=0;i<grid_size_y;i++) {
 		float start_x = 0;
 		float start_y = i*cell_width;
 		float end_x = (grid_size_x-1)*cell_height;
 		float end_y = start_y;
-				
-		for (float lx=start_x;lx<end_x;lx++) {
-			float ly = end_y - (end_y-start_y)/(end_x-start_x)*(end_x-lx);
-			int pixel = 1+4*((int)ly*width+(int)lx);
-			if ((pixel>=0) && (pixel<length*4)) {
-				disp[pixel] = disp[pixel+2] = 255;
-				disp[pixel-1]=0;
-			}
-		}
+		
+		interface_->drawLine(start_x, start_y,end_x,end_y);
 	}
 
 	// draw the vertical lines
@@ -381,15 +339,8 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 		float start_y = 0;
 		float end_x = start_x;
 		float end_y = (grid_size_y-1)*cell_height;
-				
-		for (float ly=start_y;ly<end_y;ly++) {
-			float lx = end_x - (end_x-start_x)/(end_y-start_y)*(end_y-ly);	
-			int pixel = 1+4*((int)ly*width+(int)lx);
-			if ((pixel>=0) && (pixel<length*4)) {
-				disp[pixel] = disp[pixel+2] = 255;
-				disp[pixel-1]=0;
-			}
-		}
+		
+		interface_->drawLine(start_x, start_y,end_x,end_y);
 	}
 
 }
