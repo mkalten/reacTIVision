@@ -123,14 +123,13 @@ void VisionEngine::start() {
 	if (interface_) {
 		if (fps_>60) interface_->setVsync(false);
 	} else interface_ = new ConsoleInterface(app_name_.c_str());
-	displayBuffer_ = interface_->openDisplay(this);
 	
-	if (displayBuffer_==NULL) {
+	if (!interface_->openDisplay(this)) {
 		delete interface_;
 		interface_ = new ConsoleInterface(app_name_.c_str());
-		displayBuffer_ = interface_->openDisplay(this);
+		interface_->openDisplay(this);
 	}
-
+	
     if(camera_==NULL ) {
         interface_->displayError("No camera found!");
         return;
@@ -171,7 +170,7 @@ void VisionEngine::reset(CameraConfig *cam_cfg) {
 	if( camera_->startCamera() ) {
 		interface_->closeDisplay();
 		interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,camera_->getColor());
-		displayBuffer_ = interface_->openDisplay(this);
+		interface_->openDisplay(this);
 		for (frame = processorList.begin(); frame!=processorList.end();frame++)
 			(*frame)->init(width_ , height_, bytesPerSourcePixel_, bytesPerDestPixel_);
 	} else interface_->displayError("Could not start camera!");
@@ -232,7 +231,7 @@ void VisionEngine::mainLoop()
 
         // do the actual image processing job
         for (frame = processorList.begin(); frame!=processorList.end(); frame++)
-            (*frame)->process(cameraReadBuffer,destBuffer_,displayBuffer_);
+            (*frame)->process(cameraReadBuffer,destBuffer_);
         //long processing_time = currentMicroSeconds()-start_time;
   
         if (interface_->getDisplayMode()==SOURCE_DISPLAY)
@@ -425,8 +424,7 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
     app_config_ = config;
     camera_config_ = CameraTool::readSettings(app_config_->camera_config);
     setupCamera();
-    displayBuffer_ = NULL;
-    
+	
     lastTime_ = currentSeconds();
     cameraTime_ = processingTime_ = interfaceTime_ = totalTime_ = 0.0f;
     

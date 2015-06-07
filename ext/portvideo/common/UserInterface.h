@@ -68,9 +68,10 @@ public:
     void setDisplayMode(DisplayMode mode) { displayMode_ = mode; };
     DisplayMode getDisplayMode() { return displayMode_; };
     
-    virtual unsigned char* openDisplay(VisionEngine *engine) = 0;
+    virtual bool openDisplay(VisionEngine *engine) = 0;
     virtual void updateDisplay() = 0;
     virtual void closeDisplay() = 0;
+	virtual unsigned char* getDisplay() = 0;
     virtual void setVsync(bool sync) = 0;
     
     virtual void setHelpText(std::vector<std::string> hlp) = 0;

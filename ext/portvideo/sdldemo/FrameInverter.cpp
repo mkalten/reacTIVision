@@ -19,7 +19,7 @@
 
 #include "FrameInverter.h"
 
-void FrameInverter::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
+void FrameInverter::process(unsigned char *src, unsigned char *dest) {
 	// inverts the image
 	for (int i=srcSize;i>0;i--) {
 		*dest++ = 255 - *src++;

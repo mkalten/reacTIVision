@@ -35,9 +35,10 @@ public:
 		if (displayBuffer_) delete[] displayBuffer_;
 	};
 
-	unsigned char* openDisplay(VisionEngine *engine);
+	bool openDisplay(VisionEngine *engine);
     void updateDisplay();
     void closeDisplay();
+	unsigned char* getDisplay();
     
     void setHelpText(std::vector<std::string> hlp);
     void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color);

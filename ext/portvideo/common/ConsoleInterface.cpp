@@ -20,7 +20,7 @@
 #include "VisionEngine.h"
 
 // the principal program sequence
-unsigned char* ConsoleInterface::openDisplay(VisionEngine *engine) {
+bool ConsoleInterface::openDisplay(VisionEngine *engine) {
 	engine_ = engine;
 	
 	tcgetattr(STDIN_FILENO, &term_cfg);
@@ -34,7 +34,12 @@ unsigned char* ConsoleInterface::openDisplay(VisionEngine *engine) {
 	tv.tv_usec = 10;
 	
 	displayBuffer_ = new unsigned char[4*width_*height_];
-    return displayBuffer_;
+    return true;
+}
+
+unsigned char* ConsoleInterface::getDisplay()
+{
+	return displayBuffer_;
 }
 
 void ConsoleInterface::closeDisplay()

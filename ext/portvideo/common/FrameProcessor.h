@@ -72,7 +72,6 @@ public:
 		destBytes = 0;
 		srcSize   = 0;
 		destSize  = 0;
-		dispSize  = 0;
 		initialized = false;
 	};
 	virtual ~FrameProcessor() {};
@@ -85,14 +84,13 @@ public:
 
 		srcSize   = w*h*sb;
 		destSize  = w*h*db;
-		dispSize  = w*h*4;
 
 		initialized = true;
 		return true;
 	};
 
     virtual void addUserInterface(UserInterface *uiface) { interface_=uiface; };
-    virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
+    virtual void process(unsigned char *src, unsigned char *dest) = 0;
     virtual bool setFlag(unsigned char flag, bool value, bool lock) { return lock; };
     virtual bool toggleFlag(unsigned char flag, bool lock) { return lock; };
 	std::vector<std::string> getOptions() { return help_text; }
@@ -104,7 +102,6 @@ protected:
 	int destBytes;
 	int srcSize;
 	int destSize;
-	int dispSize;
 
 	bool initialized;
 	UserInterface *interface_;

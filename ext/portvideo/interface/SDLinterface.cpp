@@ -33,15 +33,19 @@ int SDLinterface::textWidth(const char *text) {
 }
 
 // the principal program sequence
-unsigned char* SDLinterface::openDisplay(VisionEngine *engine) {
+bool SDLinterface::openDisplay(VisionEngine *engine) {
     engine_ = engine;
-    if( !setupWindow() ) return NULL;
+    if( !setupWindow() ) return false;
     if (displayMode_==NO_DISPLAY) {
         SDL_RenderClear(renderer_);
 	SDL_RenderPresent(renderer_);
     } else displayMessage("starting camera");
 	select_ = false;
-    return (unsigned char*)displayImage_->pixels;
+    return true;
+}
+
+unsigned char* SDLinterface::getDisplay() {
+	return (unsigned char*)displayImage_->pixels;
 }
 
 void SDLinterface::closeDisplay()

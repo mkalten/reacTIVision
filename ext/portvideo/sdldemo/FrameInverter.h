@@ -28,7 +28,7 @@ public:
 	FrameInverter() {};
 	~FrameInverter() {};
 
-    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
+    void process(unsigned char *src, unsigned char *dest);
 };
 
 #endif

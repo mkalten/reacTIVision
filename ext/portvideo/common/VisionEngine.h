@@ -134,7 +134,6 @@ private:
     
     unsigned char* sourceBuffer_;
     unsigned char* destBuffer_;
-    unsigned char* displayBuffer_;
     
 	std::vector<FrameProcessor*> processorList;
 	std::vector<FrameProcessor*>::iterator frame;
