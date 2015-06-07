@@ -72,7 +72,7 @@ public:
 		 if (initialized) delete dmap;
 	}
 
-    virtual void process(unsigned char *src, unsigned char *dest, unsigned char *display) = 0;
+    virtual void process(unsigned char *src, unsigned char *dest) = 0;
 
 	bool init(int w, int h, int sb ,int db);
 	bool toggleFlag(unsigned char flag, bool lock);
@@ -94,8 +94,8 @@ protected:
 	bool calibration, show_grid, empty_grid;
 	ShortPoint* dmap;
 
-    void drawObject(int id, int xpos, int ypos, unsigned char *display, int state);
-    void drawGrid(unsigned char *src, unsigned char *dest, unsigned char *display);
+    void drawObject(int id, int xpos, int ypos, int state);
+    void drawGrid(unsigned char *src, unsigned char *dest);
     void displayControl();
 	void computeGrid();
 

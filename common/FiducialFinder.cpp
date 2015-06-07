@@ -267,9 +267,9 @@ void FiducialFinder::finish() {
 	}
 }
 
-void FiducialFinder::drawObject(int id, int xpos, int ypos, unsigned char *disp, int state)
+void FiducialFinder::drawObject(int id, int xpos, int ypos, int state)
 {
-    if ((interface_==NULL) || (disp==NULL)) return;
+    if (interface_==NULL) return;
 	if (interface_->getDisplayMode()==NO_DISPLAY) return;
     
 	char id_str[8];
@@ -279,12 +279,14 @@ void FiducialFinder::drawObject(int id, int xpos, int ypos, unsigned char *disp,
     interface_->drawMark(xpos,ypos, id_str, state);
 }
 
-void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest, unsigned char *disp) {
+void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 
-    if ((interface_==NULL) || (disp==NULL)) return;
+    if (interface_==NULL) return;
     if (interface_->getDisplayMode()==NO_DISPLAY) return;
-
-	//unsigned char* disp = (unsigned char*)(display->pixels);
+	
+	unsigned char* disp = interface_->getDisplay();
+	if (disp==NULL) return;
+	
 	int length = width*height;
 	int offset = (width-height)/2;
 	int half = height/2;

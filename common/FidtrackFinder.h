@@ -67,9 +67,9 @@ public:
 		}
 	};
 
-    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
+    void process(unsigned char *src, unsigned char *dest);
 	bool init(int w ,int h, int sb, int db);
-	void drawDisplay(unsigned char *display);
+	void drawDisplay();
 	bool toggleFlag(unsigned char flag, bool lock);
 
 	int getFingerSize() { return average_finger_size; };
@@ -92,7 +92,7 @@ private:
 	void sendCursorMessages();
 	void printStatistics(long start_time);
 
-	int check_finger(RegionX *finger, unsigned char* image, unsigned char* display);
+	int check_finger(RegionX *finger, unsigned char* image);
 
 	bool detect_finger;
 	float average_leaf_size;

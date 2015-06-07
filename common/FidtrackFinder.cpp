@@ -51,7 +51,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 }
 
 
-int FidtrackFinder::check_finger(RegionX *finger, unsigned char *image, unsigned char *display) {
+int FidtrackFinder::check_finger(RegionX *finger, unsigned char *image) {
 
 	int buffer_size = width*height;
 	int mask_size = finger->width;
@@ -238,10 +238,13 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
     return lock;
 }
 
-void FidtrackFinder::drawDisplay(unsigned char *disp) {
+void FidtrackFinder::drawDisplay() {
 
-    if ((interface_==NULL) || (disp==NULL)) return;
+    if (interface_==NULL) return;
     if (interface_->getDisplayMode()==NO_DISPLAY) return;
+	
+	unsigned char *disp = interface_->getDisplay();
+	if (disp==NULL) return;
 
 	FiducialFinder::displayControl();
 
@@ -279,7 +282,7 @@ void FidtrackFinder::drawDisplay(unsigned char *disp) {
     interface_->displayControl(displayText, 0, maxValue, settingValue);
 }
 
-void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
+void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 
 /*
 	#ifdef WIN32
@@ -375,7 +378,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 					fiducials[i].angle=fiducial->getAngle();
 					fiducials[i].id=fiducial->fiducial_id;
 					fiducial->state = FIDUCIAL_INVALID;
-					drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),display,0);
+					drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),0);
 				} else /*if (fiducials[i].id!=fiducial->fiducial_id)*/ {
 
 					if (!fiducial->checkIdConflict(session_id,fiducials[i].id)) {
@@ -396,13 +399,13 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 		if  (existing_fiducial!=NULL) {
 			// just update the fiducial from last frame ...
 			existing_fiducial->update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size,fiducials[i].leaf_size);
-			if(existing_fiducial->state!=FIDUCIAL_INVALID) drawObject(existing_fiducial->fiducial_id,(int)(existing_fiducial->getX()),(int)(existing_fiducial->getY()),display,1);
+			if(existing_fiducial->state!=FIDUCIAL_INVALID) drawObject(existing_fiducial->fiducial_id,(int)(existing_fiducial->getX()),(int)(existing_fiducial->getY()),1);
 		} else if  (fiducials[i].id!=INVALID_FIDUCIAL_ID) {
 			// add the newly found object
 			session_id++;
 			FiducialObject addFiducial(session_id, fiducials[i].id, width, height,fiducials[i].root_colour,fiducials[i].node_count);
 			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size,fiducials[i].leaf_size);
-			drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),display,1);
+			drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),1);
 			fiducialList.push_back(addFiducial);
 			if (interface_) {
 				std::stringstream add_message;
@@ -490,7 +493,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 				//printf("region: %d %d\n", regions[j].width, regions[j].height);
 				//printf("recovered plain fiducial %d (%ld)\n", existing_fiducial->fiducial_id,existing_fiducial->session_id);
 				existing_fiducial->state = FIDUCIAL_REGION;
-				drawObject(existing_fiducial->fiducial_id,xpos,ypos,display,2);
+				drawObject(existing_fiducial->fiducial_id,xpos,ypos,2);
 			} //else goto plain_analysis;
 						
 		// plain fingers
@@ -499,7 +502,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 
 			//check first if the finger is valid
 			//printf("candidate: %d %d\n", regions[j].width, regions[j].height);
-			int finger_match = check_finger(&regions[j],dest,display);
+			int finger_match = check_finger(&regions[j],dest);
 			if(finger_match<0) continue;//goto plain_analysis;
 			//printf("finger: %d %d\n", regions[j].width, regions[j].height);
 
@@ -557,7 +560,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 				fingerList.push_back(addFinger);
 			} else continue; //goto plain_analysis;
 	
-			drawObject(FINGER_ID,(int)(regions[j].x),(int)(regions[j].y),display,1);
+			drawObject(FINGER_ID,(int)(regions[j].x),(int)(regions[j].y),1);
 			region_loop_end:;
 		} /*else if (	(regions[j].width>average_leaf_size*2) && (regions[j].height>average_leaf_size*2)) {
 			plain_analysis:;
@@ -581,8 +584,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, unsigned c
 		if (detect_finger) sendCursorMessages();
 	}
 	
-	if (show_grid) drawGrid(src,dest,display);
-	if (show_settings) drawDisplay(display);
+	if (show_grid) drawGrid(src,dest);
+	if (show_settings) drawDisplay();
 	//printStatistics(start_time);
     
     //long fiducial_time = VisionEngine::currentTime() - start_time;
