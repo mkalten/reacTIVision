@@ -46,7 +46,7 @@
 
 #include "CameraTool.h"
 #include "UserInterface.h"
-#include "FontTool.h"
+#include "SFont.h"
 #include "Resources.h"
 
 class SDLinterface: public UserInterface
@@ -98,7 +98,12 @@ private:
     
     SDL_Texture *texture_;
     SDL_Texture *display_;
-    
+	
+	SFont_Font *sfont_;
+	int textHeight();
+	int textWidth(const char *text);
+	void drawText(int xpos, int ypos, const char* text);
+	
     bool error_;
     bool pause_;
     bool help_;

@@ -19,6 +19,19 @@
 #include "SDLinterface.h"
 #include "VisionEngine.h"
 
+
+void SDLinterface::drawText(int xpos, int ypos, const char* text) {
+	SFont_Write(displayImage_, sfont_, xpos,ypos,text);
+}
+
+int SDLinterface::textHeight() {
+	return SFont_TextHeight(sfont_);
+}
+
+int SDLinterface::textWidth(const char *text) {
+	return SFont_TextWidth(sfont_,text);
+}
+
 // the principal program sequence
 unsigned char* SDLinterface::openDisplay(VisionEngine *engine) {
     engine_ = engine;
@@ -38,24 +51,23 @@ void SDLinterface::closeDisplay()
 }
 
 void SDLinterface::updateDisplay() {
-
 	
 	if (select_) {
 		SDL_RenderClear(renderer_);
 		SDL_FillRect(displayImage_, NULL, 0 );
 		
-		int y = FontTool::getFontHeight()-3;
-		FontTool::drawText(FontTool::getFontHeight(),y,"DOWN - next camera setting");
-		FontTool::drawText(FontTool::getFontHeight(),2*y,"UP - previous camera setting");
-		FontTool::drawText(FontTool::getFontHeight(),3*y,"");
-		FontTool::drawText(FontTool::getFontHeight(),4*y,"U - cancel camera selection");
-		FontTool::drawText(FontTool::getFontHeight(),5*y,"ENTER - apply camera selection");
+		int y = textHeight()-3;
+		drawText(textHeight(),y,"DOWN - next camera setting");
+		drawText(textHeight(),2*y,"UP - previous camera setting");
+		drawText(textHeight(),3*y,"");
+		drawText(textHeight(),4*y,"U - cancel camera selection");
+		drawText(textHeight(),5*y,"ENTER - apply camera selection");
 		
 		char format[256];
 		CameraConfig *cfg = &dev_list[selector_];
 		if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format,"%s%d: %dx%d@%d (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
 		else sprintf(format,"%s%d: %dx%d@%.1f (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
-		FontTool::drawText((width_- FontTool::getTextWidth(format))/2,height_/2,format);
+		drawText((width_- textWidth(format))/2,height_/2,format);
 		SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
 		SDL_RenderCopy(renderer_, display_, NULL, NULL);
 		SDL_RenderPresent(renderer_);
@@ -307,7 +319,7 @@ void SDLinterface::allocateBuffers()
     SDL_SetSurfaceBlendMode(displayImage_, SDL_BLENDMODE_BLEND);
     display_ = SDL_CreateTextureFromSurface(renderer_,displayImage_);
     
-    FontTool::init(displayImage_);
+    sfont_ = SFont_InitDefaultFont();
 }
 
 void SDLinterface::freeBuffers()
@@ -317,7 +329,7 @@ void SDLinterface::freeBuffers()
     SDL_DestroyTexture(texture_);
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
-    FontTool::close();
+    SFont_FreeFont(sfont_);
 }
 
 void SDLinterface::toggleFullScreen() {
@@ -343,7 +355,7 @@ void SDLinterface::showFrameRate() {
     if (fullscreen_) {
         char caption[24] = "";
         sprintf(caption,"%d FPS",current_fps_);
-        FontTool::drawText(width_-(FontTool::getTextWidth(caption)+FontTool::getFontHeight()),FontTool::getFontHeight(),caption);
+        drawText(width_-(textWidth(caption)+textHeight()),textHeight(),caption);
     }
     
     if (diffTime >= 1) {
@@ -383,8 +395,8 @@ void SDLinterface::displayError(const char* error)
     delete image_rect;
     
     std::string error_message = "Press any key to exit "+app_name_+" ...";
-    FontTool::drawText((width_- FontTool::getTextWidth(error))/2,height_/2+60,error);
-    FontTool::drawText((width_- FontTool::getTextWidth(error_message.c_str()))/2,height_/2+80,error_message.c_str());
+    drawText((width_- textWidth(error))/2,height_/2+60,error);
+    drawText((width_- textWidth(error_message.c_str()))/2,height_/2+80,error_message.c_str());
     SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
     SDL_RenderCopy(renderer_, display_, NULL, NULL);
     SDL_RenderPresent(renderer_);
@@ -398,13 +410,13 @@ void SDLinterface::displayError(const char* error)
 
 void SDLinterface::drawHelp()
 {
-    int y = FontTool::getFontHeight()-3;
+    int y = textHeight()-3;
     
     for(std::vector<std::string>::iterator help_line = help_text.begin(); help_line!=help_text.end(); help_line++) {
         if (strcmp(help_line->c_str(), "") == 0) y+=5;
         else {
-            FontTool::drawText(FontTool::getFontHeight(),y,help_line->c_str());
-            y+=FontTool::getFontHeight()-3;
+            drawText(textHeight(),y,help_line->c_str());
+            y+=textHeight()-3;
         }
     }
 }
@@ -413,7 +425,7 @@ void SDLinterface::displayMessage(const char *message)
 {
     SDL_RenderClear(renderer_);
     SDL_FillRect(displayImage_, NULL, 0 );
-    FontTool::drawText((width_- FontTool::getTextWidth(message))/2,height_/2,message);
+    drawText((width_- textWidth(message))/2,height_/2,message);
     SDL_UpdateTexture(display_,NULL,displayImage_->pixels,displayImage_->pitch);
     SDL_RenderCopy(renderer_, display_, NULL, NULL);
     SDL_FillRect(displayImage_, NULL, 0 );
@@ -429,7 +441,7 @@ void SDLinterface::displayControl(const char *title, int min, int max, int value
     int y_offset=height_-100;
     int range = max - min;
     
-    FontTool::drawText(x_offset+128-(FontTool::getTextWidth(title)/2),y_offset-FontTool::getFontHeight(),title);
+    drawText(x_offset+128-(textWidth(title)/2),y_offset-textHeight(),title);
     
     // draw the border
     for (int i=x_offset;i<=(x_offset+256);i++) {
@@ -471,7 +483,7 @@ void SDLinterface::drawMark(int xpos, int ypos, const char *mark, int state) {
         if ((pixel>=0) && (pixel<width_*height_*4)) disp[pixel+state]=disp[pixel+3]=255;
     }
 
-    FontTool::drawText(xpos,ypos,mark);
+    drawText(xpos,ypos,mark);
 }
 
 void SDLinterface::setDisplayMode(DisplayMode mode) {
