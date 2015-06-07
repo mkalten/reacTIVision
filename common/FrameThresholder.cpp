@@ -126,7 +126,7 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 	return true;
 }
 
-void FrameThresholder::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
+void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 
 
     //long start_time = VisionEngine::currentMicroSeconds();

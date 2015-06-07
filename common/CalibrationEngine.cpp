@@ -263,12 +263,18 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
     return lock;
 }
 
-void CalibrationEngine::process(unsigned char *src, unsigned char *dest, unsigned char *display) {
+void CalibrationEngine::process(unsigned char *src, unsigned char *dest) {
 
-	if(calibration) drawDisplay(display);
+	if(calibration) drawDisplay();
 }
 
-void CalibrationEngine::drawDisplay(unsigned char* display) {
+void CalibrationEngine::drawDisplay() {
+	
+	if (interface_==NULL) return;
+	if (interface_->getDisplayMode()==NO_DISPLAY) return;
+	
+	unsigned char *display = interface_->getDisplay();
+	if (display==NULL) return;
 
     float x,y;
     int gx,gy;

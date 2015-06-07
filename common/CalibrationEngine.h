@@ -38,8 +38,8 @@ public:
 	CalibrationEngine(const char* out);
 	~CalibrationEngine();
 
-    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
-	void drawDisplay(unsigned char* display);
+    void process(unsigned char *src, unsigned char *dest);
+	void drawDisplay();
 	bool init(int w ,int h, int sb, int db);
 
 	bool setFlag(unsigned char flag, bool value, bool lock);

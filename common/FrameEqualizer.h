@@ -36,7 +36,7 @@ public:
 		}
 	};
 	
-    void process(unsigned char *src, unsigned char *dest, unsigned char *display);
+    void process(unsigned char *src, unsigned char *dest);
 	bool init(int w ,int h, int sb, int db);
 	bool toggleFlag(unsigned char flag, bool lock);
 	bool getState() { return equalize; };
