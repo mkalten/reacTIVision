@@ -50,7 +50,8 @@ extern "C" {
 // To load the fonts, load the font image into YourFont->Surface
 // and call InitFont( YourFont );
 typedef struct {
-	SDL_Surface *Surface;	
+	SDL_Surface *Surface;
+	SDL_Texture *Texture;
 	int CharPos[512];
 	int MaxPos;
 } SFont_Font;
@@ -58,13 +59,13 @@ typedef struct {
 // 10.01.2006 Martin Kaltenbrunner <martin@tuio.org>
 // added binary default font and methods to load the default font
 SDL_Surface* SFont_FontSurface ();
-SFont_Font* SFont_InitDefaultFont ();
+SFont_Font* SFont_InitDefaultFont (SDL_Renderer *Rendere);
 
 // Initializes the font
 // Font: this contains the surface with the font.
 //       The Surface must be loaded before calling this function
 
-SFont_Font* SFont_InitFont (SDL_Surface *Font);
+SFont_Font* SFont_InitFont (SDL_Renderer *Renderer, SDL_Surface *Font);
 
 // Frees the font
 // Font: The font to free
@@ -74,17 +75,13 @@ void SFont_FreeFont(SFont_Font* Font);
 // Blits a string to a surface
 // Destination: the suface you want to blit to
 // text: a string containing the text you want to blit.
-void SFont_Write(SDL_Surface *Surface, const SFont_Font *Font, int x, int y,
+void SFont_Write(SDL_Renderer *Renderer, SDL_Texture *Texture, const SFont_Font *Font, int x, int y,
 				 const char *text);
 
 // Returns the width of "text" in pixels
 int SFont_TextWidth(const SFont_Font* Font, const char *text);
 // Returns the height of "text" in pixels (which is always equal to Font->Surface->h)
 int SFont_TextHeight(const SFont_Font* Font);
-
-// Blits a string to Surface with centered x position
-void SFont_WriteCenter(SDL_Surface *Surface, const SFont_Font* Font, int y,
-					   const char *text);
 
 #ifdef __cplusplus
 }
