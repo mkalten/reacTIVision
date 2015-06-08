@@ -25,10 +25,29 @@
 class FrameInverter: public FrameProcessor
 {
 public:	
-	FrameInverter() {};
+	FrameInverter() {
+		currentSetting = INV_NONE;
+		show_settings = false;
+		
+		invert_red = true;
+		invert_green = true;
+		invert_blue = true;
+		
+		help_text.push_back( "FrameInverter:");
+		help_text.push_back( "   i - invert red, green or blue");
+	};
 	~FrameInverter() {};
 
     void process(unsigned char *src, unsigned char *dest);
+	bool toggleFlag(unsigned char flag, bool lock);
+	
+private:
+	
+	void displayControl();
+	bool invert_red, invert_green, invert_blue;
+	enum InvertSetting { INV_NONE, INV_RED, INV_GREEN, INV_BLUE };
+	int currentSetting;
+	bool show_settings;
 };
 
 #endif

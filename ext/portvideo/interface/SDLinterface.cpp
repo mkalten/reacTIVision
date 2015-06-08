@@ -427,7 +427,6 @@ void SDLinterface::displayMessage(const char *message)
     drawText((width_- textWidth(message))/2,height_/2,message);
 	
     SDL_RenderCopy(renderer_, display_, NULL, NULL);
-	SDL_RenderClear(renderer_);
     SDL_RenderPresent(renderer_);
 }
 

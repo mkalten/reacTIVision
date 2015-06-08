@@ -20,10 +20,89 @@
 #include "FrameInverter.h"
 
 void FrameInverter::process(unsigned char *src, unsigned char *dest) {
-	// inverts the image
-	for (int i=srcSize;i>0;i--) {
-		*dest++ = 255 - *src++;
+	
+	// grayscale
+	if (srcBytes==1) {
+		for (int i=srcSize;i>0;i--) {
+			*dest++ = 255 - *src++;
+		}
+	// colour
+	} else {
+		for (int i=width*height;i>0;i--) {
+			*dest++ = (invert_red)   ? (255 - *src++):*src++;
+			*dest++ = (invert_green) ? (255 - *src++):*src++;
+			*dest++ = (invert_blue)  ? (255 - *src++):*src++;
+		}
+		
+		if (show_settings) displayControl();
 	}
+}
+
+bool FrameInverter::toggleFlag(unsigned char flag, bool lock) {
+	
+	if (srcBytes==1) return lock;
+	
+	if (flag==KEY_I) {
+		if (currentSetting != INV_NONE) {
+			currentSetting = INV_NONE;
+			show_settings = false;
+			return false;
+		} else if (!lock) {
+			currentSetting = INV_RED;
+			show_settings = true;
+			return true;
+		}
+	} else if ( currentSetting != INV_NONE ) {
+		switch(flag) {
+			case KEY_LEFT:
+				if (currentSetting==INV_RED) invert_red = false ;
+				else if (currentSetting==INV_GREEN) invert_green = false ;
+				else if (currentSetting==INV_BLUE) invert_blue = false ;
+				break;
+			case KEY_RIGHT:
+				if (currentSetting==INV_RED) invert_red = true ;
+				else if (currentSetting==INV_GREEN) invert_green = true ;
+				else if (currentSetting==INV_BLUE) invert_blue = true ;
+				break;
+			case KEY_UP:
+				currentSetting--;
+				if (currentSetting < INV_RED) currentSetting = INV_BLUE;
+				break;
+			case KEY_DOWN:
+				currentSetting++;
+				if (currentSetting > INV_BLUE) currentSetting = INV_RED;
+				break;
+		}
+	}
+	return lock;
+}
+
+void FrameInverter::displayControl() {
+	
+	char displayText[64];
+	int settingValue = 0;
+	int maxValue = 1;
+	
+	switch (currentSetting) {
+		case INV_NONE: return;
+		case INV_RED: {
+			sprintf(displayText,"invert RED channel %d",(int)invert_red);
+			settingValue = (int)invert_red;
+			break;
+		}
+		case INV_GREEN: {
+			sprintf(displayText,"invert GREEN channel %d",(int)invert_green);
+			settingValue = (int)invert_green;
+			break;
+		}
+		case INV_BLUE: {
+			sprintf(displayText,"invert BLUE channel %d",(int)invert_blue);
+			settingValue = (int)invert_blue;
+			break;
+		}
+	}
+	
+	ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 
 
