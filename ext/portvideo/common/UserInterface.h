@@ -82,7 +82,7 @@ public:
 	virtual void displayMessage(const char *message) = 0;
     virtual void displayControl(const char *title, int min, int max, int value) = 0;
     virtual void displayError(const char *message) = 0;
-    virtual void drawMark(int xpos, int ypos, const char *mark, int state) = 0;
+    virtual void drawText(int xpos, int ypos, const char *text) = 0;
 	
 	virtual void setColor(unsigned char r, unsigned char g, unsigned char b) = 0;
 	virtual void drawPoint(int x,int y) = 0;

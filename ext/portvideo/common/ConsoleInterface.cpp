@@ -127,14 +127,9 @@ void ConsoleInterface::displayMessage(const char *message)
    std::cout << message << std::endl;
 }
 
-void ConsoleInterface::displayControl(const char *title, int min, int max, int value)
-{
+void ConsoleInterface::displayControl(const char *title, int min, int max, int value) {}
 
-}
-
-void ConsoleInterface::drawMark(int xpos, int ypos, const char *mark, int state) {
-
-}
+void ConsoleInterface::drawText(int xpos, int ypos, const char *text) {}
 
 void ConsoleInterface::setDisplayMode(DisplayMode mode) {
     displayMode_ = mode;

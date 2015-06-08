@@ -48,7 +48,7 @@ public:
     void displayMessage(const char *message);
     void displayControl(const char *title, int min, int max, int value);
     void displayError(const char* error);
-    void drawMark(int xpos, int ypos, const char *mark, int state);
+	void drawText(int xpos, int ypos, const char *text);
 	
 	void setColor(unsigned char r, unsigned char g, unsigned char b) {};
 	void drawPoint(int x,int y) {};

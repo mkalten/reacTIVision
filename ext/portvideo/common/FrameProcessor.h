@@ -73,6 +73,7 @@ public:
 		srcSize   = 0;
 		destSize  = 0;
 		initialized = false;
+		ui = NULL;
 	};
 	virtual ~FrameProcessor() {};
 
@@ -89,7 +90,7 @@ public:
 		return true;
 	};
 
-    virtual void addUserInterface(UserInterface *uiface) { interface_=uiface; };
+    virtual void addUserInterface(UserInterface *uiface) { ui=uiface; };
     virtual void process(unsigned char *src, unsigned char *dest) = 0;
     virtual bool setFlag(unsigned char flag, bool value, bool lock) { return lock; };
     virtual bool toggleFlag(unsigned char flag, bool lock) { return lock; };
@@ -104,7 +105,7 @@ protected:
 	int destSize;
 
 	bool initialized;
-	UserInterface *interface_;
+	UserInterface *ui;
 
 	std::vector<std::string> help_text;
 };

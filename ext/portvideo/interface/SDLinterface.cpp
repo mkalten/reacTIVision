@@ -57,8 +57,9 @@ void SDLinterface::closeDisplay()
 void SDLinterface::updateDisplay() {
 	
 	if (select_) {
-		SDL_SetRenderTarget(renderer_, display_);
 		SDL_SetRenderDrawColor(renderer_,0,0,0,0);
+		SDL_RenderClear(renderer_);
+		SDL_SetRenderTarget(renderer_, display_);
 		SDL_RenderClear(renderer_);
 		
 		int y = textHeight()-3;
@@ -419,13 +420,14 @@ void SDLinterface::drawHelp()
 
 void SDLinterface::displayMessage(const char *message)
 {
-	SDL_SetRenderTarget(renderer_, display_);
 	SDL_SetRenderDrawColor(renderer_,0,0,0,0);
-	SDL_RenderClear(renderer_);;
+	SDL_SetRenderTarget(renderer_, display_);
+	SDL_RenderClear(renderer_);
 	
     drawText((width_- textWidth(message))/2,height_/2,message);
 	
     SDL_RenderCopy(renderer_, display_, NULL, NULL);
+	SDL_RenderClear(renderer_);
     SDL_RenderPresent(renderer_);
 }
 
@@ -450,31 +452,6 @@ void SDLinterface::displayControl(const char *title, int min, int max, int value
 	
 	SDL_SetRenderTarget(renderer_, NULL);
 	SDL_SetRenderDrawColor(renderer_,0,0,0,0);
-}
-
-void SDLinterface::drawMark(int xpos, int ypos, const char *mark, int state) {
-
-	drawText(xpos,ypos,mark);
-	SDL_SetRenderTarget(renderer_, display_);
-	
-	switch (state) {
-		case 0:
-			SDL_SetRenderDrawColor(renderer_,255,0,0,255);
-			break;
-		case 1:
-			SDL_SetRenderDrawColor(renderer_,0,255,0,255);
-			break;
-		case 2:
-			SDL_SetRenderDrawColor(renderer_,0,0,255,255);
-			break;
-	}
-	
-	SDL_RenderDrawLine(renderer_, xpos+1, ypos, xpos+2, ypos);
-	SDL_RenderDrawLine(renderer_, xpos-1, ypos, xpos-2, ypos);
-	SDL_RenderDrawLine(renderer_, xpos, ypos+1, xpos, ypos+2);
-	SDL_RenderDrawLine(renderer_, xpos, ypos-1, xpos, ypos-2);
-
-	SDL_SetRenderTarget(renderer_, NULL);	
 }
 
 void SDLinterface::setColor(unsigned char r, unsigned char g, unsigned char b) {

@@ -102,9 +102,9 @@ bool FileCamera::initCamera() {
 unsigned char* FileCamera::getFrame()
 {
 #ifdef WIN32
-	Sleep(1000);
+	Sleep(100);
 #else
-	usleep( 1000000 ); // do 1fps
+	usleep( 100000 ); // do 10fps
 #endif
 	return cam_buffer;
 }
