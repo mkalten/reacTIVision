@@ -21,9 +21,11 @@
 #define CONSOLENTERFACE_H
 
 #include "UserInterface.h"
+#ifndef WIN32
 #include <termios.h>
 #include <sys/select.h>
 #include <unistd.h>
+#endif
 
 class ConsoleInterface: public UserInterface
 {
@@ -31,7 +33,9 @@ class ConsoleInterface: public UserInterface
 public:
 	ConsoleInterface(const char* name);
 	~ConsoleInterface() {
+#ifndef WIN32
 		tcsetattr(STDIN_FILENO, TCSANOW, &term_cfg);
+#endif
 	};
 
 	bool openDisplay(VisionEngine *engine);
@@ -69,11 +73,11 @@ private:
     unsigned char* destBuffer_;
     
     bool pause_;
-	
+#ifndef WIN32	
 	termios term_cfg;
 	fd_set readset;
 	struct timeval tv;
-	
+#endif	
 	long frames_;
   	long lastTime_;
 	unsigned int cameraTime_, processingTime_, totalTime_;

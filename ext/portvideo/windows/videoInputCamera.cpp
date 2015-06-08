@@ -37,38 +37,43 @@ videoInputCamera::~videoInputCamera()
 	if (cam_buffer!=NULL) delete cam_buffer;
 }
 
-void videoInputCamera::listDevices() {
+int videoInputCamera::getDeviceCount() {
+	videoInput VI;
+	std::vector <std::string> devList = VI.getDeviceList();
+	return  devList.size();
+}
+
+std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
+
+	std::vector<CameraConfig> dev_list;
 
 	videoInput VI;
 	std::vector <std::string> devList = VI.getDeviceList();
 
 	int count = devList.size();
-	if (count==0) { std::cout << " no videoInput camera found!" << std::endl; return; }
-	else if (count==1) std::cout << "1 videoInput camera found:" << std::endl;
-	else std::cout << count << " videoInput cameras found:" << std::endl;
 	
 	for(int i = 0; i <count; i++){
 		std::cout << "\t" << i << ": " << devList[i] << std::endl;
 	}
+
+	return dev_list;
 }
 
-bool videoInputCamera::findCamera() {
+ CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 
-	std::vector <std::string> devList = VI->getDeviceList();
-
-	int count = devList.size();
-	if (count==0) { std::cout << " no videoInput camera found!" << std::endl; return false; }
-	else if (count==1) std::cout << "1 videoInput camera found" << std::endl;
-	else std::cout << count << " videoInput cameras found" << std::endl;
-	
-	if (cfg->device<0) cfg->device=0;
-	if (cfg->device>=count) cfg->device = count-1;
-
-	sprintf(cameraName,devList[cfg->device].c_str());
-	return true;
+	return NULL;
 }
 
 bool videoInputCamera::initCamera() {
+
+
+	std::vector <std::string> devList = VI->getDeviceList();
+	int count = devList.size();
+
+	if (cfg->device<0) cfg->device=0;
+	if (cfg->device>=count) cfg->device = count-1;
+
+	sprintf(cfg->name,devList[cfg->device].c_str());
 
 	// TODO: get actual video formats
 	if (cfg->cam_width<=0) cfg->cam_width=640;
@@ -76,7 +81,7 @@ bool videoInputCamera::initCamera() {
 	if (cfg->cam_fps<=0) cfg->cam_fps=30;
 
 	VI->setIdealFramerate(this->cfg->device, cfg->cam_fps);
-	if (cfg->compress == true) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
+	if (cfg->cam_format==FORMAT_MJPEG) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
 	bool bOk = VI->setupDevice(cfg->device, cfg->cam_width, cfg->cam_height);
 
 	if (bOk == true) {	
@@ -87,8 +92,8 @@ bool videoInputCamera::initCamera() {
 	applyCameraSettings();
 	setupFrame();
 	
-	if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];
-	else cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*bytes];
+	if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
+	else cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
 
 	return true;
 }
@@ -123,8 +128,8 @@ unsigned char* videoInputCamera::getFrame()
 
 	} else {
 
-		if (cfg->frame) flip_crop(cfg->cam_width,cfg->cam_height,src,dest,bytes);
-		else flip(cfg->cam_width,cfg->cam_height,src,dest,bytes);
+		if (cfg->frame) flip_crop(cfg->cam_width,cfg->cam_height,src,dest,cfg->src_format);
+		else flip(cfg->cam_width,cfg->cam_height,src,dest,cfg->src_format);
 	}
 
 		lost_frames = 0;

@@ -71,7 +71,7 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 std::vector<CameraConfig> CameraTool::findDevices() {
 	
 #ifdef WIN32
-	std::vector<CameraConfig> dev_list = videoInputCamera::getCameraConfigs());
+	std::vector<CameraConfig> dev_list = videoInputCamera::getCameraConfigs();
 #endif
 	
 #ifdef __APPLE__

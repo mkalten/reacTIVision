@@ -119,13 +119,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\ConsoleInterface.cpp" />
     <ClCompile Include="..\sdldemo\FrameInverter.cpp" />
     <ClCompile Include="..\sdldemo\Main.cpp" />
     <ClCompile Include=".\videoInputCamera.cpp" />
     <ClCompile Include="..\interface\Resources.c" />
     <ClCompile Include="..\interface\SDLinterface.cpp" />
     <ClCompile Include="..\interface\SFont.c" />
-    <ClCompile Include="..\interface\FontTool.cpp" />
     <ClCompile Include="..\common\VisionEngine.cpp" />
     <ClCompile Include="..\common\RingBuffer.cpp" />
     <ClCompile Include="..\common\CameraEngine.cpp" />
@@ -135,12 +135,12 @@
     <ClCompile Include="..\tinyxml\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\ConsoleInterface.h" />
     <ClInclude Include="..\sdldemo\FrameInverter.h" />
     <ClInclude Include="..\sdldemo\Main.h" />
     <ClInclude Include=".\videoInputCamera.h" />
     <ClInclude Include="..\interface\SDLinterface.h" />
     <ClInclude Include="..\interface\SFont.h" />
-    <ClInclude Include="..\interface\FontTool.h" />
     <ClInclude Include="..\interface\Resources.h" />
     <ClInclude Include="..\common\UserInterface.h" />
     <ClInclude Include="..\common\VisionEngine.h" />
@@ -153,7 +153,9 @@
     <ClInclude Include="..\tinyxml\tinyxml2.h" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="camera.xml" />
+    <Xml Include="camera.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="portvideo.xml" />
   </ItemGroup>
   <ItemGroup>

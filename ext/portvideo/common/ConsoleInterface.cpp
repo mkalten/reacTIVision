@@ -22,7 +22,7 @@
 // the principal program sequence
 bool ConsoleInterface::openDisplay(VisionEngine *engine) {
 	engine_ = engine;
-	
+#ifndef WIN32	
 	tcgetattr(STDIN_FILENO, &term_cfg);
 	termios new_cfg = term_cfg;
 	new_cfg.c_lflag &= ~ECHO;
@@ -32,7 +32,7 @@ bool ConsoleInterface::openDisplay(VisionEngine *engine) {
 	
 	tv.tv_sec = 0;
 	tv.tv_usec = 10;
-	
+#endif	
 	return true;
 }
 
@@ -48,6 +48,7 @@ void ConsoleInterface::updateDisplay()
 
 void ConsoleInterface::processEvents()
 {
+#ifndef WIN32
 	FD_ZERO(&readset);
 	FD_SET(fileno(stdin), &readset);
 	select(fileno(stdin)+1, &readset, NULL, NULL, &tv);
@@ -75,7 +76,7 @@ void ConsoleInterface::processEvents()
 				break;
 		}
 	}
-
+#endif
 }
 
 void ConsoleInterface::setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color)

@@ -139,7 +139,7 @@ void CameraEngine::control(unsigned char key) {
     ctrl_min = getMinCameraSetting(currentCameraSetting);
 }
 
-void CameraEngine::showInterface(UserInterface *interface) {
+void CameraEngine::showInterface(UserInterface *uiface) {
     if(!settingsDialog) return;
 
     //int settingValue = getCameraSetting(currentCameraSetting);
@@ -173,7 +173,7 @@ void CameraEngine::showInterface(UserInterface *interface) {
     char displayText[256];
     sprintf(displayText,"%s %d",settingText,ctrl_val);
 
-    interface->displayControl(displayText, ctrl_min, ctrl_max, ctrl_val);
+    uiface->displayControl(displayText, ctrl_min, ctrl_max, ctrl_val);
 }
 
 void CameraEngine::uyvy2gray(int width, int height, unsigned char *src, unsigned char *dest) {

@@ -45,9 +45,6 @@
     <ClCompile Include="..\common\FileCamera.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
-    <ClCompile Include="..\interface\FontTool.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
     <ClCompile Include="..\interface\Resources.c">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
     <ClCompile Include="..\interface\SDLinterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\ConsoleInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sdldemo\Main.h">
@@ -87,9 +87,6 @@
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
     <ClInclude Include="..\common\FolderCamera.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\interface\FontTool.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
     <ClInclude Include="..\common\FrameProcessor.h">
@@ -117,6 +114,9 @@
       <Filter>Header Files\tinyxml</Filter>
     </ClInclude>
     <ClInclude Include="..\interface\SDLinterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\ConsoleInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
