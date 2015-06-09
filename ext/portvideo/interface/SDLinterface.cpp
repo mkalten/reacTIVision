@@ -491,7 +491,15 @@ void SDLinterface::drawEllipse(int x,int y, int w, int h) {
 
 void SDLinterface::fillEllipse(int x,int y, int w, int h) {
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
-	SDL_RenderDrawPoint(renderer_, x, y);
+	
+	float step = 0.002 * width_/w;
+	
+	for (double a=M_PI/2;a>-M_PI/2;a-=step) {
+		
+		double X = cos(a)*w/2.0f;
+		double Y = sin(a)*h/2.0f;
+		drawLine(x-X,y+Y,x+X,y+Y);
+	}
 }
 
 void SDLinterface::setDisplayMode(DisplayMode mode) {
