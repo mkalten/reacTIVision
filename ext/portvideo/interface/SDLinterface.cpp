@@ -87,7 +87,8 @@ void SDLinterface::updateDisplay() {
             break;
         case SOURCE_DISPLAY: {
 			SDL_SetRenderTarget(renderer_, NULL);
-            SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_*format_);
+            if (format_==FORMAT_RGB) SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_*format_);
+			else SDL_UpdateYUVTexture(texture_,NULL,sourceBuffer_,width_*format_,uvBuffer_,width_*format_,uvBuffer_,width_*format_);
             SDL_RenderCopy(renderer_, texture_, NULL, NULL);
             if (help_) drawHelp();
             SDL_RenderCopy(renderer_, display_, NULL, NULL);
@@ -100,8 +101,9 @@ void SDLinterface::updateDisplay() {
         }
         case DEST_DISPLAY: {
 			SDL_SetRenderTarget(renderer_, NULL);
-            SDL_UpdateTexture(texture_,NULL,destBuffer_,width_*format_);
-            SDL_RenderCopy(renderer_, texture_, NULL, NULL);
+			if (format_==FORMAT_RGB) SDL_UpdateTexture(texture_,NULL,destBuffer_,width_*format_);
+			else SDL_UpdateYUVTexture(texture_,NULL,destBuffer_,width_*format_,uvBuffer_,width_*format_,uvBuffer_,width_*format_);
+			SDL_RenderCopy(renderer_, texture_, NULL, NULL);
             if (help_) drawHelp();
 			SDL_RenderCopy(renderer_, display_, NULL, NULL);
 			SDL_SetRenderTarget(renderer_, display_);
@@ -291,18 +293,16 @@ void SDLinterface::setBuffers(unsigned char *src, unsigned char *dest, int width
     
     sourceBuffer_  = src;
     destBuffer_    = dest;
-    
-    for (int i=0;i<3*width_*height_;i++) {
-       	destBuffer_[i] = 128;
-       	sourceBuffer_[i] = 128;
-    }
-
 }
 
 void SDLinterface::allocateBuffers()
 {
     if (format_==FORMAT_RGB) texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STATIC,width_,height_);
-    else texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
+	else {
+		texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
+		uvBuffer_ = new unsigned char [width_*height_];
+		for (int i=0;i<width_*height_;i++) uvBuffer_[i] = 128;
+	}
     
 	display_ =  SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGBA8888 , SDL_TEXTUREACCESS_TARGET ,width_,height_);
 	SDL_SetTextureBlendMode(display_, SDL_BLENDMODE_BLEND);
@@ -536,6 +536,7 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
     window_ = NULL;
     sourceBuffer_ = NULL;
     destBuffer_ = NULL;
+	uvBuffer_ = NULL;
     
     help_text.push_back("display:");
     help_text.push_back("   n - no image");

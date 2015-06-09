@@ -54,7 +54,9 @@ class SDLinterface: public UserInterface
 
 public:
 	SDLinterface(const char* name, bool fullscreen);
-	~SDLinterface() {};
+	~SDLinterface() {
+		if (uvBuffer_) delete[] uvBuffer_;
+	};
 
 	bool openDisplay(VisionEngine *engine);
     void updateDisplay();
@@ -106,6 +108,8 @@ private:
 	SFont_Font *sfont_;
 	int textHeight();
 	int textWidth(const char *text);
+	
+	unsigned char* uvBuffer_;
 	
     bool error_;
     bool pause_;

@@ -308,8 +308,8 @@ void VisionEngine::event(int key)
 
 void VisionEngine::allocateBuffers()
 {
-    sourceBuffer_  = new unsigned char[3*width_*height_];
-    destBuffer_    = new unsigned char[3*width_*height_];
+    sourceBuffer_  = new unsigned char[format_*width_*height_];
+    destBuffer_    = new unsigned char[format_*width_*height_];
     ringBuffer = new RingBuffer(width_*height_*format_);
 }
 
