@@ -169,10 +169,10 @@ void VisionEngine::reset(CameraConfig *cam_cfg) {
 	
 	if( camera_->startCamera() ) {
 		interface_->closeDisplay();
-		interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,camera_->getColor());
+		interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,format_);
 		interface_->openDisplay(this);
 		for (frame = processorList.begin(); frame!=processorList.end();frame++)
-			(*frame)->init(width_ , height_, bytesPerSourcePixel_, bytesPerDestPixel_);
+			(*frame)->init(width_ , height_, format_, format_);
 	} else interface_->displayError("Could not start camera!");
 	
 	pause_ = false;
@@ -241,8 +241,8 @@ void VisionEngine::mainLoop()
 #ifndef NDEBUG
         if (recording_) {
 			if (interface_->getDisplayMode()==SOURCE_DISPLAY)
-				saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
-			else saveBuffer(destBuffer_,bytesPerDestPixel_);
+				saveBuffer(sourceBuffer_,format_);
+			else saveBuffer(destBuffer_,format_);
         }
 #endif
 
@@ -294,8 +294,8 @@ void VisionEngine::event(int key)
         recording_ = !recording_;
     } else if( key == KEY_B ){
 		if (interface_->getDisplayMode()==SOURCE_DISPLAY)
-			saveBuffer(sourceBuffer_,bytesPerSourcePixel_);
-		else saveBuffer(destBuffer_,bytesPerDestPixel_);
+			saveBuffer(sourceBuffer_,format_);
+		else saveBuffer(destBuffer_,format_);
     }
 #endif
     
@@ -308,17 +308,9 @@ void VisionEngine::event(int key)
 
 void VisionEngine::allocateBuffers()
 {
-    bytesPerSourcePixel_ = 1;
-    bytesPerDestPixel_ = 1;
-    
-    if ((camera_!=NULL) && (camera_->getColor())) {
-        bytesPerSourcePixel_ = 3;
-        bytesPerDestPixel_ = 3;
-    }
-    
     sourceBuffer_  = new unsigned char[3*width_*height_];
     destBuffer_    = new unsigned char[3*width_*height_];
-    ringBuffer = new RingBuffer(width_*height_*bytesPerSourcePixel_);
+    ringBuffer = new RingBuffer(width_*height_*format_);
 }
 
 void VisionEngine::freeBuffers()
@@ -344,7 +336,7 @@ void VisionEngine::initFrameProcessors() {
     
     std::vector<std::string> help_text;
     for (frame = processorList.begin(); frame!=processorList.end(); ) {
-        bool success = (*frame)->init(width_ , height_, bytesPerSourcePixel_, bytesPerDestPixel_);
+        bool success = (*frame)->init(width_ , height_, format_, format_);
         if(success) {
             
             std::vector<std::string> processor_text = (*frame)->getOptions();
@@ -373,6 +365,7 @@ void VisionEngine::setupCamera() {
         width_ = camera_->getWidth();
         height_ = camera_->getHeight();
         fps_ = camera_->getFps();
+		format_ = camera_->getFormat();
         
 		camera_->printInfo();
     } else {
@@ -398,9 +391,7 @@ void VisionEngine::teardownCamera()
 void VisionEngine::setInterface(UserInterface *uiface) {
     if (uiface!=NULL) {
         interface_ = uiface;
-        bool color = false;
-        if (camera_) color = camera_->getColor();
-        interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,color);
+        interface_->setBuffers(sourceBuffer_,destBuffer_,width_,height_,format_);
     }
 }
 

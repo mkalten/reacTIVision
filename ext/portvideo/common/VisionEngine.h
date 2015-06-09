@@ -38,9 +38,6 @@
 #include <sys/stat.h>
 #include <time.h>
 
-#define WIDTH 640
-#define HEIGHT 480
-
 #include "Main.h"
 #include "CameraTool.h"
 #include "RingBuffer.h"
@@ -129,9 +126,8 @@ private:
 	int width_;
 	int height_;
 	int fps_;
-	int bytesPerSourcePixel_;
-	int bytesPerDestPixel_;
-    
+	int format_;
+
     unsigned char* sourceBuffer_;
     unsigned char* destBuffer_;
     

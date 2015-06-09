@@ -44,7 +44,7 @@ public:
 	void setVsync(bool vsync) {};
     
     void setHelpText(std::vector<std::string> hlp);
-    void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color);
+    void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format);
     void processEvents();
     void setDisplayMode(DisplayMode mode);
     
@@ -68,10 +68,7 @@ protected:
     void printFrameRate();
 
 private:
-    
-    unsigned char* sourceBuffer_;
-    unsigned char* destBuffer_;
-    
+        
     bool pause_;
 #ifndef WIN32	
 	termios term_cfg;
@@ -82,9 +79,6 @@ private:
   	long lastTime_;
 	unsigned int cameraTime_, processingTime_, totalTime_;
     unsigned int current_fps_;
-    
-	int width_;
-	int height_;
 
 	std::string app_name_;
 	std::vector<std::string> help_text;

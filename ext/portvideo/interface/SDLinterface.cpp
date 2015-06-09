@@ -87,7 +87,7 @@ void SDLinterface::updateDisplay() {
             break;
         case SOURCE_DISPLAY: {
 			SDL_SetRenderTarget(renderer_, NULL);
-            SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_*bytesPerSourcePixel_);
+            SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_*format_);
             SDL_RenderCopy(renderer_, texture_, NULL, NULL);
             if (help_) drawHelp();
             SDL_RenderCopy(renderer_, display_, NULL, NULL);
@@ -100,7 +100,7 @@ void SDLinterface::updateDisplay() {
         }
         case DEST_DISPLAY: {
 			SDL_SetRenderTarget(renderer_, NULL);
-            SDL_UpdateTexture(texture_,NULL,destBuffer_,width_*bytesPerDestPixel_);
+            SDL_UpdateTexture(texture_,NULL,destBuffer_,width_*format_);
             SDL_RenderCopy(renderer_, texture_, NULL, NULL);
             if (help_) drawHelp();
 			SDL_RenderCopy(renderer_, display_, NULL, NULL);
@@ -283,18 +283,11 @@ void SDLinterface::processEvents()
 	if (select_) updateDisplay();
 }
 
-void SDLinterface::setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color)
+void SDLinterface::setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format)
 {
-    if (color) {
-        bytesPerSourcePixel_ = 3;
-        bytesPerDestPixel_ = 3;
-    } else {
-        bytesPerSourcePixel_ = 1;
-        bytesPerDestPixel_ = 1;
-    }
-    
     width_ = width;
     height_ = height;
+	format_ = format;
     
     sourceBuffer_  = src;
     destBuffer_    = dest;
@@ -308,7 +301,7 @@ void SDLinterface::setBuffers(unsigned char *src, unsigned char *dest, int width
 
 void SDLinterface::allocateBuffers()
 {
-    if (bytesPerSourcePixel_==3) texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STATIC,width_,height_);
+    if (format_==FORMAT_RGB) texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGB24,SDL_TEXTUREACCESS_STATIC,width_,height_);
     else texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
     
 	display_ =  SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGBA8888 , SDL_TEXTUREACCESS_TARGET ,width_,height_);
@@ -532,9 +525,7 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 , vsync_( true )
 , frames_( 0 )
 , current_fps_( 0 )
-, width_( WIDTH )
-, height_( HEIGHT )
-{
+{	
     displayMode_ = DEST_DISPLAY;
     app_name_ = std::string(name);
     fullscreen_ = fullscreen;

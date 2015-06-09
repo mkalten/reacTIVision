@@ -56,13 +56,21 @@
 #define KEY_DOWN 81
 #define KEY_UP 82
 
+#define WIDTH 640
+#define HEIGHT 480
+
 enum DisplayMode { NO_DISPLAY, SOURCE_DISPLAY, DEST_DISPLAY };
 
 class VisionEngine;
 class UserInterface
 {
 public:
-	UserInterface() { verbose_ = false; };
+	UserInterface() {
+		width_ = WIDTH;
+		height_ = HEIGHT;
+		format_ = 0;
+		verbose_ = false;
+	};
 	virtual ~UserInterface() {};
     
     void setDisplayMode(DisplayMode mode) { displayMode_ = mode; };
@@ -74,7 +82,7 @@ public:
     virtual void setVsync(bool sync) = 0;
     
     virtual void setHelpText(std::vector<std::string> hlp) = 0;
-    virtual void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color) = 0;
+    virtual void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format) = 0;
     virtual void processEvents() = 0;
     void setVerbose(bool verbose) { verbose_ = verbose; };
     
@@ -96,6 +104,13 @@ protected:
 	bool verbose_;
     DisplayMode displayMode_;
     VisionEngine *engine_;
+	
+	unsigned char* sourceBuffer_;
+	unsigned char* destBuffer_;
+	
+	int width_;
+	int height_;
+	int format_;
 
 };
 

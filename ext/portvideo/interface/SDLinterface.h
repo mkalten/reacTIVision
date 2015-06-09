@@ -63,7 +63,7 @@ public:
 	void setVsync(bool vsync);
     
     void setHelpText(std::vector<std::string> hlp);
-    void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color);
+    void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format);
     void processEvents();
     void setDisplayMode(DisplayMode mode);
     
@@ -99,10 +99,7 @@ private:
     
     SDL_Renderer *renderer_;
     SDL_Window *window_;
-    
-    unsigned char* sourceBuffer_;
-    unsigned char* destBuffer_;
-    
+	
     SDL_Texture *texture_;
     SDL_Texture *display_;
 	
@@ -124,11 +121,6 @@ private:
   	long lastTime_;
 	unsigned int cameraTime_, processingTime_, totalTime_;
     unsigned int current_fps_;
-    
-	int width_;
-	int height_;
-	int bytesPerSourcePixel_;
-	int bytesPerDestPixel_;
 
 	std::string app_name_;
 	std::vector<std::string> help_text;

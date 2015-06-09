@@ -79,10 +79,11 @@ void ConsoleInterface::processEvents()
 #endif
 }
 
-void ConsoleInterface::setBuffers(unsigned char *src, unsigned char *dest, int width, int height, bool color)
+void ConsoleInterface::setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format)
 {
     width_  = width;
     height_ = height;
+	format_ = format;
 
     sourceBuffer_ = src;
     destBuffer_   = dest;
@@ -153,8 +154,6 @@ ConsoleInterface::ConsoleInterface(const char* name)
 : pause_( false )
 , frames_( 0 )
 , current_fps_( 0 )
-, width_( WIDTH )
-, height_( HEIGHT )
 {
     displayMode_ = NO_DISPLAY;
     app_name_ = std::string(name);

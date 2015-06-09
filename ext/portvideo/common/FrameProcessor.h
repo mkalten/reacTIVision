@@ -23,43 +23,11 @@
 #include <string>
 #include <vector>
 #include "UserInterface.h"
+#include "CameraEngine.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-
-#define KEY_A 4
-#define KEY_B 5
-#define KEY_C 6
-#define KEY_D 7
-#define KEY_E 8
-#define KEY_F 9
-#define KEY_G 10
-#define KEY_H 11
-#define KEY_I 12
-#define KEY_J 13
-#define KEY_K 14
-#define KEY_L 15
-#define KEY_M 16
-#define KEY_N 17
-#define KEY_O 18
-#define KEY_P 19
-#define KEY_Q 20
-#define KEY_R 21
-#define KEY_S 22
-#define KEY_T 23
-#define KEY_U 24
-#define KEY_V 25
-#define KEY_W 26
-#define KEY_X 27
-#define KEY_Y 28
-#define KEY_Z 29
-
-#define KEY_SPACE 44
-#define KEY_RIGHT 79
-#define KEY_LEFT 80
-#define KEY_DOWN 81
-#define KEY_UP 82
 
 class FrameProcessor
 {
@@ -68,23 +36,18 @@ public:
 	FrameProcessor() {
 		width     = 0;
 		height    = 0;
-		srcBytes  = 0;
-		destBytes = 0;
-		srcSize   = 0;
-		destSize  = 0;
+		src_format  = 0;
+		dest_format = 0;
 		initialized = false;
 		ui = NULL;
 	};
 	virtual ~FrameProcessor() {};
 
-	virtual bool init(int w, int h, int sb, int db) {
+	virtual bool init(int w, int h, int sf, int df) {
 		width  = w;
 		height = h;
-		srcBytes  = sb;
-		destBytes = db;
-
-		srcSize   = w*h*sb;
-		destSize  = w*h*db;
+		src_format  = sf;
+		dest_format = df;
 
 		initialized = true;
 		return true;
@@ -99,10 +62,8 @@ public:
 protected:
 	int width;
 	int height;
-	int srcBytes;
-	int destBytes;
-	int srcSize;
-	int destSize;
+	int src_format;
+	int dest_format;
 
 	bool initialized;
 	UserInterface *ui;

@@ -148,8 +148,8 @@ public:
         cfg = cam_cfg;
         settingsDialog=false;
                 
-        if (cam_cfg->color) cam_cfg->buf_format=FORMAT_RGB;
-        else cam_cfg->buf_format=FORMAT_GRAY;
+        if (cfg->color) cfg->buf_format=FORMAT_RGB;
+        else cfg->buf_format=FORMAT_GRAY;
     }
 
 	virtual ~CameraEngine() {};
@@ -185,7 +185,7 @@ public:
     int getFps() { return (int)floor(cfg->cam_fps+0.5f); }
     int getWidth() { return cfg->frame_width; }
     int getHeight() { return cfg->frame_height; }
-    bool getColor() { return cfg->color; }
+    int getFormat() { return cfg->buf_format; }
     char* getName() { return cfg->name; }
 
 protected:

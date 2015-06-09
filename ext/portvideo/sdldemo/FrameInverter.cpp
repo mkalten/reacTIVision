@@ -21,12 +21,10 @@
 
 void FrameInverter::process(unsigned char *src, unsigned char *dest) {
 	
-	// grayscale
-	if (srcBytes==1) {
-		for (int i=srcSize;i>0;i--) {
+	if (src_format==FORMAT_GRAY) {
+		for (int i=width*height;i>0;i--) {
 			*dest++ = 255 - *src++;
 		}
-	// colour
 	} else {
 		for (int i=width*height;i>0;i--) {
 			*dest++ = (invert_red)   ? (255 - *src++):*src++;
@@ -40,7 +38,7 @@ void FrameInverter::process(unsigned char *src, unsigned char *dest) {
 
 bool FrameInverter::toggleFlag(unsigned char flag, bool lock) {
 	
-	if (srcBytes==1) return lock;
+	if (src_format==FORMAT_GRAY) return lock;
 	
 	if (flag==KEY_I) {
 		if (currentSetting != INV_NONE) {
