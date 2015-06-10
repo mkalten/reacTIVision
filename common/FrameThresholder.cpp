@@ -151,10 +151,10 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 		tdata[i].dest=dp;
 		tdata[i].width=width;
 		tdata[i].height=part_height;
-		tdata[i].bytes=srcBytes;
+		tdata[i].bytes=src_format;
 		tdata[i].tile_size=tile_size;
 		tdata[i].gradient=gradient;
-    
+
 #ifdef WIN32
         DWORD threadId;
         tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
@@ -255,6 +255,6 @@ void FrameThresholder::displayControl() {
         sprintf(displayText,"tile size %d",settingValue);
     }
   
-    interface_->displayControl(displayText, 0, maxValue, settingValue);
+    ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 

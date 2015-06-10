@@ -240,8 +240,8 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 
 void FidtrackFinder::drawDisplay() {
 
-    if (interface_==NULL) return;
-    if (interface_->getDisplayMode()==NO_DISPLAY) return;
+    if (ui==NULL) return;
+    if (ui->getDisplayMode()==NO_DISPLAY) return;
 
 	FiducialFinder::displayControl();
 	
@@ -253,8 +253,8 @@ void FidtrackFinder::drawDisplay() {
 
 		// draw the finger
 		if( average_finger_size>0) {
-			interface_->setColor(0,0,255);
-			interface_->drawEllipse(width/2, height/2, average_finger_size,average_finger_size);
+			ui->setColor(0,0,255);
+			ui->drawEllipse(width/2, height/2, average_finger_size,average_finger_size);
 		}
 		
 		sprintf(displayText,"finger size %d",average_finger_size);
@@ -266,7 +266,7 @@ void FidtrackFinder::drawDisplay() {
 		maxValue = 200;
 	} else return;
 	
-    interface_->displayControl(displayText, 0, maxValue, settingValue);
+    ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
@@ -394,10 +394,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size,fiducials[i].leaf_size);
 			drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),1);
 			fiducialList.push_back(addFiducial);
-			if (interface_) {
+			if (ui) {
 				std::stringstream add_message;
 				add_message << "add obj " << session_id << " " << fiducials[i].id;
-				interface_->printMessage(add_message.str());
+				ui->printMessage(add_message.str());
 			}
 		}
 			
@@ -619,19 +619,19 @@ void FidtrackFinder::sendCursorMessages() {
 				aliveList[aliveSize]=finger->session_id;
 				aliveSize++;
 				session_id++;
-				if(interface_) {
+				if(ui) {
 					std::stringstream add_message;
 					add_message << "add cur " << finger->session_id;
-					interface_->printMessage(add_message.str());
+					ui->printMessage(add_message.str());
 				}
 				finger++;
 				break;
 			}
 			case FINGER_REMOVED: {
-				if(interface_) {
+				if(ui) {
 					std::stringstream del_message;
 					del_message << "del cur " << finger->session_id;
-					interface_->printMessage(del_message.str());
+					ui->printMessage(del_message.str());
 				}
 				finger = fingerList.erase(finger);
 				sendAliveMessage = true;
@@ -675,7 +675,7 @@ void FidtrackFinder::sendCursorMessages() {
 			}
 				
 			std::string set_message = finger->addSetMessage(tuio_server);
-			if(set_message!="" && interface_) interface_->printMessage(set_message);
+			if(set_message!="" && ui) ui->printMessage(set_message);
 		
 			if (finger->unsent>unsent) unsent = finger->unsent;
 		}

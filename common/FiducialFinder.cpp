@@ -93,13 +93,13 @@ bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 	if ((flag==KEY_R) && (!calibration) && (!empty_grid)) {
 		if (!show_grid) {
 			show_grid = true;
-			if(interface_) {
-				prevMode = interface_->getDisplayMode();
-				interface_->setDisplayMode(DEST_DISPLAY);
+			if(ui) {
+				prevMode = ui->getDisplayMode();
+				ui->setDisplayMode(DEST_DISPLAY);
 			}
 		} else {
 			show_grid = false;
-			if(interface_) interface_->setDisplayMode(prevMode);
+			if(ui) ui->setDisplayMode(prevMode);
 		}
 	} else if (flag==KEY_C) {
 		if(!calibration) {
@@ -176,7 +176,7 @@ void FiducialFinder::displayControl() {
 		}			
 	}
     
-    interface_->displayControl(displayText, 0, maxValue, settingValue);
+    ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 
 void FiducialFinder::sendTuioMessages() {
@@ -192,7 +192,7 @@ void FiducialFinder::sendTuioMessages() {
 
 			std::string remove_message = fiducial->checkRemoved();
 			if (remove_message!="") {
-				if(interface_) interface_->printMessage(remove_message);
+				if(ui) ui->printMessage(remove_message);
 				
 				fiducial = fiducialList.erase(fiducial);
 				// send a single alive message if any
@@ -226,7 +226,7 @@ void FiducialFinder::sendTuioMessages() {
 				}
 				
 				std::string set_message = fiducial->addSetMessage(tuio_server);
-				if(set_message!="" && interface_) interface_->printMessage(set_message);
+				if(set_message!="" && ui) ui->printMessage(set_message);
 		
 				if (fiducial->unsent>unsent) unsent = fiducial->unsent;
 			}
@@ -269,20 +269,20 @@ void FiducialFinder::finish() {
 
 void FiducialFinder::drawObject(int id, int xpos, int ypos, int state)
 {
-    if (interface_==NULL) return;
-	if (interface_->getDisplayMode()==NO_DISPLAY) return;
+    if (ui==NULL) return;
+	if (ui->getDisplayMode()==NO_DISPLAY) return;
     
 	char id_str[8];
 	if(id>=0) sprintf(id_str,"%d",id);
 	else sprintf(id_str,"F");
     
-    interface_->drawMark(xpos,ypos, id_str, state);
+    //ui->drawMark(xpos,ypos, id_str, state);
 }
 
 void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 
-    if (interface_==NULL) return;
-    if (interface_->getDisplayMode()==NO_DISPLAY) return;
+    if (ui==NULL) return;
+    if (ui->getDisplayMode()==NO_DISPLAY) return;
 	
 	int size = width*height-1;
 
@@ -315,21 +315,21 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 		}
 	}
 	// draw the circles
-	interface_->setColor(0, 0, 255);
-	interface_->drawEllipse(width/2, height/2,width,height);
-	interface_->drawEllipse(width/2, height/2,height,height);
-	interface_->drawEllipse(width/2, height/2,cell_width*4,cell_height*4);
-	interface_->drawEllipse(width/2, height/2,cell_width*2,cell_height*2);
+	ui->setColor(0, 0, 255);
+	ui->drawEllipse(width/2, height/2,width,height);
+	ui->drawEllipse(width/2, height/2,height,height);
+	ui->drawEllipse(width/2, height/2,cell_width*4,cell_height*4);
+	ui->drawEllipse(width/2, height/2,cell_width*2,cell_height*2);
 
 	// draw the horizontal lines
-	interface_->setColor(0, 255, 0);
+	ui->setColor(0, 255, 0);
 	for (int i=0;i<grid_size_y;i++) {
 		float start_x = 0;
 		float start_y = i*cell_width;
 		float end_x = (grid_size_x-1)*cell_height;
 		float end_y = start_y;
 		
-		interface_->drawLine(start_x, start_y,end_x,end_y);
+		ui->drawLine(start_x, start_y,end_x,end_y);
 	}
 
 	// draw the vertical lines
@@ -340,7 +340,7 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 		float end_x = start_x;
 		float end_y = (grid_size_y-1)*cell_height;
 		
-		interface_->drawLine(start_x, start_y,end_x,end_y);
+		ui->drawLine(start_x, start_y,end_x,end_y);
 	}
 
 }

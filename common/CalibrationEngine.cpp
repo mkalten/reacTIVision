@@ -119,16 +119,16 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 	if (flag==KEY_C) {
 		if (calibration) {
 			calibration = false;
-			if(interface_) interface_->setDisplayMode(prevMode);
+			if(ui) ui->setDisplayMode(prevMode);
 		} else {
 			calibration = true;
 
 			grid_xpos = (char)(grid_size_x/2);
 			grid_ypos = (char)(grid_size_y/2);
 
-			if(interface_) {
-				prevMode = interface_->getDisplayMode();
-				interface_->setDisplayMode(SOURCE_DISPLAY);
+			if(ui) {
+				prevMode = ui->getDisplayMode();
+				ui->setDisplayMode(SOURCE_DISPLAY);
 			}
 		}
 	}
@@ -136,7 +136,7 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 	if(!calibration) return lock;
 
 	if ((flag==KEY_T) || (flag==KEY_N))  {
-		interface_->setDisplayMode(SOURCE_DISPLAY);
+		ui->setDisplayMode(SOURCE_DISPLAY);
 	}
 
     if (flag==KEY_Q) {
@@ -270,15 +270,15 @@ void CalibrationEngine::process(unsigned char *src, unsigned char *dest) {
 
 void CalibrationEngine::drawDisplay() {
 	
-	if (interface_==NULL) return;
-	if (interface_->getDisplayMode()==NO_DISPLAY) return;
+	if (ui==NULL) return;
+	if (ui->getDisplayMode()==NO_DISPLAY) return;
 
     float x,y;
     int gx,gy;
     GridPoint gp;
 
 	// draw the circles
-	interface_->setColor(0, 0, 255);
+	ui->setColor(0, 0, 255);
 	int offset = (width-height)/2;
 	for (double a=-M_PI;a<M_PI;a+=0.005) {
 		int half = height/2;
@@ -292,7 +292,7 @@ void CalibrationEngine::drawDisplay() {
             gx = (int)(x + gp.x*cell_size_x);
             gy = (int)(y + gp.y*cell_size_y);
 
-           interface_->drawPoint(gx, gy);
+           ui->drawPoint(gx, gy);
         }
         
         // extra circle
@@ -304,7 +304,7 @@ void CalibrationEngine::drawDisplay() {
             gx = (int)(x + gp.x*cell_size_x);
             gy = (int)(y + gp.y*cell_size_y);
             
-            interface_->drawPoint(gx, gy);
+            ui->drawPoint(gx, gy);
         }
         
 		// outer circle
@@ -315,7 +315,7 @@ void CalibrationEngine::drawDisplay() {
 		gx = (int)(x + gp.x*cell_size_x);
 		gy = (int)(y + gp.y*cell_size_y);
 
-		interface_->drawPoint(gx, gy);
+		ui->drawPoint(gx, gy);
 
 		// middle circle
 		x = offset+half+cos(a)*cell_size_x*2;
@@ -325,7 +325,7 @@ void CalibrationEngine::drawDisplay() {
 		gx = (int)(x + gp.x*cell_size_x);
 		gy = (int)(y + gp.y*cell_size_y);
 
-		interface_->drawPoint(gx, gy);
+		ui->drawPoint(gx, gy);
 
 		// inner circle
 		x = offset+half+cos(a)*cell_size_x;
@@ -335,11 +335,11 @@ void CalibrationEngine::drawDisplay() {
 		gx = (int)(x + gp.x*cell_size_x);
 		gy = (int)(y + gp.y*cell_size_y);
 
-		interface_->drawPoint(gx, gy);
+		ui->drawPoint(gx, gy);
 	}
 	
 	// draw the horizontal lines
-	interface_->setColor(0, 255, 0);
+	ui->setColor(0, 255, 0);
 	for (int i=0;i<grid_size_y;i++) {
 		float start_x = 0;
 		float start_y = i*cell_size_y;
@@ -353,7 +353,7 @@ void CalibrationEngine::drawDisplay() {
 			int gx = (int)(lx+gp.x*cell_size_x);
 			int gy = (int)(ly+gp.y*cell_size_y);
 
-			interface_->drawPoint(gx, gy);
+			ui->drawPoint(gx, gy);
 		}
 	}
 
@@ -372,27 +372,27 @@ void CalibrationEngine::drawDisplay() {
 			int gx = (int)(lx+gp.x*cell_size_x);
 			int gy = (int)(ly+gp.y*cell_size_y);
 			
-			interface_->drawPoint(gx, gy);
+			ui->drawPoint(gx, gy);
 		}
 	}
 
 	// draw the red box for the selected point
-	interface_->setColor(255, 0, 0);
+	ui->setColor(255, 0, 0);
 	GridPoint p = grid->GetInterpolated(grid_xpos,grid_ypos);
 	gx = (int)(grid_xpos*cell_size_x + p.x*cell_size_x);
 	gy = (int)(grid_ypos*cell_size_y + p.y*cell_size_y);
 
-	interface_->fillRect(gx-3, gy-3,7,7);
+	ui->fillRect(gx-3, gy-3,7,7);
 	
 	// draw the grid points
-	interface_->setColor(255, 0, 255);
+	ui->setColor(255, 0, 255);
 	for (int i=0;i<grid_size_x;i++) {
 		for (int j=0;j<grid_size_y;j++) {
 			GridPoint gp = grid->GetInterpolated(i,j);
 			int gx = (int)(i*cell_size_x + gp.x*cell_size_x);
 			int gy = (int)(j*cell_size_y + gp.y*cell_size_y);
 
-			interface_->fillRect(gx-1, gy-1,3,3);
+			ui->fillRect(gx-1, gy-1,3,3);
 		}
 	}
 	
