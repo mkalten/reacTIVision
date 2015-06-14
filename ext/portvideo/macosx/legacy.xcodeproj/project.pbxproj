@@ -12,7 +12,6 @@
 		B200D55D1B0E52BB00249D8B /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D55A1B0E52BB00249D8B /* tinyxml2.cpp */; };
 		B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B21D89E30CE7A0FE003B810C /* FileCamera.cpp */; };
 		B21D8A0D0CE7A34A003B810C /* CameraEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */; };
-		B2375F3C0CCE305C00DE086D /* FontTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2375F3B0CCE305C00DE086D /* FontTool.cpp */; };
 		B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B239D6A30CC51682009708F3 /* DC1394Camera.cpp */; };
 		B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B244E81519C6D4DC008ADD32 /* libusb.a */; };
 		B24E06821B149B7800E42401 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B24E06811B149B7800E42401 /* IOKit.framework */; };
@@ -28,15 +27,14 @@
 		B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B220851F078AFC4D0047913B /* SDLinterface.cpp */; };
 		B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208521078AFC4D0047913B /* RingBuffer.cpp */; };
 		B297D3E2097536E2004AB0FE /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E66E0959DA6F00A347C1 /* Main.cpp */; };
-		B2985D201B1E52AD00A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D1E1B1E52AD00A3172B /* ConsoleInterface.cpp */; };
 		B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29AE05A1B0A95050046E462 /* FrameInverter.cpp */; };
 		B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */ = {isa = PBXBuildFile; fileRef = B29AE05D1B0A999C0046E462 /* portvideo.xml */; };
+		B2A621111B2DBC5400BC724D /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2A6210F1B2DBC5400BC724D /* ConsoleInterface.cpp */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
 		B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; };
 		B2DEC9DA19F65370006CAD09 /* SDL2.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */; };
 		B2F024E10975394D00538C36 /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DD0975394D00538C36 /* Resources.c */; };
-		B2F024E30975394D00538C36 /* SFont.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DF0975394D00538C36 /* SFont.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -71,8 +69,6 @@
 		B2208520078AFC4D0047913B /* SDLinterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDLinterface.h; path = ../interface/SDLinterface.h; sourceTree = SOURCE_ROOT; };
 		B2208521078AFC4D0047913B /* RingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RingBuffer.cpp; path = ../common/RingBuffer.cpp; sourceTree = SOURCE_ROOT; };
 		B2208522078AFC4D0047913B /* RingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RingBuffer.h; path = ../common/RingBuffer.h; sourceTree = SOURCE_ROOT; };
-		B2375E210CCE125700DE086D /* FontTool.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FontTool.h; path = ../interface/FontTool.h; sourceTree = SOURCE_ROOT; };
-		B2375F3B0CCE305C00DE086D /* FontTool.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FontTool.cpp; path = ../interface/FontTool.cpp; sourceTree = SOURCE_ROOT; };
 		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = DC1394Camera.cpp; path = ../linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
 		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
@@ -90,11 +86,11 @@
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B297D3ED097536E3004AB0FE /* SportVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B2985D1E1B1E52AD00A3172B /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = ../common/ConsoleInterface.cpp; sourceTree = "<group>"; };
-		B2985D1F1B1E52AD00A3172B /* ConsoleInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleInterface.h; path = ../common/ConsoleInterface.h; sourceTree = "<group>"; };
 		B29AE05A1B0A95050046E462 /* FrameInverter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FrameInverter.cpp; path = ../sdldemo/FrameInverter.cpp; sourceTree = "<group>"; };
 		B29AE05B1B0A95050046E462 /* FrameInverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameInverter.h; path = ../sdldemo/FrameInverter.h; sourceTree = "<group>"; };
 		B29AE05D1B0A999C0046E462 /* portvideo.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = portvideo.xml; sourceTree = "<group>"; };
+		B2A6210F1B2DBC5400BC724D /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = "../../../../reacTIVision-MERGE/ext/portvideo/common/ConsoleInterface.cpp"; sourceTree = "<group>"; };
+		B2A621101B2DBC5400BC724D /* ConsoleInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleInterface.h; path = "../../../../reacTIVision-MERGE/ext/portvideo/common/ConsoleInterface.h"; sourceTree = "<group>"; };
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../sdldemo/Main.h; sourceTree = "<group>"; };
 		B2CA60030CD623FA00B46958 /* libdc1394.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdc1394.a; path = dc1394/libdc1394.a; sourceTree = SOURCE_ROOT; };
 		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = "<group>"; };
@@ -103,8 +99,6 @@
 		B2E644150D6C39EC0000ABD0 /* FolderCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FolderCamera.h; path = ../common/FolderCamera.h; sourceTree = SOURCE_ROOT; };
 		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../interface/Resources.c; sourceTree = SOURCE_ROOT; };
 		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../interface/Resources.h; sourceTree = SOURCE_ROOT; };
-		B2F024DF0975394D00538C36 /* SFont.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SFont.c; path = ../interface/SFont.c; sourceTree = SOURCE_ROOT; };
-		B2F024E00975394D00538C36 /* SFont.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SFont.h; path = ../interface/SFont.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,10 +124,6 @@
 			children = (
 				B214E66E0959DA6F00A347C1 /* Main.cpp */,
 				B2A8A0C919ECF6EE00D8D4FA /* Main.h */,
-				B200D5421B0D153F00249D8B /* VisionEngine.cpp */,
-				B200D5441B0D154B00249D8B /* VisionEngine.h */,
-				B220851F078AFC4D0047913B /* SDLinterface.cpp */,
-				B2208520078AFC4D0047913B /* SDLinterface.h */,
 				B29AE05A1B0A95050046E462 /* FrameInverter.cpp */,
 				B29AE05B1B0A95050046E462 /* FrameInverter.h */,
 				B2F486A407788A9A00370074 /* drivers */,
@@ -225,8 +215,6 @@
 				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
 				B2208522078AFC4D0047913B /* RingBuffer.h */,
 				B220851B078AFC3D0047913B /* FrameProcessor.h */,
-				B2985D1E1B1E52AD00A3172B /* ConsoleInterface.cpp */,
-				B2985D1F1B1E52AD00A3172B /* ConsoleInterface.h */,
 				B200D5451B0E12BA00249D8B /* UserInterface.h */,
 			);
 			name = common;
@@ -235,10 +223,12 @@
 		B267A21E1B0A8D9F003CA930 /* interface */ = {
 			isa = PBXGroup;
 			children = (
-				B2375F3B0CCE305C00DE086D /* FontTool.cpp */,
-				B2375E210CCE125700DE086D /* FontTool.h */,
-				B2F024DF0975394D00538C36 /* SFont.c */,
-				B2F024E00975394D00538C36 /* SFont.h */,
+				B200D5421B0D153F00249D8B /* VisionEngine.cpp */,
+				B200D5441B0D154B00249D8B /* VisionEngine.h */,
+				B220851F078AFC4D0047913B /* SDLinterface.cpp */,
+				B2208520078AFC4D0047913B /* SDLinterface.h */,
+				B2A6210F1B2DBC5400BC724D /* ConsoleInterface.cpp */,
+				B2A621101B2DBC5400BC724D /* ConsoleInterface.h */,
 				B2F024DD0975394D00538C36 /* Resources.c */,
 				B2F024DE0975394D00538C36 /* Resources.h */,
 			);
@@ -337,15 +327,13 @@
 				B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */,
 				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
 				B297D3E2097536E2004AB0FE /* Main.cpp in Sources */,
+				B2A621111B2DBC5400BC724D /* ConsoleInterface.cpp in Sources */,
 				B2F024E10975394D00538C36 /* Resources.c in Sources */,
-				B2F024E30975394D00538C36 /* SFont.c in Sources */,
-				B2985D201B1E52AD00A3172B /* ConsoleInterface.cpp in Sources */,
 				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
 				B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */,
 				B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */,
 				B24E06891B149C3600E42401 /* QTKitCamera.mm in Sources */,
 				B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */,
-				B2375F3C0CCE305C00DE086D /* FontTool.cpp in Sources */,
 				B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */,
 				B21D8A0D0CE7A34A003B810C /* CameraEngine.cpp in Sources */,
 				B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */,

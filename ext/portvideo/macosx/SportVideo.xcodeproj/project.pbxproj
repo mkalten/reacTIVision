@@ -41,7 +41,6 @@
 		B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */; };
 		B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */; };
 		B2F024E10975394D00538C36 /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DD0975394D00538C36 /* Resources.c */; };
-		B2F024E30975394D00538C36 /* SFont.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DF0975394D00538C36 /* SFont.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -112,8 +111,6 @@
 		B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../interface/Resources.c; sourceTree = SOURCE_ROOT; };
 		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../interface/Resources.h; sourceTree = SOURCE_ROOT; };
-		B2F024DF0975394D00538C36 /* SFont.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SFont.c; path = ../interface/SFont.c; sourceTree = SOURCE_ROOT; };
-		B2F024E00975394D00538C36 /* SFont.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SFont.h; path = ../interface/SFont.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,17 +140,11 @@
 			children = (
 				B214E66E0959DA6F00A347C1 /* Main.cpp */,
 				B2A8A0C919ECF6EE00D8D4FA /* Main.h */,
-				B200D5421B0D153F00249D8B /* VisionEngine.cpp */,
-				B200D5441B0D154B00249D8B /* VisionEngine.h */,
-				B220851F078AFC4D0047913B /* SDLinterface.cpp */,
-				B2208520078AFC4D0047913B /* SDLinterface.h */,
-				B2985D1B1B1E301600A3172B /* ConsoleInterface.cpp */,
-				B2985D1C1B1E301600A3172B /* ConsoleInterface.h */,
 				B29AE05A1B0A95050046E462 /* FrameInverter.cpp */,
 				B29AE05B1B0A95050046E462 /* FrameInverter.h */,
+				B267A21E1B0A8D9F003CA930 /* interface */,
 				B2F486A407788A9A00370074 /* drivers */,
 				B267A21D1B0A8CB9003CA930 /* common */,
-				B267A21E1B0A8D9F003CA930 /* interface */,
 				B200D5581B0E52BB00249D8B /* tinyxml */,
 			);
 			name = Classes;
@@ -252,8 +243,12 @@
 		B267A21E1B0A8D9F003CA930 /* interface */ = {
 			isa = PBXGroup;
 			children = (
-				B2F024DF0975394D00538C36 /* SFont.c */,
-				B2F024E00975394D00538C36 /* SFont.h */,
+				B200D5421B0D153F00249D8B /* VisionEngine.cpp */,
+				B200D5441B0D154B00249D8B /* VisionEngine.h */,
+				B220851F078AFC4D0047913B /* SDLinterface.cpp */,
+				B2208520078AFC4D0047913B /* SDLinterface.h */,
+				B2985D1B1B1E301600A3172B /* ConsoleInterface.cpp */,
+				B2985D1C1B1E301600A3172B /* ConsoleInterface.h */,
 				B2F024DD0975394D00538C36 /* Resources.c */,
 				B2F024DE0975394D00538C36 /* Resources.h */,
 			);
@@ -353,7 +348,6 @@
 				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
 				B297D3E2097536E2004AB0FE /* Main.cpp in Sources */,
 				B2F024E10975394D00538C36 /* Resources.c in Sources */,
-				B2F024E30975394D00538C36 /* SFont.c in Sources */,
 				B2985D1D1B1E301600A3172B /* ConsoleInterface.cpp in Sources */,
 				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
 				B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */,
