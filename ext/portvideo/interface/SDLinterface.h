@@ -34,7 +34,6 @@
 #endif
 
 #include <sys/stat.h>
-#include <assert.h>
 
 #ifdef __APPLE__
 #include <SDL2/SDL.h>
@@ -141,7 +140,6 @@ private:
     SdlFont *font_;
     void initFont ();
     void freeFont();
-    Uint32 fontPixel(Sint32 X, Sint32 Y);
 };
 
 #endif

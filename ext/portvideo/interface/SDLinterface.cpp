@@ -20,57 +20,24 @@
 #include "VisionEngine.h"
 
 
-Uint32 SDLinterface::fontPixel(Sint32 X, Sint32 Y)
+unsigned int fontPixel(SDL_Surface *surface, int x, int y)
 {
-	Uint8  *bits;
-	Uint32 Bpp;
-
-	assert(X>=0);
-	assert(X<Surface->w);
-
-	Bpp = font_->Surface->format->BytesPerPixel;
-	bits = ((Uint8 *)font_->Surface->pixels)+Y*font_->Surface->pitch+X*Bpp;
-
-	// Get the pixel
-	switch(Bpp) {
-		case 1:
-			return *((Uint8 *)font_->Surface->pixels + Y * font_->Surface->pitch + X);
-			break;
-		case 2:
-			return *((Uint16 *)font_->Surface->pixels + Y * font_->Surface->pitch/2 + X);
-			break;
-		case 3: { // Format/endian independent
-			Uint8 r, g, b;
-			r = *((bits)+font_->Surface->format->Rshift/8);
-			g = *((bits)+font_->Surface->format->Gshift/8);
-			b = *((bits)+font_->Surface->format->Bshift/8);
-			return SDL_MapRGB(font_->Surface->format, r, g, b);
-		}
-			break;
-		case 4:
-			return *((Uint32 *)font_->Surface->pixels + Y * font_->Surface->pitch/4 + X);
-			break;
-	}
-
-	return -1;
+	return *((unsigned char*)surface->pixels + y * surface->pitch + x);
 }
 
 void SDLinterface::initFont()
 {
-	int x = 0, i = 0;
-	Uint32 pixel;
-	Uint32 green;
-
 	font_ = (SdlFont *) malloc(sizeof(SdlFont));
 	font_->Surface = getFont();
 
 	SDL_LockSurface(font_->Surface);
 
-	green = SDL_MapRGB(font_->Surface->format, 255, 0, 255);
+	unsigned int green = SDL_MapRGB(font_->Surface->format, 255, 0, 255);
+	int x = 0, i = 0;
 	while (x < font_->Surface->w) {
-		if (fontPixel(x, 0) == green) {
+		if (fontPixel(font_->Surface, x, 0) == green) {
 			font_->CharPos[i++]=x;
-			while((x < font_->Surface->w) && (fontPixel(x, 0)== green))
+			while((x < font_->Surface->w) && (fontPixel(font_->Surface, x, 0)==green))
 				x++;
 			font_->CharPos[i++]=x;
 		}
@@ -78,7 +45,7 @@ void SDLinterface::initFont()
 	}
 	font_->MaxPos = x-1;
 
-	pixel = fontPixel(0, font_->Surface->h-1);
+	unsigned int pixel = fontPixel(font_->Surface, 0, font_->Surface->h-1);
 	SDL_UnlockSurface(font_->Surface);
 	SDL_SetColorKey(font_->Surface, SDL_TRUE, pixel);
 
@@ -109,7 +76,7 @@ void SDLinterface::drawText(int xpos, int ypos, const char* text)
 
 	for(c = text; *c != '\0' && xpos <= width_ ; c++) {
 		charoffset = ((int) (*c - 33)) * 2 + 1;
-		// skip spaces and nonprintable characters
+		// skip spaces and non printable characters
 		if (*c == ' ' || charoffset < 0 || charoffset > font_->MaxPos) {
 			xpos += font_->CharPos[2]-font_->CharPos[1];
 			continue;
@@ -140,7 +107,7 @@ int SDLinterface::textWidth(const char *text)
 
 	for(c = text; *c != '\0'; c++) {
 		charoffset = ((int) *c - 33) * 2 + 1;
-		// skip spaces and nonprintable characters
+		// skip spaces and non printable characters
 		if (*c == ' ' || charoffset < 0 || charoffset > font_->MaxPos) {
 			w += font_->CharPos[2]-font_->CharPos[1];
 			continue;
