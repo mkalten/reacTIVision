@@ -130,17 +130,11 @@
 		<Unit filename="../ext/portvideo/interface/SDLinterface.h" />
 		<Unit filename="../ext/portvideo/interface/ConsoleInterface.cpp" />
 		<Unit filename="../ext/portvideo/interface/ConsoleInterface.h" />
-		<Unit filename="../ext/portvideo/interface/SFont.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../ext/portvideo/interface/SFont.h" />
 		<Unit filename="../ext/portvideo/common/FileCamera.cpp" />
 		<Unit filename="../ext/portvideo/common/FileCamera.h" />
 		<Unit filename="../ext/portvideo/common/FrameProcessor.h" />
 		<Unit filename="../ext/portvideo/common/FolderCamera.cpp" />
 		<Unit filename="../ext/portvideo/common/FolderCamera.h" />
-		<Unit filename="../ext/portvideo/interface/FontTool.cpp" />
-		<Unit filename="../ext/portvideo/interface/FontTool.h" />
 		<Unit filename="../ext/libfidtrack/default_trees.h" />
 		<Unit filename="../ext/libfidtrack/dump_graph.c">
 			<Option compilerVar="CC" />
