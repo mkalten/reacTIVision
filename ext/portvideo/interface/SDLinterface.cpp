@@ -32,7 +32,7 @@ void SDLinterface::initFont()
 
 	SDL_LockSurface(font_->Surface);
 
-	unsigned int green = SDL_MapRGB(font_->Surface->format, 255, 0, 255);
+	unsigned char green = SDL_MapRGB(font_->Surface->format, 255, 0, 255);
 	int x = 0, i = 0;
 	while (x < font_->Surface->w) {
 		if (fontPixel(font_->Surface, x, 0) == green) {
@@ -45,7 +45,7 @@ void SDLinterface::initFont()
 	}
 	font_->MaxPos = x-1;
 
-	unsigned int pixel = fontPixel(font_->Surface, 0, font_->Surface->h-1);
+	unsigned char pixel = fontPixel(font_->Surface, 0, font_->Surface->h-1);
 	SDL_UnlockSurface(font_->Surface);
 	SDL_SetColorKey(font_->Surface, SDL_TRUE, pixel);
 
