@@ -16,8 +16,8 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _images_H_
-#define _images_H_
+#ifndef _RESOURCES_H_
+#define _RESOURCES_H_
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -26,12 +26,12 @@ extern "C" {
 #else
 #include <SDL.h>
 #endif
-//extern unsigned char icon[3126];
-//extern unsigned char mask[1024];
-extern unsigned char camera[3910];
-//extern Uint8 *getMask();
-//extern SDL_Surface *getIcon();
+
+extern unsigned char camera_img[3910];
+extern unsigned char font_img[13654];
+
 extern SDL_Surface *getCamera();
+extern SDL_Surface *getFont();
 #ifdef __cplusplus
 }
 #endif

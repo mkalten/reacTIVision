@@ -1,16 +1,16 @@
 /*  portVideo, a cross platform camera framework
  Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
- 
+
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
  License as published by the Free Software Foundation; either
  version 2.1 of the License, or (at your option) any later version.
- 
+
  This library is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  Lesser General Public License for more details.
- 
+
  You should have received a copy of the GNU Lesser General Public
  License along with this library; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -34,6 +34,7 @@
 #endif
 
 #include <sys/stat.h>
+#include <assert.h>
 
 #ifdef __APPLE__
 #include <SDL2/SDL.h>
@@ -46,7 +47,6 @@
 
 #include "CameraTool.h"
 #include "UserInterface.h"
-#include "SFont.h"
 #include "Resources.h"
 
 class SDLinterface: public UserInterface
@@ -63,18 +63,18 @@ public:
     void closeDisplay();
 	unsigned char* getDisplay();
 	void setVsync(bool vsync);
-    
+
     void setHelpText(std::vector<std::string> hlp);
     void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format);
     void processEvents();
     void setDisplayMode(DisplayMode mode);
-    
+
     void printMessage(std::string message);
     void displayMessage(const char *message);
     void displayControl(const char *title, int min, int max, int value);
     void displayError(const char* error);
     void drawText(int xpos, int ypos, const char* text);
-	
+
 	void setColor(unsigned char r, unsigned char g, unsigned char b);
 	void drawPoint(int x,int y);
 	void drawLine(int x1,int y1, int x2, int y2);
@@ -84,7 +84,7 @@ public:
 	void fillEllipse(int x,int y, int w, int h);
 
 protected:
-	
+
     bool setupWindow();
     char* checkRenderDriver();
 
@@ -94,23 +94,22 @@ protected:
 	void toggleFullScreen();
 	void drawHelp();
     void showFrameRate();
-	
+
 	void selectCamera();
 
 private:
-    
+
     SDL_Renderer *renderer_;
     SDL_Window *window_;
-	
+
     SDL_Texture *texture_;
     SDL_Texture *display_;
-	
-	SFont_Font *sfont_;
+
 	int textHeight();
 	int textWidth(const char *text);
-	
+
 	unsigned char* uvBuffer_;
-	
+
     bool error_;
     bool pause_;
     bool help_;
@@ -120,7 +119,7 @@ private:
 #endif
     bool fullscreen_;
 	bool vsync_;
-   
+
 	long frames_;
   	long lastTime_;
 	unsigned int cameraTime_, processingTime_, totalTime_;
@@ -128,9 +127,21 @@ private:
 
 	std::string app_name_;
 	std::vector<std::string> help_text;
-	
+
 	std::vector<CameraConfig> dev_list;
 	int selector_;
+
+	typedef struct {
+        SDL_Surface *Surface;
+        SDL_Texture *Texture;
+        int CharPos[512];
+        int MaxPos;
+    } SdlFont;
+
+    SdlFont *font_;
+    void initFont ();
+    void freeFont();
+    Uint32 fontPixel(Sint32 X, Sint32 Y);
 };
 
 #endif

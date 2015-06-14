@@ -20,20 +20,141 @@
 #include "VisionEngine.h"
 
 
-void SDLinterface::drawText(int xpos, int ypos, const char* text)
+Uint32 SDLinterface::fontPixel(Sint32 X, Sint32 Y)
 {
+	Uint8  *bits;
+	Uint32 Bpp;
 
-    SFont_Write(renderer_, display_, sfont_, xpos,ypos,text);
+	assert(X>=0);
+	assert(X<Surface->w);
+
+	Bpp = font_->Surface->format->BytesPerPixel;
+	bits = ((Uint8 *)font_->Surface->pixels)+Y*font_->Surface->pitch+X*Bpp;
+
+	// Get the pixel
+	switch(Bpp) {
+		case 1:
+			return *((Uint8 *)font_->Surface->pixels + Y * font_->Surface->pitch + X);
+			break;
+		case 2:
+			return *((Uint16 *)font_->Surface->pixels + Y * font_->Surface->pitch/2 + X);
+			break;
+		case 3: { // Format/endian independent
+			Uint8 r, g, b;
+			r = *((bits)+font_->Surface->format->Rshift/8);
+			g = *((bits)+font_->Surface->format->Gshift/8);
+			b = *((bits)+font_->Surface->format->Bshift/8);
+			return SDL_MapRGB(font_->Surface->format, r, g, b);
+		}
+			break;
+		case 4:
+			return *((Uint32 *)font_->Surface->pixels + Y * font_->Surface->pitch/4 + X);
+			break;
+	}
+
+	return -1;
 }
 
-int SDLinterface::textHeight()
+void SDLinterface::initFont()
 {
-    return SFont_TextHeight(sfont_);
+	int x = 0, i = 0;
+	Uint32 pixel;
+	Uint32 green;
+
+	font_ = (SdlFont *) malloc(sizeof(SdlFont));
+	font_->Surface = getFont();
+
+	SDL_LockSurface(font_->Surface);
+
+	green = SDL_MapRGB(font_->Surface->format, 255, 0, 255);
+	while (x < font_->Surface->w) {
+		if (fontPixel(x, 0) == green) {
+			font_->CharPos[i++]=x;
+			while((x < font_->Surface->w) && (fontPixel(x, 0)== green))
+				x++;
+			font_->CharPos[i++]=x;
+		}
+		x++;
+	}
+	font_->MaxPos = x-1;
+
+	pixel = fontPixel(0, font_->Surface->h-1);
+	SDL_UnlockSurface(font_->Surface);
+	SDL_SetColorKey(font_->Surface, SDL_TRUE, pixel);
+
+	font_->Texture = SDL_CreateTextureFromSurface(renderer_,font_->Surface);
+}
+
+void SDLinterface::freeFont()
+{
+	SDL_DestroyTexture(font_->Texture);
+	SDL_FreeSurface(font_->Surface);
+	free(font_);
+}
+
+void SDLinterface::drawText(int xpos, int ypos, const char* text)
+{
+	const char* c;
+	int charoffset;
+	SDL_Rect srcrect, dstrect;
+
+	if(text == NULL) return;
+
+	// these values won't change in the loop
+	srcrect.y = 1;
+	dstrect.y = ypos;
+	srcrect.h = dstrect.h = textHeight();
+
+	SDL_SetRenderTarget(renderer_,display_);
+
+	for(c = text; *c != '\0' && xpos <= width_ ; c++) {
+		charoffset = ((int) (*c - 33)) * 2 + 1;
+		// skip spaces and nonprintable characters
+		if (*c == ' ' || charoffset < 0 || charoffset > font_->MaxPos) {
+			xpos += font_->CharPos[2]-font_->CharPos[1];
+			continue;
+		}
+
+		srcrect.w = dstrect.w =
+		(font_->CharPos[charoffset+2] + font_->CharPos[charoffset+1])/2 -
+		(font_->CharPos[charoffset] + font_->CharPos[charoffset-1])/2;
+		srcrect.x = (font_->CharPos[charoffset]+font_->CharPos[charoffset-1])/2;
+		dstrect.x = xpos - (float)(font_->CharPos[charoffset]
+								- font_->CharPos[charoffset-1])/2;
+
+		SDL_RenderCopy(renderer_, font_->Texture, &srcrect, &dstrect);
+
+		xpos += font_->CharPos[charoffset+1] - font_->CharPos[charoffset];
+	}
+
+	SDL_SetRenderTarget(renderer_,NULL);
 }
 
 int SDLinterface::textWidth(const char *text)
 {
-    return SFont_TextWidth(sfont_,text);
+	const char* c;
+	int charoffset=0;
+	int w = 0;
+
+	if(text == NULL) return 0;
+
+	for(c = text; *c != '\0'; c++) {
+		charoffset = ((int) *c - 33) * 2 + 1;
+		// skip spaces and nonprintable characters
+		if (*c == ' ' || charoffset < 0 || charoffset > font_->MaxPos) {
+			w += font_->CharPos[2]-font_->CharPos[1];
+			continue;
+		}
+
+		w += font_->CharPos[charoffset+1] - font_->CharPos[charoffset];
+	}
+
+	return w;
+}
+
+int SDLinterface::textHeight()
+{
+	return font_->Surface->h - 1;
 }
 
 // the principal program sequence
@@ -370,7 +491,7 @@ void SDLinterface::allocateBuffers()
     display_ =  SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_RGBA8888 , SDL_TEXTUREACCESS_TARGET ,width_,height_);
     SDL_SetTextureBlendMode(display_, SDL_BLENDMODE_BLEND);
 
-    sfont_ = SFont_InitDefaultFont(renderer_);
+    initFont();
 }
 
 void SDLinterface::freeBuffers()
@@ -379,7 +500,7 @@ void SDLinterface::freeBuffers()
     SDL_DestroyTexture(texture_);
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
-    SFont_FreeFont(sfont_);
+    freeFont();
 }
 
 void SDLinterface::toggleFullScreen()
