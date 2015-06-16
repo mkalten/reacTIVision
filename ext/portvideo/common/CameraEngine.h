@@ -140,6 +140,23 @@ struct CameraConfig {
     int green;
 };
 
+struct CameraSort : std::binary_function<CameraConfig, CameraConfig, bool>
+{
+	bool operator() (CameraConfig c1, CameraConfig c2)const
+	{
+		if (c1.device > c2.device) return false;
+		if (c1.cam_format > c2.cam_format) return false;
+		
+		if (c1.cam_width > c2.cam_width || (c1.cam_width == c2.cam_width && c1.cam_height > c2.cam_height))
+			return true;
+		
+		if (c1.cam_width == c2.cam_width && c1.cam_height == c2.cam_height)
+		 return (c1.cam_fps > c2.cam_fps);
+		else return false;
+	}
+};
+
+
 class CameraEngine
 {
 public:

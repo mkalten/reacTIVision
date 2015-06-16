@@ -164,11 +164,15 @@ void SDLinterface::updateDisplay()
         drawText(textHeight(),4*y,"U - cancel camera selection");
         drawText(textHeight(),5*y,"ENTER - apply camera selection");
 
-        char format[256];
+		
         CameraConfig *cfg = &dev_list[selector_];
-        if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format,"%s%d: %dx%d@%d (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
-        else sprintf(format,"%s%d: %dx%d@%.1f (%s)",dstr[cfg->driver],cfg->device,cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
-        drawText((width_- textWidth(format))/2,height_/2,format);
+		char camera_str[256];
+		sprintf(camera_str,"%s%d: %s",dstr[cfg->driver],cfg->device,cfg->name);
+		drawText((width_- textWidth(camera_str))/2,height_/2-textHeight(),camera_str);
+		char format_str[256];
+        if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format_str,"%dx%d@%d (%s)",cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
+        else sprintf(format_str,"%dx%d@%.1f (%s)",cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
+        drawText((width_- textWidth(format_str))/2,height_/2,format_str);
         SDL_RenderCopy(renderer_, display_, NULL, NULL);
         SDL_RenderPresent(renderer_);
 

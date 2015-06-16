@@ -204,7 +204,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
         else sprintf(cam_cfg.name,"unknown device");
         
         NSArray *captureDeviceFormats = [device formats];
-        for (AVCaptureDeviceFormat *format in captureDeviceFormats) {
+		for (AVCaptureDeviceFormat *format in captureDeviceFormats) {
 						
             int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
 			
@@ -231,6 +231,8 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
     }
 	
 	[captureDevices release];
+	
+	std::sort(cfg_list.begin(), cfg_list.end(), CameraSort());
     return cfg_list;
 }
 
