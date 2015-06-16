@@ -267,6 +267,7 @@ bool V4Linux2Camera::initCamera() {
             break;
         }
     }
+
     // try to set the desired format
     memset(&v4l2_form, 0, sizeof(v4l2_format));
     v4l2_form.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -285,7 +286,7 @@ bool V4Linux2Camera::initCamera() {
     pixelformat = v4l2_form.fmt.pix.pixelformat;
     cfg->cam_width = v4l2_form.fmt.pix.width;
     cfg->cam_height = v4l2_form.fmt.pix.height;
-    cfg->cam_fps = v4l2_parm.parm.capture.timeperframe.denominator;
+    //cfg->cam_fps = v4l2_parm.parm.capture.timeperframe.denominator/(float)v4l2_parm.parm.capture.timeperframe.numerator;
 
     if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) _jpegDecompressor = tjInitDecompress();
 
