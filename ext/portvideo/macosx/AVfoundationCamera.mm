@@ -232,7 +232,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
 	
 	[captureDevices release];
 	
-	std::sort(cfg_list.begin(), cfg_list.end(), CameraSort());
+	std::sort(cfg_list.begin(), cfg_list.end());
     return cfg_list;
 }
 

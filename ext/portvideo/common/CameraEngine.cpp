@@ -32,32 +32,32 @@ void CameraEngine::printInfo() {
 
 void CameraEngine::setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConfig> cfg_list) {
 	if ((cam_cfg->cam_width>0) && (cam_cfg->cam_height>0) && (cam_cfg->cam_fps>0)) return;
-	
+
 	int max_width = 0;
 	int max_height = 0;
 	int min_width = INT_MAX;
 	int min_height = INT_MAX;
 	float max_fps = 0;
 	float min_fps = INT_MAX;
-	
+
 	for (int i=0;i<cfg_list.size();i++) {
 		if (cfg_list[i].cam_format!=cam_cfg->cam_format) continue; // wrong format
 		if (cfg_list[i].frame_mode!=cam_cfg->frame_mode) continue; // wrong format7
-		
+
 		if (cfg_list[i].cam_width>max_width) max_width = cfg_list[i].cam_width;
 		if (cfg_list[i].cam_width<min_width) min_width = cfg_list[i].cam_width;
-		
+
 		if (cfg_list[i].cam_height>max_height) max_height = cfg_list[i].cam_height;
 		if (cfg_list[i].cam_width<min_height) min_height = cfg_list[i].cam_height;
 	}
-	
+
 	if ((cam_cfg->cam_width==SETTING_MAX) || (cam_cfg->cam_width>max_width)) cam_cfg->cam_width = max_width;
 	else if ((cam_cfg->cam_width==SETTING_MIN) || (cam_cfg->cam_width<min_width)) cam_cfg->cam_width = min_width;
 	if ((cam_cfg->cam_height==SETTING_MAX) || (cam_cfg->cam_height>max_height)) cam_cfg->cam_height = max_height;
 	else if ((cam_cfg->cam_height==SETTING_MIN) || (cam_cfg->cam_height<min_height)) cam_cfg->cam_height = min_height;
-	
+
 	if (cam_cfg->cam_fps>0) return;
-	
+
 	for (int i=0;i<cfg_list.size();i++) {
 		if (cfg_list[i].cam_format!=cam_cfg->cam_format) continue; // wrong format
 		if (cfg_list[i].frame_mode!=cam_cfg->frame_mode) continue; // wrong format7

@@ -138,7 +138,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                     			frmsize.pixel_format  = fmtdesc.pixelformat;
                     			if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
                     			cam_cfg.cam_width = frmsize.discrete.width;
-                                cam_cfg.cam_height = frmsize.discrete.height;
+                               		cam_cfg.cam_height = frmsize.discrete.height;
 
                     			float last_fps=0.0f;
                     			for (int z=0;;z++) {
@@ -163,6 +163,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
         	close(fd);
 	}
 
+	std::sort(cfg_list.begin(), cfg_list.end());
 	return cfg_list;
 }
 

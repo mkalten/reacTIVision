@@ -22,6 +22,7 @@
 #include <list>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 #include <limits.h>
 #include <math.h>
@@ -71,7 +72,7 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_H264    26
 #define FORMAT_DVPAL   30
 #define FORMAT_DVNTSC  31
-#define FORMAT_MAX	   31
+#define FORMAT_MAX     31
 
 static const char* fstr[] =  { "unknown", "mono8",  "mono16",  "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p", "", "", "", "", "jpeg", "mjpeg", "mpeg", "mpeg2", "mpeg4", "h263", "h264", "", "", "", "dvpal", "dvntsc" };
 
@@ -93,33 +94,32 @@ static const char* dstr[] = { "default","dc1394","ps3eye","raspi","uvccam","",""
 enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 
 struct CameraConfig {
-    
+
     char path[256];
-    
+
     int driver;
     int device;
     char name[256];
-    
+
     char file[256];
     char folder[256];
 
     bool color;
-    //bool compress;
     bool frame;
 
     int cam_format;
     int src_format;
     int buf_format;
-    
+
     int cam_width;
     int cam_height;
     float cam_fps;
 
-	int frame_width;
-	int frame_height;
-	int frame_xoff;
+    int frame_width;
+    int frame_height;
+    int frame_xoff;
     int frame_yoff;
-	int frame_mode;
+    int frame_mode;
 
     int brightness;
     int contrast;
@@ -138,24 +138,21 @@ struct CameraConfig {
     int red;
     int blue;
     int green;
-};
 
-struct CameraSort : std::binary_function<CameraConfig, CameraConfig, bool>
-{
-	bool operator() (CameraConfig c1, CameraConfig c2)const
-	{
-		if (c1.device > c2.device) return false;
-		if (c1.cam_format > c2.cam_format) return false;
-		
-		if (c1.cam_width > c2.cam_width || (c1.cam_width == c2.cam_width && c1.cam_height > c2.cam_height))
-			return true;
-		
-		if (c1.cam_width == c2.cam_width && c1.cam_height == c2.cam_height)
-		 return (c1.cam_fps > c2.cam_fps);
-		else return false;
-	}
-};
+    bool operator < (const CameraConfig& c) const {
 
+       //if (device > c.device) return false;
+       if (cam_format < c.cam_format) return true;
+
+       if (cam_width > c.cam_width || (cam_width == c.cam_width && cam_height < c.cam_height))
+                return true;
+
+       if (cam_width == c.cam_width && cam_height == c.cam_height) {
+                return (cam_fps > c.cam_fps);
+       } else return false;
+
+    }
+};
 
 class CameraEngine
 {
@@ -164,12 +161,12 @@ public:
     CameraEngine(CameraConfig *cam_cfg) {
         cfg = cam_cfg;
         settingsDialog=false;
-                
+
         if (cfg->color) cfg->buf_format=FORMAT_RGB;
         else cfg->buf_format=FORMAT_GRAY;
     }
 
-	virtual ~CameraEngine() {};
+    virtual ~CameraEngine() {};
 
     virtual bool initCamera() = 0;
     virtual bool startCamera() = 0;
@@ -178,9 +175,9 @@ public:
     virtual bool resetCamera() = 0;
     virtual bool closeCamera() = 0;
     virtual bool stillRunning() = 0;
-	
-	void printInfo();
-	static void setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConfig> cfg_list);
+
+    void printInfo();
+    static void setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConfig> cfg_list);
 
     virtual int getCameraSettingStep(int mode) = 0;
     virtual int getMinCameraSetting(int mode) = 0;
@@ -218,13 +215,13 @@ protected:
     bool settingsDialog;
     int currentCameraSetting;
 
-	void crop(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
-	void flip(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
-	void flip_crop(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
+    void crop(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
+    void flip(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
+    void flip_crop(int width, int height, unsigned char *src, unsigned char *dest, int bytes);
 
     void rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
     void crop_rgb2gray(int width, unsigned char *src, unsigned char *dest);
-	void flip_rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
+    void flip_rgb2gray(int width, int height, unsigned char *src, unsigned char *dest);
     void flip_crop_rgb2gray(int width, unsigned char *src, unsigned char *dest);
 
     void uyvy2gray(int width, int height, unsigned char *src, unsigned char *dest);
