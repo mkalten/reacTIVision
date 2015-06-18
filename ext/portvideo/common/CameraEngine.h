@@ -74,7 +74,8 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_DVNTSC  31
 #define FORMAT_MAX     31
 
-static const char* fstr[] =  { "unknown", "mono8",  "mono16",  "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p", "", "", "", "", "jpeg", "mjpeg", "mpeg", "mpeg2", "mpeg4", "h263", "h264", "", "", "", "dvpal", "dvntsc" };
+extern const char* fstr[];
+extern const char* dstr[];
 
 #define DRIVER_DEFAULT  0
 #define DRIVER_DC1394   1
@@ -83,8 +84,6 @@ static const char* fstr[] =  { "unknown", "mono8",  "mono16",  "rgb8", "rgb16", 
 #define DRIVER_UVCCAM   4
 #define DRIVER_FILE    10
 #define DRIVER_FOLDER  11
-
-static const char* dstr[] = { "default","dc1394","ps3eye","raspi","uvccam","","","","","","file","folder"};
 
 #define VALUE_INCREASE   79
 #define VALUE_DECREASE   80
@@ -141,8 +140,8 @@ struct CameraConfig {
 
     bool operator < (const CameraConfig& c) const {
 
-       //if (device > c.device) return false;
-       if (cam_format < c.cam_format) return true;
+       //if (device < c.device) return true;
+       //if (cam_format < c.cam_format) return true;
 
        if (cam_width > c.cam_width || (cam_width == c.cam_width && cam_height < c.cam_height))
                 return true;

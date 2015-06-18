@@ -160,7 +160,7 @@ void CameraTool::listDevices() {
 		else  printf("%d DC1394 cameras found:\n",dev_count);
 		printConfig(DC1394Camera::getCameraConfigs());
 	}
-	
+
 	dev_count = V4Linux2Camera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
 	else {
@@ -169,7 +169,7 @@ void CameraTool::listDevices() {
 		printConfig(V4Linux2Camera::getCameraConfigs());
 	}
 #endif
-	
+
 }
 
 CameraEngine* CameraTool::getDefaultCamera() {
@@ -206,40 +206,40 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 		camera = FileCamera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
-	
+
 	if (cam_cfg->driver==DRIVER_FOLDER) {
 		camera = FolderCamera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
-	
+
 #endif
-	
+
 #ifdef WIN32
-	
+
 	dev_count = videoInputCamera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
 	else camera = videoInputCamera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-	
+
 #endif
-	
+
 #ifdef __APPLE__
-	
+
 	if (cam_cfg->driver==DRIVER_DC1394) {
 		dev_count = DC1394Camera::getDeviceCount();
 		if (dev_count==0) printf("no DC1394 camera found\n");
 		else camera = DC1394Camera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
-	
+
 	if (cam_cfg->driver==DRIVER_PS3EYE) {
 		dev_count = PS3EyeCamera::getDeviceCount();
 		if (dev_count==0) printf("no PS3Eye camera found\n");
 		else camera = PS3EyeCamera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
-	
+
 #ifdef __x86_64__
 	// default driver
 	dev_count = AVfoundationCamera::getDeviceCount();
@@ -260,21 +260,27 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 	else return getDefaultCamera();
 #endif
 #endif
-	
+
 #ifdef LINUX
-	
+
 	if (cam_cfg->driver==DRIVER_DC1394) {
-		camera = DC1394Camera::getCamera(cam_cfg);
+		dev_count = DC1394Camera::getDeviceCount();
+		if (dev_count==0) printf("no DC1394 camera found\n");
+		else camera = DC1394Camera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
-	
+
 	// default driver
-	camera = V4Linux2Camera::getCamera(cam_cfg);
+	dev_count = V4Linux2Camera::getDeviceCount();
+	if (dev_count==0) {
+		printf("no system camera found\n");
+		return NULL;
+	} else camera = V4Linux2Camera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-	
+
 #endif
-	
+
 	return NULL;
 }
 
@@ -618,7 +624,7 @@ void CameraTool::saveSettings() {
 }
 
 void CameraTool::saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config) {
-	
+
 	if (config==SETTING_MIN) settings->SetAttribute(attribute,"min");
 	else if (config==SETTING_MAX) settings->SetAttribute(attribute,"max");
 	else if (config==SETTING_AUTO) settings->SetAttribute(attribute,"auto");

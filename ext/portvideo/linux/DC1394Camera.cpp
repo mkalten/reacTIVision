@@ -79,7 +79,7 @@ std::vector<CameraConfig> DC1394Camera::getCameraConfigs(int dev_id) {
 	}
 	
 	for (unsigned int i=0;i<list->num;i++) {
-		if ((dev_id>=0) && (dev_id!=i)) continue;
+		if ((dev_id>=0) && (dev_id!=(int)i)) continue;
 		dc1394camera_t *camera = dc1394_camera_new (d, list->ids[i].guid);
 		if (!camera) continue;
 		
@@ -168,7 +168,7 @@ CameraEngine* DC1394Camera::getCamera(CameraConfig *cam_cfg) {
 	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
 	
-	for (int i=0;i<cfg_list.size();i++) {
+	for (unsigned int i=0;i<cfg_list.size();i++) {
 			
 		if (cam_cfg->frame_mode<0) cam_cfg->frame_mode=0;
 		if ((cam_cfg->frame) && (cam_cfg->frame_mode != cfg_list[i].frame_mode)) continue;
@@ -554,7 +554,7 @@ bool DC1394Camera::hasCameraSettingAuto(int mode) {
 	if ( dc1394_feature_get(camera, &info) != DC1394_SUCCESS) return false;
 	if (!info.available) return false;
 
-	for (int i=0;i<info.modes.num;i++) {
+	for (unsigned int i=0;i<info.modes.num;i++) {
 		if (info.modes.modes[i] == DC1394_FEATURE_MODE_AUTO) return true;
 	}
 	

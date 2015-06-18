@@ -19,6 +19,11 @@
 #include "CameraEngine.h"
 #include "CameraTool.h"
 
+const char* dstr[] = { "default","dc1394","ps3eye","raspi","uvccam","","","","","","file","folder"};
+
+const char* fstr[] =  { "unknown", "mono8",  "mono16", "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p",  "", "", "", "", "jpeg", "mjpeg", "mpeg", "mpeg2", "mpeg4", "h263", "h264", "", "", "", "dvpal", "dvntsc" };
+
+
 void CameraEngine::printInfo() {
 	printf("camera: %s\n",cfg->name);
 	printf("driver: %s\n",dstr[cfg->driver]);
@@ -40,7 +45,7 @@ void CameraEngine::setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConf
 	float max_fps = 0;
 	float min_fps = INT_MAX;
 
-	for (int i=0;i<cfg_list.size();i++) {
+	for (unsigned int i=0;i<cfg_list.size();i++) {
 		if (cfg_list[i].cam_format!=cam_cfg->cam_format) continue; // wrong format
 		if (cfg_list[i].frame_mode!=cam_cfg->frame_mode) continue; // wrong format7
 
@@ -58,15 +63,15 @@ void CameraEngine::setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConf
 
 	if (cam_cfg->cam_fps>0) return;
 
-	for (int i=0;i<cfg_list.size();i++) {
+	for (unsigned int i=0;i<cfg_list.size();i++) {
 		if (cfg_list[i].cam_format!=cam_cfg->cam_format) continue; // wrong format
 		if (cfg_list[i].frame_mode!=cam_cfg->frame_mode) continue; // wrong format7
 		if ((cfg_list[i].cam_width!=cam_cfg->cam_width) || (cfg_list[i].cam_height!=cam_cfg->cam_height)) continue; // wrong size
-		
+
 		if (cfg_list[i].cam_fps>max_fps) max_fps = cfg_list[i].cam_fps;
 		if (cfg_list[i].cam_fps<min_fps) min_fps = cfg_list[i].cam_fps;
 	}
-	
+
 	if ((cam_cfg->cam_fps==SETTING_MAX) || (cam_cfg->cam_fps>max_fps)) cam_cfg->cam_fps = max_fps;
 	if ((cam_cfg->cam_fps==SETTING_MIN) || (cam_cfg->cam_fps<min_fps)) cam_cfg->cam_fps = min_fps;
 }
