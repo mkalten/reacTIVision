@@ -20,6 +20,10 @@
 #include "V4Linux2Camera.h"
 #include "CameraTool.h"
 
+unsigned int codec_table[] =  { 0, V4L2_PIX_FMT_GREY, 0,  V4L2_PIX_FMT_RGB24, 0, 0, 0, 0, 0, 0, V4L2_PIX_FMT_YUYV,
+V4L2_PIX_FMT_UYVY, 0, V4L2_PIX_FMT_YUV444, V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YUV410, 0, 0, 0, 0,V4L2_PIX_FMT_JPEG,
+V4L2_PIX_FMT_MJPEG, V4L2_PIX_FMT_MPEG1, V4L2_PIX_FMT_MPEG2, V4L2_PIX_FMT_MPEG4, V4L2_PIX_FMT_H263, V4L2_PIX_FMT_H264, 0, 0, 0,  V4L2_PIX_FMT_DV, 0 };
+
 V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
 {
     cam_buffer = NULL;
@@ -102,10 +106,10 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
         	int fd = open(v4l2_device, O_RDONLY);
         	if (fd < 0) continue;
 
-            if (ioctl(fd, VIDIOC_QUERYCAP, &v4l2_caps) < 0) {
-                close(fd);
-                continue;
-            }
+        	if (ioctl(fd, VIDIOC_QUERYCAP, &v4l2_caps) < 0) {
+        		close(fd);
+                	continue;
+            	}
 
         	if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
 
@@ -123,13 +127,15 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                 		fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                 		if (-1 == ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc)) break;
 
-                        cam_cfg.cam_format = FORMAT_UNKNOWN;
-                        for (int i=FORMAT_MAX;i>0;i--) {
-                            if (fmtdesc.pixelformat == codec_table[i]) {
-                                cam_cfg.cam_format = i;
-                                break;
-                            }
-                        }
+                        	cam_cfg.cam_format = FORMAT_UNKNOWN;
+                        	for (int i=FORMAT_MAX;i>0;i--) {
+                            		if (fmtdesc.pixelformat == codec_table[i]) {
+                                		cam_cfg.cam_format = i;
+                                		break;
+                            		}
+                        	}
+
+				std::vector<CameraConfig> tmp_list;
 
                 		for (int y=0;;y++) {
                     			struct v4l2_frmsizeenum frmsize;
@@ -155,15 +161,17 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                         			last_fps=frm_fps;
 
                         			cam_cfg.cam_fps = frm_fps;
-						cfg_list.push_back(cam_cfg);
+						tmp_list.push_back(cam_cfg);
                     			}
                 		}
+
+				std::sort(tmp_list.begin(), tmp_list.end());
+				cfg_list.insert( cfg_list.end(), tmp_list.begin(), tmp_list.end() );
             		}
         	}
         	close(fd);
 	}
 
-	std::sort(cfg_list.begin(), cfg_list.end());
 	return cfg_list;
 }
 
@@ -179,7 +187,7 @@ CameraEngine* V4Linux2Camera::getCamera(CameraConfig *cam_cfg) {
     if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
 
-    for (int i=0;i<cfg_list.size();i++) {
+    for (unsigned int i=0;i<cfg_list.size();i++) {
 
         if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
         if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
