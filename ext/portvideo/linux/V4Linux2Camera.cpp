@@ -143,8 +143,15 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                     			frmsize.index = y;
                     			frmsize.pixel_format  = fmtdesc.pixelformat;
                     			if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
-                    			cam_cfg.cam_width = frmsize.discrete.width;
-                               		cam_cfg.cam_height = frmsize.discrete.height;
+
+					if (frmsize.type==V4L2_FRMSIZE_TYPE_DISCRETE) {
+                    				cam_cfg.cam_width = frmsize.discrete.width;
+                               			cam_cfg.cam_height = frmsize.discrete.height;
+
+					} else {
+                    				cam_cfg.cam_width = frmsize.stepwise.max_width;
+                               			cam_cfg.cam_height = frmsize.stepwise.max_height;
+					}
 
                     			float last_fps=0.0f;
                     			for (int z=0;;z++) {
@@ -152,8 +159,8 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                        				memset(&frmival, 0, sizeof(v4l2_frmivalenum));
                         			frmival.index = z;
                         			frmival.pixel_format = fmtdesc.pixelformat;
-                       				frmival.width = frmsize.discrete.width;
-                       				frmival.height = frmsize.discrete.height;
+                       				frmival.width = cam_cfg.cam_width;
+                       				frmival.height = cam_cfg.cam_height;
                        				if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
 
                         			float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
