@@ -281,11 +281,19 @@ bool V4Linux2Camera::initCamera() {
     v4l2_form.fmt.pix.pixelformat = pixelformat;
     v4l2_form.fmt.pix.width  = cfg->cam_width;
     v4l2_form.fmt.pix.height = cfg->cam_height;
-    v4l2_parm.parm.capture.timeperframe.numerator = 1;
-    v4l2_parm.parm.capture.timeperframe.denominator = int(cfg->cam_fps);
 
     if (-1 == ioctl (dev_handle, VIDIOC_S_FMT, &v4l2_form)) {
         printf("error setting pixel format: %s\n" , strerror(errno));
+        return false;
+    }
+    
+    // try to set the desired fps
+    v4l2_parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v4l2_parm.parm.capture.timeperframe.numerator = 1;
+    v4l2_parm.parm.capture.timeperframe.denominator = int(cfg->cam_fps);
+    
+    if(-1 == ioctl (dev_handle, VIDIOC_S_PARM, &v4l2_parm)) {
+        printf("error setting fps: %s\n", strerror(errno));
         return false;
     }
 
