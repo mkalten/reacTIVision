@@ -1,27 +1,15 @@
 xcuserdata
-
 build
-
 Debug
-
 Release
-
 Frameworks
-
 *.pbxuser
-
 *.mode1v3
-
 project.xcworkspace
-
 *.sdf
-
 *.suo
-
 *.exe
-
 *.opensdf
-
 .DS_Store
 
 *.o
@@ -29,3 +17,5 @@ project.xcworkspace
 linux/reacTIVision
 
 ext/portvideo/linux/SportVideo
+
+nbproject/
