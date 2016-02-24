@@ -294,7 +294,7 @@ bool V4Linux2Camera::initCamera() {
     
     if(-1 == ioctl (dev_handle, VIDIOC_S_PARM, &v4l2_parm)) {
         printf("error setting fps: %s\n", strerror(errno));
-        return false;
+        //return false;
     }
 
     // use the settings we got from the driver

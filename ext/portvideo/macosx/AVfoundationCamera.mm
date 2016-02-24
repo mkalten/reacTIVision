@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -202,7 +202,8 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
         if ([device localizedName]!=NULL)
             sprintf(cam_cfg.name,"%s",[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
         else sprintf(cam_cfg.name,"unknown device");
-        
+		
+		std::vector<CameraConfig> fmt_list;
         NSArray *captureDeviceFormats = [device formats];
 		for (AVCaptureDeviceFormat *format in captureDeviceFormats) {
 						
@@ -225,15 +226,15 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
             
             for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
                 cam_cfg.cam_fps = roundf([frameRateRange maxFrameRate]*100)/100;
-                cfg_list.push_back(cam_cfg);
+                fmt_list.push_back(cam_cfg);
             }
         }
+		std::sort(fmt_list.begin(), fmt_list.end());
+		cfg_list.insert( cfg_list.end(), fmt_list.begin(), fmt_list.end() );
     }
 	
 	[captureDevices release];
-	
-	std::sort(cfg_list.begin(), cfg_list.end());
-    return cfg_list;
+	return cfg_list;
 }
 
 CameraEngine* AVfoundationCamera::getCamera(CameraConfig *cam_cfg) {

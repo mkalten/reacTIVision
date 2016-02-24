@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -69,7 +69,7 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 }
 
 std::vector<CameraConfig> CameraTool::findDevices() {
-	
+
 #ifdef WIN32
 	std::vector<CameraConfig> dev_list = videoInputCamera::getCameraConfigs();
 #endif
@@ -87,7 +87,7 @@ std::vector<CameraConfig> CameraTool::findDevices() {
 	
 	std::vector<CameraConfig> ps3eye_list = PS3EyeCamera::getCameraConfigs();
 	dev_list.insert( dev_list.end(), ps3eye_list.begin(), ps3eye_list.end() );
-	
+
 #endif
 	
 #ifdef LINUX
@@ -286,8 +286,7 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 
 void CameraTool::initCameraConfig(CameraConfig *cfg) {
 	
-	sprintf(cfg->file,"none");
-	sprintf(cfg->folder,"none");
+	sprintf(cfg->src,"none");
 	
 	cfg->driver = DRIVER_DEFAULT;
 	cfg->device = 0;
@@ -357,15 +356,14 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 	cam_cfg.cam_height = cfg->cam_height;
 	cam_cfg.cam_fps = cfg->cam_fps;
 	
-	cam_cfg.frame = false;
+	cam_cfg.frame = cfg->frame;
 	cam_cfg.frame_width = SETTING_MAX;
 	cam_cfg.frame_height = SETTING_MAX;
 	cam_cfg.frame_xoff = 0;
 	cam_cfg.frame_yoff = 0;
-	cam_cfg.frame_mode = -1;
+	cam_cfg.frame_mode = cfg->frame_mode;
 	
-	sprintf(cam_cfg.file,"none");
-	sprintf(cam_cfg.folder,"none");
+	sprintf(cam_cfg.src,"none");
 }
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
@@ -429,18 +427,11 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		else cam_cfg.device = atoi(camera_element->Attribute("id"));
 	}
 	
-	if(camera_element->Attribute("file")!=NULL) {
+	if(camera_element->Attribute("src")!=NULL) {
 #ifdef __APPLE__
-		sprintf(cam_cfg.file,"%s/../%s",path,camera_element->Attribute("file"));
+		sprintf(cam_cfg.src,"%s/../%s",path,camera_element->Attribute("src"));
 #else
-		sprintf(cam_cfg.file,"%s",camera_element->Attribute("file"));
-#endif
-	}
-	if(camera_element->Attribute("folder")!=NULL) {
-#ifdef __APPLE__
-		sprintf(cam_cfg.folder,"%s/../%s",path,camera_element->Attribute("folder"));
-#else
-		sprintf(cam_cfg.folder,"%s",camera_element->Attribute("folder"));
+		sprintf(cam_cfg.src,"%s",camera_element->Attribute("src"));
 #endif
 	}
 	
@@ -616,6 +607,13 @@ void CameraTool::saveSettings() {
 		if (cam_cfg.blue!=SETTING_OFF) saveAttribute(settings_element, "blue", cam_cfg.green);
 		else settings_element->DeleteAttribute("blue");
 		
+	}
+	
+	tinyxml2::XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
+	if (frame_element!=NULL) {
+		
+		if (cam_cfg.frame_mode>=0) saveAttribute(frame_element, "mode", cam_cfg.frame_mode);
+		else frame_element->DeleteAttribute("mode");
 	}
 	
 	xml_settings.SaveFile(cam_cfg.path);

@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,7 @@ FileCamera::~FileCamera()
 
 CameraEngine* FileCamera::getCamera(CameraConfig *cam_cfg) {
 	
-	FILE* imagefile=fopen(cam_cfg->file, "rb");
+	FILE* imagefile=fopen(cam_cfg->src, "rb");
 	if (imagefile==NULL) return NULL;
 	fclose(imagefile);
 	return new FileCamera(cam_cfg);
@@ -48,7 +48,7 @@ bool FileCamera::initCamera() {
 	char header[32];
 	char *param;
 	
-	FILE* imagefile=fopen(cfg->file, "r");
+	FILE* imagefile=fopen(cfg->src, "r");
 	if (imagefile==NULL) return false;
 	
 	fgets(header,32,imagefile);
@@ -101,17 +101,19 @@ bool FileCamera::initCamera() {
 
 unsigned char* FileCamera::getFrame()
 {
+	if (running) {
 #ifdef WIN32
 	Sleep(100);
 #else
-	usleep( 100000 ); // do 10fps
+	usleep( 10000 ); // do 10fps
 #endif
+	} else running = true;
 	return cam_buffer;
 }
 
 bool FileCamera::startCamera()
 {
-	running = true;
+	//running = true;
 	return true;
 }
 

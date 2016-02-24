@@ -9,5 +9,5 @@ please note that active tags need to be placed outside of this commented area!
  <camera config="camera.xml" />
  <image display="dest" fullscreen="true" />
  -->
-    <image display="dest" fullscreen="false"/>
+    <image display="src" fullscreen="false"/>
 </portvideo>

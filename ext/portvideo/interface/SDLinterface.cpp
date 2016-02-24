@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -166,10 +166,13 @@ void SDLinterface::updateDisplay()
 		
 		CameraConfig *cfg = &dev_list[selector_];
 		char camera_str[256];
-		sprintf(camera_str,"%s%d: %s",dstr[cfg->driver],cfg->device,cfg->name);
+		sprintf(camera_str,"%s_%d: %s",dstr[cfg->driver],cfg->device,cfg->name);
 		drawText((width_- textWidth(camera_str))/2,height_/2-textHeight(),camera_str);
+		
 		char format_str[256];
-		if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format_str,"%dx%d@%d (%s)",cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
+		if (cfg->frame_mode>=0) {
+			sprintf(format_str,"format7_%d %dx%d (%s)",cfg->frame_mode, cfg->cam_width,cfg->cam_height,fstr[cfg->cam_format]);
+		} else if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format_str,"%dx%d@%d (%s)",cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
 		else sprintf(format_str,"%dx%d@%.1f (%s)",cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
 		drawText((width_- textWidth(format_str))/2,height_/2,format_str);
 		SDL_RenderCopy(renderer_, display_, NULL, NULL);
@@ -297,13 +300,14 @@ void SDLinterface::selectCamera()
 		return;
 	}
 	
+	engine_->pause(true);
+
 	dev_list = CameraTool::findDevices();
 	selector_ = 0;
 	
 	std::string caption = app_name_ + " - select camera";
 	SDL_SetWindowTitle( window_, caption.c_str());
 	
-	engine_->pause(true);
 	select_ = true;
 }
 
@@ -368,12 +372,14 @@ void SDLinterface::processEvents()
 						engine_->pause(pause_=true);
 						std::string caption = app_name_ + " - paused";
 						SDL_SetWindowTitle( window_, caption.c_str());
+#ifndef NDEBUG
 						// turn the display black
 						SDL_RenderClear(renderer_);
 						SDL_RenderPresent(renderer_);
+#endif
 					}
 				}
-				else if( event.key.keysym.sym == SDLK_u )
+				else if( event.key.keysym.sym == SDLK_k )
 				{
 					selectCamera();
 				}
@@ -591,6 +597,8 @@ void SDLinterface::displayMessage(const char *message)
 
 void SDLinterface::displayControl(const char *title, int min, int max, int value)
 {
+	if (displayMode_==NO_DISPLAY) return;
+	
 	int x_offset=width_/2-128;
 	int y_offset=height_-100;
 	int size = (int)(254*(((float)value-(float)min)/(float)(max-min)));
@@ -614,31 +622,67 @@ void SDLinterface::displayControl(const char *title, int min, int max, int value
 
 void SDLinterface::setColor(unsigned char r, unsigned char g, unsigned char b)
 {
+	if (displayMode_==NO_DISPLAY) return;
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
 	SDL_SetRenderDrawColor(renderer_,r,g,b,255);
 }
 
 void SDLinterface::drawPoint(int x,int y)
 {
+	if (displayMode_==NO_DISPLAY) return;
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
 	SDL_RenderDrawPoint(renderer_, x, y);
 }
 
 void SDLinterface::drawLine(int x1,int y1, int x2, int y2)
 {
+	if (displayMode_==NO_DISPLAY) return;
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
 	SDL_RenderDrawLine(renderer_, x1, y1, x2, y2);
 }
 
 void SDLinterface::drawRect(int x,int y, int w, int h)
 {
+	if (displayMode_==NO_DISPLAY) return;
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
 	SDL_Rect rect = {x,y,w,h};
 	SDL_RenderDrawRect(renderer_, &rect);
 }
 
+void SDLinterface::drawRect(int x,int y, int w, int h, float r)
+{
+	if (displayMode_==NO_DISPLAY) return;
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+
+	int w0 = w/2;
+	int h0 = h/2;
+	int w1 = -1*w0;
+	int h1 = -1*h0;
+	
+	double Cr = cos(r);
+	double Sr = sin(r);
+
+	int x0 = x + (int)floor(w0*Cr - h0*Sr + 0.5f);
+	int y0 = y + (int)floor(h0*Cr + w0*Sr + 0.5f);
+
+	int x1 = x + (int)floor(w1*Cr - h0*Sr + 0.5f);
+	int y1 = y + (int)floor(h0*Cr + w1*Sr + 0.5f);
+
+	int x2 = x + (int)floor(w1*Cr - h1*Sr + 0.5f);
+	int y2 = y + (int)floor(h1*Cr + w1*Sr + 0.5f);
+
+	int x3 = x + (int)floor(w0*Cr - h1*Sr + 0.5f);
+	int y3 = y + (int)floor(h1*Cr + w0*Sr + 0.5f);
+
+	SDL_RenderDrawLine(renderer_, x0, y0, x1, y1);
+	SDL_RenderDrawLine(renderer_, x1, y1, x2, y2);
+	SDL_RenderDrawLine(renderer_, x2, y2, x3, y3);
+	SDL_RenderDrawLine(renderer_, x3, y3, x0, y0);
+}
+
 void SDLinterface::fillRect(int x,int y, int w, int h)
 {
+	if (displayMode_==NO_DISPLAY) return;
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
 	SDL_Rect rect = {x,y,w,h};
 	SDL_RenderFillRect(renderer_, &rect);
@@ -646,13 +690,13 @@ void SDLinterface::fillRect(int x,int y, int w, int h)
 
 void SDLinterface::drawEllipse(int x,int y, int w, int h)
 {
+	if (displayMode_==NO_DISPLAY) return;
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
 	
 	float step = 0.002 * width_/w;
 	
 	for (double a=M_PI/2; a>0; a-=step)
 	{
-		
 		double X = cos(a)*w/2.0f;
 		double Y = sin(a)*h/2.0f;
 		drawPoint(x+X,y+Y);
@@ -662,15 +706,37 @@ void SDLinterface::drawEllipse(int x,int y, int w, int h)
 	}
 }
 
+void SDLinterface::drawEllipse(int x,int y, int w, int h, float r)
+{
+	if (displayMode_==NO_DISPLAY) return;
+	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
+	
+	float step = 0.002 * width_/w;
+	
+	for (double a=2*M_PI; a>0; a-=step)
+	{
+		double X = cos(a)*w/2.0f;
+		double Y = sin(a)*h/2.0f;
+		
+		double Cr = cos(r);
+		double Sr = sin(r);
+		
+		double Xr = X*Cr - Y*Sr;
+		double Yr = Y*Cr + X*Sr;
+
+		drawPoint(x+Xr,y+Yr);
+	}
+}
+
 void SDLinterface::fillEllipse(int x,int y, int w, int h)
 {
+	if (displayMode_==NO_DISPLAY) return;
 	if (!SDL_GetRenderTarget(renderer_)) SDL_SetRenderTarget(renderer_, display_);
 	
 	float step = 0.002 * width_/w;
 	
 	for (double a=M_PI/2; a>-M_PI/2; a-=step)
 	{
-		
 		double X = cos(a)*w/2.0f;
 		double Y = sin(a)*h/2.0f;
 		drawLine(x-X,y+Y,x+X,y+Y);
@@ -739,7 +805,7 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 	help_text.push_back("   v - verbose output");
 	help_text.push_back("   o - camera options");
 	help_text.push_back("   p - pause processing");
-	help_text.push_back("   u - update camera");
+	help_text.push_back("   k - select camera");
 #ifndef NDEBUG
 	help_text.push_back("");
 	help_text.push_back("debug options:");

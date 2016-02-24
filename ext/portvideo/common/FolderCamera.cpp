@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ FolderCamera::~FolderCamera()
 CameraEngine* FolderCamera::getCamera(CameraConfig *cam_cfg) {
 	
 	struct stat info;
-	if (stat(cam_cfg->folder,&info)!=0) return NULL;
+	if (stat(cam_cfg->src,&info)!=0) return NULL;
 	return new FolderCamera(cam_cfg);
 }
 
@@ -66,11 +66,11 @@ bool FolderCamera::initCamera() {
 #else
 	DIR *dp;
 	struct dirent *ep;
-	dp = opendir (cfg->folder);
+	dp = opendir (cfg->src);
 	if (dp != NULL) {
 		while ((ep = readdir (dp))) {
 			if ((strstr(ep->d_name,".pgm")!=NULL) || (strstr(ep->d_name,".ppm")!=NULL)) {
-				sprintf(file_name,"%s/%s",cfg->folder,ep->d_name);
+				sprintf(file_name,"%s/%s",cfg->src,ep->d_name);
 				image_list.push_back(file_name);
 			}
 		}
@@ -110,7 +110,7 @@ bool FolderCamera::initCamera() {
 	
 	fclose(imagefile);
 	if ((cfg->cam_width==0) || (cfg->cam_height==0) ) return false;
-	printf("%d %d\n",cfg->cam_width,cfg->cam_height);
+	//printf("%d %d\n",cfg->cam_width,cfg->cam_height);
 	
 	
 	cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];

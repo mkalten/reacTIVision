@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -58,8 +58,10 @@ public:
 	void drawPoint(int x,int y) {};
 	void drawLine(int x1,int y1, int x2, int y2) {};
 	void drawRect(int x,int y, int w, int h) {};
+	void drawRect(int x,int y, int w, int h, float r) {};
 	void fillRect(int x,int y, int w, int h) {};
 	void drawEllipse(int x,int y, int w, int h) {};
+	void drawEllipse(int x,int y, int w, int h, float r) {};
 	void fillEllipse(int x,int y, int w, int h) {};
 
 protected:

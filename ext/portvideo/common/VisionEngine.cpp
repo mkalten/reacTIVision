@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -155,12 +155,12 @@ void VisionEngine::stop() {
 }
 
 void VisionEngine::pause(bool pause) {
-	pause_ = pause;
+	
+	if (pause) teardownCamera();
+	else reset(camera_config_);
 }
 
-void VisionEngine::reset(CameraConfig *cam_cfg) {
-	
-	pause_ = true;
+void VisionEngine::reset(CameraConfig *cam_cfg) {	
 
 	teardownCamera();
 	freeBuffers();
@@ -356,31 +356,44 @@ void VisionEngine::initFrameProcessors() {
 void VisionEngine::setupCamera() {
     
     camera_ = CameraTool::getCamera(camera_config_);
-    if (camera_ == NULL) {
+	if (camera_ == NULL) {
         allocateBuffers();
         return;
     }
-    
+	
     if(camera_->initCamera()) {
         width_ = camera_->getWidth();
         height_ = camera_->getHeight();
         fps_ = camera_->getFps();
 		format_ = camera_->getFormat();
-        
 		camera_->printInfo();
     } else {
-        printf("could not initialize camera\n");
+		printf("could not initialize camera  ... trying default\n");
         camera_->closeCamera();
         delete camera_;
-        camera_ = NULL;
+		camera_ = camera_ = CameraTool::getDefaultCamera();
+		if(camera_->initCamera()) {
+			width_ = camera_->getWidth();
+			height_ = camera_->getHeight();
+			fps_ = camera_->getFps();
+			format_ = camera_->getFormat();
+			camera_->printInfo();
+		} else {
+			printf("could not initialize any camera  ... exit\n");
+			camera_->closeCamera();
+			delete camera_;
+			exit(0);
+		}
+		
     }
-    
+		
     allocateBuffers();
 }
 
 void VisionEngine::teardownCamera()
 {
     if (camera_!=NULL) {
+		pause_ = true;
         camera_->stopCamera();
         camera_->closeCamera();
         delete camera_;
