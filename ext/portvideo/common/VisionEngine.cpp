@@ -247,7 +247,7 @@ void VisionEngine::mainLoop()
 #endif
 
         if (running_) {
-            camera_->showInterface(interface_);
+			if (camera_) camera_->showInterface(interface_);
             interface_->updateDisplay();
         }
         //long total_time = currentMicroSeconds()-start_time;
@@ -300,7 +300,7 @@ void VisionEngine::event(int key)
 #endif
     
     //printf("%d\n",key);
-    camera_->control(key);
+    if (camera_) camera_->control(key);
     for (frame = processorList.begin(); frame!=processorList.end(); frame++)
         display_lock_ = (*frame)->toggleFlag(key,display_lock_);
     

@@ -578,7 +578,7 @@ void CameraTool::saveSettings() {
 		else settings_element->DeleteAttribute("brightness");
 		if (cam_cfg.contrast!=SETTING_OFF) saveAttribute(settings_element, "contrast", cam_cfg.contrast);
 		else settings_element->DeleteAttribute("contrast");
-		if (cam_cfg.brightness!=SETTING_OFF) saveAttribute(settings_element, "sharpness", cam_cfg.sharpness);
+		if (cam_cfg.sharpness!=SETTING_OFF) saveAttribute(settings_element, "sharpness", cam_cfg.sharpness);
 		else settings_element->DeleteAttribute("sharpness");
 		if (cam_cfg.gain!=SETTING_OFF) saveAttribute(settings_element, "gain", cam_cfg.gain);
 		else settings_element->DeleteAttribute("gain");
