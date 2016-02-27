@@ -1,22 +1,21 @@
-/*
-  Fiducial tracking library.
-  Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-  Maintainer (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+/*	Fiducial tracking library.
+	Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
+	Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+ 
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+ 
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "segment.h"
 
@@ -56,7 +55,7 @@ static RegionReference* new_region( Segmenter *s, int x, int y, int colour )
 {
     RegionReference *result;
     Region *r;
-//	int i;
+	int i;
 
     if( s->freed_regions_head ){
         r = s->freed_regions_head;
@@ -84,14 +83,14 @@ static RegionReference* new_region( Segmenter *s, int x, int y, int colour )
     r->descendent_count = 0x7FFF;
 
     r->adjacent_region_count = 0;	
-/*	i = y*(s->width)+x;
+	i = y*(s->width)+x;
 	
 	r->first_span = LOOKUP_SEGMENTER_SPAN( s,  i );
 	r->first_span->start = i;
 	r->first_span->end = i;
 	r->last_span = r->first_span;
 	r->last_span->next = NULL;
-*/
+	
     result = &s->region_refs[ s->region_ref_count++ ];
     result->redirect = result;
     result->region = r;
@@ -345,7 +344,7 @@ static void merge_regions( Segmenter *s, Region* r1, Region* r2 )
 
 static void build_regions( Segmenter *s, const unsigned char *source )
 {
-    //Span *new_span;
+    Span *new_span;
 	int x, y, i;
     RegionReference **current_row = &s->regions_under_construction[0];
     RegionReference **previous_row = &s->regions_under_construction[s->width];
@@ -365,8 +364,8 @@ static void build_regions( Segmenter *s, const unsigned char *source )
         if( source[i] == source[i-1] ){
             current_row[x] = current_row[x-1];
         }else{
-//			current_row[x-1]->region->last_span->end=i-1;
-//			current_row[x-1]->region->area += i-current_row[x-1]->region->last_span->start;
+			current_row[x-1]->region->last_span->end=i-1;
+			current_row[x-1]->region->area += i-current_row[x-1]->region->last_span->start;
             current_row[x] = new_region( s, x, y, source[i] );
             current_row[x]->region->flags |= ADJACENT_TO_ROOT_REGION_FLAG;
             make_adjacent( s, current_row[x]->region, current_row[x-1]->region );
@@ -390,14 +389,14 @@ static void build_regions( Segmenter *s, const unsigned char *source )
         RESOLVE_REGIONREF_REDIRECTS( previous_row[x], previous_row[x] );
         if( source[i] == previous_row[x]->region->colour ){
             current_row[x] = previous_row[x];
-/*
+
 			new_span = LOOKUP_SEGMENTER_SPAN( s,  i );
 			new_span->start = i;
 			new_span->end = i;
 			new_span->next = NULL;
 			current_row[x]->region->last_span->next = new_span;
 			current_row[x]->region->last_span = new_span;
-*/
+
 		}else{ // source[i] != previous_row[x]->colour
 
             current_row[x] = new_region( s, x, y, source[i] );
@@ -425,11 +424,11 @@ static void build_regions( Segmenter *s, const unsigned char *source )
                     // this should be more efficient than merging the previous
                     // into the current because it keeps long-lived regions
                     // alive and only frees newer (less connected?) ones
-/*
+
 					previous_row[x]->region->last_span->next = current_row[x]->region->first_span;
 					previous_row[x]->region->last_span = current_row[x]->region->last_span;
 					previous_row[x]->region->area += current_row[x]->region->area;
-*/
+
                     merge_regions( s, previous_row[x]->region, current_row[x]->region );
                     current_row[x]->region->flags = FREE_REGION_FLAG;
                     current_row[x]->region->next = s->freed_regions_head;
@@ -441,10 +440,10 @@ static void build_regions( Segmenter *s, const unsigned char *source )
 
 
             }else{ // source_image_[i] != source_image_[i-1]
-/*
+
 				current_row[x-1]->region->last_span->end=i-1; // set the span end, it is more efficient here
 				current_row[x-1]->region->area+=i-current_row[x-1]->region->last_span->start;
-				
+/* mk
 				// mark single pixels fragmented
 				if (current_row[x-1]->region->area<=REGION_GATE_AREA) {
 					if (((y+1)==s->height) || (source[i-1]!=source[i-1+s->width]))
@@ -457,14 +456,14 @@ static void build_regions( Segmenter *s, const unsigned char *source )
                 if( source[i] == previous_row[x]->region->colour ){
                     current_row[x] = previous_row[x];
                     current_row[x]->region->bottom = (short)y;
-/*
+
 					new_span = LOOKUP_SEGMENTER_SPAN( s,  i );
 					new_span->start = i;
 					new_span->end = i;
 					new_span->next = NULL;
 					current_row[x]->region->last_span->next = new_span;
 					current_row[x]->region->last_span = new_span;
-*/
+
                 }else{
                     current_row[x] = new_region( s, x, y, source[i] );
                     make_adjacent( s, current_row[x]->region, previous_row[x]->region );
@@ -476,8 +475,8 @@ static void build_regions( Segmenter *s, const unsigned char *source )
 
         // right edge
         current_row[s->width-1]->region->flags |= ADJACENT_TO_ROOT_REGION_FLAG;
-//		current_row[s->width-1]->region->last_span->end=i;
-//		current_row[x-1]->region->area+=i-current_row[x-1]->region->last_span->start+2;
+		current_row[s->width-1]->region->last_span->end=i-1;
+		current_row[x-1]->region->area+=i-current_row[x-1]->region->last_span->start+2;
     }
 
     // make regions of bottom row adjacent or merge with root
@@ -494,13 +493,12 @@ static void build_regions( Segmenter *s, const unsigned char *source )
 
 void initialize_segmenter( Segmenter *s, int width, int height, int max_adjacent_regions )
 {
-    //max_adjacent_regions += 2; //workaround for #44
     s->max_adjacent_regions = max_adjacent_regions;
     s->region_refs = (RegionReference*)malloc( sizeof(RegionReference) * width * height );
     s->region_ref_count = 0;
     s->sizeof_region = sizeof(Region) + sizeof(Region*) * (max_adjacent_regions-1);
     s->regions = (unsigned char*)malloc( s->sizeof_region * width * height );
-   // s->spans = (unsigned char*)malloc(  sizeof(Span) * width * height );
+    s->spans = (unsigned char*)malloc( sizeof(Span) * width * height );
     s->region_count = 0;
 	
 	s->width = width;
@@ -513,12 +511,12 @@ void terminate_segmenter( Segmenter *s )
 {
     free( s->region_refs );
     free( s->regions );
-	//free( s->spans );
+	free( s->spans );
     free( s->regions_under_construction );
 }
 
 void step_segmenter( Segmenter *s, const unsigned char *source )
 {
-    if( s->region_refs && s->regions && s->regions_under_construction /*&& s->spans*/) 
+    if( s->region_refs && s->regions && s->regions_under_construction && s->spans) 
 		build_regions( s, source );
 }

@@ -1,22 +1,21 @@
-/*
-  Fiducial tracking library.
-  Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-  Maintainer (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+/*	Fiducial tracking library.
+	Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
+	Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+ 
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+ 
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "fidtrackX.h"
 
@@ -26,16 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-#ifndef M_PI
-#define M_PI        3.14159265358979323846
-#endif
-
-#define NOT_TRAVERSED       UNKNOWN_REGION_LEVEL
-#define TRAVERSED           (NOT_TRAVERSED-1)
-#define TRAVERSING          (NOT_TRAVERSED-2)
-
 
 //#define LEAF_GATE_SIZE      0
 
@@ -68,23 +57,24 @@ static double calculate_angle( double dx, double dy )
 static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height )
 {
     int i;
-	float leaf_size;
+    //float leaf_size;
 
     double radius = .5 + r->depth;
     double n = radius * radius * M_PI;  // weight according to depth circle area
-	
+
     if( r->adjacent_region_count == 1 ) {
         float x, y;
 
-		leaf_size = ((r->bottom-r->top) + (r->right-r->left)) * .5f;
+		//leaf_size = ((r->bottom-r->top) + (r->right-r->left)) * .5f;
 		//printf("leaf: %f\n",leaf_size);
-		ft->total_leaf_size += leaf_size;
+		//ft->total_leaf_size += leaf_size;
 		
         x = ((r->left + r->right) * .5f);
         y = ((r->top + r->bottom) * .5f);
 		
 		if( ft->pixelwarp ){
-			int pixel = width*(int)y +(int)x;
+			int pixel = width*(int)floor(y+.5f) + (int)floor(x+.5f);
+			//int pixel = width*(int)y + (int)x;
 			if ((pixel>=0) && (pixel<width*height)) {
 				x = ft->pixelwarp[ pixel ].x;
 				y = ft->pixelwarp[ pixel ].y;
@@ -216,6 +206,7 @@ static char *build_left_heavy_depth_string( FidtrackerX *ft, Region *r )
     return result;
 }
 
+/*
 #ifndef NDEBUG
 static void print_unordered_depth_string( Region *r )
 {
@@ -238,8 +229,9 @@ static void print_unordered_depth_string( Region *r )
     printf( ")" );
 }
 #endif
+*/
 
-static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
+void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
         Region *r, int width, int height )
 {
     double all_x = 0.;
@@ -268,14 +260,14 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     ft->white_leaf_count_warped = 0.;
 	
     ft->total_leaf_count = 0;
-    ft->total_leaf_size = 0.;	
-    ft->average_leaf_size = 0.;
+    //ft->total_leaf_size = 0.;
+	//ft->average_leaf_size = 0.;
 
-//    ft->min_leaf_width_or_height = 0x7FFFFFFF;
+	//ft->min_leaf_width_or_height = 0x7FFFFFFF;
 
     set_depth( r, 0 );
     sum_leaf_centers( ft, r, width, height );
-    ft->average_leaf_size = ft->total_leaf_size / (double)(ft->total_leaf_count);
+    //ft->average_leaf_size = ft->total_leaf_size / (double)(ft->total_leaf_count);
 
 	all_x = (double)(ft->black_x_sum + ft->white_x_sum) / (double)(ft->black_leaf_count + ft->white_leaf_count);
 	all_y = (double)(ft->black_y_sum + ft->white_y_sum) / (double)(ft->black_leaf_count + ft->white_leaf_count);
@@ -283,16 +275,20 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	black_x = (double)ft->black_x_sum / (double)ft->black_leaf_count;
 	black_y = (double)ft->black_y_sum / (double)ft->black_leaf_count;
 	
+	f->raw_x = all_x;
+	f->raw_y = all_y;
+	f->raw_a = calculate_angle( all_x - black_x, all_y - black_y );
+	
 	if (ft->pixelwarp) {
 		if (ft->total_leaf_count>(ft->black_leaf_count_warped+ft->white_leaf_count_warped)) { 
-			int pixel = width*(int)all_y+(int)all_x;
+			int pixel = width*(int)floor(all_y+.5f)+(int)floor(all_x+.5f);
 
 			if ((pixel>=0) && (pixel<width*height)) {
 				all_x_warped = ft->pixelwarp[pixel].x;
 				all_y_warped = ft->pixelwarp[pixel].y;
 				if ((all_x_warped>0) || (all_y_warped>0)) {
 
-					pixel = (int)black_y*width+(int)black_x;
+					pixel = width*(int)floor(black_y+.5f)+(int)floor(black_x+.5f);
 					if ((pixel>=0) && (pixel<width*height)) {
 						black_x_warped = ft->pixelwarp[pixel].x;
 						black_y_warped = ft->pixelwarp[pixel].y;
@@ -308,9 +304,9 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 					f->x = 0.0f;
 					f->y = 0.0f;
 					f->angle = 0.0f;
-					r->flags |= LOST_SYMBOL_FLAG;
+					r->flags |= FUZZY_SYMBOL_FLAG;
 				}
-			} else r->flags |= LOST_SYMBOL_FLAG;
+			} else r->flags |= FUZZY_SYMBOL_FLAG;
 		} else {
 			all_x_warped = (double)(ft->black_x_sum_warped + ft->white_x_sum_warped) / (double)(ft->black_leaf_count_warped + ft->white_leaf_count_warped);
 			all_y_warped = (double)(ft->black_y_sum_warped + ft->white_y_sum_warped) / (double)(ft->black_leaf_count_warped + ft->white_leaf_count_warped);
@@ -324,25 +320,29 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		}
 		
 	} else {
-		f->x = all_x;
-		f->y = all_y;
-		f->angle = calculate_angle( all_x - black_x, all_y - black_y );
+		f->x = f->raw_x;
+		f->y = f->raw_y;
+		f->angle = f->raw_a;
 	}
-	
-	//f->a = black_x;
-	//f->b = black_y;
-   
-    f->leaf_size = (float)(ft->average_leaf_size);
+	  
+	short vx = all_x-black_x;
+	short vy = all_y-black_y;
+	float vlength = sqrt(vx*vx + vy*vy);
+	//f->leaf_size = (float)(ft->average_leaf_size);
 	f->root_size = r->right-r->left;
 	if ((r->bottom-r->top)>f->root_size) f->root_size = r->bottom-r->top;
 	f->root_colour=r->colour;
 	f->node_count=r->descendent_count;
 
-/*
-    print_unordered_depth_string( r );
+
+	//printf("%f %f\n",vlength,f->root_size);
+
+/*	
+	print_unordered_depth_string( r );
     printf( "\n" );
     fflush( stdout );
 */
+
 
 /*
 	// can differ due to fuzzy fiducial tracking
@@ -351,7 +351,7 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     assert( r->descendent_count <= ft->max_target_root_descendent_count );
 */
 
-	if (r->flags & LOST_SYMBOL_FLAG) f->id = INVALID_FIDUCIAL_ID;
+	if (r->flags & FUZZY_SYMBOL_FLAG) f->id = FUZZY_FIDUCIAL_ID;
 	else {
         ft->next_depth_string = 0;
         depth_string = build_left_heavy_depth_string( ft, r );
@@ -361,6 +361,7 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
         strcat( ft->temp_coloured_depth_string, depth_string );
 
 		f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
+		f->tree =  ft->temp_coloured_depth_string;
 		/*if (f->id != INVALID_FIDUCIAL_ID) {
 			if (!(check_leaf_variation(ft, r, width, height)))  {
 				f->id = INVALID_FIDUCIAL_ID;
@@ -369,6 +370,7 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		}*/
     }
 
+	if ((f->root_size/vlength)>5.0f) f->id = INVALID_FIDUCIAL_ID;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -424,14 +426,14 @@ static int r1_adjacent_contains_r2( Region* r1, Region* r2 )
 // of these nodes for a later pass but we don't bother.)
 // during the calls to this function we store the maximum leaf-to-node depth
 // in r->depth, later this field has a different meaning
-static void propagate_descendent_count_and_max_depth_upwards(
+void propagate_descendent_count_and_max_depth_upwards(
         Segmenter *s, Region *r, FidtrackerX *ft)
 {
     int i;
     Region *parent = 0;
 
     assert( r->level == NOT_TRAVERSED );
-    assert( r->children_visited_count == (r->adjacent_region_count - 1)         // has an untraversed parent 
+    assert( r->children_visited_count == (r->adjacent_region_count - 1)   // has an untraversed parent 
             || r->children_visited_count == r->adjacent_region_count );   // is adjacent to root region
 
     r->descendent_count = 0;
@@ -460,19 +462,19 @@ static void propagate_descendent_count_and_max_depth_upwards(
         link_region( &ft->root_regions_head, r );
     }else{
 
-        if( r->descendent_count >= ft->min_target_root_descendent_count
+        if( (r->descendent_count >= ft->min_target_root_descendent_count || r->descendent_count == YAMA_COUNT)
             && r->descendent_count < ft->max_target_root_descendent_count
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ) {
 				link_region( &ft->root_regions_head, r );
        } else if( r->descendent_count >= ft->min_target_root_descendent_range
             && r->descendent_count < ft->max_target_root_descendent_range
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ) {
-				r->flags |= LOST_SYMBOL_FLAG;
+				r->flags |= FUZZY_SYMBOL_FLAG;
 				link_region( &ft->root_regions_head, r );
        }
   
-
-        if( parent
+		//mk
+        else if( parent
                 && !(r->flags & (   SATURATED_REGION_FLAG |
                                     ADJACENT_TO_ROOT_REGION_FLAG |
                                     FREE_REGION_FLAG ) ) ){
@@ -506,9 +508,6 @@ static void propagate_descendent_count_and_max_depth_upwards(
         }
     }
 }
-
-
-
 
 
 #ifndef NDEBUG
@@ -590,88 +589,25 @@ void terminate_fidtrackerX( FidtrackerX *ft )
 
 
 int find_fiducialsX( FiducialX *fiducials, int max_count,
-        FidtrackerX *ft, Segmenter *segments, int width, int height)
+					FidtrackerX *ft, Segmenter *segments, int width, int height)
 {
-    int i = 0;
-    Region *next;
-
-    initialize_head_region( &ft->root_regions_head );
-
-    find_roots( segments, ft);
-
-    next = ft->root_regions_head.next;
-    while( next != &ft->root_regions_head ){
-
-        compute_fiducial_statistics( ft, &fiducials[i], next, width, height );
-
-        next = next->next;
-        ++i;
-        if( i >= max_count )
-            return i;
-    }
-
-    return i;
-}
-
-int find_regionsX( RegionX *regions, int max_count,
-        FidtrackerX *ft, Segmenter *segments, int width, int height, int min_size, int max_size)
-{
-
-	int i,j=0;
-	int max_object_size,min_object_size = 0;
-	int pixel = 0;
+	int i = 0;
+	Region *next;
 	
-	if (max_size>height) max_object_size=height;
-	else max_object_size = max_size; 
-
-	if (min_size<2) min_object_size = 2;
-	else min_object_size = min_size;
-
-    initialize_head_region( &ft->root_regions_head );	
+	initialize_head_region( &ft->root_regions_head );
 	
-	for( i=0; i < segments->region_count; ++i ) {
-		Region *r = LOOKUP_SEGMENTER_REGION( segments, i );
-
-			regions[j].left = r->left;
-			regions[j].right = r->right;
-			regions[j].top = r->top;
-			regions[j].bottom = r->bottom;
-
-			regions[j].width = r->right-r->left+1;
-			regions[j].height = r->bottom-r->top+1;
-			regions[j].span = r->first_span;
-			regions[j].area = r->area;
-			regions[j].colour = r->colour;
-
-			if ((regions[j].width>min_object_size) && (regions[j].width<max_object_size) && (regions[j].height>min_object_size) && (regions[j].height<max_object_size)) {
-				regions[j].x = regions[j].left+regions[j].width/2;
-				regions[j].y = regions[j].top+regions[j].height/2;
-
-				if(ft->pixelwarp) {
-					pixel = regions[j].y*width + regions[j].x;
-					if ((pixel<0) || (pixel>=width*height)) continue;
-					regions[j].x = ft->pixelwarp[ pixel ].x;
-					regions[j].y = ft->pixelwarp[ pixel ].y;
-					if ((regions[j].x==0) && (regions[j].y==0)) continue;
-					
-					/*pixel = (int)(width * regions[j].top + regions[j].left);
-					if ((pixel<0) || (pixel>=width*height)) continue;
-					p = &ft->pixelwarp[ pixel ];
-					regions[j].left = p->x;
-					regions[j].top = p->y;
-
-					pixel = (int)(width * regions[j].bottom + regions[j].right);
-					if ((pixel<0) || (pixel>=width*height)) continue;
-					p = &ft->pixelwarp[ pixel ];
-					regions[j].right = p->x;
-					regions[j].bottom = p->y;*/
-				} 
-
-				j++;
-				if (j==max_count) return j;
-			} 
+	find_roots( segments, ft);
+	
+	next = ft->root_regions_head.next;
+	while( next != &ft->root_regions_head ){
+		
+		compute_fiducial_statistics( ft, &fiducials[i], next, width, height );
+		
+		next = next->next;
+		++i;
+		if( i >= max_count )
+			return i;
 	}
-
-	return j;
 	
+	return i;
 }

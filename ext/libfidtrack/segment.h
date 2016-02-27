@@ -1,25 +1,27 @@
-/*
-  Fiducial tracking library.
-  Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-  Maintainer (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+/*	Fiducial tracking library.
+	Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
+	Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+ 
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+ 
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef INCLUDED_SEGMENT_H
 #define INCLUDED_SEGMENT_H
+
+#define BLACK (0)
+#define WHITE (255)
 
 #ifdef __cplusplus
 extern "C"
@@ -65,13 +67,13 @@ extern "C"
 */
 #define FRAGMENTED_REGION_FLAG          (8)
 
-#define LOST_SYMBOL_FLAG				(16)
+#define FUZZY_SYMBOL_FLAG		(16)
 
-#define VALID_REGION_FLAG				(64)
+#define VALID_REGION_FLAG		(64)
 
 #define UNKNOWN_REGION_LEVEL            (-1)
 
-#define REGION_GATE_AREA				1
+#define REGION_GATE_AREA		1
 
 typedef struct Span{
 	int start, end;
@@ -87,7 +89,7 @@ typedef struct Region{
 	struct Span *first_span;
 	struct Span *last_span;
 	int area;
-	
+
     int flags;
 
     short level;                            /* initialized to UNKNOWN_REGION_LEVEL */
@@ -95,7 +97,7 @@ typedef struct Region{
     short children_visited_count;           /* initialized to 0 */
     short descendent_count;                 /* initialized to 0x7FFF */
     char *depth_string;                     /* not initialized by segmenter */
-    
+
     short adjacent_region_count;
     struct Region *adjacent_regions[ 1 ];   /* variable length array of length max_adjacent_regions */
 } Region;

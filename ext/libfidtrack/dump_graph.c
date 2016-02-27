@@ -1,22 +1,21 @@
-/*
-  Fiducial tracking library.
-  Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-  Maintainer (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+/*	Fiducial tracking library.
+	Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
+	Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+ 
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+ 
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "dump_graph.h"
 
@@ -33,7 +32,7 @@ void dump_graph( const char *fileName, Segmenter *s )
     // we depend on the segmenter initializing certain region fields for us
     // check that here
 #ifndef NDEBUG
-    sanity_check_region_initial_values( s );
+ //   sanity_check_region_initial_values( s );
 #endif
 
     // find fiducial roots beginning at leafs

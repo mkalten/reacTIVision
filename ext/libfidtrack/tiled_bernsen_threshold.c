@@ -1,30 +1,27 @@
-/*
-  Fiducial tracking library.
-  Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-  Maintainer (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+/*	Fiducial tracking library.
+	Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
+	Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This library is free software; you can redistribute it and/or
+	modify it under the terms of the GNU Lesser General Public
+	License as published by the Free Software Foundation; either
+	version 2.1 of the License, or (at your option) any later version.
+ 
+	This library is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+	Lesser General Public License for more details.
+ 
+	You should have received a copy of the GNU Lesser General Public
+	License along with this library; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "tiled_bernsen_threshold.h"
-
 #include <stdlib.h>
 
 #define WHITE ((unsigned char)255)
 #define BLACK ((unsigned char)0)
-
 
 /*
     thresholder works on tile_size tiles of the image. applying one threshold
@@ -35,7 +32,7 @@
     thresholding tile.
 
     tiles with a threshold below contrast_threshold are clamped.
-*/                    
+*/
 
 
 void initialize_tiled_bernsen_thresholder(
@@ -145,8 +142,8 @@ static void compute_frame_min_max_tiles( unsigned char *min_max_dest,
     int full_block_count = (height - first_block_height) / tile_size;
     int last_block_height = height - first_block_height - (full_block_count * tile_size );
     int i, j;
-	int increment = source_stride * width;
-	
+    int increment = source_stride * width;
+
     init_min_max( min_max_dest, full_span_count + 2 );
     for( i= first_block_height; i > 0; --i ){
         compute_line_min_max_spans( min_max_dest, source, source_stride,
@@ -179,7 +176,8 @@ static void compute_row_thresholds( unsigned char *thresholds_dest,
         int count, int contrast_threshold )
 {
     int i;
-    unsigned char min_a, max_a, min_b, max_b, tt;
+    unsigned char min_a, max_a, min_b, max_b;
+	unsigned char test_threshold;
 
     for( i = count; i > 0 ; --i ){
         min_a = min_max_a[0];
@@ -203,15 +201,16 @@ static void compute_row_thresholds( unsigned char *thresholds_dest,
         if( max_b > max_a )
             max_a = max_b;
 
-        tt = (unsigned char)((min_a + max_a) / 2);
-        if( (max_a - min_a) < contrast_threshold ) {
-            if (tt<85) *thresholds_dest++ = WHITE;
-            else *thresholds_dest++ = BLACK;
-        } else {
-            *thresholds_dest++ = tt;
+		test_threshold = (unsigned char)((min_a + max_a) / 2);
+		if( (max_a - min_a) < contrast_threshold ) {
+			if (test_threshold<128) *thresholds_dest++ = WHITE;
+			else *thresholds_dest++ = BLACK;
+			//*thresholds_dest++ = WHITE;
+		} else {
+			*thresholds_dest++ = test_threshold;
 		}
 
-        /*if( max_a - min_a < contrast_threshold ) {
+        /*if( (max_a - min_a) < contrast_threshold ) {
 			*thresholds_dest++ = WHITE;
         } else {
             *thresholds_dest++ = (unsigned char)((min_a + max_a) / 2);
@@ -252,12 +251,12 @@ static void apply_frame_thresholds( unsigned char *dest,
 
     for( j = 0; j < height; j += tile_size ){
         tile_height = (j + tile_size > height) ? height - j : tile_size;
-        for( k = tile_height; k > 0; --k ){
+        for( k = 0; k < tile_height; ++k ){
             t = threshold;
             for( m=0; m < width; m += tile_size ){
                 unsigned char tt = *t++;
                 tile_width = (m + tile_size > width) ? width - m : tile_size;
-                for( n=tile_width; n > 0; --n ){
+                for( n=tile_width; n >0; --n ){
                     *dest++ = (*source > tt) ? WHITE : BLACK;
                     source += source_stride;
                 }
