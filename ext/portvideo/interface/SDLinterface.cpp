@@ -295,12 +295,12 @@ void SDLinterface::selectCamera()
 	
 	if (select_)
 	{
-		engine_->pause(false);
+		engine_->resetCamera();
 		select_ = false;
 		return;
 	}
 	
-	engine_->pause(true);
+	engine_->teardownCamera();
 
 	dev_list = CameraTool::findDevices();
 	selector_ = 0;
@@ -385,7 +385,7 @@ void SDLinterface::processEvents()
 				}
 				else if( event.key.keysym.sym == SDLK_RETURN )
 				{
-					if (select_) engine_->reset(&dev_list[selector_]);
+					if (select_) engine_->resetCamera(&dev_list[selector_]);
 				}
 				else if( event.key.keysym.sym == SDLK_UP )
 				{

@@ -156,15 +156,14 @@ void VisionEngine::stop() {
 
 void VisionEngine::pause(bool pause) {
 	
-	if (pause) teardownCamera();
-	else reset(camera_config_);
+	pause_ = pause;
 }
 
-void VisionEngine::reset(CameraConfig *cam_cfg) {	
+void VisionEngine::resetCamera(CameraConfig *cam_cfg) {
 
-	teardownCamera();
+	//teardownCamera();
 	freeBuffers();
-	CameraTool::setCameraConfig(cam_cfg);
+	if (cam_cfg!=NULL) CameraTool::setCameraConfig(cam_cfg);
 	setupCamera();
 	
 	if( camera_->startCamera() ) {

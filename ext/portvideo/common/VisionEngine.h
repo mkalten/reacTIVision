@@ -57,9 +57,12 @@ public:
 
 	void start();
 	void stop();
-	void reset(CameraConfig *cam_cfg);
     void event(int key);
     void pause(bool pause);
+	
+	void setupCamera();
+	void teardownCamera();
+	void resetCamera(CameraConfig *cam_cfg = NULL);
 
 	bool running_;
 	bool error_;
@@ -105,8 +108,7 @@ protected:
     void startThread();
     void stopThread();
     
-    void setupCamera();
-    void teardownCamera();
+
     
 #ifndef NDEBUG
     void saveBuffer(unsigned char* buffer, int bytes);
