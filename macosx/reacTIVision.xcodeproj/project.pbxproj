@@ -16,6 +16,7 @@
 		B21683D619F3965500F07F0D /* USBBusProber.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B21D89E30CE7A0FE003B810C /* FileCamera.cpp */; };
 		B21D8A0D0CE7A34A003B810C /* CameraEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */; };
+		B225847D1C6CC2920030E390 /* OneEuroFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B225847B1C6CC2920030E390 /* OneEuroFilter.cpp */; };
 		B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B239D6A30CC51682009708F3 /* DC1394Camera.cpp */; };
 		B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B244E81519C6D4DC008ADD32 /* libusb.a */; };
 		B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B24EA4F20015EB5000096D13 /* Cocoa.framework */; };
@@ -25,7 +26,6 @@
 		B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B26725ED0C5E3FD100D7FD74 /* IOKit.framework */; };
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */; };
-		B2884A7E0A2CF0FC00AFF79A /* FingerObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A7B0A2CF0FC00AFF79A /* FingerObject.cpp */; };
 		B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */; };
 		B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29545ED19E2FF80001111A6 /* AVFoundation.framework */; };
 		B297D3B7097536E2004AB0FE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -34,7 +34,6 @@
 		B297D3BF097536E2004AB0FE /* FiducialFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208519078AFC3D0047913B /* FiducialFinder.cpp */; };
 		B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B220851F078AFC4D0047913B /* SDLinterface.cpp */; };
 		B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208521078AFC4D0047913B /* RingBuffer.cpp */; };
-		B297D3C3097536E2004AB0FE /* TuioServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F757AC07CA3EB40030DB83 /* TuioServer.cpp */; };
 		B297D3C4097536E2004AB0FE /* dump_graph.c in Sources */ = {isa = PBXBuildFile; fileRef = B260492408E9BF610095D4C8 /* dump_graph.c */; };
 		B297D3C6097536E2004AB0FE /* fidtrackX.c in Sources */ = {isa = PBXBuildFile; fileRef = B260492808E9BF610095D4C8 /* fidtrackX.c */; };
 		B297D3C7097536E2004AB0FE /* segment.c in Sources */ = {isa = PBXBuildFile; fileRef = B260492B08E9BF620095D4C8 /* segment.c */; };
@@ -48,11 +47,26 @@
 		B297D3D0097536E2004AB0FE /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260495D08E9BFC00095D4C8 /* OscPrintReceivedElements.cpp */; };
 		B297D3D1097536E2004AB0FE /* OscReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260495F08E9BFC00095D4C8 /* OscReceivedElements.cpp */; };
 		B297D3D2097536E2004AB0FE /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260496508E9BFC00095D4C8 /* OscTypes.cpp */; };
-		B297D3D5097536E2004AB0FE /* FiducialObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E6096C08EAE57D00136A11 /* FiducialObject.cpp */; };
 		B297D3DE097536E2004AB0FE /* FidtrackFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E6660959DA6F00A347C1 /* FidtrackFinder.cpp */; };
 		B297D3E1097536E2004AB0FE /* FrameThresholder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */; };
 		B297D3E2097536E2004AB0FE /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B214E66E0959DA6F00A347C1 /* Main.cpp */; };
-		B2985D231B1ECAFF00A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D211B1ECAFF00A3172B /* ConsoleInterface.cpp */; };
+		B2985D261B1ED49700A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D241B1ED49700A3172B /* ConsoleInterface.cpp */; };
+		B29CCBE01B17680400C106A6 /* BlobObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBD51B17680400C106A6 /* BlobObject.cpp */; };
+		B29CCBE11B17680400C106A6 /* BlobMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBD71B17680400C106A6 /* BlobMatrix.cpp */; };
+		B29CCC031B17685700C106A6 /* FlashSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBE51B17685700C106A6 /* FlashSender.cpp */; };
+		B29CCC041B17685700C106A6 /* OscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBE81B17685700C106A6 /* OscSender.cpp */; };
+		B29CCC051B17685700C106A6 /* TcpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEA1B17685700C106A6 /* TcpSender.cpp */; };
+		B29CCC061B17685700C106A6 /* TuioBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEC1B17685700C106A6 /* TuioBlob.cpp */; };
+		B29CCC071B17685700C106A6 /* TuioContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEE1B17685700C106A6 /* TuioContainer.cpp */; };
+		B29CCC081B17685700C106A6 /* TuioCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBF01B17685700C106A6 /* TuioCursor.cpp */; };
+		B29CCC091B17685700C106A6 /* TuioDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBF21B17685700C106A6 /* TuioDispatcher.cpp */; };
+		B29CCC0A1B17685700C106A6 /* TuioManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBF51B17685700C106A6 /* TuioManager.cpp */; };
+		B29CCC0B1B17685700C106A6 /* TuioObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBF71B17685700C106A6 /* TuioObject.cpp */; };
+		B29CCC0C1B17685700C106A6 /* TuioPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBF91B17685700C106A6 /* TuioPoint.cpp */; };
+		B29CCC0D1B17685700C106A6 /* TuioServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBFB1B17685700C106A6 /* TuioServer.cpp */; };
+		B29CCC0E1B17685700C106A6 /* TuioTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBFD1B17685700C106A6 /* TuioTime.cpp */; };
+		B29CCC0F1B17685700C106A6 /* UdpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBFF1B17685700C106A6 /* UdpSender.cpp */; };
+		B29CCC101B17685700C106A6 /* WebSockSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCC011B17685700C106A6 /* WebSockSender.cpp */; };
 		B2AEE8EC0DE5D15C00D51856 /* reacTIVision.xml in Resources */ = {isa = PBXBuildFile; fileRef = B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */; };
 		B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
@@ -89,6 +103,7 @@
 		B200D54A1B0E45D500249D8B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = ../../../../../../System/Library/Frameworks/CoreMedia.framework; sourceTree = "<group>"; };
 		B200D5541B0E4E1300249D8B /* tinyxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml2.cpp; sourceTree = "<group>"; };
 		B200D5551B0E4E1300249D8B /* tinyxml2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml2.h; sourceTree = "<group>"; };
+		B2023CCE1C137745002D4291 /* BlobObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobObject.h; path = ../common/BlobObject.h; sourceTree = "<group>"; };
 		B214E6660959DA6F00A347C1 /* FidtrackFinder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; lineEnding = 0; name = FidtrackFinder.cpp; path = ../common/FidtrackFinder.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B214E6670959DA6F00A347C1 /* FidtrackFinder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FidtrackFinder.h; path = ../common/FidtrackFinder.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; lineEnding = 0; name = FrameThresholder.cpp; path = ../common/FrameThresholder.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -108,6 +123,8 @@
 		B2208520078AFC4D0047913B /* SDLinterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SDLinterface.h; path = ../ext/portvideo/interface/SDLinterface.h; sourceTree = SOURCE_ROOT; };
 		B2208521078AFC4D0047913B /* RingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RingBuffer.cpp; path = ../ext/portvideo/common/RingBuffer.cpp; sourceTree = SOURCE_ROOT; };
 		B2208522078AFC4D0047913B /* RingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RingBuffer.h; path = ../ext/portvideo/common/RingBuffer.h; sourceTree = SOURCE_ROOT; };
+		B225847B1C6CC2920030E390 /* OneEuroFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OneEuroFilter.cpp; path = ../ext/tuio/OneEuroFilter.cpp; sourceTree = "<group>"; };
+		B225847C1C6CC2920030E390 /* OneEuroFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OneEuroFilter.h; path = ../ext/tuio/OneEuroFilter.h; sourceTree = "<group>"; };
 		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = DC1394Camera.cpp; path = ../ext/portvideo/linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
 		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../ext/portvideo/linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = ../ext/portvideo/macosx/dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
@@ -156,16 +173,47 @@
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CalibrationGrid.cpp; path = ../common/CalibrationGrid.cpp; sourceTree = SOURCE_ROOT; };
 		B2884A780A2CF0E800AFF79A /* CalibrationGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CalibrationGrid.h; path = ../common/CalibrationGrid.h; sourceTree = SOURCE_ROOT; };
-		B2884A7B0A2CF0FC00AFF79A /* FingerObject.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FingerObject.cpp; path = ../common/FingerObject.cpp; sourceTree = SOURCE_ROOT; };
-		B2884A7C0A2CF0FC00AFF79A /* FingerObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FingerObject.h; path = ../common/FingerObject.h; sourceTree = SOURCE_ROOT; };
-		B2884A7D0A2CF0FC00AFF79A /* MessageServer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MessageServer.h; path = ../common/MessageServer.h; sourceTree = SOURCE_ROOT; };
 		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVfoundationCamera.h; path = ../ext/portvideo/macosx/AVfoundationCamera.h; sourceTree = "<group>"; };
 		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AVfoundationCamera.mm; path = ../ext/portvideo/macosx/AVfoundationCamera.mm; sourceTree = "<group>"; };
 		B29545ED19E2FF80001111A6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = /System/Library/Frameworks/AVFoundation.framework; sourceTree = "<absolute>"; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B297D3ED097536E3004AB0FE /* reacTIVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reacTIVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B2985D211B1ECAFF00A3172B /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = ../ext/portvideo/common/ConsoleInterface.cpp; sourceTree = "<group>"; };
-		B2985D221B1ECAFF00A3172B /* ConsoleInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleInterface.h; path = ../ext/portvideo/common/ConsoleInterface.h; sourceTree = "<group>"; };
+		B2985D241B1ED49700A3172B /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = ../ext/portvideo/common/ConsoleInterface.cpp; sourceTree = "<group>"; };
+		B2985D251B1ED49700A3172B /* ConsoleInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleInterface.h; path = ../ext/portvideo/common/ConsoleInterface.h; sourceTree = "<group>"; };
+		B29CCBD51B17680400C106A6 /* BlobObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobObject.cpp; path = ../common/BlobObject.cpp; sourceTree = "<group>"; };
+		B29CCBD71B17680400C106A6 /* BlobMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobMatrix.cpp; path = ../common/BlobMatrix.cpp; sourceTree = "<group>"; };
+		B29CCBD81B17680400C106A6 /* BlobMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobMatrix.h; path = ../common/BlobMatrix.h; sourceTree = "<group>"; };
+		B29CCBE51B17685700C106A6 /* FlashSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlashSender.cpp; path = ../ext/tuio/FlashSender.cpp; sourceTree = "<group>"; };
+		B29CCBE61B17685700C106A6 /* FlashSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlashSender.h; path = ../ext/tuio/FlashSender.h; sourceTree = "<group>"; };
+		B29CCBE71B17685700C106A6 /* LibExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibExport.h; path = ../ext/tuio/LibExport.h; sourceTree = "<group>"; };
+		B29CCBE81B17685700C106A6 /* OscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscSender.cpp; path = ../ext/tuio/OscSender.cpp; sourceTree = "<group>"; };
+		B29CCBE91B17685700C106A6 /* OscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscSender.h; path = ../ext/tuio/OscSender.h; sourceTree = "<group>"; };
+		B29CCBEA1B17685700C106A6 /* TcpSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TcpSender.cpp; path = ../ext/tuio/TcpSender.cpp; sourceTree = "<group>"; };
+		B29CCBEB1B17685700C106A6 /* TcpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TcpSender.h; path = ../ext/tuio/TcpSender.h; sourceTree = "<group>"; };
+		B29CCBEC1B17685700C106A6 /* TuioBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioBlob.cpp; path = ../ext/tuio/TuioBlob.cpp; sourceTree = "<group>"; };
+		B29CCBED1B17685700C106A6 /* TuioBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioBlob.h; path = ../ext/tuio/TuioBlob.h; sourceTree = "<group>"; };
+		B29CCBEE1B17685700C106A6 /* TuioContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioContainer.cpp; path = ../ext/tuio/TuioContainer.cpp; sourceTree = "<group>"; };
+		B29CCBEF1B17685700C106A6 /* TuioContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioContainer.h; path = ../ext/tuio/TuioContainer.h; sourceTree = "<group>"; };
+		B29CCBF01B17685700C106A6 /* TuioCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioCursor.cpp; path = ../ext/tuio/TuioCursor.cpp; sourceTree = "<group>"; };
+		B29CCBF11B17685700C106A6 /* TuioCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioCursor.h; path = ../ext/tuio/TuioCursor.h; sourceTree = "<group>"; };
+		B29CCBF21B17685700C106A6 /* TuioDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioDispatcher.cpp; path = ../ext/tuio/TuioDispatcher.cpp; sourceTree = "<group>"; };
+		B29CCBF31B17685700C106A6 /* TuioDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioDispatcher.h; path = ../ext/tuio/TuioDispatcher.h; sourceTree = "<group>"; };
+		B29CCBF41B17685700C106A6 /* TuioListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioListener.h; path = ../ext/tuio/TuioListener.h; sourceTree = "<group>"; };
+		B29CCBF51B17685700C106A6 /* TuioManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioManager.cpp; path = ../ext/tuio/TuioManager.cpp; sourceTree = "<group>"; };
+		B29CCBF61B17685700C106A6 /* TuioManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioManager.h; path = ../ext/tuio/TuioManager.h; sourceTree = "<group>"; };
+		B29CCBF71B17685700C106A6 /* TuioObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioObject.cpp; path = ../ext/tuio/TuioObject.cpp; sourceTree = "<group>"; };
+		B29CCBF81B17685700C106A6 /* TuioObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioObject.h; path = ../ext/tuio/TuioObject.h; sourceTree = "<group>"; };
+		B29CCBF91B17685700C106A6 /* TuioPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioPoint.cpp; path = ../ext/tuio/TuioPoint.cpp; sourceTree = "<group>"; };
+		B29CCBFA1B17685700C106A6 /* TuioPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioPoint.h; path = ../ext/tuio/TuioPoint.h; sourceTree = "<group>"; };
+		B29CCBFB1B17685700C106A6 /* TuioServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioServer.cpp; path = ../ext/tuio/TuioServer.cpp; sourceTree = "<group>"; };
+		B29CCBFC1B17685700C106A6 /* TuioServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioServer.h; path = ../ext/tuio/TuioServer.h; sourceTree = "<group>"; };
+		B29CCBFD1B17685700C106A6 /* TuioTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TuioTime.cpp; path = ../ext/tuio/TuioTime.cpp; sourceTree = "<group>"; };
+		B29CCBFE1B17685700C106A6 /* TuioTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TuioTime.h; path = ../ext/tuio/TuioTime.h; sourceTree = "<group>"; };
+		B29CCBFF1B17685700C106A6 /* UdpSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UdpSender.cpp; path = ../ext/tuio/UdpSender.cpp; sourceTree = "<group>"; };
+		B29CCC001B17685700C106A6 /* UdpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UdpSender.h; path = ../ext/tuio/UdpSender.h; sourceTree = "<group>"; };
+		B29CCC011B17685700C106A6 /* WebSockSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSockSender.cpp; path = ../ext/tuio/WebSockSender.cpp; sourceTree = "<group>"; };
+		B29CCC021B17685700C106A6 /* WebSockSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSockSender.h; path = ../ext/tuio/WebSockSender.h; sourceTree = "<group>"; };
+		B29CCC131B1796B000C106A6 /* FiducialObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FiducialObject.h; path = ../common/FiducialObject.h; sourceTree = "<group>"; };
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../common/Main.h; sourceTree = "<group>"; };
 		B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = reacTIVision.xml; sourceTree = SOURCE_ROOT; };
 		B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -174,8 +222,6 @@
 		B2CB96BF0A33064800CF3287 /* FrameEqualizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; lineEnding = 0; name = FrameEqualizer.cpp; path = ../common/FrameEqualizer.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B2CB96C00A33064800CF3287 /* FrameEqualizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FrameEqualizer.h; path = ../common/FrameEqualizer.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../ext/portvideo/macosx/Frameworks/SDL2.framework; sourceTree = "<group>"; };
-		B2E6096C08EAE57D00136A11 /* FiducialObject.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FiducialObject.cpp; path = ../common/FiducialObject.cpp; sourceTree = SOURCE_ROOT; };
-		B2E6096D08EAE57D00136A11 /* FiducialObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FiducialObject.h; path = ../common/FiducialObject.h; sourceTree = SOURCE_ROOT; };
 		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../ext/portvideo/common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
 		B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FolderCamera.cpp; path = ../ext/portvideo/common/FolderCamera.cpp; sourceTree = SOURCE_ROOT; };
 		B2E644150D6C39EC0000ABD0 /* FolderCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FolderCamera.h; path = ../ext/portvideo/common/FolderCamera.h; sourceTree = SOURCE_ROOT; };
@@ -183,8 +229,6 @@
 		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../ext/portvideo/interface/Resources.c; sourceTree = SOURCE_ROOT; };
 		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../ext/portvideo/interface/Resources.h; sourceTree = SOURCE_ROOT; };
 		B2F3467B095B506D00D300A5 /* default_trees.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = default_trees.h; path = ../ext/libfidtrack/default_trees.h; sourceTree = SOURCE_ROOT; };
-		B2F757AC07CA3EB40030DB83 /* TuioServer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TuioServer.cpp; path = ../common/TuioServer.cpp; sourceTree = SOURCE_ROOT; };
-		B2F757AD07CA3EB40030DB83 /* TuioServer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = TuioServer.h; path = ../common/TuioServer.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,12 +260,13 @@
 				B2A8A0C919ECF6EE00D8D4FA /* Main.h */,
 				B2208519078AFC3D0047913B /* FiducialFinder.cpp */,
 				B220851A078AFC3D0047913B /* FiducialFinder.h */,
-				B2E6096C08EAE57D00136A11 /* FiducialObject.cpp */,
-				B2E6096D08EAE57D00136A11 /* FiducialObject.h */,
-				B2884A7B0A2CF0FC00AFF79A /* FingerObject.cpp */,
-				B2884A7C0A2CF0FC00AFF79A /* FingerObject.h */,
 				B214E6660959DA6F00A347C1 /* FidtrackFinder.cpp */,
 				B214E6670959DA6F00A347C1 /* FidtrackFinder.h */,
+				B29CCC131B1796B000C106A6 /* FiducialObject.h */,
+				B29CCBD51B17680400C106A6 /* BlobObject.cpp */,
+				B2023CCE1C137745002D4291 /* BlobObject.h */,
+				B29CCBD71B17680400C106A6 /* BlobMatrix.cpp */,
+				B29CCBD81B17680400C106A6 /* BlobMatrix.h */,
 				B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */,
 				B214E66D0959DA6F00A347C1 /* FrameThresholder.h */,
 				B2CB96BF0A33064800CF3287 /* FrameEqualizer.cpp */,
@@ -230,9 +275,7 @@
 				B2505B720ACC635B007C21BB /* CalibrationEngine.h */,
 				B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */,
 				B2884A780A2CF0E800AFF79A /* CalibrationGrid.h */,
-				B2F757AC07CA3EB40030DB83 /* TuioServer.cpp */,
-				B2F757AD07CA3EB40030DB83 /* TuioServer.h */,
-				B2884A7D0A2CF0FC00AFF79A /* MessageServer.h */,
+				B29CCBE41B17683D00C106A6 /* tuio */,
 				B228811F073C2F33007CEA9B /* libfidtrack */,
 				B2F486A407788A9A00370074 /* portvideo */,
 				B2288120073C2F45007CEA9B /* oscpack */,
@@ -357,39 +400,55 @@
 			name = oscpack;
 			sourceTree = "<group>";
 		};
-		B2A621121B2DBCE300BC724D /* interface */ = {
+		B29CCBE41B17683D00C106A6 /* tuio */ = {
+			isa = PBXGroup;
+			children = (
+				B29CCBE51B17685700C106A6 /* FlashSender.cpp */,
+				B29CCBE61B17685700C106A6 /* FlashSender.h */,
+				B29CCBE71B17685700C106A6 /* LibExport.h */,
+				B29CCBE81B17685700C106A6 /* OscSender.cpp */,
+				B29CCBE91B17685700C106A6 /* OscSender.h */,
+				B29CCBEA1B17685700C106A6 /* TcpSender.cpp */,
+				B29CCBEB1B17685700C106A6 /* TcpSender.h */,
+				B29CCBEC1B17685700C106A6 /* TuioBlob.cpp */,
+				B29CCBED1B17685700C106A6 /* TuioBlob.h */,
+				B29CCBEE1B17685700C106A6 /* TuioContainer.cpp */,
+				B29CCBEF1B17685700C106A6 /* TuioContainer.h */,
+				B29CCBF01B17685700C106A6 /* TuioCursor.cpp */,
+				B29CCBF11B17685700C106A6 /* TuioCursor.h */,
+				B29CCBF21B17685700C106A6 /* TuioDispatcher.cpp */,
+				B29CCBF31B17685700C106A6 /* TuioDispatcher.h */,
+				B29CCBF41B17685700C106A6 /* TuioListener.h */,
+				B29CCBF51B17685700C106A6 /* TuioManager.cpp */,
+				B29CCBF61B17685700C106A6 /* TuioManager.h */,
+				B29CCBF71B17685700C106A6 /* TuioObject.cpp */,
+				B29CCBF81B17685700C106A6 /* TuioObject.h */,
+				B29CCBF91B17685700C106A6 /* TuioPoint.cpp */,
+				B29CCBFA1B17685700C106A6 /* TuioPoint.h */,
+				B29CCBFB1B17685700C106A6 /* TuioServer.cpp */,
+				B29CCBFC1B17685700C106A6 /* TuioServer.h */,
+				B29CCBFD1B17685700C106A6 /* TuioTime.cpp */,
+				B29CCBFE1B17685700C106A6 /* TuioTime.h */,
+				B29CCBFF1B17685700C106A6 /* UdpSender.cpp */,
+				B29CCC001B17685700C106A6 /* UdpSender.h */,
+				B29CCC011B17685700C106A6 /* WebSockSender.cpp */,
+				B29CCC021B17685700C106A6 /* WebSockSender.h */,
+				B225847B1C6CC2920030E390 /* OneEuroFilter.cpp */,
+				B225847C1C6CC2920030E390 /* OneEuroFilter.h */,
+			);
+			name = tuio;
+			sourceTree = "<group>";
+		};
+		B2F486A407788A9A00370074 /* portvideo */ = {
 			isa = PBXGroup;
 			children = (
 				B200D5471B0E25EA00249D8B /* VisionEngine.cpp */,
 				B200D5481B0E25EA00249D8B /* VisionEngine.h */,
 				B220851F078AFC4D0047913B /* SDLinterface.cpp */,
 				B2208520078AFC4D0047913B /* SDLinterface.h */,
-				B2985D211B1ECAFF00A3172B /* ConsoleInterface.cpp */,
-				B2985D221B1ECAFF00A3172B /* ConsoleInterface.h */,
+				B2985D241B1ED49700A3172B /* ConsoleInterface.cpp */,
+				B2985D251B1ED49700A3172B /* ConsoleInterface.h */,
 				B200D5461B0E25EA00249D8B /* UserInterface.h */,
-				B2F024DD0975394D00538C36 /* Resources.c */,
-				B2F024DE0975394D00538C36 /* Resources.h */,
-			);
-			name = interface;
-			sourceTree = "<group>";
-		};
-		B2A621131B2DBD0400BC724D /* common */ = {
-			isa = PBXGroup;
-			children = (
-				B2208511078AFC0A0047913B /* CameraTool.cpp */,
-				B2208512078AFC0A0047913B /* CameraTool.h */,
-				B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */,
-				B2E6097008EAE59400136A11 /* CameraEngine.h */,
-				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
-				B220851B078AFC3D0047913B /* FrameProcessor.h */,
-				B2208522078AFC4D0047913B /* RingBuffer.h */,
-			);
-			name = common;
-			sourceTree = "<group>";
-		};
-		B2A621141B2DBD2D00BC724D /* driver */ = {
-			isa = PBXGroup;
-			children = (
 				B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */,
 				B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */,
 				B239D6A30CC51682009708F3 /* DC1394Camera.cpp */,
@@ -398,20 +457,19 @@
 				B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */,
 				B260A1F01B0A624E0053F53D /* ps3eye.cpp */,
 				B260A1F11B0A624E0053F53D /* ps3eye.h */,
+				B2208511078AFC0A0047913B /* CameraTool.cpp */,
+				B2208512078AFC0A0047913B /* CameraTool.h */,
+				B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */,
+				B2E6097008EAE59400136A11 /* CameraEngine.h */,
+				B2208521078AFC4D0047913B /* RingBuffer.cpp */,
 				B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */,
 				B2E644150D6C39EC0000ABD0 /* FolderCamera.h */,
 				B21D89E30CE7A0FE003B810C /* FileCamera.cpp */,
 				B21D89E40CE7A0FE003B810C /* FileCamera.h */,
-			);
-			name = driver;
-			sourceTree = "<group>";
-		};
-		B2F486A407788A9A00370074 /* portvideo */ = {
-			isa = PBXGroup;
-			children = (
-				B2A621121B2DBCE300BC724D /* interface */,
-				B2A621141B2DBD2D00BC724D /* driver */,
-				B2A621131B2DBD0400BC724D /* common */,
+				B220851B078AFC3D0047913B /* FrameProcessor.h */,
+				B2208522078AFC4D0047913B /* RingBuffer.h */,
+				B2F024DD0975394D00538C36 /* Resources.c */,
+				B2F024DE0975394D00538C36 /* Resources.h */,
 			);
 			name = portvideo;
 			sourceTree = "<group>";
@@ -444,7 +502,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0720;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -486,11 +544,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */,
-				B2985D231B1ECAFF00A3172B /* ConsoleInterface.cpp in Sources */,
+				B29CCC101B17685700C106A6 /* WebSockSender.cpp in Sources */,
 				B297D3BF097536E2004AB0FE /* FiducialFinder.cpp in Sources */,
 				B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */,
 				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
-				B297D3C3097536E2004AB0FE /* TuioServer.cpp in Sources */,
+				B29CCC0A1B17685700C106A6 /* TuioManager.cpp in Sources */,
 				B297D3C4097536E2004AB0FE /* dump_graph.c in Sources */,
 				B200D5491B0E25EA00249D8B /* VisionEngine.cpp in Sources */,
 				B297D3C6097536E2004AB0FE /* fidtrackX.c in Sources */,
@@ -498,27 +556,41 @@
 				B200D5571B0E4E1300249D8B /* tinyxml2.cpp in Sources */,
 				B297D3C9097536E2004AB0FE /* tiled_bernsen_threshold.c in Sources */,
 				B297D3CA097536E2004AB0FE /* topologysearch.c in Sources */,
+				B29CCBE01B17680400C106A6 /* BlobObject.cpp in Sources */,
+				B29CCC0F1B17685700C106A6 /* UdpSender.cpp in Sources */,
 				B297D3CB097536E2004AB0FE /* treeidmap.cpp in Sources */,
+				B29CCC091B17685700C106A6 /* TuioDispatcher.cpp in Sources */,
+				B29CCC081B17685700C106A6 /* TuioCursor.cpp in Sources */,
+				B29CCC0C1B17685700C106A6 /* TuioPoint.cpp in Sources */,
+				B29CCC0D1B17685700C106A6 /* TuioServer.cpp in Sources */,
 				B297D3CC097536E2004AB0FE /* IpEndpointName.cpp in Sources */,
 				B297D3CD097536E2004AB0FE /* NetworkingUtils.cpp in Sources */,
+				B29CCC041B17685700C106A6 /* OscSender.cpp in Sources */,
 				B297D3CE097536E2004AB0FE /* UdpSocket.cpp in Sources */,
+				B2985D261B1ED49700A3172B /* ConsoleInterface.cpp in Sources */,
 				B297D3CF097536E2004AB0FE /* OscOutboundPacketStream.cpp in Sources */,
 				B297D3D0097536E2004AB0FE /* OscPrintReceivedElements.cpp in Sources */,
 				B297D3D1097536E2004AB0FE /* OscReceivedElements.cpp in Sources */,
+				B225847D1C6CC2920030E390 /* OneEuroFilter.cpp in Sources */,
+				B29CCC0E1B17685700C106A6 /* TuioTime.cpp in Sources */,
 				B297D3D2097536E2004AB0FE /* OscTypes.cpp in Sources */,
-				B297D3D5097536E2004AB0FE /* FiducialObject.cpp in Sources */,
 				B297D3DE097536E2004AB0FE /* FidtrackFinder.cpp in Sources */,
 				B297D3E1097536E2004AB0FE /* FrameThresholder.cpp in Sources */,
 				B297D3E2097536E2004AB0FE /* Main.cpp in Sources */,
+				B29CCC061B17685700C106A6 /* TuioBlob.cpp in Sources */,
 				B2F024E10975394D00538C36 /* Resources.c in Sources */,
+				B29CCC051B17685700C106A6 /* TcpSender.cpp in Sources */,
+				B29CCBE11B17680400C106A6 /* BlobMatrix.cpp in Sources */,
 				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
 				B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */,
-				B2884A7E0A2CF0FC00AFF79A /* FingerObject.cpp in Sources */,
 				B2CB96C10A33064800CF3287 /* FrameEqualizer.cpp in Sources */,
+				B29CCC031B17685700C106A6 /* FlashSender.cpp in Sources */,
 				B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */,
 				B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */,
 				B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */,
+				B29CCC071B17685700C106A6 /* TuioContainer.cpp in Sources */,
 				B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */,
+				B29CCC0B1B17685700C106A6 /* TuioObject.cpp in Sources */,
 				B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */,
 				B21D8A0D0CE7A34A003B810C /* CameraEngine.cpp in Sources */,
 				B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */,
@@ -566,6 +638,7 @@
 					../ext/portvideo/tinyxml,
 					../ext/libfidtrack,
 					../ext/oscpack,
+					../ext/tuio,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
@@ -608,6 +681,7 @@
 					../ext/portvideo/tinyxml,
 					../ext/libfidtrack,
 					../ext/oscpack,
+					../ext/tuio,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
@@ -648,6 +722,7 @@
 					../ext/portvideo/tinyxml,
 					../ext/libfidtrack,
 					../ext/oscpack,
+					../ext/tuio,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
