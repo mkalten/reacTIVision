@@ -138,7 +138,7 @@ typedef	DWORD u_int32_t;
 
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -169,7 +169,7 @@ namespace TUIO {
 	 * The FlashSender implements the Flash LocalConnection transport method for OSC
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 1.1.5
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL FlashSender : public OscSender {
 				

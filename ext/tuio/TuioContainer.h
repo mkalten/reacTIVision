@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ namespace TUIO {
 	 * The abstract TuioContainer class defines common attributes that apply to both subclasses {@link TuioObject} and {@link TuioCursor}.
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 1.1.5
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL TuioContainer: public TuioPoint {
 		
@@ -64,6 +64,8 @@ namespace TUIO {
 		 * The motion acceleration value.
 		 */ 
 		float motion_accel;
+		float x_accel;
+		float y_accel;
 		/**
 		 * A List of TuioPoints containing all the previous positions of the TUIO component.
 		 */ 
@@ -265,6 +267,8 @@ namespace TUIO {
 		 * @return	true of this TuioContainer is moving
 		 */
 		virtual bool isMoving() const;
+
+		virtual TuioPoint predictPosition();
 	};
 }
 #endif

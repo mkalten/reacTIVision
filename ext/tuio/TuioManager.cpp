@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -58,6 +58,7 @@ TuioObject* TuioManager::addTuioObject(int f_id, float x, float y, float a) {
 
 void TuioManager::addExternalTuioObject(TuioObject *tobj) {
 	if (tobj==NULL) return;
+	tobj->setSessionID(sessionID++);
 	objectList.push_back(tobj);
 	updateObject = true;
 
@@ -156,6 +157,7 @@ TuioCursor* TuioManager::addTuioCursor(float x, float y) {
 
 void TuioManager::addExternalTuioCursor(TuioCursor *tcur) {
 	if (tcur==NULL) return;
+	tcur->setSessionID(sessionID++);
 	cursorList.push_back(tcur);
 	updateCursor = true;
 
@@ -168,7 +170,7 @@ void TuioManager::addExternalTuioCursor(TuioCursor *tcur) {
 
 void TuioManager::updateTuioCursor(TuioCursor *tcur,float x, float y) {
 	if (tcur==NULL) return;
-	if (tcur->getTuioTime()==currentFrameTime) return;
+	//if (tcur->getTuioTime()==currentFrameTime) return;
 	tcur->update(currentFrameTime,x,y);
 	updateCursor = true;
 
@@ -278,13 +280,31 @@ TuioBlob* TuioManager::addTuioBlob(float x, float y, float a, float w, float h, 
 		(*listener)->addTuioBlob(tblb);
 	
 	if (verbose) 
-		std::cout << "add blb " << tblb->getBlobID() << " (" <<  tblb->getSessionID() << ") " << tblb->getX() << " " << tblb->getY()  << tblb->getAngle() << " " << tblb->getWidth() << tblb->getHeight() << " " << tblb->getArea() << std::endl;
+		std::cout << "add blb " << tblb->getBlobID() << " (" <<  tblb->getSessionID() << ") " << tblb->getX() << " " << tblb->getY()  << " " << tblb->getAngle() << " " << tblb->getWidth() << " " << tblb->getHeight() << " " << tblb->getArea() << std::endl;
 	
 	return tblb;
 }
 
 void TuioManager::addExternalTuioBlob(TuioBlob *tblb) {
 	if (tblb==NULL) return;
+	
+	int blobID = (int)blobList.size();
+	if (blobID <= maxBlobID) {
+		std::list<TuioBlob*>::iterator closestBlob = freeBlobList.begin();
+		
+		for(std::list<TuioBlob*>::iterator iter = freeBlobList.begin();iter!= freeBlobList.end(); iter++) {
+			if((*iter)->getDistance(tblb->getX(),tblb->getY())<(*closestBlob)->getDistance(tblb->getX(),tblb->getY())) closestBlob = iter;
+		}
+		
+		TuioBlob *freeBlob = (*closestBlob);
+		blobID = (*closestBlob)->getBlobID();
+		freeBlobList.erase(closestBlob);
+		delete freeBlob;
+	} else maxBlobID = blobID;
+	
+	tblb->setSessionID(sessionID++);
+	tblb->setBlobID(blobID);
+	
 	blobList.push_back(tblb);
 	updateBlob = true;
 	
@@ -292,7 +312,7 @@ void TuioManager::addExternalTuioBlob(TuioBlob *tblb) {
 		(*listener)->addTuioBlob(tblb);
 	
 	if (verbose) 
-		std::cout << "add blb " << tblb->getBlobID() << " (" <<  tblb->getSessionID() << ") " << tblb->getX() << " " << tblb->getY()  << tblb->getAngle() << " " << tblb->getWidth()  << tblb->getHeight() << " " << tblb->getArea() << std::endl;
+		std::cout << "add blb " << tblb->getBlobID() << " (" <<  tblb->getSessionID() << ") " << tblb->getX() << " " << tblb->getY()  << " " << tblb->getAngle() << " " << tblb->getWidth()  << " " << tblb->getHeight() << " " << tblb->getArea() << std::endl;
 }
 
 void TuioManager::updateTuioBlob(TuioBlob *tblb,float x, float y, float a, float w, float h, float f) {
@@ -567,8 +587,8 @@ void TuioManager::stopUntouchedMovingBlobs() {
 			tblb->stop(currentFrameTime);
 			updateBlob = true;
 			if (verbose) 	
-				std::cout << "set blb " << tblb->getSessionID() << tblb->getX() << " " << tblb->getY() << " " << tblb->getWidth() << " " << tblb->getHeight() << " " << tblb->getAngle()
-				<< " " << tblb->getXSpeed() << " " << tblb->getYSpeed()<< " " << tblb->getMotionAccel() << " " << std::endl;							
+				std::cout << "set blb " << tblb->getBlobID() << " (" <<  tblb->getSessionID() << ") " << tblb->getX() << " " << tblb->getY()  << " " << tblb->getAngle() << " " << tblb->getWidth()  << " " << tblb->getHeight() << " " << tblb->getArea()
+				<< " " << tblb->getXSpeed() << " " << tblb->getYSpeed()  << " " << tblb->getRotationSpeed() << " " << tblb->getMotionAccel()<< " " << tblb->getRotationAccel() << " " << std::endl;
 		}
 	}	
 }

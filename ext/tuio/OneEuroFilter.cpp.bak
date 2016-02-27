@@ -1,0 +1,98 @@
+/*  reacTIVision tangible interaction framework
+	Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+ 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+ 
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "OneEuroFilter.h"
+
+using namespace TUIO;
+
+void LowPassFilter::setAlpha(double alpha) {
+    if (alpha<=0.0 || alpha>1.0)
+      throw std::range_error("alpha should be in (0.0., 1.0]") ;
+    a = alpha ;
+}
+
+double LowPassFilter::filter(double value) {
+    double result ;
+    if (initialized)
+      result = a*value + (1.0-a)*s ;
+    else {
+      result = value ;
+      initialized = true ;
+    }
+    y = value ;
+    s = result ;
+    return result ;
+}
+
+double  LowPassFilter::filterWithAlpha(double value, double alpha) {
+    setAlpha(alpha) ;
+    return filter(value) ;
+}
+
+bool LowPassFilter::hasLastRawValue(void) {
+    return initialized ;
+}
+
+double  LowPassFilter::lastRawValue(void) {
+    return y ;
+}
+
+// -----------------------------------------------------------------
+
+double OneEuroFilter::alpha(double cutoff) {
+    double te = 1.0 / freq ;
+    double tau = 1.0 / (2*M_PI*cutoff) ;
+    return 1.0 / (1.0 + tau/te) ;
+}
+
+void OneEuroFilter::setFrequency(double f) {
+    if (f<=0) throw std::range_error("freq should be >0") ;
+    freq = f ;
+}
+
+void OneEuroFilter::setMinCutoff(double mc) {
+    if (mc<=0) throw std::range_error("mincutoff should be >0") ;
+    mincutoff = mc ;
+}
+
+void OneEuroFilter::setBeta(double b) {
+    beta_ = b ;
+}
+
+void OneEuroFilter::setDerivateCutoff(double dc) {
+    if (dc<=0) throw std::range_error("dcutoff should be >0") ;
+    dcutoff = dc ;
+}
+
+double OneEuroFilter::filter(double value, TimeStamp timestamp) {
+    // update the sampling frequency based on timestamps
+    if (lasttime!=UndefinedTime && timestamp!=UndefinedTime)
+      freq = 1.0 / (timestamp-lasttime) ;
+    lasttime = timestamp ;
+    // estimate the current variation per second 
+    double dvalue = x->hasLastRawValue() ? (value - x->lastRawValue())*freq : value ; // FIXME: 0.0 or value?
+	// double dvalue = (value - x->lastRawValue())*freq ;
+
+	  double edvalue;
+	  try { edvalue = dx->filterWithAlpha(dvalue, alpha(dcutoff)) ;
+	  } catch (std::range_error e) { return value; }
+    // use it to update the cutoff frequency
+    double cutoff = mincutoff + beta_*fabs(edvalue) ;
+    // filter the given value
+    return x->filterWithAlpha(value, alpha(cutoff)) ;
+}

@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -57,7 +57,7 @@ namespace TUIO {
 	 * </code></p>
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 1.1.5
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL TuioManager : public TuioDispatcher { 
 	
@@ -345,6 +345,7 @@ namespace TUIO {
 		 * @param	verbose	print verbose messages if set to true
 		 */
 		void setVerbose(bool verbose) { this->verbose=verbose; }
+		bool isVerbose() { return verbose; }
 
 		void setInversion(bool ix, bool iy, bool ia) { 
 			invert_x = ix; 

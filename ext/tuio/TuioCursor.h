@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ namespace TUIO {
 	 * The TuioCursor class encapsulates /tuio/2Dcur TUIO cursors.
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 1.1.5
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL TuioCursor: public TuioContainer {
 		
@@ -74,7 +74,7 @@ namespace TUIO {
 		/**
 		 * The destructor is doing nothing in particular. 
 		 */
-		~TuioCursor(){};
+		virtual ~TuioCursor(){};
 		
 		/**
 		 * Returns the Cursor ID of this TuioCursor.

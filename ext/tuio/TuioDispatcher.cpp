@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -148,21 +148,27 @@ TuioBlob* TuioDispatcher::getTuioBlob(long s_id) {
 
 std::list<TuioObject*> TuioDispatcher::getTuioObjects() {
 	lockObjectList();
-	std::list<TuioObject*> listBuffer = objectList;
+	std::list<TuioObject*> listBuffer;
+	listBuffer.insert(listBuffer.end(), objectList.begin(), objectList.end());
+	//std::list<TuioObject*> listBuffer = objectList;
 	unlockObjectList();
 	return listBuffer;
 }
 
 std::list<TuioCursor*> TuioDispatcher::getTuioCursors() {
 	lockCursorList();
-	std::list<TuioCursor*> listBuffer = cursorList;
+	std::list<TuioCursor*> listBuffer;
+	listBuffer.insert(listBuffer.end(), cursorList.begin(), cursorList.end());
+	//std::list<TuioCursor*> listBuffer = cursorList;
 	unlockCursorList();
 	return listBuffer;
 }
 
 std::list<TuioBlob*> TuioDispatcher::getTuioBlobs() {
 	lockBlobList();
-	std::list<TuioBlob*> listBuffer = blobList;
+	std::list<TuioBlob*> listBuffer;
+	listBuffer.insert(listBuffer.end(), blobList.begin(), blobList.end());
+	//std::list<TuioBlob*> listBuffer = blobList;
 	unlockBlobList();
 	return listBuffer;
 }

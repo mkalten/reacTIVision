@@ -1,6 +1,7 @@
 /*
- TUIO2 C++ Library
+ TUIO C++ Library
  Copyright (c) 2009-2015 Martin Kaltenbrunner <martin@tuio.org>
+ WebSockSender (c) 2015 Florian Echtler <floe@butterbrot.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public

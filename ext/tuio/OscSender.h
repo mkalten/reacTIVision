@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ namespace TUIO {
 	 * The OscSender class is the base class for the various OSC transport methods such as UDP, TCP ...
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 1.1.5
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL OscSender {
 				

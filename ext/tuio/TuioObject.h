@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ namespace TUIO {
 	 * The TuioObject class encapsulates /tuio/2Dobj TUIO objects.
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 1.1.5
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL TuioObject: public TuioContainer {
 		
@@ -41,6 +41,10 @@ namespace TUIO {
 		 */ 
 		float angle;
 		/**
+		 * The accumulated angle value.
+		 */
+		float angle_sum;
+		/**
 		 * The rotation speed value.
 		 */ 
 		float rotation_speed;
@@ -48,6 +52,9 @@ namespace TUIO {
 		 * The rotation acceleration value.
 		 */ 
 		float rotation_accel;
+		
+		float angleThreshold;
+		OneEuroFilter *angleFilter;
 		
 	public:
 		using TuioContainer::update;
@@ -88,7 +95,9 @@ namespace TUIO {
 		/**
 		 * The destructor is doing nothing in particular. 
 		 */
-		~TuioObject() {};
+		virtual ~TuioObject() {
+			if (angleFilter) delete angleFilter;
+		};
 		
 		/**
 		 * Takes a TuioTime argument and assigns it along with the provided 
@@ -163,6 +172,12 @@ namespace TUIO {
 		float getAngle() const;
 		
 		/**
+		 * Returns the accumulated rotation angle of this TuioObject.
+		 * @return	the accumulated rotation angle of this TuioObject
+		 */
+		float getAngleSum() const;
+		
+		/**
 		 * Returns the rotation angle in degrees of this TuioObject.
 		 * @return	the rotation angle in degrees of this TuioObject
 		 */
@@ -185,6 +200,14 @@ namespace TUIO {
 		 * @return	true of this TuioObject is moving
 		 */
 		bool isMoving() const;
+		
+		void addAngleThreshold(float thresh);
+		
+		void removeAngleThreshold();
+		
+		void addAngleFilter(float mcut, float beta);
+		
+		void removeAngleFilter();
 	};
 }
 #endif

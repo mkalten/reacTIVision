@@ -1,5 +1,5 @@
 /*
- TUIO2 C++ Library
+ TUIO C++ Library
  Copyright (c) 2009-2015 Martin Kaltenbrunner <martin@tuio.org>
  WebSockSender (c) 2015 Florian Echtler <floe@butterbrot.org>
  
