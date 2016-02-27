@@ -1,109 +1,179 @@
 /*  reacTIVision tangible interaction framework
-    FiducialObject.h
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+ 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+ 
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+#ifndef INCLUDED_FIDUCIALOBJECT_H
+#define INCLUDED_FIDUCIALOBJECT_H
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-#ifndef FIDOBJECT_H
-#define FIDOBJECT_H
-
-#ifdef WIN32
-#include <windows.h>
-#else
-#include <sys/time.h>
-#endif
-
-#include <string>
-#include "TuioServer.h"
+#include <math.h>
+#include "TuioObject.h"
 #include "floatpoint.h"
-#include "math.h"
-#include "stdio.h"
-#include "stdlib.h"
+#include <string>
+#include <sstream>
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+#define FIDUCIAL_FOUND 0
+#define FIDUCIAL_FUZZY -1
+#define FIDUCIAL_ROOT -2
+#define FIDUCIAL_LOST -3
 
-#define DOUBLEPI 6.283185307179586
-
-#define FIDUCIAL_LOST 0
-#define FIDUCIAL_FOUND 1
-#define FIDUCIAL_INVALID 2
-#define FIDUCIAL_WRONG 3
-#define FIDUCIAL_REGION 4
-
-struct fframe {
-	float xpos,ypos,angle;
-	float raw_xpos, raw_ypos, raw_angle;
-	float rotation_speed, rotation_accel;
-	float motion_speed, motion_accel;
-	float motion_speed_x, motion_speed_y;
-	long time;
+namespace TUIO {
+	
+	/**
+	 * The FiducialObject extends TuioObject adding a few fiducial specific attributes
+	 *
+	 * @author Martin Kaltenbrunner
+	 * @version 1.6
+	 */
+	class FiducialObject: public TuioObject {
+		
+	protected:
+		/**
+		 * Determines if the fiducial was tracked correctly
+		 */
+		int tracking_state;
+		/**
+		 * The colour of the fiducial root node
+		 */
+		int root_colour;
+		/**
+		 * The size of the fiducial root node
+		 */
+		float root_size;
+		/**
+		 * The offset of the fiducial center from the root node center
+		 */
+		FloatPoint root_offset;
+		
+		int conflict_counter;
+		int conflict_id;
+		
+	public:
+		/**
+		 * This constructor takes a TuioTime argument and assigns it along with the provided
+		 * Session ID, Symbol ID, X and Y coordinate and angle to the newly created FiducialObject.
+		 *
+		 * @param	ttime	the TuioTime to assign
+		 * @param	si	the Session ID  to assign
+		 * @param	sym	the Symbol ID  to assign
+		 * @param	xp	the X coordinate to assign
+		 * @param	yp	the Y coordinate to assign
+		 * @param	a	the angle to assign
+		 */
+		FiducialObject (TuioTime ttime, long si, int sym, float xp, float yp, float a):TuioObject(ttime, si, sym, xp, yp, a) {
+			tracking_state = FIDUCIAL_FOUND;
+			conflict_counter = 0;
+			conflict_id = -1;
+		};
+		
+		
+		/**
+		 */
+		void setFiducialInfo (int rcolour, int rsize) {
+			root_colour = rcolour;
+			root_size = rsize;
+		};
+		
+		bool checkIdConflict(int c_id) {
+			if (c_id == conflict_id) {
+				conflict_counter++;
+				if (conflict_counter>2) return true;
+			} else {
+				conflict_counter = 0;
+				conflict_id = c_id;
+			}
+			
+			return false;
+		}
+		
+		/**
+		 */
+		void setRootColour (int colour) {
+			root_colour = colour;
+		};
+		
+		/**
+		 */
+		int getRootColour () {
+			return root_colour;
+		};
+		
+		/**
+		 */
+		void setRootSize (float size) {
+			root_size = size;
+		};
+		
+		/**
+		 */
+		float getRootSize () {
+			return root_size;
+		};
+		
+		/**
+		 */
+		void setRootOffset (float x, float y) {
+			root_offset.x = x;
+			root_offset.y = y;
+		};
+		
+		/**
+		 */
+		FloatPoint getRootOffset () {
+			return root_offset;
+		};
+		
+		/**
+		 */
+		void setTrackingState (int track) {
+			tracking_state = track;
+		};
+		
+		/**
+		 */
+		int getTrackingState() {
+			return tracking_state;
+		};
+		
+		/**
+		 */
+		std::string getStatistics() {
+			std::stringstream message;
+			message << "obj ";
+			switch(tracking_state) {
+				case FIDUCIAL_FOUND:
+					message << "FND ";
+					break;
+				case FIDUCIAL_LOST:
+					message << "LST ";
+					break;
+				case FIDUCIAL_FUZZY:
+					message << "FUZ ";
+					break;
+				case FIDUCIAL_ROOT:
+					message << "BLB ";
+					break;
+				default:
+					message << "UND ";
+					break;
+			}
+			message << session_id <<" "<< symbol_id <<" "<<  xpos <<" "<<  ypos <<" "<<  angle;
+			
+			return message.str();
+		};
+	};
 };
-
-class FiducialObject {
-  public:
-	bool alive;
-	int unsent;
-	int session_id;
-	int fiducial_id;
-	float getAngle() { return current.angle; }
-	float getX() { return current.xpos; }
-	float getY() { return current.ypos; }
-	bool isUpdated() { return updated; }
-	bool checkIdConflict(int s_id, int f_id);
-	int state;
-	float root_size, leaf_size;
-	int root_colour;
-	int node_count;
-	
-  private:
-	bool updated;
-	int lost_frames;
-	
-	float width;
-	float height;
-	
-	fframe current, last;
-	
-	void positionFilter();
-	void computeSpeedAccel();
-	bool removalFilter();
-	void saveLastFrame();
-	long getCurrentTime();
-	
-	FloatPoint blob_offset;
-	
-  public:
-	FiducialObject(int s_id, int f_id, int width, int height);
-	FiducialObject(int s_id, int f_id, int width, int height, int colour, int node_count);
-	~FiducialObject();
-	void update(float x, float y, float a, float root, float leaf);
-	std::string getStatistics();
-	std::string addSetMessage(TuioServer *tserver);
-	void redundantSetMessage(TuioServer *server);
-
-	void setBlobOffset(float x, float y);
-	FloatPoint getBlobOffset();
-	
-	std::string checkRemoved();
-	float distance(float x, float y);
-	int id_buffer[6];
-	short id_buffer_index;
-};
-
-
 #endif

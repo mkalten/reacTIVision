@@ -1,110 +1,132 @@
 /*  reacTIVision tangible interaction framework
-    FidtrackFinder.h
-	Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+ 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+ 
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #ifndef FIDTRACKFINDER
 #define FIDTRACKFINDER
 
-#include <string>
 #include "FiducialFinder.h"
-#include "FingerObject.h"
+#include "FiducialObject.h"
+#include "BlobObject.h"
+#include "TuioCursor.h"
 #include "segment.h"
 #include "fidtrackX.h"
+#include <assert.h>
+
 #define MAX_FIDUCIAL_COUNT 512
 
-#define FINGER_ID -10
+using namespace TUIO;
 
 class FidtrackFinder: public FiducialFinder
 {
 public:
-	FidtrackFinder(MessageServer *server, const char* tree_cfg, const char* grid_cfg, int finger_size, int finger_sens) : FiducialFinder (server,grid_cfg) {
-
-#ifdef __APPLE__
+	FidtrackFinder(TUIO::TuioManager *manager, const char* tree_cfg, const char* grid_cfg, int finger_size, int finger_sens, int blob_size, bool obj_blobs, bool cur_blobs) : FiducialFinder (manager,grid_cfg) {
+		
+		#ifdef __APPLE__
 		if (strcmp(tree_cfg,"none")!=0) {
 			char app_path[1024];
- 			CFBundleRef mainBundle = CFBundleGetMainBundle();
+			CFBundleRef mainBundle = CFBundleGetMainBundle();
 			CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
 			CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-			CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);	
+			CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);
 			CFRelease( mainBundleURL);
 			CFRelease( cfStringRef);
-			sprintf(mac_config,"%s/Contents/Resources/%s",app_path,tree_cfg);
-			tree_config = mac_config;
-		} else tree_config = tree_cfg;
+			sprintf(tree_config,"%s/Contents/Resources/%s",app_path,tree_cfg);
+		} else sprintf(tree_config,"%s",tree_cfg);
 #else
-		tree_config = tree_cfg;
+		sprintf(tree_config,"%s",tree_cfg);
 #endif
+		
+		position_threshold = 0.0f;
+		rotation_threshold = 0.0f;
 
 		average_finger_size = 0;
 		detect_finger = true;
-
+		
+		detect_blobs = true;
+		finger_blobs = false;
+		object_blobs = false;
+		
 		if (finger_size>0) average_finger_size = finger_size;
 		else detect_finger = false;
 		finger_sensitivity = finger_sens/100.0f;
+		
+		if (blob_size>0) max_blob_size = blob_size;
+		else detect_blobs = false;
+		
+		object_blobs = obj_blobs;
+		finger_blobs = cur_blobs;
 	};
-
+	
 	~FidtrackFinder() {
 		if (initialized) {
 			terminate_segmenter(&segmenter);
 			terminate_treeidmap(&treeidmap);
 			terminate_fidtrackerX(&fidtrackerx);
-			//delete[] finger_buffer;
 		}
 	};
-
-    void process(unsigned char *src, unsigned char *dest);
+	
+	void addUserInterface(UserInterface *uiface) {
+		BlobObject::setInterface(uiface);
+		ui = uiface;
+	};
+	
+	void process(unsigned char *src, unsigned char *dest);
 	bool init(int w ,int h, int sb, int db);
-	void drawDisplay();
+	void displayControl();
 	bool toggleFlag(unsigned char flag, bool lock);
-
+	
 	int getFingerSize() { return average_finger_size; };
 	int getFingerSensitivity() { return (int)(finger_sensitivity*100); };
-
-	std::list<FiducialObject> getCalibrationMarkers();
-	std::list<FingerObject> getCalibrationPoints();
+	int getBlobSize() { return max_blob_size; };
+	bool getFingerBlob() { return finger_blobs; };
+	bool getObjectBlob() { return object_blobs; };
+	
 	void reset();
-
+	
 private:
 	Segmenter segmenter;
-	const char* tree_config;
-		
+	char tree_config[255];
+	
 	FiducialX fiducials[ MAX_FIDUCIAL_COUNT ];
 	RegionX regions[ MAX_FIDUCIAL_COUNT*4 ];
 	TreeIdMap treeidmap;
 	FidtrackerX fidtrackerx;
-
-  	std::list<FingerObject> fingerList;
-	void sendCursorMessages();
-	void printStatistics(long start_time);
-
-	int check_finger(RegionX *finger, unsigned char* image);
-
+	
+	void printStatistics(TUIO::TuioTime frameTime);
+	
 	bool detect_finger;
-	float average_leaf_size;
 	float average_fiducial_size;
 	int average_finger_size;
 	float finger_sensitivity;
-
+	
+	bool detect_blobs;
+	float max_blob_size;
+	bool object_blobs;
+	bool finger_blobs;
+	
+	float position_threshold;
+	float rotation_threshold;
+	
 	bool setFingerSize, setFingerSensitivity;
-	//unsigned char* finger_buffer;
-#ifdef __APPLE__
-    char mac_config[1024];
-#endif
+	bool setBlobSize, setObjectBlob, setFingerBlob;
+	
+	void decodeYamaarashi(FiducialX *yama, unsigned char *img);
+	float checkFinger(BlobObject *fblob);
 };
 
 #endif

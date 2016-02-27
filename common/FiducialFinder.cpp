@@ -1,52 +1,49 @@
 /*  reacTIVision tangible interaction framework
-    FiducialFinder.cpp
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ 
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+ 
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+ 
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 #include "FiducialFinder.h"
+#include "FiducialObject.h"
 #include "CalibrationGrid.h"
 
 bool FiducialFinder::init(int w, int h, int sb ,int db) {
 	FrameProcessor::init(w,h,sb,db);
-
+	
 	help_text.push_back( "FiducialFinder:");
 	help_text.push_back( "   i - invert x-axis, y-axis or angle");
-
+	
 	show_grid=false;
 	dmap = new ShortPoint[height*width];
 	computeGrid();
-
+	
 	return true;
 }
 
 void FiducialFinder::computeGrid() {
-
-	// load the distortion grid
-	grid_size_x = 7;
-	if (((float)width/height) > 1.3) grid_size_x +=2;
-	if (((float)width/height) > 1.7) grid_size_x +=2;
-	grid_size_y = 7;
 	
+	// load the distortion grid
+	grid_size_x = 9;
+	grid_size_y = 7;
 	cell_width = width/(grid_size_x-1);
 	cell_height = height/(grid_size_y-1);
-
+	
 	CalibrationGrid grid(grid_size_x,grid_size_y);
 	grid.Load(grid_config);
-
+	
 	// we do not calculate the matrix if the grid is not configured
 	if (grid.IsEmpty()) {
 		empty_grid = true;
@@ -58,10 +55,8 @@ void FiducialFinder::computeGrid() {
 		}
 		return;
 	} else empty_grid = false;
-
-	//if(msg_listener) msg_listener->displayMessage("computing distortion matrix ...");
-	//if(msg_listener) msg_listener->displayMessage("");
-
+	
+	//ui->displayMessage("computing distortion matrix ...");
 	// reset the distortion matrix
 	for (int y=0;y<height;y++) {
 		for (int x=0;x<width;x++) {
@@ -69,18 +64,18 @@ void FiducialFinder::computeGrid() {
 			dmap[y*width+x].y = 0;
 		}
 	}
-
+	
 	// calculate the distortion matrix
 	for (float y=0;y<height;y+=0.5) {
 		for (float x=0;x<width;x+=0.5) {
-
+			
 			// get the displacement
 			GridPoint new_point =  grid.GetInterpolated(x/cell_width,y/cell_height);
-
+			
 			// apply the displacement
 			short dx = (short)floor(x+0.5f+new_point.x*cell_width);
 			short dy = (short)floor(y+0.5f+new_point.y*cell_height);
-
+			
 			int pixel =  dy*width+dx;
 			if ((dx>=0) && (dx<width) && (dy>=0) && (dy<height)) {
 				dmap[pixel].x = (short)x;
@@ -88,21 +83,19 @@ void FiducialFinder::computeGrid() {
 			}
 		}
 	}
-
+	//ui->displayMessage("");
 }
 
 bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
-
+	
 	if ((flag==KEY_R) && (!calibration) && (!empty_grid)) {
 		if (!show_grid) {
 			show_grid = true;
-			if(ui) {
-				prevMode = ui->getDisplayMode();
-				ui->setDisplayMode(DEST_DISPLAY);
-			}
+			prevMode = ui->getDisplayMode();
+			ui->setDisplayMode(DEST_DISPLAY);
 		} else {
 			show_grid = false;
-			if(ui) ui->setDisplayMode(prevMode);
+			ui->setDisplayMode(prevMode);
 		}
 	} else if (flag==KEY_C) {
 		if(!calibration) {
@@ -119,6 +112,9 @@ bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 			calibration = false;
 			computeGrid();
 		}
+	} else if (flag==KEY_V) {
+		if (tuioManager->isVerbose()) tuioManager->setVerbose(false);
+		else tuioManager->setVerbose(true);
 	} else if (flag==KEY_I) {
 		if (currentSetting != INV_NONE) {
 			currentSetting = INV_NONE;
@@ -128,18 +124,18 @@ bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 			currentSetting = INV_XPOS;
 			show_settings = true;
 			return true;
-        } else return lock;
+		}
 	} else if ( currentSetting != INV_NONE ) {
 		switch(flag) {
 			case KEY_LEFT:
-				if (currentSetting==INV_XPOS) message_server->setInvertX(false);
-				else if (currentSetting==INV_YPOS) message_server->setInvertY(false);
-				else if (currentSetting==INV_ANGLE) message_server->setInvertA(false);
+				if (currentSetting==INV_XPOS) tuioManager->setInvertXpos(false);
+				else if (currentSetting==INV_YPOS) tuioManager->setInvertYpos(false);
+				else if (currentSetting==INV_ANGLE) tuioManager->setInvertAngle(false);
 				break;
 			case KEY_RIGHT:
-				if (currentSetting==INV_XPOS) message_server->setInvertX(true);
-				else if (currentSetting==INV_YPOS) message_server->setInvertY(true);
-				else if (currentSetting==INV_ANGLE) message_server->setInvertA(true);
+				if (currentSetting==INV_XPOS) tuioManager->setInvertXpos(true);
+				else if (currentSetting==INV_YPOS) tuioManager->setInvertYpos(true);
+				else if (currentSetting==INV_ANGLE) tuioManager->setInvertAngle(true);
 				break;
 			case KEY_UP:
 				currentSetting--;
@@ -151,141 +147,74 @@ bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
 				break;
 		}
 	}
-    return lock;
+	return lock;
 }
 
 void FiducialFinder::displayControl() {
 	
 	char displayText[64];
-	int maxValue = 1;
 	int settingValue = 0;
-		
+	int maxValue = 1;
+	
 	switch (currentSetting) {
 		case INV_NONE: return;
 		case INV_XPOS: {
-			sprintf(displayText,"invert X-axis %d",message_server->getInvertX());
-			settingValue = message_server->getInvertX();		
+			sprintf(displayText,"invert X-axis %d",tuioManager->getInvertXpos());
+			settingValue = tuioManager->getInvertXpos();
 			break;
 		}
 		case INV_YPOS: {
-			sprintf(displayText,"invert Y-axis %d",message_server->getInvertY());
-			settingValue = message_server->getInvertY();
+			sprintf(displayText,"invert Y-axis %d",tuioManager->getInvertYpos());
+			settingValue = tuioManager->getInvertYpos();
 			break;
 		}
 		case INV_ANGLE: {
-			sprintf(displayText,"invert angle %d",message_server->getInvertA());
-			settingValue = message_server->getInvertA();
+			sprintf(displayText,"invert angle %d",tuioManager->getInvertAngle());
+			settingValue = tuioManager->getInvertAngle();
 			break;
-		}			
-	}
-    
-    ui->displayControl(displayText, 0, maxValue, settingValue);
-}
-
-void FiducialFinder::sendTuioMessages() {
-
-		// get the current set of objects on the table
-		// we do not only use the raw objects retrieved from the frame
-		// but also the remaining (filtered) objects from our fiducialObject list
-		bool aliveMessage = false;
-		int aliveSize = 0;
-		int *aliveList = new int[fiducialList.size()];
-		
-		for(std::list<FiducialObject>::iterator fiducial = fiducialList.begin(); fiducial!=fiducialList.end(); ) {
-
-			std::string remove_message = fiducial->checkRemoved();
-			if (remove_message!="") {
-				if(ui) ui->printMessage(remove_message);
-				
-				fiducial = fiducialList.erase(fiducial);
-				// send a single alive message if any
-				// of the objects reported to have been removed
-				aliveMessage = true;
-			} else {
-				aliveList[aliveSize]=fiducial->session_id;
-				//aliveList[aliveSize]=pos->classId;
-				aliveSize++;
-				fiducial++;
-			} 
 		}
-
-		totalframes++;
-		long fseq = totalframes;
-	
-		// after a certain number of frames we should send the redundant alive message
-		if ((aliveSize>0) || (totalframes%30==0)) aliveMessage = true;
-		if ((aliveSize==0) && (totalframes%30==0)) fseq = -1;
-		
-		// add the alive message
-		if (aliveMessage) {
-			tuio_server->addObjAlive(aliveList, aliveSize);
-		
-			char unsent = 0;
-			// send a set message (in case anything changed compared to the last frame)
-			for(std::list<FiducialObject>::iterator fiducial = fiducialList.begin(); fiducial!=fiducialList.end(); fiducial++) {
-				if (!tuio_server->freeObjSpace()) {
-					tuio_server->addObjSeq(fseq);
-					tuio_server->sendObjMessages();
-				}
-				
-				std::string set_message = fiducial->addSetMessage(tuio_server);
-				if(set_message!="" && ui) ui->printMessage(set_message);
-		
-				if (fiducial->unsent>unsent) unsent = fiducial->unsent;
-			}
-	
-			// fill the rest of the packet with unchanged objects
-			// sending the least sent ones first
-			while (unsent>0) {
-				for(std::list<FiducialObject>::iterator fiducial = fiducialList.begin(); fiducial!=fiducialList.end(); fiducial++) {
-					
-					if (fiducial->unsent==unsent) {
-						if (tuio_server->freeObjSpace()) { 
-							fiducial->redundantSetMessage(tuio_server);
-						} else goto send;
-					}
-				}
-				unsent--;
-			}
-				
-			send:
-			// finally send the packet
-			tuio_server->addObjSeq(fseq);
-			tuio_server->sendObjMessages();
-			//if (fseq>0) std::cout << "sent frame " << totalframes << " at " << VisionEngine::currentTime() << std::endl; 
-		}
-		delete[] aliveList;
-}
-
-void FiducialFinder::finish() {
-	
-	// on exit we have to send an empty alive message to clear the scene
-	if (tuio_server) {
-		tuio_server->addObjAlive(NULL, 0);
-		tuio_server->addObjSeq(-1);
-		tuio_server->sendObjMessages();
-		tuio_server->addCurAlive(NULL, 0);
-		tuio_server->addCurSeq(-1);
-		tuio_server->sendCurMessages();
 	}
+	
+	ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 
-void FiducialFinder::drawObject(int id, int xpos, int ypos, int state)
+void FiducialFinder::drawObject(int id, float xpos, float ypos, int state)
 {
-    if (ui==NULL) return;
+	if (ui==NULL) return;
 	if (ui->getDisplayMode()==NO_DISPLAY) return;
-    
+	
 	char id_str[8];
 	if(id>=0) sprintf(id_str,"%d",id);
-	else sprintf(id_str,"F");
-    
-    //ui->drawMark(xpos,ypos, id_str, state);
+	else if (id==FINGER_ID)sprintf(id_str,"F");
+	else if (id==BLOB_ID)sprintf(id_str,"B");
+	
+	switch (state) {
+		case FIDUCIAL_FOUND:
+			ui->setColor(0,255,0);
+			break;
+		case FIDUCIAL_FUZZY:
+			ui->setColor(255,255,0);
+			break;
+		case FIDUCIAL_ROOT:
+			ui->setColor(255,0,0);
+			break;
+	}
+	
+	int x = (int)floor(xpos * width + 0.5f);
+	int y = (int)floor(ypos * height + 0.5f);
+	
+	ui->drawText(x,y,id_str);
+	
+	ui->drawLine(x+1, y, x+2, y);
+	ui->drawLine(x-1, y, x-2, y);
+	ui->drawLine(x, y+1, x, y+2);
+	ui->drawLine(x, y-1, x, y-2);
 }
 
 void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
-
-    if (ui==NULL) return;
-    if (ui->getDisplayMode()==NO_DISPLAY) return;
+	
+	if (ui==NULL) return;
+	if (ui->getDisplayMode()==NO_DISPLAY) return;
 	
 	int size = width*height-1;
 
@@ -297,19 +226,19 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 		if( (dmap[i].x>=0) && ( dmap[i].x<width) && (dmap[i].y>=0) && ( dmap[i].y<height) )
 			dest[dmap[i].y*width+dmap[i].x] = src[i];
 	}
-
+	
 	// interpolate empty points
 	for (int i=0;i<height;i++) {
 		for (int j=0;j<width;j++) {
- 			if (dest[i*width+j]==0) {
-			int sum = 0;
-			int pixel = 0;
-			for (int ii=i-1;ii<=i+1;ii++) {
-				for (int jj=j-1;jj<=j+1;jj++) {
-					if ((ii==i) && (jj==j)) continue;
-					if ((ii>=0) && (ii<height) && (jj>=0) && (jj<width) && (dest[ii*width+jj]>0)) {
-						pixel+=dest[ii*width+jj];
-						sum++;
+			if (dest[i*width+j]==0) {
+				int sum = 0;
+				int pixel = 0;
+				for (int ii=i-1;ii<=i+1;ii++) {
+					for (int jj=j-1;jj<=j+1;jj++) {
+						if ((ii==i) && (jj==j)) continue;
+						if ((ii>=0) && (ii<height) && (jj>=0) && (jj<width) && (dest[ii*width+jj]>0)) {
+							pixel+=dest[ii*width+jj];
+							sum++;
 						}
 					}
 				}
@@ -317,28 +246,30 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 			}
 		}
 	}
+	
 	// draw the circles
 	ui->setColor(0, 0, 255);
-	ui->drawEllipse(width/2, height/2,width,height);
-	ui->drawEllipse(width/2, height/2,cell_width*8,height);
-	ui->drawEllipse(width/2, height/2,cell_width*6,height);
+	if (grid_size_x>7) ui->drawEllipse(width/2, height/2,width,height);
+	if (grid_size_x>9) ui->drawEllipse(width/2, height/2,width-cell_width*2,height);
+	ui->drawEllipse(width/2, height/2,height,height);
 	ui->drawEllipse(width/2, height/2,cell_width*4,cell_height*4);
 	ui->drawEllipse(width/2, height/2,cell_width*2,cell_height*2);
+
 
 	// draw the horizontal lines
 	ui->setColor(0, 255, 0);
 	for (int i=0;i<grid_size_y;i++) {
 		float start_x = 0;
-		float start_y = i*cell_height;
-		float end_x = (grid_size_x-1)*cell_width;
+		float start_y = i*cell_width;
+		float end_x = (grid_size_x-1)*cell_height;
 		float end_y = start_y;
 		
 		ui->drawLine(start_x, start_y,end_x,end_y);
 	}
-
+	
 	// draw the vertical lines
 	for (int i=0;i<grid_size_x;i++) {
-
+		
 		float start_x = i*cell_width;
 		float start_y = 0;
 		float end_x = start_x;
@@ -346,6 +277,6 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 		
 		ui->drawLine(start_x, start_y,end_x,end_y);
 	}
-
+	
 }
 
