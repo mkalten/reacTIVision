@@ -80,6 +80,7 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, bool do_full_analyis):Tu
 	
 	computeOrientedBoundingBox();
 	if (obBox.size()==0) throw std::exception();
+	
 	/*
 	 #ifndef NDEBUG
 	 ui->setColor(0,255,0);
@@ -90,6 +91,7 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, bool do_full_analyis):Tu
 	 }
 	 #endif
 	 */
+	
 	xpos = obBox[4].x/screenWidth;
 	ypos = obBox[4].y/screenHeight;
 	

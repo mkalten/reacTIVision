@@ -40,6 +40,10 @@ namespace TUIO {
 	public:
 		
 		BlobObject(TuioTime ttime, RegionX *region, bool do_full_analysis=false);
+		
+		
+		void setX(float xp) { xpos = xp; }
+		void setY(float yp) { ypos = yp; }
 
 		std::vector<BlobPoint> getOrientedBoundingBox() {
 			return obBox;
@@ -96,9 +100,6 @@ namespace TUIO {
 		
 		std::vector<BlobPoint> getInnerContourList(RegionX *region);
 		std::vector<BlobPoint> getFullContourList(RegionX *region);
-		
-
-		
 		//std::vector<BlobPoint> getOuterContourList(std::vector<BlobPoint> fullList, std::vector<BlobPoint> innerList);
 		
 		double theta1(BlobPoint *p1, BlobPoint *p2);
