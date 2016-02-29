@@ -43,6 +43,11 @@ namespace TUIO {
 	 */ 
 	class LIBDECL TuioContainer: public TuioPoint {
 		
+		
+	private:
+		
+		TuioPoint *lastPoint;
+		
 	protected:
 		/**
 		 * The unique session ID number that is assigned to each TUIO object or cursor.
