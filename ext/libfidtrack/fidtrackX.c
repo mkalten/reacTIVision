@@ -324,6 +324,8 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		f->y = f->raw_y;
 		f->angle = f->raw_a;
 	}
+	
+	f->root = r;
 	  
 	short vx = all_x-black_x;
 	short vy = all_y-black_y;
@@ -331,8 +333,8 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	//f->leaf_size = (float)(ft->average_leaf_size);
 	f->root_size = r->right-r->left;
 	if ((r->bottom-r->top)>f->root_size) f->root_size = r->bottom-r->top;
-	f->root_colour=r->colour;
-	f->node_count=r->descendent_count;
+	// f->root_colour=r->colour;
+	// f->node_count=r->descendent_count;
 
 
 	//printf("%f %f\n",vlength,f->root_size);

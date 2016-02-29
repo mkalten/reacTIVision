@@ -77,33 +77,39 @@ void terminate_fidtrackerX( FidtrackerX *ft );
 #define FUZZY_FIDUCIAL_ID (-2)
 #define FUZZY_NODE_RANGE (2)
 
-typedef struct FiducialX{
-    int id;                                 /* can be INVALID_FIDUCIAL_ID */
-    float x, y;
-	float raw_x, raw_y;
-	char *tree;
-    float angle;
-	float raw_a;
-//	float vlength;
-//	float leaf_size;
-    float root_size;
-	int root_colour;
-	int node_count;
-}FiducialX;
-
+	
 typedef struct RegionX{
-
-	short top,bottom,left,right;
-    short width,height;
-    float x, y;
+	
+	Region *region;
+	float x, y;
 	float raw_x, raw_y;
+	short width,height;
 	int area;
 	struct Span *span;
 	struct Span *inner_spans[ 16 ];
 	short inner_span_count;
 	unsigned char colour;
-
+		
 } RegionX;
+	
+typedef struct FiducialX{
+
+    int id;                                /* can be INVALID_FIDUCIAL_ID */
+	char *tree;
+    float x, y;
+	float raw_x, raw_y;
+    float angle;
+	float raw_a;
+	Region *root;
+	RegionX *rootx;
+	float root_size;
+//	float vlength;
+//	float leaf_size;
+//  int root_colour;
+//  int node_count;
+}FiducialX;
+
+
 
 	
 #ifndef NDEBUG
