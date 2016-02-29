@@ -279,8 +279,8 @@ bool SDLinterface::setupWindow()
 	
 	if(fullscreen_)
 	{
-		SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		SDL_ShowCursor(0);
+		SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	}
 	
 	SDL_SetWindowTitle(window_,app_name_.c_str());
@@ -330,7 +330,7 @@ void SDLinterface::processEvents()
 				if( event.key.keysym.sym == SDLK_F1 )
 				{
 					//if (!calibrate_)
-					toggleFullScreen();
+					if (!event.key.repeat) toggleFullScreen();
 				}
 				else if( event.key.keysym.sym == SDLK_n )
 				{
@@ -440,7 +440,6 @@ void SDLinterface::processEvents()
 				return;
 		}
 	}
-	
 	if (select_) updateDisplay();
 }
 
@@ -481,9 +480,8 @@ void SDLinterface::freeBuffers()
 
 void SDLinterface::toggleFullScreen()
 {
-	
-	int flags = SDL_GetWindowFlags(window_);
-	if(flags & SDL_WINDOW_FULLSCREEN)
+
+	if(fullscreen_)
 	{
 		SDL_ShowCursor(1);
 		SDL_SetWindowFullscreen(window_, 0);
@@ -491,10 +489,12 @@ void SDLinterface::toggleFullScreen()
 	}
 	else
 	{
-		SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		if (displayMode_==NO_DISPLAY) displayMode_ = DEST_DISPLAY;
 		SDL_ShowCursor(0);
+		SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		fullscreen_ = true;
 	}
+
 }
 
 void SDLinterface::showFrameRate()
