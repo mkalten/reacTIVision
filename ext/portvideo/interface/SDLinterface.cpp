@@ -480,18 +480,18 @@ void SDLinterface::freeBuffers()
 
 void SDLinterface::toggleFullScreen()
 {
-
 	if(fullscreen_)
 	{
-		SDL_ShowCursor(1);
 		SDL_SetWindowFullscreen(window_, 0);
+		SDL_SetWindowSize(window_, width_, height_);
+		SDL_ShowCursor(1);
 		fullscreen_ = false;
 	}
 	else
 	{
-		if (displayMode_==NO_DISPLAY) displayMode_ = DEST_DISPLAY;
 		SDL_ShowCursor(0);
 		SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		if (displayMode_==NO_DISPLAY) displayMode_ = DEST_DISPLAY;
 		fullscreen_ = true;
 	}
 
