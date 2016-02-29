@@ -95,12 +95,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="../common/BlobAnalyzer.cpp" />
-		<Unit filename="../common/BlobAnalyzer.h" />
 		<Unit filename="../common/BlobMatrix.cpp" />
 		<Unit filename="../common/BlobMatrix.h" />
+		<Unit filename="../common/BlobObject.cpp" />
 		<Unit filename="../common/BlobObject.h" />
-		<Unit filename="../common/BlobPoint.cpp" />
 		<Unit filename="../common/CalibrationEngine.cpp" />
 		<Unit filename="../common/CalibrationEngine.h" />
 		<Unit filename="../common/CalibrationGrid.cpp" />
