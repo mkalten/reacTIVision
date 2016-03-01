@@ -51,22 +51,19 @@
     <ClCompile Include="..\common\RingBuffer.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
-    <ClCompile Include="..\interface\SFont.c">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
     <ClCompile Include=".\videoInputCamera.cpp">
       <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\VisionEngine.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\tinyxml\tinyxml2.cpp">
       <Filter>Source Files\tinyxml</Filter>
     </ClCompile>
-    <ClCompile Include="..\interface\SDLinterface.cpp">
+    <ClCompile Include="..\common\ConsoleInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\ConsoleInterface.cpp">
+    <ClCompile Include="..\common\VisionEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interface\SDLinterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

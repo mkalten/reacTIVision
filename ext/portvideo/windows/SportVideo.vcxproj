@@ -125,7 +125,6 @@
     <ClCompile Include=".\videoInputCamera.cpp" />
     <ClCompile Include="..\interface\Resources.c" />
     <ClCompile Include="..\interface\SDLinterface.cpp" />
-    <ClCompile Include="..\interface\SFont.c" />
     <ClCompile Include="..\common\VisionEngine.cpp" />
     <ClCompile Include="..\common\RingBuffer.cpp" />
     <ClCompile Include="..\common\CameraEngine.cpp" />
