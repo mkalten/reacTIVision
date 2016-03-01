@@ -54,11 +54,11 @@ bool FolderCamera::initCamera() {
 #ifdef WIN32
 	WIN32_FIND_DATA results;
 	char buf[255];
-	sprintf(buf, "%s\\*", cfg->folder);
+	sprintf(buf, "%s\\*", cfg->src);
 	HANDLE list = FindFirstFile(buf, &results);
 	while (FindNextFile(list, &results)) {
 		if ((strstr(results.cFileName,".pgm")!=NULL) || (strstr(results.cFileName,".ppm")!=NULL)) {
-			sprintf(file_name,"%s\\%s",cfg->folder,results.cFileName);
+			sprintf(file_name,"%s\\%s",cfg->src,results.cFileName);
 			image_list.push_back(file_name);
 		}
 	}
