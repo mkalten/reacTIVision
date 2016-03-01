@@ -37,6 +37,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
     </Filter>
+    <Filter Include="Header Files\tuio">
+      <UniqueIdentifier>{47413c9b-a18b-4cf0-97cc-12bf90eee163}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tuio">
+      <UniqueIdentifier>{fd14068f-cd06-46de-ad27-4060e815bcb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\CalibrationEngine.cpp">
@@ -51,19 +57,10 @@
     <ClCompile Include="..\common\FiducialFinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\FiducialObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\FingerObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\common\FrameThresholder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\common\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\TuioServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\ext\libfidtrack\dump_graph.c">
@@ -120,12 +117,6 @@
     <ClCompile Include="..\ext\portvideo\common\FolderCamera.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
-    <ClCompile Include="..\ext\portvideo\interface\FontTool.cpp">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ext\portvideo\interface\SFont.c">
-      <Filter>Source Files\portvideo</Filter>
-    </ClCompile>
     <ClCompile Include="..\ext\portvideo\interface\Resources.c">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
@@ -138,11 +129,65 @@
     <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
-    <ClCompile Include="..\ext\portvideo\common\VisionEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\ext\portvideo\tinyxml\tinyxml2.cpp">
       <Filter>Source Files\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\common\VisionEngine.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\BlobMatrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\common\BlobObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\FlashSender.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\OneEuroFilter.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\OscSender.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TcpSender.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioBlob.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioContainer.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioCursor.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioDispatcher.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioManager.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioObject.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioPoint.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioServer.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\TuioTime.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\UdpSender.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\tuio\WebSockSender.cpp">
+      <Filter>Source Files\tuio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\common\ConsoleInterface.cpp">
+      <Filter>Source Files\portvideo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -161,13 +206,7 @@
     <ClInclude Include="..\common\FiducialObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\common\FingerObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\common\FrameThresholder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\common\TuioServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\oscpack\ip\IpEndpointName.h">
@@ -245,9 +284,6 @@
     <ClInclude Include="..\ext\portvideo\common\FolderCamera.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
-    <ClInclude Include="..\ext\portvideo\interface\FontTool.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
     <ClInclude Include="..\ext\portvideo\interface\Resources.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
@@ -255,9 +291,6 @@
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h">
-      <Filter>Header Files\portvideo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\portvideo\interface\SFont.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h">
@@ -269,14 +302,77 @@
     <ClInclude Include="..\ext\portvideo\common\FrameProcessor.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
-    <ClInclude Include="..\ext\portvideo\common\VisionEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ext\portvideo\common\UserInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\ext\portvideo\tinyxml\tinyxml2.h">
       <Filter>Header Files\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\UserInterface.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\VisionEngine.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\BlobMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\BlobObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\common\Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\FlashSender.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\LibExport.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\OneEuroFilter.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\OscSender.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TcpSender.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioBlob.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioContainer.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioCursor.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioDispatcher.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioListener.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioManager.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioObject.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioPoint.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioServer.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\TuioTime.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\UdpSender.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\tuio\WebSockSender.h">
+      <Filter>Header Files\tuio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\common\ConsoleInterface.h">
+      <Filter>Header Files\portvideo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

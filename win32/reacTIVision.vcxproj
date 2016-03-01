@@ -57,9 +57,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      
-<AdditionalIncludeDirectories>..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -78,6 +77,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention />
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -87,9 +87,8 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
-      
-<AdditionalIncludeDirectories>..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -120,21 +119,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\common\BlobMatrix.cpp" />
+    <ClCompile Include="..\common\BlobObject.cpp" />
     <ClCompile Include="..\common\CalibrationEngine.cpp" />
     <ClCompile Include="..\common\CalibrationGrid.cpp" />
     <ClCompile Include="..\common\FidtrackFinder.cpp" />
     <ClCompile Include="..\common\FiducialFinder.cpp" />
-    <ClCompile Include="..\common\FiducialObject.cpp" />
-    <ClCompile Include="..\common\FingerObject.cpp" />
     <ClCompile Include="..\common\FrameEqualizer.cpp" />
     <ClCompile Include="..\common\FrameThresholder.cpp" />
     <ClCompile Include="..\common\Main.cpp" />
-    <ClCompile Include="..\common\TuioServer.cpp" />
+    <ClCompile Include="..\ext\portvideo\common\ConsoleInterface.cpp" />
     <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp" />
     <ClCompile Include="..\ext\portvideo\interface\Resources.c" />
     <ClCompile Include="..\ext\portvideo\interface\SDLinterface.cpp" />
-    <ClCompile Include="..\ext\portvideo\interface\SFont.c" />
-    <ClCompile Include="..\ext\portvideo\interface\FontTool.cpp" />
     <ClCompile Include="..\ext\portvideo\common\RingBuffer.cpp" />
     <ClCompile Include="..\ext\portvideo\common\CameraEngine.cpp" />
     <ClCompile Include="..\ext\portvideo\common\VisionEngine.cpp" />
@@ -155,21 +152,36 @@
     <ClCompile Include="..\ext\oscpack\osc\OscTypes.cpp" />
     <ClCompile Include="..\ext\oscpack\ip\win32\UdpSocket.cpp" />
     <ClCompile Include="..\ext\portvideo\tinyxml\tinyxml2.cpp" />
+    <ClCompile Include="..\ext\tuio\FlashSender.cpp" />
+    <ClCompile Include="..\ext\tuio\OneEuroFilter.cpp" />
+    <ClCompile Include="..\ext\tuio\OscSender.cpp" />
+    <ClCompile Include="..\ext\tuio\TcpSender.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioBlob.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioContainer.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioCursor.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioDispatcher.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioManager.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioObject.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioPoint.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioServer.cpp" />
+    <ClCompile Include="..\ext\tuio\TuioTime.cpp" />
+    <ClCompile Include="..\ext\tuio\UdpSender.cpp" />
+    <ClCompile Include="..\ext\tuio\WebSockSender.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\common\BlobMatrix.h" />
+    <ClInclude Include="..\common\BlobObject.h" />
     <ClInclude Include="..\common\CalibrationEngine.h" />
     <ClInclude Include="..\common\CalibrationGrid.h" />
     <ClInclude Include="..\common\FidtrackFinder.h" />
     <ClInclude Include="..\common\FiducialFinder.h" />
     <ClInclude Include="..\common\FiducialObject.h" />
-    <ClInclude Include="..\common\FingerObject.h" />
     <ClInclude Include="..\common\FrameEqualizer.h" />
     <ClInclude Include="..\common\FrameThresholder.h" />
-    <ClInclude Include="..\common\TuioServer.h" />
+    <ClInclude Include="..\common\Main.h" />
+    <ClInclude Include="..\ext\portvideo\common\ConsoleInterface.h" />
     <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h" />
     <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h" />
-    <ClInclude Include="..\ext\portvideo\interface\SFont.h" />
-    <ClInclude Include="..\ext\portvideo\interface\FontTool.h" />
     <ClInclude Include="..\ext\portvideo\interface\Resources.h" />
     <ClInclude Include="..\ext\portvideo\common\FrameProcessor.h" />
     <ClInclude Include="..\ext\portvideo\common\RingBuffer.h" />
@@ -201,6 +213,23 @@
     <ClInclude Include="..\ext\libfidtrack\topologysearch.h" />
     <ClInclude Include="..\ext\libfidtrack\treeidmap.h" />
     <ClInclude Include="..\ext\portvideo\tinyxml\tinyxml2.h" />
+    <ClInclude Include="..\ext\tuio\FlashSender.h" />
+    <ClInclude Include="..\ext\tuio\LibExport.h" />
+    <ClInclude Include="..\ext\tuio\OneEuroFilter.h" />
+    <ClInclude Include="..\ext\tuio\OscSender.h" />
+    <ClInclude Include="..\ext\tuio\TcpSender.h" />
+    <ClInclude Include="..\ext\tuio\TuioBlob.h" />
+    <ClInclude Include="..\ext\tuio\TuioContainer.h" />
+    <ClInclude Include="..\ext\tuio\TuioCursor.h" />
+    <ClInclude Include="..\ext\tuio\TuioDispatcher.h" />
+    <ClInclude Include="..\ext\tuio\TuioListener.h" />
+    <ClInclude Include="..\ext\tuio\TuioManager.h" />
+    <ClInclude Include="..\ext\tuio\TuioObject.h" />
+    <ClInclude Include="..\ext\tuio\TuioPoint.h" />
+    <ClInclude Include="..\ext\tuio\TuioServer.h" />
+    <ClInclude Include="..\ext\tuio\TuioTime.h" />
+    <ClInclude Include="..\ext\tuio\UdpSender.h" />
+    <ClInclude Include="..\ext\tuio\WebSockSender.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="camera.xml" />
