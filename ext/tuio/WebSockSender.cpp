@@ -20,8 +20,9 @@
 #include "WebSockSender.h"
 
 #ifdef  WIN32
-#ifndef int32_t
-typedef DWORD int32_t;
+#if not 
+	defined int32_t
+	typedef DWORD int32_t;
 #endif
 #endif
 
@@ -89,7 +90,11 @@ bool WebSockSender::sendOscPacket (osc::OutboundPacketStream *bundle) {
 void WebSockSender::newClient( int tcp_client ) {
 
 	// socket -> file descriptor
+#ifdef WIN32
+	FILE* conn = _fdopen( tcp_client, "r+" );
+#else
 	FILE* conn = fdopen( tcp_client, "r+" );
+#endif
 
 	// websocket challenge-response
 	uint8_t digest[SHA1_HASH_SIZE];

@@ -26,7 +26,8 @@
 	#ifdef LIB_EXPORT
 		#define LIBDECL __declspec(dllexport)
 	#else
-		#define LIBDECL __declspec(dllimport)
+//		#define LIBDECL __declspec(dllimport)
+		#define LIBDECL
 	#endif
 #else
 	#define LIBDECL

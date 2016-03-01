@@ -31,9 +31,9 @@ TuioDispatcher::TuioDispatcher() {
 	pthread_mutex_init(&objectMutex,NULL);	
 	pthread_mutex_init(&blobMutex,NULL);	
 #else
-	cursorMutex = CreateMutex(NULL,FALSE,"cursorMutex");
-	objectMutex = CreateMutex(NULL,FALSE,"objectMutex");
-	blobMutex = CreateMutex(NULL,FALSE,"blobMutex");
+	cursorMutex = CreateMutex(NULL,FALSE,TEXT("cursorMutex"));
+	objectMutex = CreateMutex(NULL,FALSE,TEXT("objectMutex"));
+	blobMutex = CreateMutex(NULL,FALSE,TEXT("blobMutex"));
 #endif	
 }
 
