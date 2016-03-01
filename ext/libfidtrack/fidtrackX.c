@@ -327,9 +327,9 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	
 	f->root = r;
 	  
-	short vx = all_x-black_x;
-	short vy = all_y-black_y;
-	float vlength = sqrt(vx*vx + vy*vy);
+	//short vx = all_x-black_x;
+	//short vy = all_y-black_y;
+	//float vlength = sqrtf(vx*vx + vy*vy);
 	//f->leaf_size = (float)(ft->average_leaf_size);
 	f->root_size = r->right-r->left;
 	if ((r->bottom-r->top)>f->root_size) f->root_size = r->bottom-r->top;
@@ -372,7 +372,7 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		}*/
     }
 
-	if ((f->root_size/vlength)>5.0f) f->id = INVALID_FIDUCIAL_ID;
+	//if ((f->root_size/vlength)>5.0f) f->id = INVALID_FIDUCIAL_ID;
 }
 
 /* -------------------------------------------------------------------------- */
