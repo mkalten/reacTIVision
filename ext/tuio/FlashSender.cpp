@@ -44,9 +44,9 @@
 
 #define	PROTOCOL_NAME				("localhost")
 
-#define WIN32_SEMAPHORE_NAME		TEXT("MacromediaMutexOmega")
+#define WIN32_SEMAPHORE_NAME			TEXT("MacromediaMutexOmega")
 #define WIN32_SHMEM_NAME			TEXT("MacromediaFMOmega")
-#define POSIX_SEMAPHORE_NAME		TEXT("MacromediaSemaphoreDig")
+#define POSIX_SEMAPHORE_NAME			("MacromediaSemaphoreDig")
 #define	POSIX_SEMAPHORE_INITIAL_VALUE		(10)
 
 #define	AMF_TYPE_STRING				(0x02)
