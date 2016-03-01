@@ -368,9 +368,9 @@ void VisionEngine::setupCamera() {
 		camera_->printInfo();
     } else {
 		printf("could not initialize camera  ... trying default\n");
-        camera_->closeCamera();
-        delete camera_;
-		camera_ = camera_ = CameraTool::getDefaultCamera();
+        	camera_->closeCamera();
+        	delete camera_;
+		camera_ = CameraTool::getDefaultCamera();
 		if(camera_->initCamera()) {
 			width_ = camera_->getWidth();
 			height_ = camera_->getHeight();
