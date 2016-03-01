@@ -161,7 +161,7 @@ void SDLinterface::updateDisplay()
 		drawText(textHeight(),y,"DOWN - next camera setting");
 		drawText(textHeight(),2*y,"UP - previous camera setting");
 		drawText(textHeight(),3*y,"");
-		drawText(textHeight(),4*y,"U - cancel camera selection");
+		drawText(textHeight(),4*y,"K - cancel camera selection");
 		drawText(textHeight(),5*y,"ENTER - apply camera selection");
 		
 		CameraConfig *cfg = &dev_list[selector_];
@@ -482,7 +482,7 @@ void SDLinterface::toggleFullScreen()
 {
 	if(fullscreen_)
 	{
-		SDL_SetWindowFullscreen(window_, 0);
+		SDL_SetWindowFullscreen(window_, SDL_FALSE);
 		SDL_SetWindowSize(window_, width_, height_);
 		SDL_ShowCursor(1);
 		fullscreen_ = false;
@@ -809,8 +809,8 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 #ifndef NDEBUG
 	help_text.push_back("");
 	help_text.push_back("debug options:");
-	help_text.push_back("   b - save buffer as PGM");
-	help_text.push_back("   m - save buffer sequence");
+	help_text.push_back("   b - save buffer as PGM image");
+	help_text.push_back("   m - save buffer as PGM sequence");
 #endif
 }
 
