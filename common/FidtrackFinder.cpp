@@ -483,7 +483,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				int dy = regions[i].raw_y - (*fid)->raw_y;
 				float distance = sqrtf(dx*dx+dy*dy);
 				
-				if (distance < (*fid)->root_size*1.1f) {
+				if (distance < (*fid)->root_size/1.1f) {
 					add_blob = false;
 					break;
 				}
@@ -590,11 +590,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		else if ((alt_fid!=NULL) && (alt_fid->id==FUZZY_FIDUCIAL_ID) && (alt_closest<existing_object->getRootSize()/1.1f)) {
 			
 			existing_object->setTrackingState(FIDUCIAL_FUZZY);
-			//existing_object->addPositionThreshold(position_threshold*2);
-			//existing_object->addAngleThreshold(rotation_threshold*2);
 			tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,existing_object->getAngle());
-			//existing_object->addPositionThreshold(position_threshold);
-			//existing_object->addAngleThreshold(rotation_threshold);
 			
 			drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
 			
@@ -636,11 +632,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			// we found a nearby root blob
 			if (closest_rblob!=NULL) {
 				existing_object->setTrackingState(FIDUCIAL_ROOT);
-				//existing_object->addPositionThreshold(position_threshold*3);
-				//existing_object->addAngleThreshold(rotation_threshold*3);
 				tuioManager->updateTuioObject(existing_object,closest_rblob->getX(),closest_rblob->getY(),existing_object->getAngle());
-				//existing_object->addPositionThreshold(position_threshold);
-				//existing_object->addAngleThreshold(rotation_threshold);
  				drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
 				
 				rootBlobs.remove(closest_rblob);
@@ -704,7 +696,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		add_object->addAngleThreshold(rotation_threshold);
 
 		add_object->addPositionFilter(5.0f,10.0f);
-		add_object->addAngleFilter(0.5f,10.0f);
+		//add_object->addAngleFilter(0.5f,10.0f);
 		tuioManager->addExternalTuioObject(add_object);
 		drawObject(add_object->getSymbolID(),add_object->getX(),add_object->getY(),add_object->getTrackingState());
 	}
@@ -872,9 +864,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			add_blob->addAngleThreshold(rotation_threshold*2.0f);
 			add_blob->addSizeThreshold(position_threshold*2.0f);
 			
-			add_blob->addPositionFilter(5.0f,10.0f);
-			add_blob->addAngleFilter(0.5f,10.0f);
-			add_blob->addSizeFilter(5.0f,1.0f);
+			add_blob->addPositionFilter(2.0f,10.0f);
+			//add_blob->addAngleFilter(0.5f,10.0f);
+			add_blob->addSizeFilter(10.0f,1.0f);
 			tuioManager->addExternalTuioBlob(add_blob);
 			drawObject(BLOB_ID,add_blob->getX(),add_blob->getY(),0);
 			ui->setColor(0,0,255);
