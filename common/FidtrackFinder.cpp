@@ -495,7 +495,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				try {
 					finger_blob = new BlobObject(frameTime,&regions[i],true);
 					fingerBlobs.push_back(finger_blob);
-				} catch (std::exception e) { delete finger_blob; }
+				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			}
 			
 		} else if (detect_blobs && (regions[i].colour==WHITE) && (regions[i].width>=max_object_size) && (regions[i].height>=max_object_size)) {
