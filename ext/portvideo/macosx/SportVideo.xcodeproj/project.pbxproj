@@ -302,7 +302,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0720;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "SportVideo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -378,7 +378,7 @@
 		B297D3E9097536E2004AB0FE /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
+				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -397,7 +397,7 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					./tinyxml,
+					../tinyxml,
 					../macosx,
 					../common,
 				);
@@ -436,7 +436,7 @@
 				GCC_STRICT_ALIASING = YES;
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					./tinyxml,
+					../tinyxml,
 					../macosx,
 					../common,
 				);
@@ -473,7 +473,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
-					./tinyxml,
+					../tinyxml,
 					../macosx,
 					../common,
 				);
