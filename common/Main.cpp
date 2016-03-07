@@ -107,20 +107,20 @@ void readSettings(application_settings *config) {
 	XMLHandle docHandle( &xml_settings );
 	XMLHandle config_root = docHandle.FirstChildElement("reactivision");
 	
-	XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
+	tinyxml2::XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
 	if( tuio_element!=NULL )
 	{
 		if(tuio_element->Attribute("host")!=NULL) sprintf(config->host,"%s",tuio_element->Attribute("host"));
 		if(tuio_element->Attribute("port")!=NULL) config->port = atoi(tuio_element->Attribute("port"));
 	}
 	
-	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
+	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
 	{
 		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
 	}
 	
-	XMLElement* finger_element = config_root.FirstChildElement("finger").ToElement();
+	tinyxml2::XMLElement* finger_element = config_root.FirstChildElement("finger").ToElement();
 	if( finger_element!=NULL )
 	{
 		if(finger_element->Attribute("size")!=NULL) config->finger_size = atoi(finger_element->Attribute("size"));
@@ -130,7 +130,7 @@ void readSettings(application_settings *config) {
 		}
 	}
 	
-	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
+	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if( image_element!=NULL )
 	{
 		if(image_element->Attribute("display")!=NULL)  {
@@ -149,7 +149,7 @@ void readSettings(application_settings *config) {
 		
 	}
 	
-	XMLElement* threshold_element = config_root.FirstChildElement("threshold").ToElement();
+	tinyxml2::XMLElement* threshold_element = config_root.FirstChildElement("threshold").ToElement();
 	if( threshold_element!=NULL )
 	{
 		if(threshold_element->Attribute("gradient")!=NULL) {
@@ -175,7 +175,7 @@ void readSettings(application_settings *config) {
 		}
 	}
 	
-	XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
+	tinyxml2::XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
 	if( fiducial_element!=NULL )
 	{
 		if(fiducial_element->Attribute("engine")!=NULL)  {
@@ -187,13 +187,13 @@ void readSettings(application_settings *config) {
 		}
 	}
 	
-	XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();
+	tinyxml2::XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();
 	if( blob_element!=NULL )
 	{
 		if(blob_element->Attribute("size")!=NULL) config->blob_size = atoi(blob_element->Attribute("size"));
 	}
 	
-	XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
+	tinyxml2::XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
 	if( calibration_element!=NULL )
 	{
 		if(calibration_element->Attribute("invert")!=NULL)  {
@@ -222,7 +222,7 @@ void writeSettings(application_settings *config) {
 	XMLHandle docHandle( &xml_settings );
 	XMLHandle config_root = docHandle.FirstChildElement("reactivision");
 	
-	XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
+	tinyxml2::XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
 	if( tuio_element!=NULL )
 	{
 		if(tuio_element->Attribute("host")!=NULL) tuio_element->SetAttribute("host",config->host);
@@ -232,13 +232,13 @@ void writeSettings(application_settings *config) {
 		}
 	}
 	
-	XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
+	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
 	{
 		if(camera_element->Attribute("config")!=NULL) camera_element->SetAttribute("config",config->camera_config);
 	}
 	
-	XMLElement* finger_element = config_root.FirstChildElement("finger").ToElement();
+	tinyxml2::XMLElement* finger_element = config_root.FirstChildElement("finger").ToElement();
 	if( finger_element!=NULL )
 	{
 		if(finger_element->Attribute("size")!=NULL) {
@@ -251,7 +251,7 @@ void writeSettings(application_settings *config) {
 		}
 	}
 	
-	XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
+	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if( image_element!=NULL )
 	{
 		if(image_element->Attribute("display")!=NULL)  {
@@ -270,7 +270,7 @@ void writeSettings(application_settings *config) {
 		
 	}
 	
-	XMLElement* threshold_element = config_root.FirstChildElement("threshold").ToElement();
+	tinyxml2::XMLElement* threshold_element = config_root.FirstChildElement("threshold").ToElement();
 	if( threshold_element!=NULL )
 	{
 		if(threshold_element->Attribute("gradient")!=NULL) {
@@ -284,7 +284,7 @@ void writeSettings(application_settings *config) {
 	}
 	
 	
-	XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
+	tinyxml2::XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
 	if( fiducial_element!=NULL )
 	{
 		if(fiducial_element->Attribute("engine")!=NULL)  {
@@ -293,7 +293,7 @@ void writeSettings(application_settings *config) {
 		if(fiducial_element->Attribute("tree")!=NULL) fiducial_element->SetAttribute("tree",config->tree_config);
 	}
 	
-	XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
+	tinyxml2::XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
 	if( calibration_element!=NULL )
 	{
 		sprintf(config_value," ");
