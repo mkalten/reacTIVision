@@ -302,11 +302,35 @@ int PS3EyeCamera::getMinCameraSetting(int mode) {
 }
 
 bool PS3EyeCamera::setDefaultCameraSetting(int mode) {
-    // TODO
-    return false;
+	switch (mode) {
+		case GAIN:
+			eye->setGain(getDefaultCameraSetting(mode));
+			return true;
+		case EXPOSURE:
+			eye->setExposure(getDefaultCameraSetting(mode));
+			return true;
+		case SHARPNESS:
+			eye->setSharpness(getDefaultCameraSetting(mode));
+			return true;
+		case BRIGHTNESS:
+			eye->setBrightness(getDefaultCameraSetting(mode));
+			return true;
+		case CONTRAST:
+			eye->setContrast(getDefaultCameraSetting(mode));
+			return true;
+	}
+	return false;
 }
 
 int PS3EyeCamera::getDefaultCameraSetting(int mode) {
-    // TODO
-    return 0;
+	switch (mode) {
+		case EXPOSURE:
+			return 64;
+		case BRIGHTNESS:
+		case CONTRAST:
+		case SHARPNESS:
+		case GAIN:
+			return 32;
+	}
+	return 0;
 }
