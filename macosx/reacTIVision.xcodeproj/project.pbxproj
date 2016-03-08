@@ -502,7 +502,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 0630;
+				LastUpgradeCheck = 0720;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
 			compatibilityVersion = "Xcode 3.2";
