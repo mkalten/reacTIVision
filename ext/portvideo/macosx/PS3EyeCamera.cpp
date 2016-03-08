@@ -31,6 +31,7 @@ PS3EyeCamera::~PS3EyeCamera() {
 	updateSettings();
 	CameraTool::saveSettings();
 	if (cam_buffer!=NULL) delete []cam_buffer;
+	eye.reset();
 }
 
 int PS3EyeCamera::getDeviceCount() {
@@ -183,8 +184,8 @@ bool PS3EyeCamera::startCamera() {
 }
 
 bool PS3EyeCamera::stopCamera() {
+	running = false;
     eye->stop();
-    running = false;
     return true;
 }
 
@@ -202,9 +203,10 @@ bool PS3EyeCamera::closeCamera() {
 }
 
 unsigned char*  PS3EyeCamera::getFrame() {
-    
+	
     while (!eye->isNewFrame()) {
         PS3EYECam::updateDevices();
+		if(!running) return NULL;
     }
     
     if (cfg->color) {
