@@ -301,10 +301,11 @@ bool PS3EyeCamera::setCameraSetting(int mode, int value) {
             eye->setAutogain(value);
             return true;
         case GAIN:
+			eye->setAutogain(false);
             eye->setGain(value);
             return true;
         case EXPOSURE:
-            eye->setExposure(value);
+			eye->setExposure(value);
             return true;
         case SHARPNESS:
             eye->setSharpness(value);
