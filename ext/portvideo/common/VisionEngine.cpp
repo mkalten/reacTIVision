@@ -56,7 +56,7 @@ static DWORD WINAPI getFrameFromCamera( LPVOID obj )
                 }
                 sleep(1);
             } else {
-                if (!engine->camera_->stillRunning()) {
+                if ((!engine->pause_) && (!engine->camera_->stillRunning())) {
                     engine->running_=false;
                     engine->error_=true;
                 } else sleep(1);
@@ -218,7 +218,7 @@ void VisionEngine::mainLoop()
         // loop until we get access to a frame
         while (cameraReadBuffer==NULL) {
             interface_->processEvents();
-            if(!running_) {
+            if (!running_) {
                 if(error_) interface_->displayError("Camera disconnected!");
                 return;
             }
@@ -392,7 +392,7 @@ void VisionEngine::setupCamera() {
 void VisionEngine::teardownCamera()
 {
     if (camera_!=NULL) {
-		pause_ = true;
+	pause_ = true;
         camera_->stopCamera();
         camera_->closeCamera();
         delete camera_;
