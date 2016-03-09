@@ -483,7 +483,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				int dy = regions[i].raw_y - (*fid)->raw_y;
 				float distance = sqrtf(dx*dx+dy*dy);
 				
-				if (distance < (*fid)->root_size/1.1f) {
+				if (distance < (*fid)->root_size/1.4f) {
 					add_blob = false;
 					break;
 				}
@@ -682,7 +682,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		for (std::list<TuioCursor*>::iterator tcur = cursorList.begin(); tcur!=cursorList.end(); tcur++) {
 			TuioPoint bpos = (*tcur)->predictPosition();
 			float distance = bpos.getScreenDistance(fiducial->x, fiducial->y,width,height);
-			if (distance<fiducial->root_size/1.1f) {
+			if (distance<fiducial->root_size/1.4f) {
 				tuioManager->removeTuioCursor((*tcur));
 				update_cursor_list = true;
 			}
