@@ -50,6 +50,7 @@ PS3EyeCamera::PS3EyeCamera(const char* config_file):CameraEngine(config_file)
 
 PS3EyeCamera::~PS3EyeCamera() {
     if (cam_buffer!=NULL) delete []cam_buffer;
+	eye.reset();
 }
 
 // UNUSED??
@@ -146,8 +147,8 @@ bool PS3EyeCamera::startCamera() {
 }
 
 bool PS3EyeCamera::stopCamera() {
+	running = false;
     eye->stop();
-    running = false;
     return true;
 }
 
@@ -170,6 +171,7 @@ unsigned char*  PS3EyeCamera::getFrame() {
     
     while (!eye->isNewFrame()) {
         PS3EYECam::updateDevices();
+		if(!running) return NULL;
     }
     
     //if (eye->isNewFrame()) {
