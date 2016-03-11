@@ -1,6 +1,6 @@
 reacTIVision 1.6
 ----------------
-(c) 2005-2015 by Martin Kaltenbrunner <martin@tuio.org>
+(c) 2005-2016 by Martin Kaltenbrunner <martin@tuio.org>
 https://github.com/mkalten/reacTIVision
 
 reacTIVision is an open source, cross-platform computer vision
@@ -58,6 +58,16 @@ also be adjusted, where its value is given as a percentage. 75 would be
 less sensitive and 125 more sensitive, which means that also less probable 
 regions are interpreted as a finger. The finger tracking should work with 
 DI (diffuse illumination) as well as with FTIR illumination setups.
+
+Blob Tracking
+-------------
+Since version 1.6 reacTIVision also can track untagged objects, transmitting
+the overall footprint size and orientation via the TUIO blob profile.
+You can activate this feature and configure the average blob size in 
+reacTIVision.xml, where you can also choose to send optional Blob
+messages for fingers and fiducials, in order to receive information
+about their overall size. These Blobs will share the same SessionID
+with the respective finger or fiducial to allow the proper assigment.
 
 Application Handling
 --------------------
