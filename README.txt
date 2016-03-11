@@ -1,6 +1,6 @@
 reacTIVision 1.5.1
 ------------------
-(c) 2005-2015 by Martin Kaltenbrunner <martin@tuio.org>
+(c) 2005-2016 by Martin Kaltenbrunner <martin@tuio.org>
 https://github.com/mkalten/reacTIVision
 
 reacTIVision is an open source, cross-platform computer vision
@@ -96,7 +96,6 @@ image analysis completely, hitting 'ESC' will quit the application.
 
 XML configuration file
 ----------------------
-
 Common settings can be edited within the file "reacTIVision.xml" where 
 all changes are stored automatically when closing the application.
 Under Mac OS X this XML configuration file can be found within the 
@@ -123,7 +122,7 @@ and fiducial tracking. Within the running application you can toggle
 this with the 'E' key or recalculate the background subtraction 
 by hitting the SPACE bar.
 
-The overall camera and imagee settings can be configured within the
+The overall camera and image settings can be configured within the
 "camera.xml" configuration file. On Mac OS X this file is as well 
 located in the Resources folder within the application bundle.
 You can select the camera ID and specify its dimension and framerate,
