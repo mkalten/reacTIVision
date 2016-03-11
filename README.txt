@@ -80,7 +80,8 @@ The camera options can be adjusted by pressing the 'O' key.
 On Windows and Mac OS this will show a system dialog that allows 
 the adjustment of the available camera parameters. On Linux (Mac OS X
 when using Firewire cameras), the available camera settings can be
-adjusted with a simple on screen display. 
+adjusted with a simple on screen display. Pressing the 'K' key allows
+to browse and select all available cameras and image formats. 
 
 In order to produce some more verbose debugging output, hitting
 the 'V' will print the symbol and finger data to the console.
@@ -116,7 +117,7 @@ and fiducial tracking. Within the running application you can toggle
 this with the 'E' key or recalculate the background subtraction 
 by hitting the SPACE bar.
 
-The overall camera and imagee settings can be configured within the
+The overall camera and image settings can be configured within the
 "camera.xml" configuration file. On Mac OS X this file is as well 
 located in the Resources folder within the application bundle.
 You can select the camera ID and specify its dimension and framerate,
