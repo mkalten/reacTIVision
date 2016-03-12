@@ -459,11 +459,11 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			// add the root regions
 			if (add_blob) {
-				BlobObject *root_blob;
+				BlobObject *root_blob = NULL;
 				try {
 					root_blob = new BlobObject(frameTime,&regions[i]);
 					rootBlobs.push_back(root_blob);
-				} catch (std::exception e) { delete root_blob; }
+				} catch (std::exception e) { if (root_blob) delete root_blob; }
 			}
 			
 		} else if (detect_finger && (regions[i].colour==WHITE) && (regions[i].width>min_finger_size) && (regions[i].width<max_finger_size) &&
@@ -491,7 +491,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			// add the finger candidates
 			if (add_blob) {
-				BlobObject *finger_blob;
+				BlobObject *finger_blob = NULL;
 				try {
 					finger_blob = new BlobObject(frameTime,&regions[i],true);
 					fingerBlobs.push_back(finger_blob);
@@ -504,11 +504,11 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (regions[i].inner_span_count==16) continue;
 			
 			// add the remaining plain blob
-			BlobObject *plain_blob;
+			BlobObject *plain_blob = NULL;
 			try {
 				plain_blob = new BlobObject(frameTime,&regions[i]);
 				plainBlobs.push_back(plain_blob);
-			} catch (std::exception e) { delete plain_blob; }
+			} catch (std::exception e) { if (plain_blob) delete plain_blob; }
 		}
 		
 	}
