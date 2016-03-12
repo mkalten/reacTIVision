@@ -61,13 +61,13 @@ DI (diffuse illumination) as well as with FTIR illumination setups.
 
 Blob Tracking
 -------------
-Since version 1.6 reacTIVision also can track untagged objects, transmitting
+Since version 1.6 reacTIVision also can track untagged objects, sending
 the overall footprint size and orientation via the TUIO blob profile.
-You can activate this feature and configure the average blob size in 
-reacTIVision.xml, where you can also choose to send optional Blob
+You can activate this feature and configure the maximum blob size in 
+reacTIVision.xml, where you can also choose to send optional blob
 messages for fingers and fiducials, in order to receive information
-about their overall size. These Blobs will share the same SessionID
-with the respective finger or fiducial to allow the proper assigment.
+about their overall size. These blobs will share the same session ID
+with the respective finger or fiducial to allow the proper assignment.
 
 Application Handling
 --------------------
