@@ -262,7 +262,7 @@ double* BlobMatrix::eigenvalues() {
 double* BlobMatrix::solveQuadratic(double p, double q) {
 	double disc = p*p*0.25 - q;
 	if (disc < 0.0) {
-		std::cout << "complex solution" << std::endl;
+		//std::cout << "complex solution" << std::endl;
 		return NULL;
 	}
 	disc = sqrt(disc);

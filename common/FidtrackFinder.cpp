@@ -78,7 +78,7 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			case KEY_LEFT:
 				if (setFingerSize) {
 					average_finger_size--;
-					if (average_finger_size<0) average_finger_size=0;
+					if (average_finger_size<=1) average_finger_size=0;
 					if (average_finger_size==0) detect_finger=false;
 				} else {
 					finger_sensitivity-=0.05f;
@@ -88,6 +88,7 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			case KEY_RIGHT:
 				if (setFingerSize) {
 					average_finger_size++;
+					if (average_finger_size==1) average_finger_size=2;
 					if (average_finger_size>64) average_finger_size=64;
 					detect_finger=true;
 				} else {
