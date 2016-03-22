@@ -237,11 +237,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */,
-				B200D54B1B0E45D500249D8B /* CoreMedia.framework in Frameworks */,
 				B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */,
-				B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */,
-				B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */,
 				B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */,
+				B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */,
+				B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */,
+				B200D54B1B0E45D500249D8B /* CoreMedia.framework in Frameworks */,
 				B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */,
 				B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */,
 				B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */,
@@ -502,7 +502,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0730;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -614,7 +614,6 @@
 		B297D3E9097536E2004AB0FE /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -646,6 +645,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
@@ -662,7 +662,6 @@
 		B297D3EA097536E2004AB0FE /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -690,6 +689,7 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
@@ -706,7 +706,6 @@
 		B297D3EB097536E2004AB0FE /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -729,6 +728,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
@@ -745,11 +745,11 @@
 		B2BCA3A40859B28700B9378C /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_OPTIMIZATION_LEVEL = fast;
@@ -770,7 +770,6 @@
 		B2BCA3A50859B28700B9378C /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				DEAD_CODE_STRIPPING = YES;
@@ -797,7 +796,6 @@
 		B2BCA3A60859B28700B9378C /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				DEAD_CODE_STRIPPING = YES;
