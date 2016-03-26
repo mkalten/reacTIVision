@@ -33,10 +33,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	help_text.push_back( "FidtrackFinder:");
 	help_text.push_back( "   f - adjust finger size & sensitivity");
 
-	if (strcmp(tree_config,"none")!=0) {
-		initialize_treeidmap_from_file( &treeidmap, tree_config );
-	} else initialize_treeidmap( &treeidmap );
-	
+	initialize_treeidmap( &treeidmap, tree_config );	
 	initialize_fidtrackerX( &fidtrackerx, &treeidmap, dmap);
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	BlobObject::setDimensions(width,height);
@@ -73,13 +70,25 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			show_settings = true;
 			return true;
 		}
+	} if (flag==KEY_B) {
+		if (setBlobSize || setObjectBlob || setFingerBlob) {
+			setBlobSize = false;
+			setObjectBlob = false;
+			setFingerBlob = false;
+			show_settings = false;
+			return false;
+		} else if(!lock) {
+			setBlobSize = true;
+			show_settings = true;
+			return true;
+		}
 	} else if (setFingerSize || setFingerSensitivity) {
 		switch(flag) {
 			case KEY_LEFT:
 				if (setFingerSize) {
 					average_finger_size--;
 					if (average_finger_size<=1) average_finger_size=0;
-					if (average_finger_size==0) detect_finger=false;
+					if (average_finger_size==0) detect_fingers=false;
 				} else {
 					finger_sensitivity-=0.05f;
 					if (finger_sensitivity<0) finger_sensitivity=0;
@@ -90,7 +99,7 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 					average_finger_size++;
 					if (average_finger_size==1) average_finger_size=2;
 					if (average_finger_size>64) average_finger_size=64;
-					detect_finger=true;
+					detect_fingers=true;
 				} else {
 					finger_sensitivity+=0.05f;
 					if (finger_sensitivity>2) finger_sensitivity=2.0f;
@@ -104,6 +113,56 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 				} else {
 					setFingerSize=true;
 					setFingerSensitivity=false;
+				}
+				break;
+		}
+	} else if (setBlobSize || setObjectBlob || setFingerBlob) {
+		switch(flag) {
+			case KEY_LEFT:
+				if (setBlobSize) {
+					max_blob_size--;
+					if (max_blob_size<average_fiducial_size) max_blob_size=0;
+					if (max_blob_size==0) detect_blobs=false;
+				} else if (setObjectBlob) {
+					send_fiducial_blobs = false;
+				} else if (setFingerBlob) {
+					send_finger_blobs = false;
+				}
+				break;
+			case KEY_RIGHT:
+				if (setBlobSize) {
+					max_blob_size++;
+					if (max_blob_size==1) max_blob_size=(int)average_fiducial_size;
+					if (max_blob_size>height/2) max_blob_size=height/2;
+					detect_blobs=true;
+				} else if (setObjectBlob) {
+					send_fiducial_blobs = true;
+				} else if (setFingerBlob) {
+					send_finger_blobs = true;
+				}
+				break;
+			case KEY_UP:
+				if (setFingerBlob) {
+					setFingerBlob=false;
+					setObjectBlob=true;
+				} else if (setObjectBlob) {
+					setObjectBlob=false;
+					setBlobSize=true;
+				} else if (setBlobSize) {
+					setBlobSize=false;
+					setFingerBlob=true;
+				}
+				break;
+			case KEY_DOWN:
+				if (setBlobSize) {
+					setBlobSize=false;
+					setObjectBlob=true;
+				} else if (setObjectBlob) {
+					setObjectBlob=false;
+					setFingerBlob=true;
+				} else if (setFingerBlob) {
+					setFingerBlob=false;
+					setBlobSize=true;
 				}
 				break;
 		}
@@ -134,6 +193,25 @@ void FidtrackFinder::displayControl() {
 		sprintf(displayText,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
 		settingValue = (int)floor(finger_sensitivity*100+0.5f);
 		maxValue = 200;
+	} else if (setBlobSize) {
+			
+		// draw the blob
+		if( max_blob_size>0) {
+			ui->setColor(0,0,255);
+			ui->drawEllipse(width/2, height/2, max_blob_size,max_blob_size);
+		}
+			
+		sprintf(displayText,"blob size %d",(int)max_blob_size);
+		settingValue = max_blob_size;
+		maxValue = height/2;
+	} else if (setObjectBlob) {
+		sprintf(displayText,"fiducial blobs %d",send_fiducial_blobs);
+		settingValue = send_fiducial_blobs;
+		maxValue = 1;
+	} else if (setFingerBlob) {
+		sprintf(displayText,"finger blobs %d",send_finger_blobs);
+		settingValue = send_finger_blobs;
+		maxValue = 1;
 	} else return;
 	
 	ui->displayControl(displayText, 0, maxValue, settingValue);
@@ -436,7 +514,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 						// assig the regionx data to the fiducial
 						(*fid)->rootx = &regions[i];
 						// we can also decode the yamaarashis now
-						if((*fid)->id==YAMA_ID) decodeYamaarashi((*fid), dest);
+						if ((detect_yamaarashi) && ((*fid)->id==YAMA_ID)) decodeYamaarashi((*fid), dest);
 					}
 
 					add_blob = false;
@@ -467,7 +545,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				} catch (std::exception e) { if (root_blob) delete root_blob; }
 			}
 			
-		} else if (detect_finger && (regions[i].colour==WHITE) && (regions[i].width>min_finger_size) && (regions[i].width<max_finger_size) &&
+		} else if (detect_fingers && (regions[i].colour==WHITE) && (regions[i].width>min_finger_size) && (regions[i].width<max_finger_size) &&
 				   (regions[i].height>min_finger_size) && (regions[i].height<max_finger_size) && diff < max_diff) {
 			
 			// ignore noisy blobs
@@ -651,12 +729,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		}
 		objectList = tuioManager->getTuioObjects();
 	}
-	
-	// copy remaing "root blobs" into plain blob list
-	for (std::list<BlobObject*>::iterator bobj = rootBlobs.begin(); bobj!=rootBlobs.end(); bobj++) {
-		if ((*bobj)->getColour()==WHITE) plainBlobs.push_back((*bobj));
-		else delete (*bobj);
-	}
 
 	// -------------------------------------------------------------------------------------------------
 	// add the remaining new fiducials
@@ -708,7 +780,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		tobj->setTrackingState(FIDUCIAL_LOST);
 	}
 
-// if (detect_fingers) {
+ if (detect_fingers) {
 	// -----------------------------------------------------------------------------------------------
 	// update existing fingers
 	for (std::list<TuioCursor*>::iterator tcur = cursorList.begin(); tcur!=cursorList.end(); tcur++) {
@@ -791,9 +863,16 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		delete (*fblb);
 	}
-//}
+}
 	
-//if (detect_blobs) {
+if (detect_blobs) {
+	
+	// copy remaing "root blobs" into plain blob list
+	for (std::list<BlobObject*>::iterator bobj = rootBlobs.begin(); bobj!=rootBlobs.end(); bobj++) {
+		if ((*bobj)->getColour()==WHITE) plainBlobs.push_back((*bobj));
+		else delete (*bobj);
+	}
+	
 	// -----------------------------------------------------------------------------------------------
 	// update existing blobs
 	for (std::list<TuioBlob*>::iterator tblb = blobList.begin(); tblb!=blobList.end(); tblb++) {
@@ -876,7 +955,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 		} else delete (*pblb);
 	}
-//}
+}
 	tuioManager->stopUntouchedMovingObjects();
 	tuioManager->stopUntouchedMovingCursors();
 	tuioManager->stopUntouchedMovingBlobs();

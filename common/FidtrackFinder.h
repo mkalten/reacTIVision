@@ -34,10 +34,10 @@ using namespace TUIO;
 class FidtrackFinder: public FiducialFinder
 {
 public:
-	FidtrackFinder(TUIO::TuioManager *manager, const char* tree_cfg, const char* grid_cfg, int finger_size, int finger_sens, int blob_size, bool obj_blobs, bool cur_blobs) : FiducialFinder (manager,grid_cfg) {
+	FidtrackFinder(TUIO::TuioManager *manager, bool do_yama, const char* tree_cfg, const char* grid_cfg, int finger_size, int finger_sens, int blob_size, bool obj_blobs, bool cur_blobs) : FiducialFinder (manager,grid_cfg) {
 		
 		#ifdef __APPLE__
-		if (strcmp(tree_cfg,"none")!=0) {
+		if (strstr(tree_cfg,".trees")!=NULL) {
 			char app_path[1024];
 			CFBundleRef mainBundle = CFBundleGetMainBundle();
 			CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
@@ -55,21 +55,23 @@ public:
 		rotation_threshold = 0.0f;
 
 		average_finger_size = 0;
-		detect_finger = true;
+		detect_fingers = true;
 		
 		detect_blobs = true;
-		finger_blobs = false;
-		object_blobs = false;
+		send_finger_blobs = false;
+		send_fiducial_blobs = false;
 		
 		if (finger_size>0) average_finger_size = finger_size;
-		else detect_finger = false;
+		else detect_fingers = false;
 		finger_sensitivity = finger_sens/100.0f;
 		
 		if (blob_size>0) max_blob_size = blob_size;
 		else detect_blobs = false;
 		
-		object_blobs = obj_blobs;
-		finger_blobs = cur_blobs;
+		send_fiducial_blobs = obj_blobs;
+		send_finger_blobs = cur_blobs;
+		
+		detect_yamaarashi = do_yama;
 	};
 	
 	~FidtrackFinder() {
@@ -93,8 +95,8 @@ public:
 	int getFingerSize() { return average_finger_size; };
 	int getFingerSensitivity() { return (int)(finger_sensitivity*100); };
 	int getBlobSize() { return max_blob_size; };
-	bool getFingerBlob() { return finger_blobs; };
-	bool getObjectBlob() { return object_blobs; };
+	bool getFingerBlob() { return send_finger_blobs; };
+	bool getFiducialBlob() { return send_fiducial_blobs; };
 	
 	void reset();
 	
@@ -109,15 +111,16 @@ private:
 	
 	void printStatistics(TUIO::TuioTime frameTime);
 	
-	bool detect_finger;
-	float average_fiducial_size;
+	bool detect_fingers;
 	int average_finger_size;
 	float finger_sensitivity;
-	
+	bool send_finger_blobs;
+
+	float average_fiducial_size;
+	bool send_fiducial_blobs;
+
 	bool detect_blobs;
-	float max_blob_size;
-	bool object_blobs;
-	bool finger_blobs;
+	int max_blob_size;
 	
 	float position_threshold;
 	float rotation_threshold;
@@ -125,6 +128,7 @@ private:
 	bool setFingerSize, setFingerSensitivity;
 	bool setBlobSize, setObjectBlob, setFingerBlob;
 	
+	bool detect_yamaarashi;
 	void decodeYamaarashi(FiducialX *yama, unsigned char *img);
 	float checkFinger(BlobObject *fblob);
 };

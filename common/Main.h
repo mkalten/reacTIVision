@@ -29,15 +29,15 @@ struct application_settings {
 	bool invert_x;
 	bool invert_y;
 	bool invert_a;
-	bool amoeba;
-	bool object_blobs;
+	bool yamaarashi;
 	bool background;
     bool fullscreen;
     bool headless;
 	int finger_size;
 	int finger_sensitivity;
-	bool finger_blobs;
 	int blob_size;
+	bool cursor_blobs;
+	bool object_blobs;
 	int gradient_gate;
     int tile_size;
     int thread_count;

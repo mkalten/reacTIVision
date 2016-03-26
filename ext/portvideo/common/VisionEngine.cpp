@@ -291,7 +291,7 @@ void VisionEngine::event(int key)
 #ifndef NDEBUG
     else if( key == KEY_M ){
         recording_ = !recording_;
-    } else if( key == KEY_B ){
+    } else if( key == KEY_N ){
 		if (interface_->getDisplayMode()==SOURCE_DISPLAY)
 			saveBuffer(sourceBuffer_,format_);
 		else saveBuffer(destBuffer_,format_);

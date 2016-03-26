@@ -56,21 +56,21 @@ void readSettings(application_settings *config) {
 	
 	config->port = 3333;
 	sprintf(config->host,"localhost");
-	sprintf(config->tree_config,"none");
+	sprintf(config->tree_config,"default");
 	sprintf(config->grid_config,"none");
 	sprintf(config->camera_config,"none");
 	config->invert_x = false;
 	config->invert_y = false;
 	config->invert_a = false;
-	config->amoeba = true;
-	config->object_blobs = false;
+	config->yamaarashi = false;
 	config->background = false;
 	config->fullscreen = false;
 	config->headless = false;
 	config->finger_size = 0;
 	config->finger_sensitivity = 100;
-	config->finger_blobs = false;
 	config->blob_size = 0;
+	config->object_blobs = false;
+	config->cursor_blobs = false;
 	config->gradient_gate = 32;
 	config->tile_size = 10;
 	config->thread_count = 1;
@@ -125,9 +125,6 @@ void readSettings(application_settings *config) {
 	{
 		if(finger_element->Attribute("size")!=NULL) config->finger_size = atoi(finger_element->Attribute("size"));
 		if(finger_element->Attribute("sensitivity")!=NULL) config->finger_sensitivity = atoi(finger_element->Attribute("sensitivity"));
-		if(finger_element->Attribute("blob")!=NULL) {
-			if ((strcmp( finger_element->Attribute("blob"), "true" ) == 0) ||  atoi(finger_element->Attribute("blob"))==1) config->finger_blobs = true;
-		}
 	}
 	
 	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
@@ -178,19 +175,24 @@ void readSettings(application_settings *config) {
 	tinyxml2::XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
 	if( fiducial_element!=NULL )
 	{
-		if(fiducial_element->Attribute("engine")!=NULL)  {
-			if ( strcmp( fiducial_element->Attribute("engine"), "amoeba" ) == 0 ) config->amoeba = true;
+		if(fiducial_element->Attribute("yamaarashi")!=NULL)  {
+			if ((strcmp( fiducial_element->Attribute("yamaarashi"), "true" ) == 0) || atoi(fiducial_element->Attribute("yamaarashi"))==1) config->yamaarashi = true;
 		}
-		if(fiducial_element->Attribute("tree")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("tree"));
-		if(fiducial_element->Attribute("blobs")!=NULL) {
-			if ((strcmp( fiducial_element->Attribute("blob"), "true" ) == 0) ||  atoi(fiducial_element->Attribute("blob"))==1) config->object_blobs = true;
-		}
+		if(fiducial_element->Attribute("amoeba")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("amoeba"));
 	}
 	
 	tinyxml2::XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();
 	if( blob_element!=NULL )
 	{
 		if(blob_element->Attribute("size")!=NULL) config->blob_size = atoi(blob_element->Attribute("size"));
+		
+		if(blob_element->Attribute("obj_blob")!=NULL) {
+			if ((strcmp( blob_element->Attribute("obj_blob"), "true" ) == 0) || atoi(blob_element->Attribute("obj_blob"))==1) config->object_blobs = true;
+		}
+		
+		if(blob_element->Attribute("cur_blob")!=NULL) {
+			if ((strcmp( blob_element->Attribute("cur_blob"), "true" ) == 0) || atoi(blob_element->Attribute("cur_blob"))==1) config->cursor_blobs = true;
+		}
 	}
 	
 	tinyxml2::XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
@@ -251,6 +253,25 @@ void writeSettings(application_settings *config) {
 		}
 	}
 	
+	tinyxml2::XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();
+	if( blob_element!=NULL )
+	{
+		if(blob_element->Attribute("size")!=NULL) {
+			sprintf(config_value,"%d",config->blob_size);
+			blob_element->SetAttribute("size",config_value);
+		}
+		
+		if(blob_element->Attribute("obj_blob")!=NULL) {
+			if (config->object_blobs) blob_element->SetAttribute("obj_blob","true");
+			else blob_element->SetAttribute("obj_blob","false");
+		}
+		
+		if(blob_element->Attribute("cur_blob")!=NULL) {
+			if (config->cursor_blobs) blob_element->SetAttribute("cur_blob","true");
+			else blob_element->SetAttribute("cur_blob","false");
+		}
+	}
+	
 	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
 	if( image_element!=NULL )
 	{
@@ -283,14 +304,13 @@ void writeSettings(application_settings *config) {
 		}
 	}
 	
-	
 	tinyxml2::XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
 	if( fiducial_element!=NULL )
 	{
-		if(fiducial_element->Attribute("engine")!=NULL)  {
-			if (config->amoeba) fiducial_element->SetAttribute("engine", "amoeba");
+		if(fiducial_element->Attribute("yamaarashi")!=NULL)  {
+			if (config->yamaarashi) fiducial_element->SetAttribute("yamaarashi", "true");
 		}
-		if(fiducial_element->Attribute("tree")!=NULL) fiducial_element->SetAttribute("tree",config->tree_config);
+		if(fiducial_element->Attribute("amoeba")!=NULL) fiducial_element->SetAttribute("amoeba",config->tree_config);
 	}
 	
 	tinyxml2::XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
@@ -383,7 +403,7 @@ int main(int argc, char* argv[]) {
 	thresholder = new FrameThresholder(config.gradient_gate, config.tile_size, config.thread_count);
 	engine->addFrameProcessor(thresholder);
 	
-	if (config.amoeba) fiducialfinder = new FidtrackFinder(server, config.tree_config, config.grid_config, config.finger_size, config.finger_sensitivity, config.blob_size, config.object_blobs, config.finger_blobs);
+	fiducialfinder = new FidtrackFinder(server, config.yamaarashi, config.tree_config, config.grid_config, config.finger_size, config.finger_sensitivity, config.blob_size, config.object_blobs, config.cursor_blobs);
 	engine->addFrameProcessor(fiducialfinder);
 	
 	calibrator = new CalibrationEngine(config.grid_config);
@@ -394,10 +414,14 @@ int main(int argc, char* argv[]) {
 	engine->removeFrameProcessor(calibrator);
 	delete calibrator;
 	
-	if (config.amoeba) {
-		config.finger_size = ((FidtrackFinder*)fiducialfinder)->getFingerSize();
-		config.finger_sensitivity = ((FidtrackFinder*)fiducialfinder)->getFingerSensitivity();
-	}
+	config.finger_size = ((FidtrackFinder*)fiducialfinder)->getFingerSize();
+	config.finger_sensitivity = ((FidtrackFinder*)fiducialfinder)->getFingerSensitivity();
+	config.blob_size = ((FidtrackFinder*)fiducialfinder)->getBlobSize();
+	config.object_blobs = ((FidtrackFinder*)fiducialfinder)->getFiducialBlob();
+	config.cursor_blobs = ((FidtrackFinder*)fiducialfinder)->getFingerBlob();
+	//config.yamaarashi = ((FidtrackFinder*)fiducialfinder)->getYamaarashi();
+
+	
 	
 	engine->removeFrameProcessor(fiducialfinder);
 	delete fiducialfinder;
