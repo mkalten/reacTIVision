@@ -36,9 +36,7 @@ typedef struct TreeIdMap{
 
 }TreeIdMap;
 
-void initialize_treeidmap_from_file( TreeIdMap* treeidmap, const char *file_name );
-void initialize_treeidmap( TreeIdMap* treeidmap );
-
+void initialize_treeidmap( TreeIdMap* treeidmap, const char* tree);
 void terminate_treeidmap( TreeIdMap* treeidmap );
 
 #define INVALID_TREE_ID     (-1)

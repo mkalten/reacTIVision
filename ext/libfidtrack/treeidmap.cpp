@@ -92,89 +92,98 @@ class TreeIdMapImplementation{
     std::vector< const char *> strings_;
 
 public:
-    TreeIdMapImplementation( TreeIdMap* treeidmap, const char *file_name )
+    TreeIdMapImplementation( TreeIdMap* treeidmap, const char *tree )
         : owner_( treeidmap )
     {
 
-        int minNodeCount = 0;
-        int maxNodeCount = 0;
-        int minDepth = 0;
-        int maxDepth = 0;
-        int maxAdjacencies = 0;
+		int minNodeCount = 0x7FFF;
+		int maxNodeCount = 0;
+		int minDepth = 0x7FFF;
+		int maxDepth = 0;
+		int maxAdjacencies = 0;
+		
+		const char* file_buffer[1024];
+		const char** tree_buffer;
+		int tree_length = 0;
+		
+		if (strstr(tree,".trees")!=NULL) {
+			std::ifstream is( tree );
+
+			if( !is.good() ) {
+				std::cout << "error opening tree file: " << tree << std::endl;
+			} else {
+				std::string s;
+				while( !is.eof() ) {
+					s.clear();
+					is >> s;
+					if( s.empty() ) continue;
+					
+					char *ss = new char[128];
+					strcpy( ss , s.c_str() );
+					file_buffer[tree_length] = ss;
+					tree_length++;
+				}
+				
+				tree_buffer = file_buffer;
+			}
+		} else if(strcmp(tree,"default")==0) {
+			tree_buffer = default_tree;
+			tree_length = default_tree_length;
+		} else if(strcmp(tree,"small")==0) {
+			tree_buffer = small_tree;
+			tree_length = small_tree_length;
+		} else if(strcmp(tree,"mini")==0) {
+			tree_buffer = mini_tree;
+			tree_length = mini_tree_length;
+		}
 
 		treeIdMap_.insert( std::make_pair( "w012211", YAMA_ID ));
 		
-        std::ifstream is( file_name );
-        std::string s;
-        int id = 0;
-
-        if( !is.good() ){
-            std::cout << "error opening tree file: " << file_name << std::endl;
-        }else{
+		int id = 0;
+		for (int j=0;j<tree_length;j++) {
+			
+			std::string s(tree_buffer[j]);
+			
+			int depthSequenceLength = (int)( s.size() - 1 );
+			
+			char *ss = new char[ s.size() + 1 ];
+			strings_.push_back( ss );
+			strcpy( ss, s.c_str() );
+			std::pair<map_type::iterator, bool> i = treeIdMap_.insert( std::make_pair( ss, id++ ) );
+			if( i.second ){
+				if( depthSequenceLength < minNodeCount )
+					minNodeCount = depthSequenceLength;
+				if( depthSequenceLength > maxNodeCount )
+					maxNodeCount = depthSequenceLength;
+				
+				int maxTreeDepth = find_maximum_tree_depth( s );
+				
+				if( maxTreeDepth < minDepth )
+					minDepth = maxTreeDepth;
+				if( maxTreeDepth > maxDepth )
+					maxDepth = maxTreeDepth;
+				
+				/*
+				 int maxNodeAdjacencies = find_maximum_descendent_count( s ) + 1;
+				 if( maxNodeAdjacencies > maxAdjacencies )
+				 maxAdjacencies = maxNodeAdjacencies;
+					*/
+			}else{
+				std::cout << "error inserting tree '" << s << "' into map\n";
+			}
+		}
 		
-     	    minNodeCount = 0x7FFF;
-            minDepth = 0x7FFF;
-            while( !is.eof() ){
-
-                s.clear();
-                is >> s;
-                if( s.empty() )
-                    continue;
-
-                int depthSequenceLength;
-
-                // ensure that the depth sequence has a root colour prefix
-                // of 'w' (white) or 'b' (black). if not, prepend one.
-                if( s[0] == 'w' || s[0] == 'b' ){
-                    depthSequenceLength = (int)( s.size() - 1 );
-                }else{
-                    depthSequenceLength = (int)( s.size() );
-                    s = 'w' + s;
-                }
-
-                char *ss = new char[ s.size() + 1 ];
-                strings_.push_back( ss );
-                strcpy( ss, s.c_str() );
-                std::pair<map_type::iterator, bool> i = treeIdMap_.insert( std::make_pair( ss, id++ ) );
-                if( i.second ){
-
-                    if( depthSequenceLength < minNodeCount )
-                        minNodeCount = depthSequenceLength;
-                    if( depthSequenceLength > maxNodeCount )
-                        maxNodeCount = depthSequenceLength;
-
-                    int maxTreeDepth = find_maximum_tree_depth( s );
-
-                    if( maxTreeDepth < minDepth )
-                        minDepth = maxTreeDepth;
-                    if( maxTreeDepth > maxDepth )
-                        maxDepth = maxTreeDepth;
-/*
-                    int maxNodeAdjacencies = find_maximum_descendent_count( s ) + 1;
-                    if( maxNodeAdjacencies > maxAdjacencies )
-                        maxAdjacencies = maxNodeAdjacencies;
-*/
-                }else{
-                    std::cout << "error inserting tree '" << s << "' into map\n";
-                }
-
-
-            }
-        }
-
 		maxAdjacencies = maxNodeCount;
-        owner_->tree_count = treeIdMap_.size();
-        owner_->min_node_count = minNodeCount;
-        owner_->max_node_count = maxNodeCount;
-        owner_->min_depth = minDepth;
-        owner_->max_depth = maxDepth;
-        owner_->max_adjacencies = maxAdjacencies;
-		
-		//std::cout << minNodeCount << " " << maxNodeCount << " " << minDepth << " " << maxDepth << " " << maxAdjacencies << std::endl;
-
-    }
+		owner_->tree_count = treeIdMap_.size();
+		owner_->min_node_count = minNodeCount;
+		owner_->max_node_count = maxNodeCount;
+		owner_->min_depth = minDepth;
+		owner_->max_depth = maxDepth;
+		owner_->max_adjacencies = maxAdjacencies;
+	}
 
 
+/*
     TreeIdMapImplementation( TreeIdMap* treeidmap )
         : owner_( treeidmap )
     {
@@ -211,11 +220,11 @@ public:
                     if( maxTreeDepth > maxDepth )
                         maxDepth = maxTreeDepth;
 
-					/*
-                    int maxNodeAdjacencies = find_maximum_descendent_count( s ) + 1;
-                    if( maxNodeAdjacencies > maxAdjacencies )
-                        maxAdjacencies = maxNodeAdjacencies;
-					*/
+ 
+                    //int maxNodeAdjacencies = find_maximum_descendent_count( s ) + 1;
+                    //if( maxNodeAdjacencies > maxAdjacencies )
+                    //    maxAdjacencies = maxNodeAdjacencies;
+ 
                 }else{
                     std::cout << "error inserting tree '" << s << "' into map\n";
             }
@@ -229,7 +238,7 @@ public:
         owner_->max_depth = maxDepth;
         owner_->max_adjacencies = maxAdjacencies;
     }
-
+*/
 
     ~TreeIdMapImplementation()
     {
@@ -247,14 +256,10 @@ public:
     }
 };
 
-void initialize_treeidmap_from_file( TreeIdMap* treeidmap, const char *file_name )
-{
-    treeidmap->implementation_ = new TreeIdMapImplementation( treeidmap, file_name );
-}
 
-void initialize_treeidmap( TreeIdMap* treeidmap )
+void initialize_treeidmap( TreeIdMap* treeidmap, const char* tree )
 {
-    treeidmap->implementation_ = new TreeIdMapImplementation( treeidmap );
+    treeidmap->implementation_ = new TreeIdMapImplementation( treeidmap, tree );
 }
 
 void terminate_treeidmap( TreeIdMap* treeidmap )
