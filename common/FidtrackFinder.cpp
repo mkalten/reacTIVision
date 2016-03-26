@@ -376,7 +376,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	if ((average_finger_size==0) || (min_region_size>min_object_size)) min_region_size = min_object_size;
 	
 	float max_region_size = max_blob_size;
-	if (max_blob_size==0) max_region_size = max_object_size;
+	if (max_blob_size<max_object_size) max_region_size = max_object_size;
 
 	float total_fiducial_size = 0.0f;
 	int valid_fiducial_count = 0;
