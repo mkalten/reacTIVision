@@ -378,7 +378,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
 	CFRelease( mainBundleURL);
 	CFRelease( cfStringRef);
-	sprintf(cam_cfg.path,"%s/Contents/Resources/camera.xml",path);
+	sprintf(cam_cfg.path,"%s/Contents/Resources/%s",path,cfgfile);
 #elif !defined WIN32
 	sprintf(cam_cfg.path,"./%s",cfgfile);
 	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.reacTIVision/%s",cfgfile);
