@@ -38,7 +38,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	BlobObject::setDimensions(width,height);
 
-	average_fiducial_size = 48.0f;
+	average_fiducial_size = 48;
 	position_threshold = 1.0f/(2*width); // half a pixel
 	rotation_threshold = M_PI/360.0f;	 // half a degree
 	//position_threshold = 1.0f/(width); // one pixel
@@ -497,34 +497,26 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		if (regions[i].height > regions[i].width)
 			max_diff = regions[i].height;
 		
+		bool add_blob = true;
+
+		// ignore root blobs of found fiducials
+		for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
+			
+			if ((*fid)->root==regions[i].region) {
+				// assig the regionx data to the fiducial
+				(*fid)->rootx = &regions[i];
+				// we can also decode the yamaarashis now
+				if ((detect_yamaarashi) && ((*fid)->id==YAMA_ID)) decodeYamaarashi((*fid), dest);
+				add_blob = false;
+				break;
+			}
+		}
+		
 		if ((regions[i].width>min_object_size) && (regions[i].width<max_object_size) &&
 			(regions[i].height>min_object_size) && (regions[i].height<max_object_size) && diff < max_diff) {
 			
-			bool add_blob = true;
-			
-			// ignore root blobs of found fiducials
-			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
-				
-				float dx = regions[i].raw_x - (*fid)->raw_x;
-				float dy = regions[i].raw_y - (*fid)->raw_y;
-				float distance = sqrtf(dx*dx+dy*dy);
-				
-				if (distance < (*fid)->root_size/4.0f) {
-					
-					if ((*fid)->root==regions[i].region) {
-						// assig the regionx data to the fiducial
-						(*fid)->rootx = &regions[i];
-						// we can also decode the yamaarashis now
-						if ((detect_yamaarashi) && ((*fid)->id==YAMA_ID)) decodeYamaarashi((*fid), dest);
-					}
-					
-					add_blob = false;
-					break;
-				}
-			}
-			
 			// ignore inner fiducial blobs
-			for( int j=0; j < reg_count; ++j ) {
+			if (add_blob) for( int j=0; j < reg_count; ++j ) {
 				if (j==i) continue;
 				
 				float dx = regions[j].raw_x - regions[i].raw_x;
@@ -556,7 +548,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			}
 			
 			// ignore fingers within and near current fiducials
-			bool add_blob = true;
+			//bool add_blob = true;
 			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 				
 				int dx = regions[i].raw_x - (*fid)->raw_x;
@@ -684,6 +676,15 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
 			
+			if (send_fiducial_blobs) {
+				BlobObject *fid_blob = NULL;
+				try {
+					fid_blob = new BlobObject(frameTime,alt_fid->rootx);
+					TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
+					if (existing_blob) tuioManager->updateTuioBlob(existing_blob,fid_blob->getX(),fid_blob->getY(),fid_blob->getAngle(),fid_blob->getWidth(),fid_blob->getHeight(),fid_blob->getArea());
+				} catch (std::exception e) { if (fid_blob) delete fid_blob; }
+			}
+			
 			fiducialList.remove(alt_fid);
 		}
 		// possibly correct a wrong ID
@@ -802,7 +803,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			BlobObject *fid_blob = NULL;
 			try {
 				fid_blob = new BlobObject(frameTime,fiducial->rootx);
+				tuioManager->addExternalTuioBlob(fid_blob);
 				fid_blob->setSessionID(add_object->getSessionID());
+
 				fid_blob->addPositionThreshold(position_threshold*2.0f);
 				fid_blob->addAngleThreshold(rotation_threshold*2.0f);
 				fid_blob->addSizeThreshold(position_threshold*2.0f);
@@ -810,7 +813,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				fid_blob->addPositionFilter(2.0f,10.0f);
 				//add_blob->addAngleFilter(0.5f,10.0f);
 				fid_blob->addSizeFilter(10.0f,1.0f);
-				tuioManager->addExternalTuioBlob(fid_blob);
 			} catch (std::exception e) { if (fid_blob) delete fid_blob; }
 		}
 	}

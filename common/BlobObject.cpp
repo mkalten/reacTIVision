@@ -26,6 +26,7 @@ UserInterface* BlobObject::ui = NULL;
 BlobObject::BlobObject(TuioTime ttime, RegionX *region, bool do_full_analyis):TuioBlob(ttime, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
 	
 	
+	if (region==NULL) throw std::exception();
 	blobRegion = region;
 	
 	/*#ifndef NDEBUG
