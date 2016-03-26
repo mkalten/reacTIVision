@@ -372,36 +372,28 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	
 #ifdef __APPLE__
 	char path[1024];
-	char full_path[1024];
-#endif
-	
-	if (strcmp( cfgfile, "none" ) == 0) {
-#ifdef __APPLE__
-		CFBundleRef mainBundle = CFBundleGetMainBundle();
-		CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
-		CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-		CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
-		CFRelease( mainBundleURL);
-		CFRelease( cfStringRef);
-		sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
-		cfgfile = full_path;
+	CFBundleRef mainBundle = CFBundleGetMainBundle();
+	CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
+	CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
+	CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
+	CFRelease( mainBundleURL);
+	CFRelease( cfStringRef);
+	sprintf(cam_cfg.path,"%s/Contents/Resources/camera.xml",path);
 #elif !defined WIN32
-		if (access ("./camera.xml", F_OK )==0) cfgfile = "./camera.xml";
-		else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) cfgfile = "/usr/share/reacTIVision/camera.xml";
-		else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) cfgfile = "/usr/local/share/camera.xml";
-		else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) cfgfile = "/opt/share/reacTIVision/camera.xml";
+	sprintf(cam_cfg.path,"./%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.reacTIVision/%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/reacTIVision/%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/reacTIVision/%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/reacTIVision/%s",cfgfile);
 #else
-		cfgfile = "./camera.xml";
+	sprintf(cam_cfg.path,".\%s",cfgfile);
 #endif
-	}
-	
-	sprintf(cam_cfg.path,"%s",cfgfile);
 	
 	tinyxml2::XMLDocument xml_settings;
-	xml_settings.LoadFile(cfgfile);
+	xml_settings.LoadFile(cam_cfg.path);
 	if( xml_settings.Error() )
 	{
-		std::cout << "Error loading camera configuration file: " << cfgfile << std::endl;
+		std::cout << "Error loading camera configuration file: " << cam_cfg.path << std::endl;
 		return NULL;
 	}
 	
@@ -411,7 +403,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	
 	if( camera_element==NULL )
 	{
-		std::cout << "Error loading camera configuration file: " << cfgfile << std::endl;
+		std::cout << "Error loading camera configuration file: " << cam_cfg.path << std::endl;
 		return NULL;
 	}
 	
