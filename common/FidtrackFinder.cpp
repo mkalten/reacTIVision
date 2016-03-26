@@ -38,7 +38,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	BlobObject::setDimensions(width,height);
 
-	average_fiducial_size = 48;
+	average_fiducial_size = 24;
 	position_threshold = 1.0f/(2*width); // half a pixel
 	rotation_threshold = M_PI/360.0f;	 // half a degree
 	//position_threshold = 1.0f/(width); // one pixel
@@ -373,9 +373,11 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	float max_finger_size = average_finger_size * 2.0f;
 	
 	float min_region_size = min_finger_size;
-	float max_region_size = max_object_size*2;
 	if ((average_finger_size==0) || (min_region_size>min_object_size)) min_region_size = min_object_size;
 	
+	float max_region_size = max_blob_size;
+	if (max_blob_size==0) max_region_size = max_object_size;
+
 	float total_fiducial_size = 0.0f;
 	int valid_fiducial_count = 0;
 	int fid_count = 0;
