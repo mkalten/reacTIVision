@@ -1,10 +1,25 @@
 reacTIVision 1.6
 ————————————————
 
-* implement V4L2_PIX_FMT_GREY greyscale pixelformat for Linux
-* add PS3Eye driver for MacOS X (thanks to Sebestyén Gábor)
-* reduce SDL dependencies for all non-GUI classes
+* fully implemented /tuio/2Dblb profile
+  detect plain blobs, plus optional blobs for fingers and fiducials
+* improved precision and robustness of finger tracking
+* improved angle and position resolution of fiducial tracking
+* enabled alternative amoeba symbol sets (default, small, tiny)
+
+* integrated the TUIO 1.1 library
+  allows alternative UDP,TCP, Web and Flash transport
+
 * converted portVideo into an external LGPL library
+  - process all available cameras and image formats
+  - allow camera selection during runtime (press K)
+  - implement V4L2_PIX_FMT_GREY greyscale pixelformat for Linux
+  - add PS3Eye driver for MacOS X (thanks to Sebestyén Gábor)
+
+* completely removed SDL dependencies for all non-GUI classes
+* removed the classic fiducials and legacy amoeba tree
+* removed the alternative MIDI functionality
+  (this should be provided by an external TUIOtoMIDI converter)
 
 reacTIVision 1.5
 ————————————————
