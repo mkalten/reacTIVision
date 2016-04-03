@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -403,38 +403,38 @@
 		B29CCBE41B17683D00C106A6 /* tuio */ = {
 			isa = PBXGroup;
 			children = (
-				B29CCBE51B17685700C106A6 /* FlashSender.cpp */,
-				B29CCBE61B17685700C106A6 /* FlashSender.h */,
-				B29CCBE71B17685700C106A6 /* LibExport.h */,
-				B29CCBE81B17685700C106A6 /* OscSender.cpp */,
-				B29CCBE91B17685700C106A6 /* OscSender.h */,
-				B29CCBEA1B17685700C106A6 /* TcpSender.cpp */,
-				B29CCBEB1B17685700C106A6 /* TcpSender.h */,
+				B29CCBF01B17685700C106A6 /* TuioCursor.cpp */,
+				B29CCBF11B17685700C106A6 /* TuioCursor.h */,
+				B29CCBF71B17685700C106A6 /* TuioObject.cpp */,
+				B29CCBF81B17685700C106A6 /* TuioObject.h */,
 				B29CCBEC1B17685700C106A6 /* TuioBlob.cpp */,
 				B29CCBED1B17685700C106A6 /* TuioBlob.h */,
 				B29CCBEE1B17685700C106A6 /* TuioContainer.cpp */,
 				B29CCBEF1B17685700C106A6 /* TuioContainer.h */,
-				B29CCBF01B17685700C106A6 /* TuioCursor.cpp */,
-				B29CCBF11B17685700C106A6 /* TuioCursor.h */,
-				B29CCBF21B17685700C106A6 /* TuioDispatcher.cpp */,
-				B29CCBF31B17685700C106A6 /* TuioDispatcher.h */,
-				B29CCBF41B17685700C106A6 /* TuioListener.h */,
-				B29CCBF51B17685700C106A6 /* TuioManager.cpp */,
-				B29CCBF61B17685700C106A6 /* TuioManager.h */,
-				B29CCBF71B17685700C106A6 /* TuioObject.cpp */,
-				B29CCBF81B17685700C106A6 /* TuioObject.h */,
 				B29CCBF91B17685700C106A6 /* TuioPoint.cpp */,
 				B29CCBFA1B17685700C106A6 /* TuioPoint.h */,
+				B29CCBF21B17685700C106A6 /* TuioDispatcher.cpp */,
+				B29CCBF31B17685700C106A6 /* TuioDispatcher.h */,
+				B29CCBF51B17685700C106A6 /* TuioManager.cpp */,
+				B29CCBF61B17685700C106A6 /* TuioManager.h */,
+				B29CCBF41B17685700C106A6 /* TuioListener.h */,
 				B29CCBFB1B17685700C106A6 /* TuioServer.cpp */,
 				B29CCBFC1B17685700C106A6 /* TuioServer.h */,
 				B29CCBFD1B17685700C106A6 /* TuioTime.cpp */,
 				B29CCBFE1B17685700C106A6 /* TuioTime.h */,
-				B29CCBFF1B17685700C106A6 /* UdpSender.cpp */,
-				B29CCC001B17685700C106A6 /* UdpSender.h */,
-				B29CCC011B17685700C106A6 /* WebSockSender.cpp */,
-				B29CCC021B17685700C106A6 /* WebSockSender.h */,
 				B225847B1C6CC2920030E390 /* OneEuroFilter.cpp */,
 				B225847C1C6CC2920030E390 /* OneEuroFilter.h */,
+				B29CCBE81B17685700C106A6 /* OscSender.cpp */,
+				B29CCBE91B17685700C106A6 /* OscSender.h */,
+				B29CCBFF1B17685700C106A6 /* UdpSender.cpp */,
+				B29CCC001B17685700C106A6 /* UdpSender.h */,
+				B29CCBEA1B17685700C106A6 /* TcpSender.cpp */,
+				B29CCBEB1B17685700C106A6 /* TcpSender.h */,
+				B29CCC011B17685700C106A6 /* WebSockSender.cpp */,
+				B29CCC021B17685700C106A6 /* WebSockSender.h */,
+				B29CCBE51B17685700C106A6 /* FlashSender.cpp */,
+				B29CCBE61B17685700C106A6 /* FlashSender.h */,
+				B29CCBE71B17685700C106A6 /* LibExport.h */,
 			);
 			name = tuio;
 			sourceTree = "<group>";
@@ -510,7 +510,7 @@
 				};
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
