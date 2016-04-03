@@ -33,55 +33,54 @@ bool FrameEqualizer::init(int w, int h, int sb, int db) {
 	
 	int size = width*height;
 	pointmap = new unsigned char[size];
+	//pointmap = new short[size];
 	for (int i=0;i<size;i++) pointmap[i] = 0;
 	return true;
 }
 
 void FrameEqualizer::process(unsigned char *src, unsigned char *dest) {
 
-    
-    //long start_time = VisionEngine::currentTime();
-
+    //long start_time = VisionEngine::currentMicroSeconds();
 
 	/*if (equalize) {
-		int size = width*height;
-		for (int i=0;i<size;i++) {
-	 int e = src[i]+pointmap[i];
-	 if (e & (~255)) { e < 0 ? e = 0 : e = 255; }
-	 src[i] = (unsigned char)e;
+		short *map = pointmap;
+		for (int i=width*height;i>0;i--) {
+			short e = *src+*map++;
+			if (e & (~255)) { e < 0 ? e = 0 : e = 255; }
+			*src++ = (unsigned char)e;
 		}
-	 } else if (calibrate) {
+	} else if (calibrate) {
 		long sum = 0;
 		for (int x=width/2-5;x<width/2+5;x++) {
-	 for (int y=height/2-5;y<height/2+5;y++) {
-	 sum+=src[y*width+x];
-	 }
+			for (int y=height/2-5;y<height/2+5;y++) {
+				sum+=src[y*width+x];
+			}
 		}
 		unsigned char average = (unsigned char)(sum/100);
 	 
-	 int size = width*height;
+		int size = width*height;
 		for (int i=0;i<size;i++)
-	 pointmap[i] = average-src[i];
+			pointmap[i] = average-src[i];
 	 
 		calibrate = false;
 		equalize = true;
-	 }*/
+	}*/
 	
 	if (equalize) {
-		int size = width*height;
 		unsigned char *map = pointmap;
-		for (int i=size;i>0;i--) {
+		for (int i=width*height;i>0;i--) {
 			int e = *src-*map++;
 			if (e < 0) *src++ = 0;
 			else *src++ = (unsigned char)e;
 		}
 		// ~ half the speed only!
-		/*for (int i=0;i<size;i++) {
-		 int e = src[i]-pointmap[i];
-		 if (e < 0) src[i] = 0;
-		 else src[i] = (unsigned char)e;
-		 }*/
+		//for (int i=0;i<size;i++) {
+		//int e = src[i]-pointmap[i];
+		//if (e < 0) src[i] = 0;
+		//else src[i] = (unsigned char)e;
+		//}
 	} else if (calibrate) {
+		
 		int size = width*height;
 		unsigned char *map = pointmap;
 		for (int i=size;i>0;i--) {
@@ -89,19 +88,20 @@ void FrameEqualizer::process(unsigned char *src, unsigned char *dest) {
 			if (e < 0) *map++ = 0;
 			else *map++ = (unsigned char)e;
 		}
-		/*for (int i=0;i<size;i++) {
-		 int e = src[i]-8;
-		 if (e < 0) e = 0;
-		 pointmap[i] = (unsigned char)e;
-		 }*/
+		
+		//for (int i=0;i<size;i++) {
+		//int e = src[i]-8;
+		//if (e < 0) e = 0;
+		//pointmap[i] = (unsigned char)e;
+		//}
 		
 		calibrate = false;
 		equalize = true;
 	}
 	
-	/*long equalize_time = VisionEngine::currentTime() - start_time;
-	 float latency = (equalize_time/100.0f)/10.0f;
-	 std::cout << "equalizer latency: " << latency << "ms" << std::endl;*/
+	//long equalize_time = VisionEngine::currentMicroSeconds() - start_time;
+	//float latency = (equalize_time/100.0f)/10.0f;
+	//sstd::cout << "equalizer latency: " << latency << "ms" << std::endl;
 }
 
 bool FrameEqualizer::toggleFlag(unsigned char flag, bool lock) {

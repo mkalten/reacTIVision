@@ -20,6 +20,7 @@
 #define FRAMEEQUALIZER_H
 
 #include "FrameProcessor.h"
+#include "VisionEngine.h"
 
 class FrameEqualizer: public FrameProcessor
 {
@@ -42,6 +43,7 @@ public:
 	
 private:
 	unsigned char *pointmap;
+	//short *pointmap;
 	bool equalize;
 	bool calibrate;
 };
