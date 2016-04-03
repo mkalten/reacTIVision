@@ -11,15 +11,19 @@ reacTIVision 1.6
   allows alternative UDP,TCP, Web and Flash transport
 
 * converted portVideo into an external LGPL library
-  - process all available cameras and image formats
   - allow camera selection during runtime (press K)
-  - implement V4L2_PIX_FMT_GREY greyscale pixelformat for Linux
-  - add PS3Eye driver for MacOS X (thanks to Sebestyén Gábor)
+  - process all available cameras and image formats
+  - extended camera configuration options
+  - implement V4L2_PIX_FMT_GREY pixelformat for Video4Linux2
+  - dedicated PS3Eye driver for MacOS X (thanks to Sebestyén Gábor)
 
 * completely removed SDL dependencies for all non-GUI classes
 * removed the classic fiducials and legacy amoeba tree
 * removed the alternative MIDI functionality
   (this should be provided by an external TUIOtoMIDI converter)
+
+* native Linux Samsung SUR40 support (Microsoft Pixelsense)
+* armv7 and armv8 Linux support (RaspberryPI, Odroid etc.)
 
 reacTIVision 1.5
 ————————————————
