@@ -35,6 +35,8 @@
 #include "FidtrackFinder.h"
 #include "CalibrationEngine.h"
 
+#include "TuioServer.h"
+
 VisionEngine *engine;
 using namespace tinyxml2;
 
@@ -54,8 +56,9 @@ void printUsage(const char* app_name) {
 
 void readSettings(application_settings *config) {
 	
-	config->port = 3333;
-	sprintf(config->host,"localhost");
+	config->tuio_type = TUIO_UDP;
+	config->tuio_port = 3333;
+	sprintf(config->tuio_host,"localhost");
 	sprintf(config->tree_config,"default");
 	sprintf(config->grid_config,"none");
 	sprintf(config->camera_config,"camera.xml");
@@ -110,8 +113,17 @@ void readSettings(application_settings *config) {
 	tinyxml2::XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
 	if( tuio_element!=NULL )
 	{
-		if(tuio_element->Attribute("host")!=NULL) sprintf(config->host,"%s",tuio_element->Attribute("host"));
-		if(tuio_element->Attribute("port")!=NULL) config->port = atoi(tuio_element->Attribute("port"));
+		if(tuio_element->Attribute("type")!=NULL) {
+			if ((strcmp(tuio_element->Attribute("type"),"udp")==0) || (strcmp(tuio_element->Attribute("type"),"UDP")==0)) config->tuio_type = TUIO_UDP;
+			else if ((strcmp(tuio_element->Attribute("type"),"tcp")==0) || (strcmp(tuio_element->Attribute("type"),"TCP")==0)) config->tuio_type = TUIO_TCP_CLIENT;
+			else if ((strcmp(tuio_element->Attribute("type"),"web")==0) || (strcmp(tuio_element->Attribute("type"),"WEB")==0)) config->tuio_type = TUIO_WEB;
+			else if ((strcmp(tuio_element->Attribute("type"),"flash")==0) || (strcmp(tuio_element->Attribute("type"),"FLASH")==0)) config->tuio_type = TUIO_FLASH;
+		}
+		if(tuio_element->Attribute("host")!=NULL) {
+			sprintf(config->tuio_host,"%s",tuio_element->Attribute("host"));
+			if (strcmp(config->tuio_host,"host")==0) config->tuio_type = TUIO_TCP_HOST;
+		}
+		if(tuio_element->Attribute("port")!=NULL) config->tuio_port = atoi(tuio_element->Attribute("port"));
 	}
 	
 	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
@@ -224,15 +236,15 @@ void writeSettings(application_settings *config) {
 	XMLHandle docHandle( &xml_settings );
 	XMLHandle config_root = docHandle.FirstChildElement("reactivision");
 	
-	tinyxml2::XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
+	/*tinyxml2::XMLElement* tuio_element = config_root.FirstChildElement("tuio").ToElement();
 	if( tuio_element!=NULL )
 	{
-		if(tuio_element->Attribute("host")!=NULL) tuio_element->SetAttribute("host",config->host);
+		if(tuio_element->Attribute("host")!=NULL) tuio_element->SetAttribute("host",config->tuio_host);
 		if(tuio_element->Attribute("port")!=NULL) {
-			sprintf(config_value,"%d",config->port);
+			sprintf(config_value,"%d",config->tuio_port);
 			tuio_element->SetAttribute("port",config_value);
 		}
-	}
+	}*/
 	
 	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
@@ -387,13 +399,21 @@ int main(int argc, char* argv[]) {
 		engine->setInterface(uiface);
 	}
 	
-	TuioServer     *server		= NULL;
 	FrameProcessor *fiducialfinder	= NULL;
 	FrameProcessor *thresholder	= NULL;
 	FrameProcessor *equalizer	= NULL;
 	FrameProcessor *calibrator	= NULL;
 	
-	server = new TuioServer(config.host,config.port);
+	OscSender *sender = NULL;
+	switch (config.tuio_type) {
+		case TUIO_UDP: sender = new UdpSender(config.tuio_host,config.tuio_port); break;
+		case TUIO_TCP_CLIENT: sender = new TcpSender(config.tuio_host,config.tuio_port); break;
+		case TUIO_TCP_HOST: sender = new TcpSender(config.tuio_port); break;
+		case TUIO_WEB: sender = new WebSockSender(config.tuio_port); break;
+		case TUIO_FLASH: sender = new FlashSender(); break;
+	}
+
+	TuioServer *server = new TuioServer(sender);
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 	
 	equalizer = new FrameEqualizer();

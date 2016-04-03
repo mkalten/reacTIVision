@@ -8,7 +8,10 @@ you only need to specify parameters you want to change from their default settin
 
 <!-- the camera configuration is provided in a separate file -->
 	<camera config="camera.xml" />
-<!-- available amoeba sets are default, small or mini - or an alternative *.trees file 
+<!-- the TUIO server configuration specifies type, host and port
+ possible types are: udp, tcp as well as web and flash -->
+	<tuio type="udp" host="127.0.0.1" port="3333" />
+<!-- available amoeba sets are default, small or mini - or an alternative *.trees file
   ... also allows to enable the additional yamaarashi symbols -->
 	<fiducial amoeba="default" yamaarashi="false" />
 <!-- specifies the maximum finger size and tracking sensitivity - size zero disables fingers -->

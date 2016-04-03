@@ -19,10 +19,13 @@
 #ifndef REACTIVISION_H
 #define REACTIVISION_H
 
+enum TuioType { TUIO_UDP,TUIO_TCP_CLIENT,TUIO_TCP_HOST,TUIO_WEB,TUIO_FLASH };
+
 struct application_settings {
 	char file[1024];
-	int port;
-	char host[1024];
+	int tuio_type;
+	int tuio_port;
+	char tuio_host[1024];
 	char tree_config[1024];
 	char grid_config[1024];
 	char camera_config[1024];
