@@ -44,7 +44,8 @@ public:
 	bool getState() { return equalize; };
 	
 private:
-    unsigned char *pointmap;
+	unsigned char *pointmap;
+	int average;
 	bool equalize;
 	bool calibrate;
 };

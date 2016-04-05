@@ -32,6 +32,7 @@ bool FrameEqualizer::init(int w, int h, int sb, int db) {
 	help_text.push_back( "   e - toggle frame equalizer");
 	help_text.push_back( "   SPACE - activate frame equalizer");
 	
+	average = 0;
 	int size = width*height;
 	pointmap = new unsigned char[size];
 	for (int i=0;i<size;i++) pointmap[i] = 0;
@@ -42,63 +43,48 @@ void FrameEqualizer::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 
     
     //long start_time = SDLinterface::currentTime();
-
-	/*if (equalize) {
-		int size = width*height;
-		for (int i=0;i<size;i++) {
-			int e = src[i]+pointmap[i];
-            if (e & (~255)) { e < 0 ? e = 0 : e = 255; }
-            src[i] = (unsigned char)e;
+	
+	if (equalize) {
+		
+		unsigned char *map = pointmap;
+		int e = 0;
+		for (int i=width*height;i>0;i--) {
+			e = *src - (*map++ - average);
+			if (e & (~255)) { e < 0 ? *src++ = 0 : *src++ = 255; }
+			else *src++ = (unsigned char)e;
 		}
+		
+		/*unsigned char *map = pointmap;
+		 for (int i=width*height;i>0;i--) {
+			int e = *src-*map++;
+			if (e < 0) *src++ = 0;
+			else *src++ = (unsigned char)e;
+		 }*/
+		
 	} else if (calibrate) {
-		long sum = 0;
+		
+		unsigned int sum = 0;
 		for (int x=width/2-5;x<width/2+5;x++) {
 			for (int y=height/2-5;y<height/2+5;y++) {
 				sum+=src[y*width+x];
 			}
 		}
-		unsigned char average = (unsigned char)(sum/100);
-
-        int size = width*height;
-		for (int i=0;i<size;i++)
-			pointmap[i] = average-src[i];
-
+		
+		average = (unsigned char)(sum/100);
+		memcpy(pointmap,src,width*height);
+		
+		/*int size = width*height;
+		 unsigned char *map = pointmap;
+		 for (int i=size;i>0;i--) {
+			int e = *src++-8;
+			if (e < 0) *map++ = 0;
+			else *map++ = (unsigned char)e;
+		 }*/
+		
 		calibrate = false;
 		equalize = true;
-	}*/
-    
-    if (equalize) {
-        int size = width*height;
-        unsigned char *map = pointmap;
-        for (int i=size;i>0;i--) {
-            int e = *src-*map++;
-            if (e < 0) *src++ = 0;
-            else *src++ = (unsigned char)e;
-        }
-        // ~ half the speed only!
-        /*for (int i=0;i<size;i++) {
-            int e = src[i]-pointmap[i];
-            if (e < 0) src[i] = 0;
-            else src[i] = (unsigned char)e;
-        }*/
-    } else if (calibrate) {
-        int size = width*height;
-        unsigned char *map = pointmap;
-        for (int i=size;i>0;i--) {
-            int e = *src++-8;
-            if (e < 0) *map++ = 0;
-            else *map++ = (unsigned char)e;
-        }
-        /*for (int i=0;i<size;i++) {
-         int e = src[i]-8;
-         if (e < 0) e = 0;
-         pointmap[i] = (unsigned char)e;
-         }*/
-
-        calibrate = false;
-        equalize = true;
-    }
-    
+	}
+	
      /*long equalize_time = SDLinterface::currentTime() - start_time;
      float latency = (equalize_time/100.0f)/10.0f;
      std::cout << "equalizer latency: " << latency << "ms" << std::endl;*/
