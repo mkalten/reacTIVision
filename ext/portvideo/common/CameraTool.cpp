@@ -363,7 +363,7 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 	cam_cfg.frame_yoff = 0;
 	cam_cfg.frame_mode = cfg->frame_mode;
 	
-	sprintf(cam_cfg.src,"none");
+	sprintf(cam_cfg.src,"camera.xml");
 }
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
@@ -381,10 +381,10 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	sprintf(cam_cfg.path,"%s/Contents/Resources/%s",path,cfgfile);
 #elif !defined WIN32
 	sprintf(cam_cfg.path,"./%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.reacTIVision/%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/reacTIVision/%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/reacTIVision/%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/reacTIVision/%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.portvideo/%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/%s",cfgfile);
+	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/%s",cfgfile);
 #else
 	sprintf(cam_cfg.path,".\%s",cfgfile);
 #endif
