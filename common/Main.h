@@ -18,14 +18,16 @@
 
 #ifndef REACTIVISION_H
 #define REACTIVISION_H
+#include <string>
 
 enum TuioType { TUIO_UDP,TUIO_TCP_CLIENT,TUIO_TCP_HOST,TUIO_WEB,TUIO_FLASH };
 
 struct application_settings {
 	char file[1024];
-	int tuio_type;
-	int tuio_port;
-	char tuio_host[1024];
+	int tuio_count;
+	int tuio_type[32];
+	int tuio_port[32];
+	std::string tuio_host[32];
 	char tree_config[1024];
 	char grid_config[1024];
 	char camera_config[1024];

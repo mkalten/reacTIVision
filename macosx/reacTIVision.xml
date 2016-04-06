@@ -11,6 +11,9 @@ you only need to specify parameters you want to change from their default settin
 <!-- the TUIO server configuration specifies type, host and port
  possible types are: udp, tcp as well as web and flash -->
 	<tuio type="udp" host="127.0.0.1" port="3333" />
+	<tuio type="tcp" host="server" port="3334" />
+	<tuio type="web" port="8080" />
+	<tuio type="flc" />
 <!-- available amoeba sets are default, small or mini - or an alternative *.trees file
   ... also allows to enable the additional yamaarashi symbols -->
 	<fiducial amoeba="default" yamaarashi="false" />
