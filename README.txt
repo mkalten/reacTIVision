@@ -125,11 +125,10 @@ You can also additionally enable the new Yamaarashi fiducal symbols.
 The display attribute defines the default screen upon startup.
 The <image display="dest" equalize="false" gradient="32" tile="10"/>
 lets you adjust the default gradient gate value and tile size.
-reacTIVision comes with a background subtraction module,  which in
+reacTIVision comes with an image equalization module,  which in
 some cases can increase the recognition performance of both the finger
 and fiducial tracking. Within the running application you can toggle
-this with the 'E' key or recalculate the background subtraction 
-by hitting the SPACE bar.
+this with the 'E' key or reset the equalizer by hitting the SPACE bar.
 
 The overall camera and image settings can be configured within the
 "camera.xml" configuration file. On Mac OS X this file is as well 
