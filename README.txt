@@ -108,15 +108,19 @@ Under Mac OS X this XML configuration file can be found within the
 application bundle's Resources folder. Select "Show Package Contents" 
 from the application's context menu in order to access and edit the file. 
 
-The reacTIVision application usually sends the TUIO messages 
-to port 3333 on localhost (127.0.0.1)
-You can change this setting by adding or editing the XML tag
-<tuio host="127.0.0.1" port="3333"> to the configuration.
+The reacTIVision application usually sends the TUIO/UDP messages 
+to port 3333 on localhost (127.0.0.1). Alternative transport types
+are tcp, web and flc for TUIO/TCP, TUIO/WEB (Websocket) as well as
+TUIO/FLC (Flash Local Connection).
 
-The <fiducial engine="amoeba" tree="default"/> XML tag lets you
-select the fiducial engine or an alternative amoeba tree order.
-This default engine is using the fast and robust 'amoeba' 
-fiducial set.
+You can change this setting by editing or adding the XML tag
+<tuio type="udp" host="127.0.0.1" port="3333"> to the configuration.
+Multiple (up to 32) simultaneous TUIO transport options are allowed.
+
+The <fiducial amoeba="default" yamaarashi="false" /> XML tag lets you
+select the default or alternative (small,tiny) amoeba fiducial set,
+or you can point to an alternative "amoeba.trees" file if available.
+You can also additionally enable the new Yamaarashi fiducal symbols.
 
 The display attribute defines the default screen upon startup.
 The <image display="dest" equalize="false" gradient="32" tile="10"/>
