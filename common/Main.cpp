@@ -150,7 +150,7 @@ void readSettings(application_settings *config) {
 			}
 			if(tuio_element->Attribute("port")!=NULL) config->tuio_port[tcount] = atoi(tuio_element->Attribute("port"));
 			tcount++;
-			
+			if (tcount==32) break;
 			tuio_element = tuio_element->NextSiblingElement("tuio");
 		}
 	}
