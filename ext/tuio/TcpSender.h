@@ -107,6 +107,8 @@ namespace TUIO {
 		std::list<int> tcp_client_list;
 #endif
 		bool connected;
+		const char* tuio_type() { return "TUIO/TCP"; }
+
 	protected:
 		char data_size[4];
 		char data_buffer[MAX_TCP_SIZE+4];

@@ -76,6 +76,8 @@ namespace TUIO {
 		 * @return the maximum bundle size in bytes
 		 */
 		int getBufferSize () { return buffer_size; };
+	
+		virtual const char* tuio_type() = 0;
 		
 	protected:
 		unsigned int buffer_size;

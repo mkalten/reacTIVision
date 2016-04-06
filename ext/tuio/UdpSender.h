@@ -84,6 +84,8 @@ namespace TUIO {
 		 */
 		 bool isConnected ();
 		
+		 const char* tuio_type() { return "TUIO/UDP"; }
+		
 	private:
 		UdpTransmitSocket *socket;
 	};

@@ -206,6 +206,8 @@ namespace TUIO {
 		 */
 		bool isConnected ();
 		
+		const char* tuio_type() { return "TUIO/FLC"; }
+		
 	private:
 		TFLCSLocalConnection_t* lcConnection;
 	};

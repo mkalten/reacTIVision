@@ -111,6 +111,7 @@ namespace TUIO {
 		 */
 		void newClient( int tcp_client );
 	
+		const char* tuio_type() { return "TUIO/WEB"; }
 	private:
 		
 		void sha1( uint8_t digest[SHA1_HASH_SIZE], const uint8_t* inbuf, size_t length );

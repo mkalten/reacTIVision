@@ -47,7 +47,7 @@ static DWORD WINAPI ClientThreadFunc( LPVOID obj )
 	}
 		
 	sender->tcp_client_list.remove(client);
-	std::cout << "TUIO/TCP connection closed"<< std::endl;
+	std::cout << sender->tuio_type() << " connection closed"<< std::endl;
 	if (sender->tcp_client_list.size()==0) sender->connected=false;
 	//std::cout << sender->tcp_client_list.size() << " clients left"<< std::endl;	
 
@@ -64,7 +64,7 @@ static DWORD WINAPI ServerThreadFunc( LPVOID obj )
 	struct sockaddr_in client_addr;
 	socklen_t len = sizeof(client_addr);
 	
-	std::cout << "TUIO/TCP socket created on port " << sender->port_no << std::endl;
+	std::cout << sender->tuio_type() << " socket created on port " << sender->port_no << std::endl;
 	while (sender->tcp_socket) {
 #ifdef WIN32
 		SOCKET tcp_client = -1;
@@ -75,12 +75,11 @@ static DWORD WINAPI ServerThreadFunc( LPVOID obj )
 		tcp_client = accept(sender->tcp_socket, (struct sockaddr*)&client_addr, &len);
 		
 		if (tcp_client>0) { 
-			std::cout << "TUIO/TCP client connected from " << inet_ntoa(client_addr.sin_addr) << "@" << client_addr.sin_port << std::endl;
+			std::cout << sender->tuio_type() << " client connected from " << inet_ntoa(client_addr.sin_addr) << "@" << client_addr.sin_port << std::endl;
 			sender->tcp_client_list.push_back(tcp_client);
 			sender->connected=true;
 			sender->newClient(tcp_client);
 			//std::cout << sender->tcp_client_list.size() << " clients connected"<< std::endl;	
-		
 #ifndef WIN32
 			pthread_t client_thread;
 			pthread_create(&client_thread , NULL, ClientThreadFunc,obj);
@@ -102,7 +101,7 @@ TcpSender::TcpSender()
 	
 	tcp_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if (tcp_socket < 0) {
-		std::cerr << "could not create TUIO/TCP socket" << std::endl;
+		std::cerr << "could not create " << tuio_type() << " socket" << std::endl;
 		return;
 	}
 	
@@ -117,10 +116,10 @@ TcpSender::TcpSender()
 	
 	int ret = connect(tcp_socket,(struct sockaddr*)&tcp_server,sizeof(tcp_server));
 	if (ret<0) {
-		std::cerr << "could not open TUIO/TCP connection to 127.0.0.1:3333" << std::endl;
+		std::cerr << "could not open " << tuio_type() << " connection to 127.0.0.1:3333" << std::endl;
 		return;
 	} else {
-		std::cout << "TUIO/TCP connection opened to 127.0.0.1:3333" << std::endl;
+		std::cout << tuio_type() << " connection opened to 127.0.0.1:3333" << std::endl;
 		tcp_client_list.push_back(tcp_socket);
 		connected = true;
 		
@@ -144,7 +143,7 @@ TcpSender::TcpSender(const char *host, int port)
 	
 	tcp_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if (tcp_socket < 0) {
-		std::cerr << "could not create TUIO/TCP socket" << std::endl;
+		std::cerr << "could not create  " << tuio_type() << " socket" << std::endl;
 		return;
 	}
 
@@ -155,7 +154,10 @@ TcpSender::TcpSender(const char *host, int port)
 		memcpy( (char *)&tcp_server.sin_addr, &addr, sizeof(addr));
 	} else {
 		struct hostent *host_info = gethostbyname(host);
-		if (host_info == NULL) std::cerr << "unknown host name: " << host << std::endl;
+		if (host_info == NULL) {
+			std::cerr << "unknown host name: " << host << std::endl;
+			throw std::exception();
+		}
 		memcpy( (char *)&tcp_server.sin_addr, host_info->h_addr, host_info->h_length );
 	}
 
@@ -169,10 +171,10 @@ TcpSender::TcpSender(const char *host, int port)
 #else
 		close(tcp_socket);
 #endif	
-		std::cerr << "could not open TUIO/TCP connection to " << host << ":"<< port << std::endl;
-		return;
+		std::cerr << "could not open " << tuio_type() << " connection to " << host << ":"<< port << std::endl;
+		throw std::exception();
 	} else {
-		std::cout << "TUIO/TCP connection opened to " << host << ":"<< port << std::endl;
+		std::cout << tuio_type() << " connection opened to " << host << ":"<< port << std::endl;
 		tcp_client_list.push_back(tcp_socket);
 		connected = true;
 		
@@ -193,7 +195,10 @@ TcpSender::TcpSender(int port)
 	port_no = port;
 	
 	tcp_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (tcp_socket < 0) std::cerr << "could not create TUIO/TCP socket" << std::endl;
+	if (tcp_socket < 0) {
+		std::cerr << "could not create TUIO/TCP socket" << std::endl;
+		throw std::exception();
+	}
 
 	int optval = 1;
 	#ifdef  WIN32
@@ -203,7 +208,7 @@ TcpSender::TcpSender(int port)
 	#endif
 	if (ret < 0) {
 		std::cerr << "could not reuse TUIO/TCP socket address" << std::endl;
-		return;
+		throw std::exception();
 	}
 	
 	struct sockaddr_in tcp_server;
@@ -217,7 +222,7 @@ TcpSender::TcpSender(int port)
 	ret = bind(tcp_socket,(struct sockaddr*)&tcp_server,len);
 	if (ret < 0) {
 		std::cerr << "could not bind to TUIO/TCP socket on port " << port << std::endl;
-		return;
+		throw std::exception();
 	}
 	
 	ret =  listen(tcp_socket, 1);
@@ -228,7 +233,7 @@ TcpSender::TcpSender(int port)
 #else
 		close(tcp_socket);
 #endif
-		return;
+		throw std::exception();
 	}
 				
 #ifndef WIN32
