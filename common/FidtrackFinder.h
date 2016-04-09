@@ -97,6 +97,7 @@ public:
 	int getBlobSize() { return max_blob_size; };
 	bool getFingerBlob() { return send_finger_blobs; };
 	bool getFiducialBlob() { return send_fiducial_blobs; };
+	bool getYamaarashi() { return detect_yamaarashi; };
 	
 	void reset();
 	

@@ -84,6 +84,8 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			show_settings = true;
 			return true;
 		}
+	} else if (flag==KEY_Y) {
+		detect_yamaarashi=!detect_yamaarashi;
 	} else if (setFingerSize || setFingerSensitivity) {
 		switch(flag) {
 			case KEY_LEFT:
