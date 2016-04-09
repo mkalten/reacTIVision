@@ -30,8 +30,11 @@
 
 typedef struct threshold_data {
 	bool process;
+#ifndef WIN32
 	pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+#else
+#endif
 	TiledBernsenThresholder *thresholder;
 	unsigned char *src;
 	unsigned char *dest;
@@ -65,6 +68,9 @@ public:
 		
 		equalize = false;
 		calibrate = false;
+		
+		min_latency = 1000.0f;
+		max_latency = 0.0f;
 	};
 	~FrameThresholder() {
 		if (initialized) {
@@ -107,6 +113,8 @@ private:
 	int average;
 	bool equalize;
 	bool calibrate;
+	
+	float min_latency, max_latency;
 	
 #ifdef WIN32
 	HANDLE tthreads[16];
