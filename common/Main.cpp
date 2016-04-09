@@ -432,7 +432,6 @@ int main(int argc, char* argv[]) {
 	TuioServer *server = NULL;
 	FrameProcessor *fiducialfinder	= NULL;
 	FrameProcessor *thresholder	= NULL;
-	//FrameProcessor *equalizer	= NULL;
 	FrameProcessor *calibrator	= NULL;
 	
 	for (int i=0;i<config.tuio_count;i++) {
@@ -451,15 +450,10 @@ int main(int argc, char* argv[]) {
 			else server->addOscSender(sender);
 		}
 	}
-
-	//TuioServer *server = new TuioServer(sender);
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 	
-	//equalizer = new FrameEqualizer();
-	//engine->addFrameProcessor(equalizer);
-	//if (config.background) equalizer->toggleFlag(' ',false);
-	
 	thresholder = new FrameThresholder(config.gradient_gate, config.tile_size, config.thread_count);
+	if (config.background) thresholder->toggleFlag(KEY_SPACE,false);
 	engine->addFrameProcessor(thresholder);
 	
 	fiducialfinder = new FidtrackFinder(server, config.yamaarashi, config.tree_config, config.grid_config, config.finger_size, config.finger_sensitivity, config.blob_size, config.object_blobs, config.cursor_blobs);
@@ -478,7 +472,7 @@ int main(int argc, char* argv[]) {
 	config.blob_size = ((FidtrackFinder*)fiducialfinder)->getBlobSize();
 	config.object_blobs = ((FidtrackFinder*)fiducialfinder)->getFiducialBlob();
 	config.cursor_blobs = ((FidtrackFinder*)fiducialfinder)->getFingerBlob();
-	//config.yamaarashi = ((FidtrackFinder*)fiducialfinder)->getYamaarashi();
+	config.yamaarashi = ((FidtrackFinder*)fiducialfinder)->getYamaarashi();
 
 	engine->removeFrameProcessor(fiducialfinder);
 	delete fiducialfinder;
@@ -488,10 +482,6 @@ int main(int argc, char* argv[]) {
 	config.background = ((FrameThresholder*)thresholder)->getEqualizerState();
 	engine->removeFrameProcessor(thresholder);
 	delete thresholder;
-	
-	//config.background = ((FrameEqualizer*)equalizer)->getState();
-	//engine->removeFrameProcessor(equalizer);
-	//delete equalizer;
 	
 	config.invert_x = server->getInvertXpos();
 	config.invert_y = server->getInvertYpos();
