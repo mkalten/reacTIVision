@@ -28,7 +28,10 @@
 #include "FrameProcessor.h"
 #include "tiled_bernsen_threshold.h"
 
-typedef struct threshold_data{
+typedef struct threshold_data {
+	bool process;
+	pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 	TiledBernsenThresholder *thresholder;
 	unsigned char *src;
 	unsigned char *dest;
@@ -38,6 +41,7 @@ typedef struct threshold_data{
 	int gradient;
 	unsigned char *map;
 	int average;
+	bool done;
 } threshold_data;
 
 class FrameThresholder: public FrameProcessor
@@ -68,6 +72,7 @@ public:
 			for (int i=0;i<thread_count;i++) {
 				terminate_tiled_bernsen_thresholder( thresholder[i] );
 				delete thresholder[i];
+				tdata[i].done = true;
 			}
 			
 			delete tile_sizes;

@@ -19,6 +19,7 @@
 #include "FrameThresholder.h"
 #include "VisionEngine.h"
 
+
 // the thread function
 #ifndef WIN32
 static void* threshold_thread_function( void *obj )
@@ -28,17 +29,25 @@ static DWORD WINAPI threshold_thread_function( LPVOID obj )
 {
 	threshold_data *data = (threshold_data *)obj;
 	
-	if (data->average>=0) {
-		int e = 0;
-		unsigned char* src = data->src;
-		for (int i=data->width*data->height;i>0;i--) {
-			e = *src - (*(data->map)++ - data->average);
-			if (e & (~255)) { e < 0 ? *src++ = 0 : *src++ = 255; }
-			else *src++ = (unsigned char)e;
+	while (!data->done) {
+		//pthread_mutex_lock(&data->mutex);
+		pthread_cond_wait(&data->cond, &data->mutex);
+		//pthread_mutex_unlock(&data->mutex);
+
+		if (data->average>=0) {
+			int e = 0;
+			unsigned char* src = data->src;
+			for (int i=data->width*data->height;i>0;i--) {
+				e = *src - (*(data->map)++ - data->average);
+				if (e & (~255)) { e < 0 ? *src++ = 0 : *src++ = 255; }
+				else *src++ = (unsigned char)e;
+			}
 		}
+		
+		tiled_bernsen_threshold( data->thresholder, data->dest, data->src,data->bytes, data->width, data->height, data->tile_size, data->gradient );
+		
+		data->process = false;
 	}
-	
-	tiled_bernsen_threshold( data->thresholder, data->dest, data->src,data->bytes, data->width, data->height, data->tile_size, data->gradient );
 	
 	return(0);
 }
@@ -135,6 +144,32 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 	pointmap = new unsigned char[size];
 	for (int i=0;i<size;i++) pointmap[i] = 0;
 	
+	for (int i=0;i<thread_count;i++) {
+		
+		int part_height = height/thread_count;
+		tdata[i].process=false;
+		tdata[i].thresholder=thresholder[i];
+		tdata[i].src=NULL;
+		tdata[i].dest=NULL;
+		tdata[i].width=width;
+		tdata[i].height=part_height;
+		tdata[i].bytes=src_format;
+		tdata[i].tile_size=tile_size;
+		tdata[i].gradient=gradient;
+		
+		tdata[i].average = -1;
+		tdata[i].map = NULL;
+		tdata[i].done=false;
+		
+#ifdef WIN32
+		DWORD threadId;
+		tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
+#else
+		pthread_create(&tthreads[i] , NULL, threshold_thread_function, &tdata[i]);
+		pthread_detach(tthreads[i]);
+#endif
+	}
+	
 	help_text.push_back( "FrameThresholder:");
 	help_text.push_back( "   g - set gradient gate & tile size");
 	help_text.push_back( "   e - activate frame equalization");
@@ -146,7 +181,6 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 
 	//long start_time = VisionEngine::currentMicroSeconds();
-    //tiled_bernsen_threshold( thresholder, dest, src, srcBytes, width, height, tile_size, gradient );
 
 	if (calibrate) {
 		
@@ -166,18 +200,8 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 	
 	for (int i=0;i<thread_count;i++) {
 
-		int part_height = height/thread_count;
-		int offset = i*part_height*width;
+		int offset = i*tdata[i].height*width;
 
-		tdata[i].thresholder=thresholder[i];
-		tdata[i].src=src+offset;
-		tdata[i].dest=dest+offset;
-		tdata[i].width=width;
-		tdata[i].height=part_height;
-		tdata[i].bytes=src_format;
-		tdata[i].tile_size=tile_size;
-		tdata[i].gradient=gradient;
-		
 		if (equalize) {
 			tdata[i].average = average;
 			tdata[i].map = pointmap+offset;
@@ -186,29 +210,33 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 			tdata[i].average = -1;
 			tdata[i].map = NULL;
 		}
-
-#ifdef WIN32
-		DWORD threadId;
-		tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
-#else
-		pthread_create(&tthreads[i] , NULL, threshold_thread_function, &tdata[i]);
-#endif
+		
+		tdata[i].src=src+offset;
+		tdata[i].dest=dest+offset;
+		
+		tdata[i].process = true;
+		//pthread_mutex_lock(&tdata[i].mutex);
+		pthread_cond_signal(&tdata[i].cond);
+		//pthread_mutex_unlock(&tdata[i].mutex);
+		
 	}
 	
-	for (int i=0;i<thread_count;i++) {
-#ifdef WIN32
-		WaitForSingleObject(tthreads[i],INFINITE);
-		CloseHandle(tthreads[i]);
-#else
-		pthread_join(tthreads[i],NULL);
-#endif
+	bool waiting=true;
+	while (waiting) {
+		waiting = false;
+		for (int i=0;i<thread_count;i++) {
+			if(tdata[i].process) {
+				waiting = true;
+				usleep(10);
+				break;
+			}
+			
+		}
 	}
 	
 	if (setGradient || setTilesize) displayControl();
 
-	//long equalize_time = VisionEngine::currentMicroSeconds() - start_time;
-	//float latency = (equalize_time/100.0f)/10.0f;
-	//std::cout << "threshold latency: " << latency << "ms " << std::endl;
+	//std::cout << "threshold latency: " << (VisionEngine::currentMicroSeconds() - start_time)/1000.0f << "ms " << std::endl;
 }
 
 bool FrameThresholder::setFlag(unsigned char flag, bool value, bool lock) {
