@@ -21,12 +21,23 @@
 
 // the thread function
 #ifndef WIN32
-static void* threshold_thread_function( void* obj )
+static void* threshold_thread_function( void *obj )
 #else
 static DWORD WINAPI threshold_thread_function( LPVOID obj )
 #endif
 {
 	threshold_data *data = (threshold_data *)obj;
+	
+	if (data->average>=0) {
+		int e = 0;
+		unsigned char* src = data->src;
+		for (int i=data->width*data->height;i>0;i--) {
+			e = *src - (*(data->map)++ - data->average);
+			if (e & (~255)) { e < 0 ? *src++ = 0 : *src++ = 255; }
+			else *src++ = (unsigned char)e;
+		}
+	}
+	
 	tiled_bernsen_threshold( data->thresholder, data->dest, data->src,data->bytes, data->width, data->height, data->tile_size, data->gradient );
 	
 	return(0);
@@ -61,7 +72,7 @@ int getDividers(short number, short *dividers) {
 bool FrameThresholder::init(int w, int h, int sb, int db) {
 	
 	FrameProcessor::init(w,h,sb,db);
-	
+
 	short tw = w;
 	short th = h/thread_count;
 	
@@ -119,40 +130,62 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 		initialize_tiled_bernsen_thresholder(thresholder[i], tw, th, 2 );
 	}
 	
+	average = 0;
+	int size = width*height;
+	pointmap = new unsigned char[size];
+	for (int i=0;i<size;i++) pointmap[i] = 0;
+	
 	help_text.push_back( "FrameThresholder:");
 	help_text.push_back( "   g - set gradient gate & tile size");
+	help_text.push_back( "   e - activate frame equalization");
+	help_text.push_back( "   SPACE - reset frame equalization");
 	
 	return true;
 }
 
 void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 
-
-    //long start_time = VisionEngine::currentMicroSeconds();
+	//long start_time = VisionEngine::currentMicroSeconds();
     //tiled_bernsen_threshold( thresholder, dest, src, srcBytes, width, height, tile_size, gradient );
 
-#ifdef WIN32
-	HANDLE tthreads[16];
-#else
-	pthread_t tthreads[16];
-#endif
-	threshold_data tdata[16];
+	if (calibrate) {
+		
+		unsigned int sum = 0;
+		for (int x=width/2-5;x<width/2+5;x++) {
+			for (int y=height/2-5;y<height/2+5;y++) {
+				sum+=src[y*width+x];
+			}
+		}
+		
+		average = (unsigned char)(sum/100);
+		memcpy(pointmap,src,width*height);
+		
+		calibrate = false;
+		equalize = true;
+	}
 	
 	for (int i=0;i<thread_count;i++) {
+
 		int part_height = height/thread_count;
-		unsigned char *sp = src+i*part_height*width;
-		unsigned char *dp = dest+i*part_height*width;
-		
-		//tdata[i] = { .thresholder=thresholder[i], .src=sp, .dest=dp, .width=width, .height=part_height, .bytes=srcBytes, .tile_size=tile_size, .gradient=gradient };
-		
+		int offset = i*part_height*width;
+
 		tdata[i].thresholder=thresholder[i];
-		tdata[i].src=sp;
-		tdata[i].dest=dp;
+		tdata[i].src=src+offset;
+		tdata[i].dest=dest+offset;
 		tdata[i].width=width;
 		tdata[i].height=part_height;
 		tdata[i].bytes=src_format;
 		tdata[i].tile_size=tile_size;
 		tdata[i].gradient=gradient;
+		
+		if (equalize) {
+			tdata[i].average = average;
+			tdata[i].map = pointmap+offset;
+			
+		} else {
+			tdata[i].average = -1;
+			tdata[i].map = NULL;
+		}
 
 #ifdef WIN32
 		DWORD threadId;
@@ -162,8 +195,6 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 #endif
 	}
 	
-	if (setGradient || setTilesize) displayControl();
-	
 	for (int i=0;i<thread_count;i++) {
 #ifdef WIN32
 		WaitForSingleObject(tthreads[i],INFINITE);
@@ -171,12 +202,13 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 #else
 		pthread_join(tthreads[i],NULL);
 #endif
-		
 	}
 	
-	//long threshold_time = VisionEngine::currentMicroSeconds() - start_time;
-	//float latency = threshold_time/1000.0f;
-	//std::cout << "threshold latency: " << latency << "ms" << std::endl;
+	if (setGradient || setTilesize) displayControl();
+
+	//long equalize_time = VisionEngine::currentMicroSeconds() - start_time;
+	//float latency = (equalize_time/100.0f)/10.0f;
+	//std::cout << "threshold latency: " << latency << "ms " << std::endl;
 }
 
 bool FrameThresholder::setFlag(unsigned char flag, bool value, bool lock) {
@@ -230,6 +262,12 @@ bool FrameThresholder::toggleFlag(unsigned char flag, bool lock) {
 				break;
 				
 		}
+	} else if (flag==KEY_E) {
+		equalize=!equalize;
+		calibrate=false;
+	} else if (flag==KEY_SPACE) {
+		equalize=false;
+		calibrate=true;
 	}
 	
 	return lock;

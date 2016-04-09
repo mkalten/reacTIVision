@@ -30,7 +30,7 @@
 #include "SDLinterface.h"
 #include "VisionEngine.h"
 
-#include "FrameEqualizer.h"
+//#include "FrameEqualizer.h"
 #include "FrameThresholder.h"
 #include "FidtrackFinder.h"
 #include "CalibrationEngine.h"
@@ -432,7 +432,7 @@ int main(int argc, char* argv[]) {
 	TuioServer *server = NULL;
 	FrameProcessor *fiducialfinder	= NULL;
 	FrameProcessor *thresholder	= NULL;
-	FrameProcessor *equalizer	= NULL;
+	//FrameProcessor *equalizer	= NULL;
 	FrameProcessor *calibrator	= NULL;
 	
 	for (int i=0;i<config.tuio_count;i++) {
@@ -455,9 +455,9 @@ int main(int argc, char* argv[]) {
 	//TuioServer *server = new TuioServer(sender);
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 	
-	equalizer = new FrameEqualizer();
-	engine->addFrameProcessor(equalizer);
-	if (config.background) equalizer->toggleFlag(' ',false);
+	//equalizer = new FrameEqualizer();
+	//engine->addFrameProcessor(equalizer);
+	//if (config.background) equalizer->toggleFlag(' ',false);
 	
 	thresholder = new FrameThresholder(config.gradient_gate, config.tile_size, config.thread_count);
 	engine->addFrameProcessor(thresholder);
@@ -485,12 +485,13 @@ int main(int argc, char* argv[]) {
 	
 	config.gradient_gate = ((FrameThresholder*)thresholder)->getGradientGate();
 	config.tile_size = ((FrameThresholder*)thresholder)->getTileSize();
+	config.background = ((FrameThresholder*)thresholder)->getEqualizerState();
 	engine->removeFrameProcessor(thresholder);
 	delete thresholder;
 	
-	config.background = ((FrameEqualizer*)equalizer)->getState();
-	engine->removeFrameProcessor(equalizer);
-	delete equalizer;
+	//config.background = ((FrameEqualizer*)equalizer)->getState();
+	//engine->removeFrameProcessor(equalizer);
+	//delete equalizer;
 	
 	config.invert_x = server->getInvertXpos();
 	config.invert_y = server->getInvertYpos();

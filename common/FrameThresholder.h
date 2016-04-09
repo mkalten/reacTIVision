@@ -36,6 +36,8 @@ typedef struct threshold_data{
 	int bytes;
 	int tile_size;
 	int gradient;
+	unsigned char *map;
+	int average;
 } threshold_data;
 
 class FrameThresholder: public FrameProcessor
@@ -56,6 +58,9 @@ public:
 		thread_count = t;
 		if (thread_count<1) thread_count = 1;
 		else if (thread_count>16) thread_count = 16;
+		
+		equalize = false;
+		calibrate = false;
 	};
 	~FrameThresholder() {
 		if (initialized) {
@@ -67,6 +72,7 @@ public:
 			
 			delete tile_sizes;
 			delete thresholder;
+			delete[] pointmap;
 		}
 	};
 
@@ -79,6 +85,7 @@ public:
 	
 	int getGradientGate() { return gradient; };
 	int getTileSize() { return tile_size; };
+	bool getEqualizerState() { return equalize; };
 	
 private:
 	TiledBernsenThresholder **thresholder;
@@ -90,6 +97,18 @@ private:
 	short tile_index;
 	bool setTilesize;
 	int thread_count;
+
+	unsigned char *pointmap;
+	int average;
+	bool equalize;
+	bool calibrate;
+	
+#ifdef WIN32
+	HANDLE tthreads[16];
+#else
+	pthread_t tthreads[16];
+#endif
+	threshold_data tdata[16];
 };
 
 #endif

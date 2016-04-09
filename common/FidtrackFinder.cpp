@@ -30,8 +30,10 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 		return false;
 	}
 
-	help_text.push_back( "FidtrackFinder:");
+	//help_text.push_back( "FidtrackFinder:");
 	help_text.push_back( "   f - adjust finger size & sensitivity");
+	help_text.push_back( "   b - adjust blob size & activation");
+	help_text.push_back( "   y - toggle yamaarashi detection");
 
 	initialize_treeidmap( &treeidmap, tree_config );	
 	initialize_fidtrackerX( &fidtrackerx, &treeidmap, dmap);
