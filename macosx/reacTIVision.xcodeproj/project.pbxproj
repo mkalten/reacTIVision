@@ -71,7 +71,6 @@
 		B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
 		B2CAC0B219CC3E94003AC356 /* reacTIVision.png in Resources */ = {isa = PBXBuildFile; fileRef = B2CAC0B119CC3E94003AC356 /* reacTIVision.png */; };
-		B2CB96C10A33064800CF3287 /* FrameEqualizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2CB96BF0A33064800CF3287 /* FrameEqualizer.cpp */; };
 		B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; };
 		B2DEC9DA19F65370006CAD09 /* SDL2.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */; };
@@ -219,8 +218,6 @@
 		B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B2CA60030CD623FA00B46958 /* libdc1394.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdc1394.a; path = ../ext/portvideo/macosx/dc1394/libdc1394.a; sourceTree = SOURCE_ROOT; };
 		B2CAC0B119CC3E94003AC356 /* reacTIVision.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = reacTIVision.png; path = ../linux/reacTIVision.png; sourceTree = "<group>"; };
-		B2CB96BF0A33064800CF3287 /* FrameEqualizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; lineEnding = 0; name = FrameEqualizer.cpp; path = ../common/FrameEqualizer.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B2CB96C00A33064800CF3287 /* FrameEqualizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FrameEqualizer.h; path = ../common/FrameEqualizer.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../ext/portvideo/macosx/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../ext/portvideo/common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
 		B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FolderCamera.cpp; path = ../ext/portvideo/common/FolderCamera.cpp; sourceTree = SOURCE_ROOT; };
@@ -269,8 +266,6 @@
 				B29CCBD81B17680400C106A6 /* BlobMatrix.h */,
 				B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */,
 				B214E66D0959DA6F00A347C1 /* FrameThresholder.h */,
-				B2CB96BF0A33064800CF3287 /* FrameEqualizer.cpp */,
-				B2CB96C00A33064800CF3287 /* FrameEqualizer.h */,
 				B2505B710ACC635B007C21BB /* CalibrationEngine.cpp */,
 				B2505B720ACC635B007C21BB /* CalibrationEngine.h */,
 				B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */,
@@ -588,7 +583,6 @@
 				B29CCBE11B17680400C106A6 /* BlobMatrix.cpp in Sources */,
 				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
 				B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */,
-				B2CB96C10A33064800CF3287 /* FrameEqualizer.cpp in Sources */,
 				B29CCC031B17685700C106A6 /* FlashSender.cpp in Sources */,
 				B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */,
 				B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */,
