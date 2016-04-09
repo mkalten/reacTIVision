@@ -108,8 +108,6 @@
 		<Unit filename="../common/FiducialFinder.cpp" />
 		<Unit filename="../common/FiducialFinder.h" />
 		<Unit filename="../common/FiducialObject.h" />
-		<Unit filename="../common/FrameEqualizer.cpp" />
-		<Unit filename="../common/FrameEqualizer.h" />
 		<Unit filename="../common/FrameThresholder.cpp" />
 		<Unit filename="../common/FrameThresholder.h" />
 		<Unit filename="../common/Main.cpp" />
