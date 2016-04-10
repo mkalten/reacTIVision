@@ -386,7 +386,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/%s",cfgfile);
 	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/%s",cfgfile);
 #else
-	sprintf(cam_cfg.path,".\%s",cfgfile);
+	sprintf(cam_cfg.path,"./%s",cfgfile);
 #endif
 	
 	tinyxml2::XMLDocument xml_settings;

@@ -125,7 +125,6 @@
     <ClCompile Include="..\common\CalibrationGrid.cpp" />
     <ClCompile Include="..\common\FidtrackFinder.cpp" />
     <ClCompile Include="..\common\FiducialFinder.cpp" />
-    <ClCompile Include="..\common\FrameEqualizer.cpp" />
     <ClCompile Include="..\common\FrameThresholder.cpp" />
     <ClCompile Include="..\common\Main.cpp" />
     <ClCompile Include="..\ext\portvideo\common\ConsoleInterface.cpp" />
@@ -176,7 +175,6 @@
     <ClInclude Include="..\common\FidtrackFinder.h" />
     <ClInclude Include="..\common\FiducialFinder.h" />
     <ClInclude Include="..\common\FiducialObject.h" />
-    <ClInclude Include="..\common\FrameEqualizer.h" />
     <ClInclude Include="..\common\FrameThresholder.h" />
     <ClInclude Include="..\common\Main.h" />
     <ClInclude Include="..\ext\portvideo\common\ConsoleInterface.h" />

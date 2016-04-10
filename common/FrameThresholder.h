@@ -34,6 +34,7 @@ typedef struct threshold_data {
 	pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 #else
+	HANDLE ghWriteEvent;
 #endif
 	TiledBernsenThresholder *thresholder;
 	unsigned char *src;

@@ -23,6 +23,14 @@
 #ifndef WIN32
 static void* threshold_thread_function( void *obj )
 #else
+
+void usleep(long value) {
+struct timeval tv;
+	tv.tv_sec = value / 1000000;
+	tv.tv_usec = value % 1000000;
+	select(0, NULL, NULL, NULL, &tv);
+}
+
 static DWORD WINAPI threshold_thread_function( LPVOID obj )
 #endif
 {
@@ -33,6 +41,11 @@ static DWORD WINAPI threshold_thread_function( LPVOID obj )
 #ifndef WIN32
 		pthread_cond_wait(&data->cond, &data->mutex);
 #else
+		DWORD dwWaitResult  = WaitForSingleObject(data->ghWriteEvent, INFINITE);
+		if ( dwWaitResult != WAIT_OBJECT_0) {
+			data->process = false;
+			continue;
+		}
 #endif
 		// equalizer
 		if (data->average>=0) {
@@ -156,6 +169,7 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 		
 #ifdef WIN32
 		DWORD threadId;
+		tdata[i].ghWriteEvent = CreateEvent(NULL, TRUE, FALSE, TEXT("ProcessEvent"));
 		tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
 #else
 		pthread_create(&tthreads[i] , NULL, threshold_thread_function, &tdata[i]);
@@ -218,6 +232,7 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 #ifndef WIN32
 		pthread_cond_signal(&tdata[i].cond);
 #else
+		SetEvent(tdata[i].ghWriteEvent);
 #endif
 	}
 	
