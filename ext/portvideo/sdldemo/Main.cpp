@@ -46,7 +46,7 @@ void printUsage(const char *app_name) {
 
 void readSettings(application_settings *config) {
 
-	sprintf(config->camera_config,"none");
+	sprintf(config->camera_config,"camera.xml");
 	config->background = false;
 	config->fullscreen = false;
 	config->headless = false;
