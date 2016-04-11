@@ -31,8 +31,8 @@
 typedef struct threshold_data {
 	bool process;
 #ifndef WIN32
-	pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+	pthread_cond_t cond;
+	pthread_mutex_t mutex;
 #else
 	HANDLE ghWriteEvent;
 #endif

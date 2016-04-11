@@ -172,6 +172,8 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 		tdata[i].ghWriteEvent = CreateEvent(NULL, TRUE, FALSE, TEXT("ProcessEvent"));
 		tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
 #else
+		tdata[i].cond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
+		tdata[i].mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
 		pthread_create(&tthreads[i] , NULL, threshold_thread_function, &tdata[i]);
 		pthread_detach(tthreads[i]);
 #endif
