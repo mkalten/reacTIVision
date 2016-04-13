@@ -378,6 +378,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	float min_region_size = min_finger_size;
 	if ((average_finger_size==0) || (min_region_size>min_object_size)) min_region_size = min_object_size;
+	else if (min_object_size>max_blob_size/2) min_region_size = max_blob_size/2;
 	
 	float max_region_size = max_blob_size;
 	if (max_blob_size<max_object_size) max_region_size = max_object_size;
@@ -576,7 +577,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			}
 			
-		} else if (detect_blobs && (regions[i].colour==WHITE) && (regions[i].width>=max_object_size) && (regions[i].height>=max_object_size)) {
+		} else if (detect_blobs && (regions[i].colour==WHITE) && (regions[i].width<=max_blob_size) && (regions[i].height<=max_blob_size)) {
 			
 			// ignore saturated blobs
 			if (regions[i].inner_span_count==16) continue;
