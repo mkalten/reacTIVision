@@ -78,8 +78,8 @@ int V4Linux2Camera::getDeviceCount() {
             		continue;
         	}
 
-        	if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
-		    cam_count++;
+        	if (v4l2_caps.device_caps & V4L2_CAP_VIDEO_CAPTURE) {
+        		if ((v4l2_caps.device_caps & V4L2_CAP_READWRITE) == 0) cam_count++;
 		}
 
 		close(fd);
@@ -110,6 +110,11 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
         		close(fd);
                 	continue;
             	}
+
+    		if (((v4l2_caps.capabilities & V4L2_CAP_STREAMING) == 0) || (v4l2_caps.device_caps & V4L2_CAP_READWRITE)) {
+        		close(fd);
+        		continue;
+    		}
 
         	if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
 
@@ -147,8 +152,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 					if (frmsize.type==V4L2_FRMSIZE_TYPE_DISCRETE) {
                     				cam_cfg.cam_width = frmsize.discrete.width;
                                			cam_cfg.cam_height = frmsize.discrete.height;
-
-					} else {
+					} else if (frmsize.type == V4L2_FRMSIZE_TYPE_STEPWISE) {
                     				cam_cfg.cam_width = frmsize.stepwise.max_width;
                                			cam_cfg.cam_height = frmsize.stepwise.max_height;
 					}
@@ -286,12 +290,12 @@ bool V4Linux2Camera::initCamera() {
         printf("error setting pixel format: %s\n" , strerror(errno));
         return false;
     }
-    
+
     // try to set the desired fps
     v4l2_parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     v4l2_parm.parm.capture.timeperframe.numerator = 1;
     v4l2_parm.parm.capture.timeperframe.denominator = int(cfg->cam_fps);
-    
+
     if(-1 == ioctl (dev_handle, VIDIOC_S_PARM, &v4l2_parm)) {
         printf("error setting fps: %s\n", strerror(errno));
         //return false;
