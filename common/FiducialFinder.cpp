@@ -36,8 +36,11 @@ bool FiducialFinder::init(int w, int h, int sb ,int db) {
 void FiducialFinder::computeGrid() {
 	
 	// load the distortion grid
-	grid_size_x = 9;
+	grid_size_x = 7;
+	if (((float)width/height) > 1.3) grid_size_x +=2;
+	if (((float)width/height) > 1.7) grid_size_x +=2;
 	grid_size_y = 7;
+	
 	cell_width = width/(grid_size_x-1);
 	cell_height = height/(grid_size_y-1);
 	
@@ -83,7 +86,6 @@ void FiducialFinder::computeGrid() {
 			}
 		}
 	}
-	//ui->displayMessage("");
 }
 
 bool FiducialFinder::toggleFlag(unsigned char flag, bool lock) {
@@ -251,17 +253,16 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest) {
 	ui->setColor(0, 0, 255);
 	if (grid_size_x>7) ui->drawEllipse(width/2, height/2,width,height);
 	if (grid_size_x>9) ui->drawEllipse(width/2, height/2,width-cell_width*2,height);
-	ui->drawEllipse(width/2, height/2,height,height);
+	ui->drawEllipse(width/2, height/2,cell_width*6,cell_height*6);
 	ui->drawEllipse(width/2, height/2,cell_width*4,cell_height*4);
 	ui->drawEllipse(width/2, height/2,cell_width*2,cell_height*2);
-
 
 	// draw the horizontal lines
 	ui->setColor(0, 255, 0);
 	for (int i=0;i<grid_size_y;i++) {
 		float start_x = 0;
-		float start_y = i*cell_width;
-		float end_x = (grid_size_x-1)*cell_height;
+		float start_y = i*cell_height;
+		float end_x = (grid_size_x-1)*cell_width;
 		float end_y = start_y;
 		
 		ui->drawLine(start_x, start_y,end_x,end_y);
