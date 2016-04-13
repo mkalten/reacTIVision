@@ -1,5 +1,4 @@
-
-reacTIVision 1.5.1
+﻿reacTIVision 1.5.1
 —————————————————-
 * revert FrameEqualizer to equalization rather than subtraction
 * added a dedicated PS3 camera driver on MacOSX (thanks to Sebestyén Gábor)
@@ -9,8 +8,10 @@ reacTIVision 1.5.1
 * minimum supported MacOSX version is 10.8
 * code sign MacOSX application
 
+
 reacTIVision 1.5
 ————————————————
+
 * new AVFoundation camera driver for MacOS X (including controls)
 * new videoInput camera driver for Windows (including controls)
 * improved Video4Linux2 camera driver for Linux (including controls)

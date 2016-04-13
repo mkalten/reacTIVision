@@ -1,4 +1,4 @@
-reacTIVision 1.5.1
+﻿reacTIVision 1.5.1
 ------------------
 (c) 2005-2016 by Martin Kaltenbrunner <martin@tuio.org>
 https://github.com/mkalten/reacTIVision
@@ -19,7 +19,6 @@ client application. It implements the TUIO protocol, which has been
 specially designed for transmitting the state of tangible objects
 and multi-touch events from a tabletop surface. As an alternative 
 to TUIO, the application is also capabable of sending MIDI messages.
-http://www.tuio.org/
 
 The TUIO framework includes a set of example client projects
 for various programming languages, which serve as a base for
@@ -31,7 +30,7 @@ The reacTIVision application currently runs under the
 following operating systems: Windows, Mac OS X and Linux
 Under Windows it supports any camera with a proper WDM driver,
 such as most USB, FireWire and DV cameras. Under Mac OS X most
-UVC compliant USB as well as Firewire cameras should work.
+UVC campliant USB as well as Firewire cameras should work.
 Under Linux FireWire cameras are as well supported as many 
 Video4Linux2 compliant USB cameras.
 
@@ -42,6 +41,7 @@ markers. You will find the default "amoeba" set of 216 fiducials in
 the document "default.pdf" within the symbols folder. Print this
 document and attach the labels to any object you want to track.
 The default fiducial tracking engine is based on the included fidtrack
+
 library, which also provides an alternative "classic“ fiducial set,
 which are a reimplementation of Enrico Costanza’s d-touch concept.
 See below how to configure the application to use these symbol sets.
@@ -96,6 +96,7 @@ image analysis completely, hitting 'ESC' will quit the application.
 
 XML configuration file
 ----------------------
+
 Common settings can be edited within the file "reacTIVision.xml" where 
 all changes are stored automatically when closing the application.
 Under Mac OS X this XML configuration file can be found within the 
@@ -122,7 +123,7 @@ and fiducial tracking. Within the running application you can toggle
 this with the 'E' key or recalculate the background subtraction 
 by hitting the SPACE bar.
 
-The overall camera and image settings can be configured within the
+The overall camera and imageesettings can be configured within the
 "camera.xml" configuration file. On Mac OS X this file is as well 
 located in the Resources folder within the application bundle.
 You can select the camera ID and specify its dimension and framerate,
@@ -139,12 +140,14 @@ the mapping of any object dimension (xpos, ypos, angle) to a MIDI
 control message through an XML configuration file. Adding and removing
 objects can also be mapped to simple note ON/OFF events.
 Keep in mind though that MIDI has less bandwidth and data resolution
-compared to Open Sound Control, so the MIDI feature is only meant
+compared to Open Sound Control, so the new MIDI feature is only meant
 as a convenience alternative to TUIO in some application scenarios.
 
-Adding <midi config="midi.xml" /> to reacTIVision.xml switches to
+Adding <midi config="midi_demo.xml" /> to reacTIVision.xml switches to
 MIDI mode and specifies the MIDI configuration file that contains the
+
 mappings and MIDI device selection. An example configuration file along
+
 with a simple PD patch example can be found in the midi folder.
 
 You can list all available MIDI devices with the "-l" startup option.
@@ -185,8 +188,8 @@ right away without any additional configuration.
 
 Mac OS X:
 An Xcode project for Xcode version 3.2 or later is included.
-The build will require the SDL2 and VVUVCKit frameworks, in order 
-to compile properly, just unzip the included Frameworks.zip
+The build will require an installed SDL2 framework in order to
+compile properly.
 
 Linux:
 Call make to build the application, the distribution also
