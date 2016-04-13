@@ -36,7 +36,9 @@ bool FiducialFinder::init(int w, int h, int sb ,int db) {
 void FiducialFinder::computeGrid() {
 
 	// load the distortion grid
-	grid_size_x = 9;
+	grid_size_x = 7;
+	if (((float)width/height) > 1.3) grid_size_x +=2;
+	if (((float)width/height) > 1.7) grid_size_x +=2;
 	grid_size_y = 7;
 	cell_width = width/(grid_size_x-1);
 	cell_height = height/(grid_size_y-1);
@@ -376,45 +378,57 @@ void FiducialFinder::drawGrid(unsigned char *src, unsigned char *dest, SDL_Surfa
 	// draw the circles
 	for (double a=-M_PI;a<M_PI;a+=0.005) {
 
-		// ellipse
-		float x = width/2+cos(a)*width/2;
-		float y = half+sin(a)*half;
+		
+		// inner circle
+		float x = offset+half+cos(a)*cell_width;
+		float y = half+sin(a)*cell_height;
 		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
 			int pixel = 4*((int)y*width+(int)x);
 			disp[pixel] = disp[pixel+3] = 255;
 		}
 		
+		// middle circle
+		x = offset+half+cos(a)*(2*cell_width);
+		y = half+sin(a)*(2*cell_height);
+		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
+			int pixel = 4*((int)y*width+(int)x);
+			disp[pixel] = disp[pixel+3] = 255;
+		}
+
 		// outer circle
-		x = offset+half+cos(a)*half;
+		x = offset+half+cos(a)*(3*cell_width);
+		y = half+sin(a)*(3*cell_height);
+		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
+			int pixel = 4*((int)y*width+(int)x);
+			disp[pixel] = disp[pixel+3] = 255;
+		}
+		
+		
+		// ellipse
+		if (grid_size_x>7) {
+		x = width/2+cos(a)*width/2;
 		y = half+sin(a)*half;
 		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
 			int pixel = 4*((int)y*width+(int)x);
 			disp[pixel] = disp[pixel+3] = 255;
-		}
-
-		// middle circle
-		x = offset+half+cos(a)*(half-cell_width);
-		y = half+sin(a)*(half-cell_height);
+		} }
+		
+		// extra circle
+		if (grid_size_x>9) {
+		x = offset+half+cos(a)*(4*cell_width);
+		y = half+sin(a)*(3*cell_height);
 		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
 			int pixel = 4*((int)y*width+(int)x);
 			disp[pixel] = disp[pixel+3] = 255;
-		}
-
-		// inner circle
-		x = offset+half+cos(a)*cell_width;
-		y = half+sin(a)*cell_height;
-		if ((x>=0) && (x<width) && (y>=0) && (y<height)) {
-			int pixel = 4*((int)y*width+(int)x);
-			disp[pixel] = disp[pixel+3] = 255;
-		}
-
+		} }
+		
 	}
 			
 	// draw the horizontal lines
 	for (int i=0;i<grid_size_y;i++) {
 		float start_x = 0;
-		float start_y = i*cell_width;
-		float end_x = (grid_size_x-1)*cell_height;
+		float start_y = i*cell_height;
+		float end_x = (grid_size_x-1)*cell_width;
 		float end_y = start_y;
 				
 		for (float lx=start_x;lx<end_x;lx++) {
