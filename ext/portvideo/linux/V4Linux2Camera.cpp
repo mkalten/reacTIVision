@@ -78,8 +78,8 @@ int V4Linux2Camera::getDeviceCount() {
             		continue;
         	}
 
-        	if (v4l2_caps.device_caps & V4L2_CAP_VIDEO_CAPTURE) {
-        		if ((v4l2_caps.device_caps & V4L2_CAP_READWRITE) == 0) cam_count++;
+        	if ((v4l2_caps.device_caps & V4L2_CAP_VIDEO_CAPTURE) && (v4l2_caps.capabilities & V4L2_CAP_STREAMING)) {
+        		cam_count++;
 		}
 
 		close(fd);
@@ -111,7 +111,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                 	continue;
             	}
 
-    		if (((v4l2_caps.capabilities & V4L2_CAP_STREAMING) == 0) || (v4l2_caps.device_caps & V4L2_CAP_READWRITE)) {
+    		if ((v4l2_caps.capabilities & V4L2_CAP_STREAMING) == 0) {
         		close(fd);
         		continue;
     		}
