@@ -178,11 +178,11 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 						unsigned int step_w = frmsize.stepwise.step_width;
 						unsigned int step_h = frmsize.stepwise.step_height;
 
-						if ((frmsize.stepwise.max_width !=frmsize.stepwise.max_height) && (step_w == step_h)) {
+						if ((frmsize.stepwise.max_width != frmsize.stepwise.max_height) && (step_w == step_h)) {
 							float ratio = frmsize.stepwise.max_width/(float)frmsize.stepwise.max_height;
 							if (ratio == 4.0f/3.0f) {
-								step_w *= 4;
-								step_h *= 3;
+								step_w *= 16;
+								step_h *= 12;
 							} else if (ratio == 16.0f/9.0f) {
 								step_w *= 16;
 								step_h *= 9;
