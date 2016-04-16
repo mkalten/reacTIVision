@@ -39,8 +39,10 @@ V4Linux2Camera::~V4Linux2Camera(void)
 {
     CameraTool::saveSettings();
     if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) tjDestroy(_jpegDecompressor);
-    if (cam_buffer) delete []cam_buffer;
-    if (frm_buffer) delete []frm_buffer;
+    if (cam_buffer!=NULL) delete []cam_buffer;
+    cam_buffer = NULL;
+    if (frm_buffer!=NULL) delete []frm_buffer;
+    frm_buffer = NULL;
 }
 
 int v4lfilter(const struct dirent *dir)
@@ -78,8 +80,8 @@ int V4Linux2Camera::getDeviceCount() {
             		continue;
         	}
 
-        	if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
-		    cam_count++;
+        	if ((v4l2_caps.device_caps & V4L2_CAP_VIDEO_CAPTURE) && (v4l2_caps.capabilities & V4L2_CAP_STREAMING)) {
+        		cam_count++;
 		}
 
 		close(fd);
@@ -111,6 +113,11 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                 	continue;
             	}
 
+    		if ((v4l2_caps.capabilities & V4L2_CAP_STREAMING) == 0) {
+        		close(fd);
+        		continue;
+    		}
+
         	if (v4l2_caps.capabilities & V4L2_CAP_VIDEO_CAPTURE) {
 
 			CameraConfig cam_cfg;
@@ -133,7 +140,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                                 		cam_cfg.cam_format = i;
                                 		break;
                             		}
-                        	}
+                        	} if (cam_cfg.cam_format == FORMAT_UNKNOWN) continue;
 
 				std::vector<CameraConfig> tmp_list;
 
@@ -148,28 +155,60 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                     				cam_cfg.cam_width = frmsize.discrete.width;
                                			cam_cfg.cam_height = frmsize.discrete.height;
 
-					} else {
-                    				cam_cfg.cam_width = frmsize.stepwise.max_width;
-                               			cam_cfg.cam_height = frmsize.stepwise.max_height;
+        	            			float last_fps=0.0f;
+	                    			for (int z=0;;z++) {
+                	        			struct v4l2_frmivalenum frmival;
+                       					memset(&frmival, 0, sizeof(v4l2_frmivalenum));
+                        				frmival.index = z;
+                        				frmival.pixel_format = fmtdesc.pixelformat;
+                     	  				frmival.width = cam_cfg.cam_width;
+                       					frmival.height = cam_cfg.cam_height;
+                       					if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
+
+                        				float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
+                       					if(frm_fps==last_fps) break;
+                        				last_fps=frm_fps;
+
+                        				cam_cfg.cam_fps = frm_fps;
+							tmp_list.push_back(cam_cfg);
+						}
+
+					} else if (frmsize.type == V4L2_FRMSIZE_TYPE_STEPWISE) {
+
+						unsigned int step_w = frmsize.stepwise.step_width;
+						unsigned int step_h = frmsize.stepwise.step_height;
+
+						if ((frmsize.stepwise.max_width != frmsize.stepwise.max_height) && (step_w == step_h)) {
+							float ratio = frmsize.stepwise.max_width/(float)frmsize.stepwise.max_height;
+							if (ratio == 4.0f/3.0f) {
+								step_w *= 16;
+								step_h *= 12;
+							} else if (ratio == 16.0f/9.0f) {
+								step_w *= 16;
+								step_h *= 9;
+							}
+						}
+
+						unsigned int h = frmsize.stepwise.max_height;
+						for (unsigned int w=frmsize.stepwise.max_width;w!=frmsize.stepwise.min_width;w-=step_w) {
+
+							cam_cfg.cam_width = w;
+                               				cam_cfg.cam_height = h;
+
+                	        			struct v4l2_frmivalenum frmival;
+                       					memset(&frmival, 0, sizeof(v4l2_frmivalenum));
+                        				frmival.index = 0;
+                        				frmival.pixel_format = fmtdesc.pixelformat;
+                     	  				frmival.width = cam_cfg.cam_width;
+                       					frmival.height = cam_cfg.cam_height;
+                       					if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
+
+                        				cam_cfg.cam_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
+							tmp_list.push_back(cam_cfg);
+
+							h-=step_h;
+						}
 					}
-
-                    			float last_fps=0.0f;
-                    			for (int z=0;;z++) {
-                        			struct v4l2_frmivalenum frmival;
-                       				memset(&frmival, 0, sizeof(v4l2_frmivalenum));
-                        			frmival.index = z;
-                        			frmival.pixel_format = fmtdesc.pixelformat;
-                       				frmival.width = cam_cfg.cam_width;
-                       				frmival.height = cam_cfg.cam_height;
-                       				if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
-
-                        			float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
-                       				if(frm_fps==last_fps) break;
-                        			last_fps=frm_fps;
-
-                        			cam_cfg.cam_fps = frm_fps;
-						tmp_list.push_back(cam_cfg);
-                    			}
                 		}
 
 				std::sort(tmp_list.begin(), tmp_list.end());
@@ -286,12 +325,12 @@ bool V4Linux2Camera::initCamera() {
         printf("error setting pixel format: %s\n" , strerror(errno));
         return false;
     }
-    
+
     // try to set the desired fps
     v4l2_parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     v4l2_parm.parm.capture.timeperframe.numerator = 1;
     v4l2_parm.parm.capture.timeperframe.denominator = int(cfg->cam_fps);
-    
+
     if(-1 == ioctl (dev_handle, VIDIOC_S_PARM, &v4l2_parm)) {
         printf("error setting fps: %s\n", strerror(errno));
         //return false;
