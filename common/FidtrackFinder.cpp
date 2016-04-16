@@ -223,7 +223,6 @@ void FidtrackFinder::displayControl() {
 
 void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 
-	
 	BlobObject *yamaBlob;
 	try {
 		yamaBlob = new BlobObject(TuioTime::getSystemTime(),yama->rootx);
@@ -513,7 +512,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				// assig the regionx data to the fiducial
 				(*fid)->rootx = &regions[i];
 				// we can also decode the yamaarashis now
-				if ((detect_yamaarashi) && ((*fid)->id==YAMA_ID)) decodeYamaarashi((*fid), dest);
+				if ((*fid)->id==YAMA_ID) {
+					if (detect_yamaarashi) decodeYamaarashi((*fid), dest);
+					else (*fid)->id = INVALID_FIDUCIAL_ID;
+				}
 				add_blob = false;
 				break;
 			}
@@ -627,7 +629,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 			FiducialX *fiducial = (*fid);
-			if ((fiducial->id==INVALID_FIDUCIAL_ID) || (fiducial->id==YAMA_ID)) continue;
+			if (fiducial->id==INVALID_FIDUCIAL_ID) continue;
 			
 			float distance = fpos.getScreenDistance(fiducial->x,fiducial->y,width,height);
 			
