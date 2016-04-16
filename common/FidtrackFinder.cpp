@@ -40,12 +40,11 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	BlobObject::setDimensions(width,height);
 
-	average_fiducial_size = 24;
+	average_fiducial_size = height/2;
 	position_threshold = 1.0f/(2*width); // half a pixel
 	rotation_threshold = M_PI/360.0f;	 // half a degree
 	//position_threshold = 1.0f/(width); // one pixel
 	//rotation_threshold = M_PI/180.0f;	 // one degree
-	
 	
 	setFingerSize = false;
 	setFingerSensitivity = false;
@@ -377,7 +376,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	float min_region_size = min_finger_size;
 	if ((average_finger_size==0) || (min_region_size>min_object_size)) min_region_size = min_object_size;
-	else if (min_object_size>max_blob_size/2) min_region_size = max_blob_size/2;
+	else if ((max_blob_size>0) && (min_object_size>max_blob_size/2)) min_region_size = max_blob_size/2;
 	
 	float max_region_size = max_blob_size;
 	if (max_blob_size<max_object_size) max_region_size = max_object_size;
@@ -472,7 +471,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			fiducials[fid_count].x = fiducials[fid_count].x/width;
 			fiducials[fid_count].y = fiducials[fid_count].y/height;
 			
-			if (fiducials[fid_count].id>=0) {
+			if ((fiducials[fid_count].id>=0) || (fiducials[fid_count].id==YAMA_ID)) {
 				valid_fiducial_count ++;
 				total_fiducial_size += fiducials[fid_count].root_size;
 			}
