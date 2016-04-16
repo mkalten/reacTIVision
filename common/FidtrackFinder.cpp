@@ -627,7 +627,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 			FiducialX *fiducial = (*fid);
-			if (fiducial->id==INVALID_FIDUCIAL_ID) continue;
+			if ((fiducial->id==INVALID_FIDUCIAL_ID) || (fiducial->id==YAMA_ID)) continue;
 			
 			float distance = fpos.getScreenDistance(fiducial->x,fiducial->y,width,height);
 			
@@ -768,7 +768,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 		
 		FiducialX *fiducial = (*fid);
-		if (fiducial->id==FUZZY_FIDUCIAL_ID) continue;
+		if (fiducial->id<0) continue;
 		
 		// remove possible blobs under this fiducial
 		bool update_blob_list = false;
