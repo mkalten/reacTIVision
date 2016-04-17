@@ -40,7 +40,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	BlobObject::setDimensions(width,height);
 
-	average_fiducial_size = height/2;
+	average_fiducial_size = 0;
 	position_threshold = 1.0f/(2*width); // half a pixel
 	rotation_threshold = M_PI/360.0f;	 // half a degree
 	//position_threshold = 1.0f/(width); // one pixel
@@ -222,18 +222,27 @@ void FidtrackFinder::displayControl() {
 
 void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 
-	BlobObject *yamaBlob;
+	BlobObject *yamaBlob = NULL;
 	try {
 		yamaBlob = new BlobObject(TuioTime::getSystemTime(),yama->rootx);
 	} catch (std::exception e) {
 		yama->id = FUZZY_FIDUCIAL_ID;
 		return;
 	}
+	
+	float blob_area = M_PI * yamaBlob->getWidth()/2 * yamaBlob->getHeight()/2;
+	float error = fabs(yamaBlob->getArea()/blob_area - 0.66f);
 	delete yamaBlob;
+	
+	if (error>0.05f) {
+		std::cout << "yama fp: " << error << std::endl;
+		yama->id = INVALID_FIDUCIAL_ID;
+		return;
+	}
 	
 	double yx = yama->raw_x;
 	double yy = yama->raw_y;
-	double radius = yama->root_size * 0.75;
+	double radius = yamaBlob->getScreenWidth(width) * 0.75f;
 	double angle = yama->raw_a;
 	
 	IntPoint point[4];
@@ -289,12 +298,12 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 		angle += M_PI/12.0f;
 	}
 	
-	unsigned int test = value%13;
-	
-	std::cout << value << " " << checksum << " " << test << std::endl;
-	
-	if (test==checksum) yama->id = value;
-	else yama->id = FUZZY_FIDUCIAL_ID;
+	unsigned int validation = value%13;
+	if (validation==checksum) yama->id = value;
+	else {
+		yama->id = FUZZY_FIDUCIAL_ID;
+		std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
+	}
 }
 
 float FidtrackFinder::checkFinger(BlobObject *fblob) {
@@ -305,8 +314,8 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	}
 	
 	std::vector<BlobPoint> contourList = fblob->getFullContour();
-	float bx = fblob->getX()*width;
-	float by = fblob->getY()*height;
+	float bx = fblob->getScreenX(width);
+	float by = fblob->getScreenY(height);
 	float r = 2*M_PI-fblob->getAngle();
 	float Sr = sin(r);
 	float Cr = cos(r);
@@ -324,8 +333,8 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		
 		double aE = atan2(pY, pX);
 		
-		double eX = fblob->getWidth()*width/2.0f * cos(aE);
-		double eY = fblob->getHeight()*height/2.0f * sin(aE);
+		double eX = fblob->getScreenWidth(width)/2.0f * cos(aE);
+		double eY = fblob->getScreenHeight(height)/2.0f * sin(aE);
 		
 		//ui->setColor(0,255,0);
 		//ui->drawPoint(bx+eX,by+eY);
@@ -346,7 +355,7 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		}
 	}
 	
-	return (distance/contourList.size())/(fblob->getWidth()*width);
+	return (distance/contourList.size())/fblob->getScreenWidth(width);
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
@@ -370,19 +379,21 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	float min_object_size = average_fiducial_size / 1.5f;
 	float max_object_size = average_fiducial_size * 1.5f;
+	if (average_fiducial_size==0) {
+		min_object_size=4;
+		max_object_size=height;
+	}
 	
 	float min_finger_size = average_finger_size / 2.0f;
 	float max_finger_size = average_finger_size * 2.0f;
 	
 	float min_region_size = min_finger_size;
 	if ((average_finger_size==0) || (min_region_size>min_object_size)) min_region_size = min_object_size;
-	else if ((max_blob_size>0) && (min_object_size>max_blob_size/2)) min_region_size = max_blob_size/2;
+	else if ((max_blob_size>0) && (min_object_size>max_blob_size/2.0f)) min_region_size = max_blob_size/2.0f;
 	
 	float max_region_size = max_blob_size;
 	if (max_blob_size<max_object_size) max_region_size = max_object_size;
 
-	float total_fiducial_size = 0.0f;
-	int valid_fiducial_count = 0;
 	int fid_count = 0;
 	int reg_count = 0;
 	
@@ -459,7 +470,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		}
 	}
 
-	
+	float total_fiducial_size = 0.0f;
+	int valid_fiducial_count = 0;
 	// decode the found fiducials
 	Region *next = fidtrackerx.root_regions_head.next;
 	while( next != &fidtrackerx.root_regions_head ){
@@ -471,7 +483,20 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			fiducials[fid_count].x = fiducials[fid_count].x/width;
 			fiducials[fid_count].y = fiducials[fid_count].y/height;
 			
-			if ((fiducials[fid_count].id>=0) || (fiducials[fid_count].id==YAMA_ID)) {
+			for( int i=0; i < reg_count; ++i ) {
+				if (fiducials[fid_count].root==regions[i].region) {
+					// assign the regionx data to the fiducial
+					fiducials[fid_count].rootx = &regions[i];
+					// we can also decode the yamaarashis now
+					if (fiducials[fid_count].id==YAMA_ID) {
+						if (detect_yamaarashi) decodeYamaarashi(&fiducials[fid_count], dest);
+						else fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
+					}
+					break;
+				}
+			}
+			
+			if (fiducials[fid_count].id>=0) {
 				valid_fiducial_count ++;
 				total_fiducial_size += fiducials[fid_count].root_size;
 			}
@@ -485,9 +510,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		if( fid_count >= MAX_FIDUCIAL_COUNT ) break;
 	}
 
-	
 	if (valid_fiducial_count>0) {
-		average_fiducial_size = (average_fiducial_size+(total_fiducial_size/(float)valid_fiducial_count))/2.0f;
+		average_fiducial_size = total_fiducial_size/valid_fiducial_count;
 	}
 
 	//std::cout << "fiducials: " << fid_count << std::endl;
@@ -503,25 +527,19 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			max_diff = regions[i].height;
 		
 		bool add_blob = true;
-
-		// ignore root blobs of found fiducials
-		for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
-			
-			if ((*fid)->root==regions[i].region) {
-				// assig the regionx data to the fiducial
-				(*fid)->rootx = &regions[i];
-				// we can also decode the yamaarashis now
-				if ((*fid)->id==YAMA_ID) {
-					if (detect_yamaarashi) decodeYamaarashi((*fid), dest);
-					else (*fid)->id = INVALID_FIDUCIAL_ID;
-				}
-				add_blob = false;
-				break;
-			}
-		}
 		
 		if ((regions[i].width>min_object_size) && (regions[i].width<max_object_size) &&
 			(regions[i].height>min_object_size) && (regions[i].height<max_object_size) && diff < max_diff) {
+			
+			
+			// ignore root blobs of found fiducials
+			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
+				
+				if ((*fid)->root==regions[i].region) {
+					add_blob = false;
+					break;
+				}
+			}
 			
 			// ignore inner fiducial blobs
 			if (add_blob) for( int j=0; j < reg_count; ++j ) {
