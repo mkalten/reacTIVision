@@ -229,24 +229,34 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 	try {
 		yamaBlob = new BlobObject(TuioTime::getSystemTime(),yama->rootx);
 	} catch (std::exception e) {
-		yama->id = FUZZY_FIDUCIAL_ID;
+		yama->id = INVALID_FIDUCIAL_ID;
 		return;
 	}
 	
 	float blob_area = M_PI * yamaBlob->getWidth()/2 * yamaBlob->getHeight()/2;
 	float error = fabs(yamaBlob->getArea()/blob_area - 0.66f);
-	delete yamaBlob;
 	
-	if (error>0.05f) {
+	if (error>0.066f) {
 		std::cout << "yama fp: " << error << std::endl;
 		yama->id = INVALID_FIDUCIAL_ID;
+		delete yamaBlob;
 		return;
 	}
 	
-	double yx = yama->raw_x;
-	double yy = yama->raw_y;
-	double radius = yamaBlob->getScreenWidth(width) * 0.75f;
-	double angle = yama->raw_a;
+	double angle = yama->raw_a - M_PI_2;
+	
+	float bx = yamaBlob->getScreenX(width);
+	float by = yamaBlob->getScreenY(height);
+	
+	float eW = yamaBlob->getScreenWidth(width)* 0.75f;
+	float eH = yamaBlob->getScreenHeight(height)* 0.75f;
+	
+	if (yamaBlob->getAngle()>1) {
+		eW = eH;
+		eH = yamaBlob->getScreenWidth(width)* 0.75f;
+	}
+
+	delete yamaBlob;
 	
 	IntPoint point[4];
 	int pixel[4];
@@ -256,31 +266,37 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 	unsigned char bitpos = 0;
 	
 	for (int i=0;i<6;i++) {
-		double dx = sin(angle)*radius;
-		double dy = cos(angle)*radius;
 		
-		point[0].x = (int)(yx + dx);
-		point[0].y = (int)(yy - dy);
+		float apos = angle;
+
+		point[0].x = (int)(bx + cos(apos)*eW);
+		point[0].y = (int)(by + sin(apos)*eH);
 		
-		point[1].x = (int)(yx - dx);
-		point[1].y = (int)(yy + dy);
+		apos+=M_PI_2;
 		
-		point[2].x = (int)(yx + dy);
-		point[2].y = (int)(yy + dx);
+		point[2].x = (int)(bx + cos(apos)*eW);
+		point[2].y = (int)(by + sin(apos)*eH);
 		
-		point[3].x = (int)(yx - dy);
-		point[3].y = (int)(yy - dx);
+		apos+=M_PI_2;
+		
+		point[1].x = (int)(bx + cos(apos)*eW);
+		point[1].y = (int)(by + sin(apos)*eH);
+		 
+		apos+=M_PI_2;
+		 
+		point[3].x = (int)(bx + cos(apos)*eW);
+		point[3].y = (int)(by + sin(apos)*eH);
 		
 		for (int p=0;p<4;p++) {
 			pixel[p] = point[p].y*width+point[p].x;
 			if ( (pixel[p]<0) || (pixel[p]>=width*height) ) {
-				yama->id = FUZZY_FIDUCIAL_ID;
+				yama->id = INVALID_FIDUCIAL_ID;
 				return;
 			}
 			
 #ifndef NDEBUG
 			ui->setColor(255, 0, 255);
-			ui->drawLine(yx,yy,point[p].x,point[p].y);
+			ui->drawLine(bx,by,point[p].x,point[p].y);
 #endif
 			
 			if (bitpos<20) {
@@ -432,6 +448,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			propagate_descendent_count_and_max_depth_upwards( &segmenter, r, &fidtrackerx);
 		}
 		
+		if( reg_count >= MAX_FIDUCIAL_COUNT ) continue;
+
 		regions[reg_count].region = r;
 		regions[reg_count].width = r->right-r->left+1;
 		regions[reg_count].height = r->bottom-r->top+1;
@@ -468,8 +486,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			}
 			
 			++reg_count;
-			if( reg_count >= MAX_FIDUCIAL_COUNT ) break;
-
 		}
 	}
 
