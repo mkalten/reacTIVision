@@ -123,9 +123,12 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 		switch(flag) {
 			case KEY_LEFT:
 				if (setBlobSize) {
-					max_blob_size--;
-					if (max_blob_size<average_fiducial_size) max_blob_size=0;
-					if (max_blob_size==0) detect_blobs=false;
+					max_blob_size-=2;
+					if ((average_fiducial_size!=0) && (max_blob_size<average_fiducial_size)) max_blob_size=0;
+					if (max_blob_size<=0) {
+						max_blob_size = 0;
+						detect_blobs=false;
+					}
 				} else if (setObjectBlob) {
 					send_fiducial_blobs = false;
 				} else if (setFingerBlob) {
@@ -134,9 +137,9 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 				break;
 			case KEY_RIGHT:
 				if (setBlobSize) {
-					max_blob_size++;
-					if (max_blob_size==1) max_blob_size=(int)average_fiducial_size;
-					if (max_blob_size>height/2) max_blob_size=height/2;
+					max_blob_size+=2;
+					if ((average_fiducial_size!=0) && (max_blob_size==1)) max_blob_size=(int)average_fiducial_size;
+					if (max_blob_size>height) max_blob_size=height;
 					detect_blobs=true;
 				} else if (setObjectBlob) {
 					send_fiducial_blobs = true;
@@ -206,7 +209,7 @@ void FidtrackFinder::displayControl() {
 			
 		sprintf(displayText,"blob size %d",(int)max_blob_size);
 		settingValue = max_blob_size;
-		maxValue = height/2;
+		maxValue = height;
 	} else if (setObjectBlob) {
 		sprintf(displayText,"fiducial blobs %d",send_fiducial_blobs);
 		settingValue = send_fiducial_blobs;
@@ -946,7 +949,7 @@ if (detect_blobs) {
 	
 	// copy remaing "root blobs" into plain blob list
 	for (std::list<BlobObject*>::iterator bobj = rootBlobs.begin(); bobj!=rootBlobs.end(); bobj++) {
-		if ((*bobj)->getColour()==WHITE) plainBlobs.push_back((*bobj));
+		if (((*bobj)->getColour()==WHITE) && ((*bobj)->getScreenWidth(width)<=max_blob_size)  && ((*bobj)->getScreenHeight(height)<=max_blob_size)) plainBlobs.push_back((*bobj));
 		else delete (*bobj);
 	}
 	
