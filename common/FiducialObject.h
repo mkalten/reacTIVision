@@ -58,8 +58,9 @@ namespace TUIO {
 		 */
 		FloatPoint root_offset;
 		
-		int conflict_counter;
-		int conflict_id;
+		unsigned int conflict_threshold;
+		unsigned int conflict_counter;
+		unsigned int conflict_id;
 		
 	public:
 		/**
@@ -75,6 +76,7 @@ namespace TUIO {
 		 */
 		FiducialObject (TuioTime ttime, long si, int sym, float xp, float yp, float a):TuioObject(ttime, si, sym, xp, yp, a) {
 			tracking_state = FIDUCIAL_FOUND;
+			conflict_threshold = 2;
 			conflict_counter = 0;
 			conflict_id = -1;
 		};
@@ -90,12 +92,12 @@ namespace TUIO {
 		bool checkIdConflict(int c_id) {
 			if (c_id == conflict_id) {
 				conflict_counter++;
-				if (conflict_counter>2) return true;
+				conflict_threshold--;
+				if (conflict_counter>conflict_threshold) return true;
 			} else {
 				conflict_counter = 0;
 				conflict_id = c_id;
 			}
-			
 			return false;
 		}
 		
@@ -140,6 +142,8 @@ namespace TUIO {
 		 */
 		void setTrackingState (int track) {
 			tracking_state = track;
+			if (tracking_state==FIDUCIAL_FOUND) conflict_threshold++;
+			//else conflict_threshold--;
 		};
 		
 		/**
