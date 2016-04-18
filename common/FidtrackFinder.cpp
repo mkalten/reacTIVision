@@ -26,7 +26,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	FiducialFinder::init(w,h,sb,db);
 
 	if (db!=1) {
-		printf("target buffer must be grayscale\n");
+		std::cout << "target buffer must be grayscale" << std::endl;
 		return false;
 	}
 
@@ -250,7 +250,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 	delete yamaBlob;
 	
 	if (error>0.066f) {
-		std::cout << "yama fp: " << error << std::endl;
+		//std::cout << "yama fp: " << error << std::endl;
 		yama->id = INVALID_FIDUCIAL_ID;
 		return;
 	}
@@ -306,7 +306,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 	if (validation==checksum) yama->id = value;
 	else {
 		yama->id = FUZZY_FIDUCIAL_ID;
-		std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
+		//std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
 	}
 }
 
@@ -503,14 +503,15 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (fiducials[fid_count].id>=0) {
 				valid_fiducial_count ++;
 				total_fiducial_size += fiducials[fid_count].root_size;
-			}
+			} else if (fiducials[fid_count].id==YAMA_ID) fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
 
-			fiducials[fid_count].rootx = NULL;
-			fiducialList.push_back(&fiducials[fid_count]);
+			if (fiducials[fid_count].id!=INVALID_FIDUCIAL_ID) {
+				fiducialList.push_back(&fiducials[fid_count]);
+				fid_count ++;
+			}
 		}
 		
 		next = next->next;
-		++fid_count;
 		if( fid_count >= MAX_FIDUCIAL_COUNT ) break;
 	}
 
@@ -537,13 +538,13 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			
 			// ignore root blobs of found fiducials
-			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
+			/*for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 				
 				if ((*fid)->root==regions[i].region) {
 					add_blob = false;
 					break;
 				}
-			}
+			}*/
 			
 			// ignore inner fiducial blobs
 			if (add_blob) for( int j=0; j < reg_count; ++j ) {
@@ -761,6 +762,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			// we found a nearby root blob
 			if (closest_rblob!=NULL) {
+				//std::cout << "root"<< std::endl;
 				existing_object->setTrackingState(FIDUCIAL_ROOT);
 				tuioManager->updateTuioObject(existing_object,closest_rblob->getX(),closest_rblob->getY(),existing_object->getAngle());
  				drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
@@ -772,7 +774,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				
 				rootBlobs.remove(closest_rblob);
 				delete closest_rblob;
-				fiducialList.remove(closest_fid);
+				//fiducialList.remove(closest_fid);
 			}
 		}
 		
