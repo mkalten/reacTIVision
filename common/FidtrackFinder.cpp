@@ -233,63 +233,47 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 		return;
 	}
 	
+	float bx = yamaBlob->getScreenX(width);
+	float by = yamaBlob->getScreenY(height);
+	
+	float bw = yamaBlob->getScreenWidth(width)* 0.75f;
+	float bh = yamaBlob->getScreenHeight(height)* 0.75f;
+	
+	if (yamaBlob->getAngle()>1) {
+		bw = bh;
+		bh = yamaBlob->getScreenWidth(width)* 0.75f;
+	}
+	
 	float blob_area = M_PI * yamaBlob->getWidth()/2 * yamaBlob->getHeight()/2;
 	float error = fabs(yamaBlob->getArea()/blob_area - 0.66f);
+
+	delete yamaBlob;
 	
 	if (error>0.066f) {
 		std::cout << "yama fp: " << error << std::endl;
 		yama->id = INVALID_FIDUCIAL_ID;
-		delete yamaBlob;
 		return;
 	}
 	
-	double angle = yama->raw_a - M_PI_2;
-	
-	float bx = yamaBlob->getScreenX(width);
-	float by = yamaBlob->getScreenY(height);
-	
-	float eW = yamaBlob->getScreenWidth(width)* 0.75f;
-	float eH = yamaBlob->getScreenHeight(height)* 0.75f;
-	
-	if (yamaBlob->getAngle()>1) {
-		eW = eH;
-		eH = yamaBlob->getScreenWidth(width)* 0.75f;
-	}
-
-	delete yamaBlob;
-	
 	IntPoint point[4];
-	int pixel[4];
+	int pixel;
 	
 	unsigned int value = 0;
 	unsigned int checksum = 0;
 	unsigned char bitpos = 0;
 	
+	double angle = yama->raw_a - M_PI_2;
+
 	for (int i=0;i<6;i++) {
 		
 		float apos = angle;
-
-		point[0].x = (int)(bx + cos(apos)*eW);
-		point[0].y = (int)(by + sin(apos)*eH);
-		
-		apos+=M_PI_2;
-		
-		point[2].x = (int)(bx + cos(apos)*eW);
-		point[2].y = (int)(by + sin(apos)*eH);
-		
-		apos+=M_PI_2;
-		
-		point[1].x = (int)(bx + cos(apos)*eW);
-		point[1].y = (int)(by + sin(apos)*eH);
-		 
-		apos+=M_PI_2;
-		 
-		point[3].x = (int)(bx + cos(apos)*eW);
-		point[3].y = (int)(by + sin(apos)*eH);
-		
 		for (int p=0;p<4;p++) {
-			pixel[p] = point[p].y*width+point[p].x;
-			if ( (pixel[p]<0) || (pixel[p]>=width*height) ) {
+			
+			point[p].x = (int)(bx + cos(apos)*bw);
+			point[p].y = (int)(by + sin(apos)*bh);
+			
+			pixel = point[p].y*width+point[p].x;
+			if ( (pixel<0) || (pixel>=width*height) ) {
 				yama->id = INVALID_FIDUCIAL_ID;
 				return;
 			}
@@ -300,17 +284,18 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 #endif
 			
 			if (bitpos<20) {
-				if (img[pixel[p]]==0) {
+				if (img[pixel]==0) {
 					unsigned int mask = (unsigned int)pow(2,bitpos);
 					value = value|mask;
 				}
 			} else {
-				if (img[pixel[p]]==255) {
+				if (img[pixel]==255) {
 					unsigned int mask = (unsigned int)pow(2,bitpos-20);
 					checksum = checksum|mask;
 				}
 			}
 			
+			apos+=M_PI_2;
 			bitpos++;
 		}
 		
