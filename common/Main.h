@@ -35,12 +35,14 @@ struct application_settings {
 	bool invert_y;
 	bool invert_a;
 	bool yamaarashi;
+	int max_fid;
 	bool background;
     bool fullscreen;
     bool headless;
 	int finger_size;
 	int finger_sensitivity;
-	int blob_size;
+	int max_blob_size;
+	int min_blob_size;
 	bool cursor_blobs;
 	bool object_blobs;
 	int gradient_gate;

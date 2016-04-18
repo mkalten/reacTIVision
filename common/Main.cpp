@@ -74,12 +74,14 @@ void readSettings(application_settings *config) {
 	config->invert_y = false;
 	config->invert_a = false;
 	config->yamaarashi = false;
+	config->max_fid = UINT_MAX;
 	config->background = false;
 	config->fullscreen = false;
 	config->headless = false;
 	config->finger_size = 0;
 	config->finger_sensitivity = 100;
-	config->blob_size = 0;
+	config->max_blob_size = 0;
+	config->min_blob_size = 0;
 	config->object_blobs = false;
 	config->cursor_blobs = false;
 	config->gradient_gate = 32;
@@ -220,13 +222,17 @@ void readSettings(application_settings *config) {
 		if(fiducial_element->Attribute("yamaarashi")!=NULL)  {
 			if ((strcmp( fiducial_element->Attribute("yamaarashi"), "true" ) == 0) || atoi(fiducial_element->Attribute("yamaarashi"))==1) config->yamaarashi = true;
 		}
+		
+		if(fiducial_element->Attribute("max_fid")!=NULL) config->max_fid = atoi(fiducial_element->Attribute("max_fid"));
+		
 		if(fiducial_element->Attribute("amoeba")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("amoeba"));
 	}
 	
 	tinyxml2::XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();
 	if( blob_element!=NULL )
 	{
-		if(blob_element->Attribute("size")!=NULL) config->blob_size = atoi(blob_element->Attribute("size"));
+		if(blob_element->Attribute("max_size")!=NULL) config->max_blob_size = atoi(blob_element->Attribute("max_size"));
+		if(blob_element->Attribute("min_size")!=NULL) config->min_blob_size = atoi(blob_element->Attribute("min_size"));
 		
 		if(blob_element->Attribute("obj_blob")!=NULL) {
 			if ((strcmp( blob_element->Attribute("obj_blob"), "true" ) == 0) || atoi(blob_element->Attribute("obj_blob"))==1) config->object_blobs = true;
@@ -298,9 +304,9 @@ void writeSettings(application_settings *config) {
 	tinyxml2::XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();
 	if( blob_element!=NULL )
 	{
-		if(blob_element->Attribute("size")!=NULL) {
-			sprintf(config_value,"%d",config->blob_size);
-			blob_element->SetAttribute("size",config_value);
+		if(blob_element->Attribute("max_size")!=NULL) {
+			sprintf(config_value,"%d",config->max_blob_size);
+			blob_element->SetAttribute("max_size",config_value);
 		}
 		
 		if(blob_element->Attribute("obj_blob")!=NULL) {
@@ -456,7 +462,7 @@ int main(int argc, char* argv[]) {
 	if (config.background) thresholder->toggleFlag(KEY_SPACE,false);
 	engine->addFrameProcessor(thresholder);
 	
-	fiducialfinder = new FidtrackFinder(server, config.yamaarashi, config.tree_config, config.grid_config, config.finger_size, config.finger_sensitivity, config.blob_size, config.object_blobs, config.cursor_blobs);
+	fiducialfinder = new FidtrackFinder(server, &config);
 	engine->addFrameProcessor(fiducialfinder);
 	
 	calibrator = new CalibrationEngine(config.grid_config);
@@ -469,7 +475,7 @@ int main(int argc, char* argv[]) {
 	
 	config.finger_size = ((FidtrackFinder*)fiducialfinder)->getFingerSize();
 	config.finger_sensitivity = ((FidtrackFinder*)fiducialfinder)->getFingerSensitivity();
-	config.blob_size = ((FidtrackFinder*)fiducialfinder)->getBlobSize();
+	config.max_blob_size = ((FidtrackFinder*)fiducialfinder)->getBlobSize();
 	config.object_blobs = ((FidtrackFinder*)fiducialfinder)->getFiducialBlob();
 	config.cursor_blobs = ((FidtrackFinder*)fiducialfinder)->getFingerBlob();
 	config.yamaarashi = ((FidtrackFinder*)fiducialfinder)->getYamaarashi();

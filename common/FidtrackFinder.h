@@ -26,6 +26,7 @@
 #include "segment.h"
 #include "fidtrackX.h"
 #include <assert.h>
+#include "main.h"
 
 #define MAX_FIDUCIAL_COUNT 512
 
@@ -34,10 +35,10 @@ using namespace TUIO;
 class FidtrackFinder: public FiducialFinder
 {
 public:
-	FidtrackFinder(TUIO::TuioManager *manager, bool do_yama, const char* tree_cfg, const char* grid_cfg, int finger_size, int finger_sens, int blob_size, bool obj_blobs, bool cur_blobs) : FiducialFinder (manager,grid_cfg) {
+	FidtrackFinder(TUIO::TuioManager *manager, application_settings *config) : FiducialFinder (manager,config->grid_config) {
 		
 		#ifdef __APPLE__
-		if (strstr(tree_cfg,".trees")!=NULL) {
+		if (strstr(config->tree_config,".trees")!=NULL) {
 			char app_path[1024];
 			CFBundleRef mainBundle = CFBundleGetMainBundle();
 			CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
@@ -45,10 +46,10 @@ public:
 			CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);
 			CFRelease( mainBundleURL);
 			CFRelease( cfStringRef);
-			sprintf(tree_config,"%s/Contents/Resources/%s",app_path,tree_cfg);
-		} else sprintf(tree_config,"%s",tree_cfg);
+			sprintf(tree_config,"%s/Contents/Resources/%s",app_path,config->tree_config);
+		} else sprintf(tree_config,"%s",config->tree_config);
 #else
-		sprintf(tree_config,"%s",tree_cfg);
+		sprintf(tree_config,"%s",config->tree_config);
 #endif
 		
 		position_threshold = 0.0f;
@@ -61,17 +62,20 @@ public:
 		send_finger_blobs = false;
 		send_fiducial_blobs = false;
 		
-		if (finger_size>0) average_finger_size = finger_size;
+		if (config->finger_size>0) average_finger_size = config->finger_size;
 		else detect_fingers = false;
-		finger_sensitivity = finger_sens/100.0f;
+		finger_sensitivity = config->finger_sensitivity/100.0f;
 		
-		if (blob_size>0) max_blob_size = blob_size;
-		else detect_blobs = false;
 		
-		send_fiducial_blobs = obj_blobs;
-		send_finger_blobs = cur_blobs;
+		max_blob_size = config->max_blob_size;
+		min_blob_size = config->min_blob_size;
+		if (max_blob_size==0) detect_blobs = false;
 		
-		detect_yamaarashi = do_yama;
+		send_fiducial_blobs = config->object_blobs;
+		send_finger_blobs = config->cursor_blobs;
+		
+		detect_yamaarashi = config->yamaarashi;
+		max_fiducial_id = config->max_fid;
 	};
 	
 	~FidtrackFinder() {
@@ -122,6 +126,7 @@ private:
 
 	bool detect_blobs;
 	int max_blob_size;
+	int min_blob_size;
 	
 	float position_threshold;
 	float rotation_threshold;
@@ -129,6 +134,7 @@ private:
 	bool setFingerSize, setFingerSensitivity;
 	bool setBlobSize, setObjectBlob, setFingerBlob;
 	
+	unsigned int max_fiducial_id;
 	bool detect_yamaarashi;
 	void decodeYamaarashi(FiducialX *yama, unsigned char *img);
 	float checkFinger(BlobObject *fblob);

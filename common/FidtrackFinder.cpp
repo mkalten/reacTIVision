@@ -500,6 +500,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				}
 			}
 			
+			if (fiducials[fid_count].id>max_fiducial_id)
+				fiducials[fid_count].id = FUZZY_FIDUCIAL_ID;
+			
 			if (fiducials[fid_count].id>=0) {
 				valid_fiducial_count ++;
 				total_fiducial_size += fiducials[fid_count].root_size;
@@ -601,7 +604,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			}
 			
-		} else if (detect_blobs && (regions[i].colour==WHITE) && (regions[i].width<=max_blob_size) && (regions[i].height<=max_blob_size)) {
+		} else if (detect_blobs && (regions[i].colour==WHITE) && (regions[i].width>=min_blob_size) && (regions[i].height>=min_blob_size) && (regions[i].width<=max_blob_size) && (regions[i].height<=max_blob_size)) {
 			
 			// ignore saturated blobs
 			if (regions[i].inner_span_count==16) continue;
@@ -774,7 +777,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				
 				rootBlobs.remove(closest_rblob);
 				delete closest_rblob;
-				//fiducialList.remove(closest_fid);
+				fiducialList.remove(closest_fid);
 			}
 		}
 		
@@ -952,7 +955,7 @@ if (detect_blobs) {
 	
 	// copy remaing "root blobs" into plain blob list
 	for (std::list<BlobObject*>::iterator bobj = rootBlobs.begin(); bobj!=rootBlobs.end(); bobj++) {
-		if (((*bobj)->getColour()==WHITE) && ((*bobj)->getScreenWidth(width)<=max_blob_size)  && ((*bobj)->getScreenHeight(height)<=max_blob_size)) plainBlobs.push_back((*bobj));
+		if (((*bobj)->getColour()==WHITE) && ((*bobj)->getScreenWidth(width)>=min_blob_size)  && ((*bobj)->getScreenHeight(height)>=min_blob_size)&& ((*bobj)->getScreenWidth(width)<=max_blob_size)  && ((*bobj)->getScreenHeight(height)<=max_blob_size)) plainBlobs.push_back((*bobj));
 		else delete (*bobj);
 	}
 	
