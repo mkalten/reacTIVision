@@ -96,7 +96,6 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, bool do_full_analyis):Tu
 	xpos = obBox[4].x/screenWidth;
 	ypos = obBox[4].y/screenHeight;
 	
-	
 	/*if(dmap) {
 		int pixel = screenWidth*(int)floor(ypos+.5f) + (int)floor(xpos+.5f);
 		if ((pixel>=0) || (pixel<screenWidth*screenHeight)) {
@@ -114,7 +113,7 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, bool do_full_analyis):Tu
 	
 	float ak = obBox[1].x - obBox[0].x;
 	float hp  = obBox[1].distance(&obBox[0]);
-	angle = acos(ak/hp);
+	angle = acosf(ak/hp);
 	if (height>width) {
 		width=obBox[5].y/screenWidth;
 		height = obBox[5].x/screenHeight;

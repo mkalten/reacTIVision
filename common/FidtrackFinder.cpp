@@ -236,21 +236,25 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 	float bx = yamaBlob->getScreenX(width);
 	float by = yamaBlob->getScreenY(height);
 	
-	float bw = yamaBlob->getScreenWidth(width)* 0.75f;
-	float bh = yamaBlob->getScreenHeight(height)* 0.75f;
+	float dx = (bx - yama->raw_x)/width;
+	float dy = (by - yama->raw_y)/height;
+	float dist = sqrtf(dx*dx + dy*dy);
+	
+	float bw = yamaBlob->getScreenWidth(width)* 0.73f;
+	float bh = yamaBlob->getScreenHeight(height)* 0.73f;
 	
 	if (yamaBlob->getAngle()>1) {
 		bw = bh;
-		bh = yamaBlob->getScreenWidth(width)* 0.75f;
+		bh = yamaBlob->getScreenWidth(width)* 0.73f;
 	}
 	
 	float blob_area = M_PI * yamaBlob->getWidth()/2 * yamaBlob->getHeight()/2;
 	float error = fabs(yamaBlob->getArea()/blob_area - 0.66f);
 
 	delete yamaBlob;
-	
-	if (error>0.066f) {
-		//std::cout << "yama fp: " << error << std::endl;
+
+	if ((error>0.1f) || (dist>0.01f)) {
+		//std::cout << "yama fp: " << error << " " << dist << std::endl;
 		yama->id = INVALID_FIDUCIAL_ID;
 		return;
 	}
@@ -262,15 +266,15 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 	unsigned int checksum = 0;
 	unsigned char bitpos = 0;
 	
-	double angle = yama->raw_a - M_PI_2;
+	float angle = yama->raw_a - M_PI_2;
 
 	for (int i=0;i<6;i++) {
 		
 		float apos = angle;
 		for (int p=0;p<4;p++) {
 			
-			point[p].x = (int)(bx + cos(apos)*bw);
-			point[p].y = (int)(by + sin(apos)*bh);
+			point[p].x = (int)(bx + cosf(apos)*bw);
+			point[p].y = (int)(by + sinf(apos)*bh);
 			
 			pixel = point[p].y*width+point[p].x;
 			if ( (pixel<0) || (pixel>=width*height) ) {
@@ -320,38 +324,40 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	std::vector<BlobPoint> contourList = fblob->getFullContour();
 	float bx = fblob->getScreenX(width);
 	float by = fblob->getScreenY(height);
+	float bw = fblob->getScreenWidth(width)/2.0f;
+	float bh = fblob->getScreenHeight(height)/2.0f;
 	float r = 2*M_PI-fblob->getAngle();
-	float Sr = sin(r);
-	float Cr = cos(r);
+	float Sr = sinf(r);
+	float Cr = cosf(r);
 	float distance = 0.0f;
 	for (unsigned int i = 0; i < contourList.size(); i++) {
 		BlobPoint pt = contourList[i];
-		double px = pt.x - bx;
-		double py = pt.y - by;
+		float px = pt.x - bx;
+		float py = pt.y - by;
 		
-		double pX = px*Cr - py*Sr;
-		double pY = py*Cr + px*Sr;
+		float pX = px*Cr - py*Sr;
+		float pY = py*Cr + px*Sr;
 		
 		//ui->setColor(255,0,255);
 		//ui->drawPoint(bx+pX,by+pY);
 		
-		double aE = atan2(pY, pX);
+		float aE = atan2f(pY, pX);
 		
-		double eX = fblob->getScreenWidth(width)/2.0f * cos(aE);
-		double eY = fblob->getScreenHeight(height)/2.0f * sin(aE);
+		float eX = bw * cosf(aE);
+		float eY = bh * sinf(aE);
 		
 		//ui->setColor(0,255,0);
 		//ui->drawPoint(bx+eX,by+eY);
 		
-		double dx = pX-eX;
-		double dy = pY-eY;
+		float dx = pX-eX;
+		float dy = pY-eY;
 		
 		distance += dx*dx+dy*dy;
 	}
 
 	if(!empty_grid) {
-		int xp = (int)floor(fblob->getX()*width +0.5f);
-		int yp = (int)floor(fblob->getY()*height+0.5f);
+		int xp = (int)floor(fblob->getScreenX(width) +0.5f);
+		int yp = (int)floor(fblob->getScreenY(height)+0.5f);
 		int pixel = width*yp + xp;
 		if ((pixel>=0) || (pixel<width*height)) {
 			fblob->setX(dmap[ pixel ].x/width);
@@ -359,7 +365,7 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		}
 	}
 	
-	return (distance/contourList.size())/fblob->getScreenWidth(width);
+	return (distance/contourList.size())/bw;
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
