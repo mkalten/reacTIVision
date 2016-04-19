@@ -19,6 +19,7 @@
 #ifndef FIDTRACKFINDER
 #define FIDTRACKFINDER
 
+#include "Main.h"
 #include "FiducialFinder.h"
 #include "FiducialObject.h"
 #include "BlobObject.h"
@@ -26,7 +27,6 @@
 #include "segment.h"
 #include "fidtrackX.h"
 #include <assert.h>
-#include "main.h"
 
 #define MAX_FIDUCIAL_COUNT 512
 
