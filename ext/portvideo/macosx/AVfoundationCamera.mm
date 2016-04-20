@@ -530,6 +530,8 @@ bool AVfoundationCamera::hasCameraSetting(int mode) {
             return [uvcController contrastSupported];
         case SHARPNESS:
             return [uvcController sharpnessSupported];
+		case GAMMA:
+			return [uvcController gammaSupported];
         case GAIN:
             return [uvcController gainSupported];
         case AUTO_GAIN:
@@ -571,6 +573,8 @@ bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
             [uvcController setSharpness:setting]; return true;
         case GAIN:
             [uvcController setGain:setting]; return true;
+		case GAMMA:
+			[uvcController setGamma:setting]; return true;
         case EXPOSURE:
             [uvcController setExposureTime:setting]; return true;
         case FOCUS:
@@ -601,6 +605,8 @@ int AVfoundationCamera::getCameraSetting(int mode) {
             return [uvcController sharpness];
         case GAIN:
             return [uvcController gain];
+		case GAMMA:
+			return [uvcController gamma];
         case EXPOSURE:
             return [uvcController exposureTime];
         case FOCUS:
@@ -627,6 +633,7 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
         case CONTRAST:      return [uvcController maxContrast];
         case SHARPNESS:     return [uvcController maxSharpness];
         case GAIN:          return [uvcController maxGain];
+		case GAMMA:         return [uvcController maxGamma];
         case EXPOSURE:      return [uvcController maxExposureTime];
         case FOCUS:         return [uvcController maxFocus];
         case WHITE:         return [uvcController maxWhiteBalance];
@@ -647,6 +654,7 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
         case BRIGHTNESS:    return [uvcController minBright];
         case CONTRAST:      return [uvcController minContrast];
         case GAIN:          return [uvcController minGain];
+		case GAMMA:         return [uvcController minGamma];
         case EXPOSURE:      return [uvcController minExposureTime];
         case SHARPNESS:     return [uvcController minSharpness];
         case FOCUS:         return [uvcController minFocus];
@@ -680,6 +688,10 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
             [uvcController resetGain];
             default_gain = [uvcController gain];
             break;
+		case GAMMA:
+			[uvcController resetGamma];
+			default_gamma = [uvcController gamma];
+			break;
         case EXPOSURE:
             [uvcController resetExposureTime];
             default_exposure = [uvcController exposureTime];
@@ -715,6 +727,7 @@ int AVfoundationCamera::getDefaultCameraSetting(int mode) {
         case BRIGHTNESS: return default_brightness;
         case CONTRAST: return default_contrast;
         case GAIN: return default_gain;
+		case GAMMA: return default_gamma;
         case EXPOSURE: return default_exposure;
         case SHARPNESS: return default_sharpness;
         case FOCUS: return default_focus;
