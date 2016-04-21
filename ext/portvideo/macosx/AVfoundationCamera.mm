@@ -315,14 +315,12 @@ bool AVfoundationCamera::initCamera() {
 		
         if (!cam_format) continue; // wrong format
         
-        AVFrameRateRange *lastRange = NULL;
         for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
             float framerate = round([frameRateRange maxFrameRate]*100)/100.0f;
             if (framerate==cfg->cam_fps) { // found exact framerate
                 selectedFrameRateRange = frameRateRange;
-                break;
+				break;
             }
-            lastRange = frameRateRange;
         }
         
         if (selectedFrameRateRange) break;
@@ -347,7 +345,6 @@ bool AVfoundationCamera::initCamera() {
     
     for (AVFrameRateRange *frameRateRange in [[videoDevice activeFormat] videoSupportedFrameRateRanges])
     {
-        //selectedFrameRateRange = frameRateRange;
         cfg->cam_fps = roundf([frameRateRange maxFrameRate]*100)/100;
         if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [videoDevice activeVideoMinFrameDuration])) break;
     }
@@ -554,8 +551,10 @@ bool AVfoundationCamera::hasCameraSetting(int mode) {
             return [uvcController hueSupported];
         case AUTO_HUE:
             return hasCameraSettingAuto(COLOR_HUE);
+		case POWERLINE:
+			return hasCameraSettingAuto(POWERLINE);
     }
-    
+	
     return false;
 }
 
@@ -585,8 +584,10 @@ bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
             [uvcController setBacklight:setting]; return true;
         case COLOR_HUE:
             [uvcController setHue:setting]; return true;
+		case POWERLINE:
+			[uvcController setPowerLine:setting]; return true;
     }
-    
+	
     return false;
 }
 
@@ -617,8 +618,10 @@ int AVfoundationCamera::getCameraSetting(int mode) {
             return [uvcController backlight];
         case COLOR_HUE:
             return [uvcController hue];
+		case POWERLINE:
+			return [uvcController powerLine];
     }
-    
+	
     return 0;
 }
 
@@ -639,6 +642,7 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
         case WHITE:         return [uvcController maxWhiteBalance];
         case BACKLIGHT:     return [uvcController maxBacklight];
         case COLOR_HUE:     return [uvcController maxHue];
+		case POWERLINE:		return [uvcController maxPowerLine];
     }
     
     return 0;
@@ -661,6 +665,7 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
         case WHITE:         return [uvcController minWhiteBalance];
         case BACKLIGHT:     return [uvcController minBacklight];
         case COLOR_HUE:     return [uvcController minHue];
+		case POWERLINE:		return [uvcController minPowerLine];
     }
     
     return 0;
@@ -712,9 +717,12 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
             [uvcController resetHue];
             default_hue = [uvcController hue];
             break;
-            
+		case POWERLINE:
+			[uvcController resetPowerLine];
+			default_powerline = [uvcController powerLine];
+			break;
     }
-    
+	
     return false;
 }
 
@@ -734,8 +742,9 @@ int AVfoundationCamera::getDefaultCameraSetting(int mode) {
         case WHITE: return default_white;
         case BACKLIGHT: return default_backlight;
         case COLOR_HUE: return default_hue;
+		case POWERLINE: return default_powerline;
     }
-    
+	
     return 0;
 }
 
