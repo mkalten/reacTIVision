@@ -204,6 +204,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
         else sprintf(cam_cfg.name,"unknown device");
 		
 		std::vector<CameraConfig> fmt_list;
+		int last_format = FORMAT_UNKNOWN;
         NSArray *captureDeviceFormats = [device formats];
 		for (AVCaptureDeviceFormat *format in captureDeviceFormats) {
 						
@@ -219,6 +220,13 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
 				}
 			}
 			
+			if (cam_cfg.cam_format != last_format) {
+				std::sort(fmt_list.begin(), fmt_list.end());
+				cfg_list.insert( cfg_list.end(), fmt_list.begin(), fmt_list.end() );
+				fmt_list.clear();
+				last_format = cam_cfg.cam_format;
+			}
+						
             CMVideoDimensions dim = CMVideoFormatDescriptionGetDimensions((CMVideoFormatDescriptionRef)[format formatDescription]);
             
             cam_cfg.cam_width = dim.width;
@@ -552,7 +560,7 @@ bool AVfoundationCamera::hasCameraSetting(int mode) {
         case AUTO_HUE:
             return hasCameraSettingAuto(COLOR_HUE);
 		case POWERLINE:
-			return hasCameraSettingAuto(POWERLINE);
+			return [uvcController powerLineSupported];
     }
 	
     return false;
