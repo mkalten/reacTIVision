@@ -47,6 +47,7 @@ static DWORD WINAPI threshold_thread_function( LPVOID obj )
 			continue;
 		}
 #endif
+		if (data->done) return(0);
 		// equalizer
 		if (data->average>=0) {
 			int e = 0;
@@ -95,6 +96,27 @@ int getDividers(short number, short *dividers) {
 
 bool FrameThresholder::init(int w, int h, int sb, int db) {
 	
+
+                if (initialized) {
+
+                        for (int i=0;i<thread_count;i++) {
+				tdata[i].done = true;
+#ifndef WIN32
+				pthread_cond_signal(&tdata[i].cond);
+#else
+				SetEvent(tdata[i].ghWriteEvent);
+#endif
+				while(tdata[i].process) usleep(10);
+
+				terminate_tiled_bernsen_thresholder( thresholder[i] );
+				delete thresholder[i];
+                        }
+
+                        delete tile_sizes;
+                        delete thresholder;
+                        delete[] pointmap;
+                }
+
 	FrameProcessor::init(w,h,sb,db);
 
 	short tw = w;
