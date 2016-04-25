@@ -68,6 +68,8 @@ public:
 		
 		currentSetting = INV_NONE;
 		show_settings = false;
+
+		dmap = NULL;
 	}
 	
 	~FiducialFinder() {

@@ -423,6 +423,7 @@ VisionEngine::VisionEngine(const char* name, application_settings *config)
 , frames_( 0 )
 , width_( WIDTH )
 , height_( HEIGHT )
+, format_( 1 )
 {
     app_config_ = config;
     camera_config_ = CameraTool::readSettings(app_config_->camera_config);
