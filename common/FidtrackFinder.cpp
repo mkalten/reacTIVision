@@ -395,7 +395,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	float min_region_size = min_finger_size;
 	if ((average_finger_size==0) || (min_region_size>min_object_size)) min_region_size = min_object_size;
-	else if ((max_blob_size>0) && (min_object_size>min_blob_size)) min_region_size = min_blob_size;
+	else if ((min_blob_size>0) && (min_object_size>min_blob_size)) min_region_size = min_blob_size;
 	
 	float max_region_size = max_blob_size;
 	if (max_blob_size<max_object_size) max_region_size = max_object_size;
@@ -543,13 +543,13 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			
 			// ignore root blobs of found fiducials
-			/*for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
+			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 				
 				if ((*fid)->root==regions[i].region) {
 					add_blob = false;
 					break;
 				}
-			}*/
+			}
 			
 			// ignore inner fiducial blobs
 			if (add_blob) for( int j=0; j < reg_count; ++j ) {
