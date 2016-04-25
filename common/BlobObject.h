@@ -39,11 +39,15 @@ namespace TUIO {
 
 	public:
 		
-		BlobObject(TuioTime ttime, RegionX *region, bool do_full_analysis=false);
+		BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool do_full_analysis=false);
 		
+		//void setX(float xp) { xpos = xp; }
+		//void setY(float yp) { ypos = yp; }
 		
-		void setX(float xp) { xpos = xp; }
-		void setY(float yp) { ypos = yp; }
+		float getRawX() { return rawXpos; }
+		float getRawY() { return rawYpos; }
+		float getRawWidth() { return rawWidth; }
+		float getRawHeight() { return rawHeight; }
 
 		std::vector<BlobPoint> getOrientedBoundingBox() {
 			return obBox;
@@ -106,6 +110,9 @@ namespace TUIO {
 		
 		static int screenWidth, screenHeight;
 		static UserInterface* ui;
+		
+		float rawXpos, rawYpos;
+		float rawWidth, rawHeight;
 
 	};
 };

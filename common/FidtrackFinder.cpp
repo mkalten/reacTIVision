@@ -227,25 +227,25 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 
 	BlobObject *yamaBlob = NULL;
 	try {
-		yamaBlob = new BlobObject(TuioTime::getSystemTime(),yama->rootx);
+		yamaBlob = new BlobObject(TuioTime::getSystemTime(),yama->rootx, dmap);
 	} catch (std::exception e) {
 		yama->id = INVALID_FIDUCIAL_ID;
 		return;
 	}
 	
-	float bx = yamaBlob->getScreenX(width);
-	float by = yamaBlob->getScreenY(height);
+	float bx = yamaBlob->getRawX();
+	float by = yamaBlob->getRawY();
 	
 	float dx = (bx - yama->raw_x)/width;
 	float dy = (by - yama->raw_y)/height;
 	float dist = sqrtf(dx*dx + dy*dy);
 	
-	float bw = yamaBlob->getScreenWidth(width)* 0.73f;
-	float bh = yamaBlob->getScreenHeight(height)* 0.73f;
+	float bw = yamaBlob->getRawWidth()* 0.73f;
+	float bh = yamaBlob->getRawHeight()* 0.73f;
 	
 	if (yamaBlob->getAngle()>1) {
 		bw = bh;
-		bh = yamaBlob->getScreenWidth(width)* 0.73f;
+		bh = yamaBlob->getRawWidth()* 0.73f;
 	}
 	
 	float blob_area = M_PI * yamaBlob->getWidth()/2 * yamaBlob->getHeight()/2;
@@ -322,13 +322,14 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	}
 	
 	std::vector<BlobPoint> contourList = fblob->getFullContour();
-	float bx = fblob->getScreenX(width);
-	float by = fblob->getScreenY(height);
-	float bw = fblob->getScreenWidth(width)/2.0f;
-	float bh = fblob->getScreenHeight(height)/2.0f;
+	float bx = fblob->getRawX();
+	float by = fblob->getRawY();
+	float bw = fblob->getRawWidth()/2.0f;
+	float bh = fblob->getRawHeight()/2.0f;
 	float r = 2*M_PI-fblob->getAngle();
 	float Sr = sinf(r);
 	float Cr = cosf(r);
+	
 	float distance = 0.0f;
 	for (unsigned int i = 0; i < contourList.size(); i++) {
 		BlobPoint pt = contourList[i];
@@ -355,17 +356,9 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		distance += dx*dx+dy*dy;
 	}
 
-	if(!empty_grid) {
-		int xp = (int)floor(fblob->getScreenX(width) +0.5f);
-		int yp = (int)floor(fblob->getScreenY(height)+0.5f);
-		int pixel = width*yp + xp;
-		if ((pixel>=0) || (pixel<width*height)) {
-			fblob->setX(dmap[ pixel ].x/width);
-			fblob->setY(dmap[ pixel ].y/height);
-		}
-	}
-	
-	return (distance/contourList.size())/bw;
+	float size = bw;
+	if (bh > bw) size = bh;
+	return (distance/contourList.size())/size;
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
@@ -573,7 +566,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (add_blob) {
 				BlobObject *root_blob = NULL;
 				try {
-					root_blob = new BlobObject(frameTime,&regions[i]);
+					root_blob = new BlobObject(frameTime,&regions[i],dmap);
 					rootBlobs.push_back(root_blob);
 				} catch (std::exception e) { if (root_blob) delete root_blob; }
 			}
@@ -605,7 +598,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (add_blob) {
 				BlobObject *finger_blob = NULL;
 				try {
-					finger_blob = new BlobObject(frameTime,&regions[i],true);
+					finger_blob = new BlobObject(frameTime,&regions[i],dmap,true);
 					fingerBlobs.push_back(finger_blob);
 				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			}
@@ -618,7 +611,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			// add the remaining plain blob
 			BlobObject *plain_blob = NULL;
 			try {
-				plain_blob = new BlobObject(frameTime,&regions[i]);
+				plain_blob = new BlobObject(frameTime,&regions[i],dmap);
 				plainBlobs.push_back(plain_blob);
 			} catch (std::exception e) { if (plain_blob) delete plain_blob; }
 		}
@@ -699,7 +692,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (send_fiducial_blobs) {
 				BlobObject *fid_blob = NULL;
 				try {
-					fid_blob = new BlobObject(frameTime,closest_fid->rootx);
+					fid_blob = new BlobObject(frameTime,closest_fid->rootx,dmap);
 					TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
 					if (existing_blob) tuioManager->updateTuioBlob(existing_blob,fid_blob->getX(),fid_blob->getY(),fid_blob->getAngle(),fid_blob->getWidth(),fid_blob->getHeight(),fid_blob->getArea());
 
@@ -719,7 +712,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (send_fiducial_blobs) {
 				BlobObject *fid_blob = NULL;
 				try {
-					fid_blob = new BlobObject(frameTime,alt_fid->rootx);
+					fid_blob = new BlobObject(frameTime,alt_fid->rootx,dmap);
 					TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
 					if (existing_blob) tuioManager->updateTuioBlob(existing_blob,fid_blob->getX(),fid_blob->getY(),fid_blob->getAngle(),fid_blob->getWidth(),fid_blob->getHeight(),fid_blob->getArea());
 				} catch (std::exception e) { if (fid_blob) delete fid_blob; }
@@ -744,7 +737,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				if (send_fiducial_blobs) {
 					BlobObject *fid_blob = NULL;
 					try {
-						fid_blob = new BlobObject(frameTime,alt_fid->rootx);
+						fid_blob = new BlobObject(frameTime,alt_fid->rootx,dmap);
 						TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
 						if (existing_blob) tuioManager->updateTuioBlob(existing_blob,fid_blob->getX(),fid_blob->getY(),fid_blob->getAngle(),fid_blob->getWidth(),fid_blob->getHeight(),fid_blob->getArea());
 					} catch (std::exception e) { if (fid_blob) delete fid_blob; }
@@ -843,7 +836,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		if (send_fiducial_blobs) {
 			BlobObject *fid_blob = NULL;
 			try {
-				fid_blob = new BlobObject(frameTime,fiducial->rootx);
+				fid_blob = new BlobObject(frameTime,fiducial->rootx,dmap);
 				tuioManager->addExternalTuioBlob(fid_blob);
 				fid_blob->setSessionID(add_object->getSessionID());
 
@@ -961,7 +954,7 @@ if (detect_blobs) {
 	
 	// copy remaing "root blobs" into plain blob list
 	for (std::list<BlobObject*>::iterator bobj = rootBlobs.begin(); bobj!=rootBlobs.end(); bobj++) {
-		if (((*bobj)->getColour()==WHITE) && ((*bobj)->getScreenWidth(width)>=min_blob_size)  && ((*bobj)->getScreenHeight(height)>=min_blob_size)&& ((*bobj)->getScreenWidth(width)<=max_blob_size)  && ((*bobj)->getScreenHeight(height)<=max_blob_size)) plainBlobs.push_back((*bobj));
+		if (((*bobj)->getColour()==WHITE) && ((*bobj)->getRawWidth()>=min_blob_size)  && ((*bobj)->getRawHeight()>=min_blob_size)&& ((*bobj)->getRawWidth()<=max_blob_size)  && ((*bobj)->getRawHeight()<=max_blob_size)) plainBlobs.push_back((*bobj));
 		else delete (*bobj);
 	}
 	

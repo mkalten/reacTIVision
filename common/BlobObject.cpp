@@ -23,7 +23,7 @@ int BlobObject::screenWidth = WIDTH;
 int BlobObject::screenHeight = HEIGHT;
 UserInterface* BlobObject::ui = NULL;
 
-BlobObject::BlobObject(TuioTime ttime, RegionX *region, bool do_full_analyis):TuioBlob(ttime, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
+BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool do_full_analyis):TuioBlob(ttime, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
 	
 	
 	if (region==NULL) throw std::exception();
@@ -93,18 +93,22 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, bool do_full_analyis):Tu
 	 #endif
 	 */
 	
+	rawXpos = obBox[4].x;
+	rawYpos = obBox[4].y;
+	
 	xpos = obBox[4].x/screenWidth;
 	ypos = obBox[4].y/screenHeight;
 	
-	/*if(dmap) {
+	if(dmap) {
 		int pixel = screenWidth*(int)floor(ypos+.5f) + (int)floor(xpos+.5f);
 		if ((pixel>=0) || (pixel<screenWidth*screenHeight)) {
-	 xpos = dmap[ pixel ].x;
-	 ypos = dmap[ pixel ].y;
+			xpos = dmap[ pixel ].x;
+			ypos = dmap[ pixel ].y;
 		}
-		//if ((regions[reg_count].x==0) && (regions[reg_count].y==0)) continue;
-	 }*/
+	}
 	
+	rawWidth = obBox[5].x;
+	rawHeight = obBox[5].y;
 	
 	width = obBox[5].x/screenWidth;
 	height = obBox[5].y/screenHeight;
