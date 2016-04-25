@@ -759,6 +759,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			for (std::list<BlobObject*>::iterator rblb = rootBlobs.begin(); rblb!=rootBlobs.end(); rblb++) {
 				BlobObject *root_blob = (*rblb);
 				float distance = fpos.getScreenDistance(root_blob->getX(),root_blob->getY(),width,height);
+
 				if ((distance<closest) && (distance<existing_object->getRootSize()/1.1f) && (root_blob->getColour()==existing_object->getRootColour())) {
 					closest_rblob = root_blob;
 					closest = distance;
@@ -767,7 +768,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			// we found a nearby root blob
 			if (closest_rblob!=NULL) {
-				//std::cout << "root"<< std::endl;
 				existing_object->setTrackingState(FIDUCIAL_ROOT);
 				tuioManager->updateTuioObject(existing_object,closest_rblob->getX(),closest_rblob->getY(),existing_object->getAngle());
  				drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());

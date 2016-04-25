@@ -96,22 +96,22 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool d
 	rawXpos = obBox[4].x;
 	rawYpos = obBox[4].y;
 	
-	xpos = obBox[4].x/screenWidth;
-	ypos = obBox[4].y/screenHeight;
-	
 	if(dmap) {
-		int pixel = screenWidth*(int)floor(ypos+.5f) + (int)floor(xpos+.5f);
+		int pixel = screenWidth*(int)floor(rawYpos+.5f) + (int)floor(rawXpos+.5f);
 		if ((pixel>=0) || (pixel<screenWidth*screenHeight)) {
-			xpos = dmap[ pixel ].x;
-			ypos = dmap[ pixel ].y;
+			xpos = dmap[ pixel ].x/(float)screenWidth;
+			ypos = dmap[ pixel ].y/(float)screenHeight;
 		}
+	} else {
+		xpos = rawXpos/screenWidth;
+		ypos = rawYpos/screenHeight;
 	}
 	
 	rawWidth = obBox[5].x;
 	rawHeight = obBox[5].y;
 	
-	width = obBox[5].x/screenWidth;
-	height = obBox[5].y/screenHeight;
+	width = rawWidth/screenWidth;
+	height = rawHeight/screenHeight;
 	
 	area = (float)region->area/(screenWidth*screenHeight);
 	
@@ -119,8 +119,8 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool d
 	float hp  = obBox[1].distance(&obBox[0]);
 	angle = acosf(ak/hp);
 	if (height>width) {
-		width=obBox[5].y/screenWidth;
-		height = obBox[5].x/screenHeight;
+		width = rawHeight/screenWidth;
+		height = rawWidth/screenHeight;
 		angle+=3*M_PI/2.0f;
 	}
 	angle=2*M_PI-angle;
