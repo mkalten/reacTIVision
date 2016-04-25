@@ -75,6 +75,7 @@ public:
 		send_finger_blobs = config->cursor_blobs;
 		
 		detect_yamaarashi = config->yamaarashi;
+		invert_yamaarashi = config->yama_flip;
 		max_fiducial_id = config->max_fid;
 	};
 	
@@ -136,6 +137,7 @@ private:
 	
 	unsigned int max_fiducial_id;
 	bool detect_yamaarashi;
+	bool invert_yamaarashi;
 	void decodeYamaarashi(FiducialX *yama, unsigned char *img);
 	float checkFinger(BlobObject *fblob);
 };

@@ -299,11 +299,14 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 				}
 			}
 			
-			apos+=M_PI_2;
+			if (invert_yamaarashi) apos+=M_PI_2;
+			else apos-=M_PI_2;
 			bitpos++;
 		}
 		
-		angle += M_PI/12.0f;
+		if (invert_yamaarashi) angle += M_PI/12.0f;
+		else angle -= M_PI/12.0f;
+		
 	}
 	
 	unsigned int validation = value%13;

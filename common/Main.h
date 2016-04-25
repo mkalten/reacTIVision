@@ -35,6 +35,7 @@ struct application_settings {
 	bool invert_y;
 	bool invert_a;
 	bool yamaarashi;
+	bool yama_flip;
 	int max_fid;
 	bool background;
     bool fullscreen;

@@ -74,6 +74,7 @@ void readSettings(application_settings *config) {
 	config->invert_y = false;
 	config->invert_a = false;
 	config->yamaarashi = false;
+	config->yama_flip = false;
 	config->max_fid = UINT_MAX;
 	config->background = false;
 	config->fullscreen = false;
@@ -221,6 +222,10 @@ void readSettings(application_settings *config) {
 	{
 		if(fiducial_element->Attribute("yamaarashi")!=NULL)  {
 			if ((strcmp( fiducial_element->Attribute("yamaarashi"), "true" ) == 0) || atoi(fiducial_element->Attribute("yamaarashi"))==1) config->yamaarashi = true;
+		}
+		
+		if(fiducial_element->Attribute("flip")!=NULL)  {
+			if ((strcmp( fiducial_element->Attribute("flip"), "true" ) == 0) || atoi(fiducial_element->Attribute("flip"))==1) config->yama_flip = true;
 		}
 		
 		if(fiducial_element->Attribute("max_fid")!=NULL) config->max_fid = atoi(fiducial_element->Attribute("max_fid"));
