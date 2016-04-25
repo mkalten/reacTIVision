@@ -7,8 +7,8 @@ PShape check[] = new PShape[4];
 
 PGraphics pdf;
 
-int border = 14;
-int fiducial_size_mm = 36;
+int border = 22;
+int fiducial_size_mm = 46;
 int fiducial_size;
 
 int xpos = border;
@@ -92,12 +92,12 @@ void render() {
     pdf.shape(fiducial,xpos, ypos, fiducial_size,fiducial_size);
   
     pdf.fill(0);
-    pdf.text("ID "+id,xpos,ypos+fiducial_size+border);
+    pdf.text("ID "+id,xpos,ypos+fiducial_size+border/2);
       
-    xpos+=(border+fiducial_size);
+    xpos+=(border/2+fiducial_size);
     if ((xpos+border+fiducial_size)>pdf.width) {
        xpos = border;
-       ypos+=(2*border+fiducial_size);
+       ypos+=(border+fiducial_size);
       
        if ((ypos+border+fiducial_size+border)>pdf.height) {
          ypos = border;
