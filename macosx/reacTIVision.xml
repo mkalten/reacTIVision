@@ -17,7 +17,7 @@ you only need to specify parameters you want to change from their default settin
 <!-- available amoeba sets are default, small or mini - or an alternative *.trees file
   ... also allows to enable the additional yamaarashi symbols,
       as well as the limitation to a maximum fiducial ID -->
-	<fiducial amoeba="default" yamaarashi="true" flip="true" max_fid="299" />
+	<fiducial amoeba="live.trees" yamaarashi="true" mirror="false" max_fid="299" />
 <!-- specifies the maximum finger size and tracking sensitivity - size zero disables fingers -->
     <finger size="0" sensitivity="75" />
 <!-- specifies the minimum blob size - size zero disables blob tracking

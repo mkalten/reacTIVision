@@ -224,8 +224,8 @@ void readSettings(application_settings *config) {
 			if ((strcmp( fiducial_element->Attribute("yamaarashi"), "true" ) == 0) || atoi(fiducial_element->Attribute("yamaarashi"))==1) config->yamaarashi = true;
 		}
 		
-		if(fiducial_element->Attribute("flip")!=NULL)  {
-			if ((strcmp( fiducial_element->Attribute("flip"), "true" ) == 0) || atoi(fiducial_element->Attribute("flip"))==1) config->yama_flip = true;
+		if(fiducial_element->Attribute("mirror")!=NULL)  {
+			if ((strcmp( fiducial_element->Attribute("mirror"), "true" ) == 0) || atoi(fiducial_element->Attribute("mirror"))==1) config->yama_flip = true;
 		}
 		
 		if(fiducial_element->Attribute("max_fid")!=NULL) config->max_fid = atoi(fiducial_element->Attribute("max_fid"));
