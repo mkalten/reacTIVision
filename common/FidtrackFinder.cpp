@@ -1043,6 +1043,11 @@ if (detect_blobs) {
 			
 		} else delete (*pblb);
 	}
+} else {
+	// delete unused root blobs
+	for (std::list<BlobObject*>::iterator rblb = rootBlobs.begin(); rblb!=rootBlobs.end(); rblb++) {
+		delete (*rblb);
+	}
 }
 	tuioManager->stopUntouchedMovingObjects();
 	tuioManager->stopUntouchedMovingCursors();

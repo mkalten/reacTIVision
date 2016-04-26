@@ -570,7 +570,11 @@ void BlobObject::computeOrientedBoundingBox() {
 	
 	BlobMatrix C(c);
 	double *lambda = C.eigenvalues();
-	if (lambda==NULL) return;
+	if (lambda==NULL) {
+		delete[]a;
+		delete[]m;
+		return;
+	}
 	
 	BlobMatrix X(1.0, 0.0, 0.0, 1.0);
 	X.scale(lambda[0])->sub(&C);
