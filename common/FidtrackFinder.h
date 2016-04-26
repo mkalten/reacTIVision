@@ -77,6 +77,10 @@ public:
 		detect_yamaarashi = config->yamaarashi;
 		invert_yamaarashi = config->yama_flip;
 		max_fiducial_id = config->max_fid;
+		
+		objFilter = config->obj_filter;
+		curFilter = config->cur_filter;
+		blbFilter = config->blb_filter;
 	};
 	
 	~FidtrackFinder() {
@@ -134,6 +138,7 @@ private:
 	
 	bool setFingerSize, setFingerSensitivity;
 	bool setBlobSize, setObjectBlob, setFingerBlob;
+	bool objFilter, curFilter, blbFilter;
 	
 	unsigned int max_fiducial_id;
 	bool detect_yamaarashi;

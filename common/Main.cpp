@@ -76,6 +76,9 @@ void readSettings(application_settings *config) {
 	config->yamaarashi = false;
 	config->yama_flip = false;
 	config->max_fid = UINT_MAX;
+	config->obj_filter = false;
+	config->cur_filter = false;
+	config->blb_filter = false;
 	config->background = false;
 	config->fullscreen = false;
 	config->headless = false;
@@ -231,6 +234,22 @@ void readSettings(application_settings *config) {
 		if(fiducial_element->Attribute("max_fid")!=NULL) config->max_fid = atoi(fiducial_element->Attribute("max_fid"));
 		
 		if(fiducial_element->Attribute("amoeba")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("amoeba"));
+	}
+	
+	tinyxml2::XMLElement* filter_element = config_root.FirstChildElement("filter").ToElement();
+	if( fiducial_element!=NULL )
+	{
+		if(filter_element->Attribute("fiducial")!=NULL)  {
+			if ((strcmp( filter_element->Attribute("fiducial"), "true" ) == 0) || atoi(filter_element->Attribute("fiducial"))==1) config->obj_filter = true;
+		}
+		
+		if(filter_element->Attribute("finger")!=NULL)  {
+			if ((strcmp( filter_element->Attribute("finger"), "true" ) == 0) || atoi(filter_element->Attribute("finger"))==1) config->cur_filter = true;
+		}
+		
+		if(filter_element->Attribute("blob")!=NULL)  {
+			if ((strcmp( filter_element->Attribute("blob"), "true" ) == 0) || atoi(filter_element->Attribute("blob"))==1) config->blb_filter = true;
+		}
 	}
 	
 	tinyxml2::XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();

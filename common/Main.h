@@ -37,6 +37,9 @@ struct application_settings {
 	bool yamaarashi;
 	bool yama_flip;
 	int max_fid;
+	bool obj_filter;
+	bool cur_filter;
+	bool blb_filter;
 	bool background;
     bool fullscreen;
     bool headless;
