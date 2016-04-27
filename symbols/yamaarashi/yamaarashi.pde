@@ -1,4 +1,5 @@
 import processing.pdf.*;
+//import com.hamoid.*;
 
 PFont font;
 PShape fiducial;
@@ -6,29 +7,33 @@ PShape bits[] = new PShape[20];
 PShape check[] = new PShape[4];
 
 PGraphics pdf;
+//VideoExport video;
 
-int border = 22;
+// edit these three values
+int start_id = 0;
+int range = 1000;
 int fiducial_size_mm = 46;
-int fiducial_size;
 
+String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2016 Martin Kaltenbrunner <martin@tuio.org>";
+int border = 22;
 int xpos = border;
 int ypos = border;
-
-int start_id = 0;
-int range = 300;
+int fiducial_size;
  
 void setup() {
+  
+  size(480, 480);
+  noLoop();
+  
+  //video = new VideoExport(this, "yamaarashi.mp4");
+  //video.setFrameRate(60);  
   pdf = createGraphics(598, 842, PDF, "yamaarashi_"+start_id+"-"+(start_id+range-1)+".pdf");
   font = createFont("Arial", 8);
   
-  /*int logo = unbinary("10111000010010110010");
-  int cs_logo = logo%16;
-  String cs_bin = binary(cs_logo,4);
-  println(logo+" "+cs_bin);*/
-  
   fiducial_size = round(fiducial_size_mm * 2.83464567);
-  
   fiducial = loadShape("yamaarashi.svg");
+  
+  // define bit order
   bits[0] = fiducial.getChild("bit1");
   bits[1] = fiducial.getChild("bit7");
   bits[2] = fiducial.getChild("bit13");
@@ -50,22 +55,27 @@ void setup() {
   bits[18] = fiducial.getChild("bit17");
   bits[19] = fiducial.getChild("bit23");
   
+  // checksum bits
   check[0] = fiducial.getChild("bit6");
   check[1] = fiducial.getChild("bit12");
   check[2] = fiducial.getChild("bit18");
   check[3] = fiducial.getChild("bit24");
-
-  pdf.beginDraw();
-  render();
-  pdf.dispose();
-  pdf.endDraw();
-  exit();
 }
 
+void mouseClicked() {
+  render();
+}
+
+void draw() {
+    background(255);
+    shape(fiducial,20, 20, 440,440); 
+    //video.saveFrame();
+} 
 
 void render() {
+  pdf.beginDraw();
   pdf.background(255);
-  pdf.textFont(font,8); 
+  pdf.textFont(font,8);
   
   int end_id = start_id + range;
   int page = 1;
@@ -74,7 +84,7 @@ void render() {
   for (int id=start_id;id<end_id;id++) {
     if ((id<0) || (id>=1048576)) break;
     println("generating ID "+id);
-  
+
     String id_bits = binary(id,20);
     int checksum = id%13;
     String check_bits = binary(checksum,4);
@@ -90,10 +100,9 @@ void render() {
     }
     
     pdf.shape(fiducial,xpos, ypos, fiducial_size,fiducial_size);
-  
     pdf.fill(0);
     pdf.text("ID "+id,xpos,ypos+fiducial_size+border/2);
-      
+
     xpos+=(border/2+fiducial_size);
     if ((xpos+border+fiducial_size)>pdf.width) {
        xpos = border;
@@ -102,17 +111,22 @@ void render() {
        if ((ypos+border+fiducial_size+border)>pdf.height) {
          ypos = border;
          if (id<end_id-1) {
-           pdf.text("reacTIVision yamaarashi symbols CC BY-NC-SA 2016 Martin Kaltenbrunner <martin@tuio.org>",border,pdf.height-border);
+           pdf.text(license,border,pdf.height-border);
            page++;
            println("\ncreating page #"+page);
            ((PGraphicsPDF)pdf).nextPage();
            pdf.background(255);
          }
-       } 
+       }
     }
-    
+   
+    redraw();
+    //delay(20);
   }
   
-  pdf.text("reacTIVision yamaarashi symbols CC BY-NC-SA 2016 Martin Kaltenbrunner <martin@tuio.org>",border,pdf.height-border);
+  pdf.text(license,border,pdf.height-border);
+  pdf.endDraw();
+
+  pdf.dispose();
   println("\nPDF file saved");
 }
