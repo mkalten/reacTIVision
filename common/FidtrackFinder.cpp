@@ -124,7 +124,7 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			case KEY_LEFT:
 				if (setBlobSize) {
 					max_blob_size-=2;
-					if ((average_fiducial_size!=0) && (max_blob_size<average_fiducial_size)) max_blob_size=0;
+					if (max_blob_size<min_blob_size) max_blob_size=0;
 					if (max_blob_size<=0) {
 						max_blob_size = 0;
 						detect_blobs=false;
@@ -138,7 +138,7 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			case KEY_RIGHT:
 				if (setBlobSize) {
 					max_blob_size+=2;
-					if ((average_fiducial_size!=0) && (max_blob_size==1)) max_blob_size=(int)average_fiducial_size;
+					if ((min_blob_size>0) && (max_blob_size==2)) max_blob_size=min_blob_size;
 					if (max_blob_size>height) max_blob_size=height;
 					detect_blobs=true;
 				} else if (setObjectBlob) {
