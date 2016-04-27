@@ -11,7 +11,7 @@ PGraphics pdf;
 
 // edit these three values
 int start_id = 0;
-int range = 1000;
+int range = 300;
 int fiducial_size_mm = 46;
 
 String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2016 Martin Kaltenbrunner <martin@tuio.org>";
@@ -77,13 +77,26 @@ void render() {
   pdf.background(255);
   pdf.textFont(font,8);
   
+  int max_page_id_count = 0;
+  int cur_page_id_count = 0;
   int end_id = start_id + range;
   int page = 1;
+  int last_page = 0;
   
-  println("creating page #"+page);
   for (int id=start_id;id<end_id;id++) {
+    
+    if (page>last_page) {
+      println("\ncreating page #"+page);
+      pdf.fill(0);
+      pdf.text(license,border,pdf.height-border);
+      last_page = page;
+      max_page_id_count = cur_page_id_count;
+      cur_page_id_count = 0;
+    }
+    
     if ((id<0) || (id>=1048576)) break;
     println("generating ID "+id);
+    cur_page_id_count++;
 
     String id_bits = binary(id,20);
     int checksum = id%13;
@@ -111,11 +124,9 @@ void render() {
        if ((ypos+border+fiducial_size+border)>pdf.height) {
          ypos = border;
          if (id<end_id-1) {
-           pdf.text(license,border,pdf.height-border);
-           page++;
-           println("\ncreating page #"+page);
            ((PGraphicsPDF)pdf).nextPage();
            pdf.background(255);
+           page++;
          }
        }
     }
@@ -124,9 +135,39 @@ void render() {
     //delay(20);
   }
   
-  pdf.text(license,border,pdf.height-border);
+  if (max_page_id_count!=cur_page_id_count) stencil(max_page_id_count);
+  stencil(cur_page_id_count);
+  
   pdf.endDraw();
-
   pdf.dispose();
   println("\nPDF file saved");
+}
+
+void stencil(int id_count) {
+  
+  ((PGraphicsPDF)pdf).nextPage();
+  pdf.background(255);
+  pdf.fill(0);
+  pdf.text("complementary stencil page",border,pdf.height-border);
+  xpos = border;
+  ypos = border;
+  pdf.fill(255);
+  pdf.ellipseMode(CORNER);
+  pdf.strokeWeight(0);
+   
+  for (int i=0;i<id_count;i++) {
+    
+    pdf.ellipse(xpos,ypos,fiducial_size,fiducial_size);
+    xpos+=(border/2+fiducial_size);
+    if ((xpos+border+fiducial_size)>pdf.width) {
+       xpos = border;
+       ypos+=(border+fiducial_size);
+      
+       if ((ypos+border+fiducial_size+border)>pdf.height) {
+         ypos = border;
+       }
+    }
+    
+  } 
+  
 }
