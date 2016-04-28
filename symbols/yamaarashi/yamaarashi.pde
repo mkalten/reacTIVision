@@ -148,7 +148,6 @@ void stencil(int id_count) {
   ((PGraphicsPDF)pdf).nextPage();
   pdf.background(255);
   pdf.fill(0);
-  pdf.text("complementary stencil page",border,pdf.height-border);
   xpos = border;
   ypos = border;
   pdf.fill(255);
