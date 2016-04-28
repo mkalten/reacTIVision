@@ -518,7 +518,7 @@ bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
         case EXPOSURE:      [uvcController setExposureTime:setting]; break;
         case SHARPNESS:     [uvcController setSharpness:setting]; break;
         case FOCUS:         [uvcController setFocus:setting]; break;
-        case GAMMA:         [uvcController setWhiteBalance:setting]; break;
+        case GAMMA:         [uvcController setGamma:setting]; break;
     }
     
     return false;
@@ -536,7 +536,7 @@ int AVfoundationCamera::getCameraSetting(int mode) {
         case EXPOSURE:      return [uvcController exposureTime];
         case SHARPNESS:     return [uvcController sharpness];
         case FOCUS:         return [uvcController focus];
-        case GAMMA:         return [uvcController whiteBalance];
+        case GAMMA:         return [uvcController gamma];
     }
 
     return 0;
@@ -554,7 +554,7 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
         case EXPOSURE:      return [uvcController maxExposureTime];
         case SHARPNESS:     return [uvcController maxSharpness];
         case FOCUS:         return [uvcController maxFocus];
-        case GAMMA:         return [uvcController maxWhiteBalance];
+        case GAMMA:         return [uvcController maxGamma];
     }
     
     return 0;
@@ -572,7 +572,7 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
         case EXPOSURE:      return [uvcController minExposureTime];
         case SHARPNESS:     return [uvcController minSharpness];
         case FOCUS:         return [uvcController minFocus];
-        case GAMMA:         return [uvcController minWhiteBalance];
+        case GAMMA:         return [uvcController minGamma];
     }
     
     return 0;
@@ -609,8 +609,8 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
             default_focus = [uvcController focus];
             break;
         case GAMMA:
-            [uvcController resetWhiteBalance];
-            default_gamma = [uvcController whiteBalance];
+            [uvcController resetGamma];
+            default_gamma = [uvcController gamma];
             break;
     }
 
