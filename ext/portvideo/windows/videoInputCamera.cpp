@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2014 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 
  CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 
-	return NULL;
+	return new videoInputCamera(cam_cfg);
 }
 
 bool videoInputCamera::initCamera() {
@@ -164,7 +164,7 @@ bool videoInputCamera::closeCamera()
 {
 	if (!disconnect) {
 		updateSettings();
-		//CameraTool::saveSettings(cfg);
+		CameraTool::saveSettings();
 		VI->stopDevice(cfg->device);
 	}
 	return true;

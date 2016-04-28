@@ -87,9 +87,15 @@ public:
         return (long) currentTime;
     }
     
-    static long currentMicroSeconds() {
+    static unsigned long currentMicroSeconds() {
 #ifdef WIN32
-        return GetTickCount();
+        FILETIME ft;
+		GetSystemTimeAsFileTime(&ft);
+		unsigned long long tt = ft.dwHighDateTime;
+		tt <<=32;
+		tt |= ft.dwLowDateTime;
+		tt /=10;
+		return (unsigned long)(tt - 11644473600000000ULL);
 #else
         struct timeval tv;
         struct timezone tz;

@@ -28,6 +28,10 @@
 #include "FrameProcessor.h"
 #include "tiled_bernsen_threshold.h"
 
+#ifdef WIN32
+void usleep(long value);
+#endif
+
 typedef struct threshold_data {
 	bool process;
 #ifndef WIN32
@@ -46,6 +50,7 @@ typedef struct threshold_data {
 	unsigned char *map;
 	int average;
 	bool done;
+	int id;
 } threshold_data;
 
 class FrameThresholder: public FrameProcessor
@@ -77,9 +82,15 @@ public:
 		if (initialized) {
 			
 			for (int i=0;i<thread_count;i++) {
+				tdata[i].done = true;
+#ifndef WIN32
+				pthread_cond_signal(&tdata[i].cond);
+#else
+				SetEvent(tdata[i].ghWriteEvent);
+#endif
+				while(tdata[i].process) usleep(10);
 				terminate_tiled_bernsen_thresholder( thresholder[i] );
 				delete thresholder[i];
-				tdata[i].done = true;
 			}
 			
 			delete tile_sizes;
