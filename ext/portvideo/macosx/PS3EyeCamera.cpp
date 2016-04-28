@@ -112,6 +112,11 @@ CameraEngine* PS3EyeCamera::getCamera(CameraConfig *cam_cfg) {
 	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=dev_count-1;
 	
 	std::vector<CameraConfig> cfg_list = PS3EyeCamera::getCameraConfigs();
+	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
+	setMinMaxConfig(cam_cfg,cfg_list);
+	
+	if (cam_cfg->force) return new PS3EyeCamera(cam_cfg);
+
 	int count = cfg_list.size();
 	if (count > 0) {
 		for (int i=0;i<count;i++) {

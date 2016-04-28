@@ -323,6 +323,8 @@ void CameraTool::initCameraConfig(CameraConfig *cfg) {
 	cfg->red = SETTING_DEFAULT;
 	cfg->green = SETTING_DEFAULT;
 	
+	cfg->force = false;
+	
 }
 
 void CameraTool::setCameraConfig(CameraConfig *cfg) {
@@ -363,6 +365,7 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 	cam_cfg.frame_yoff = 0;
 	cam_cfg.frame_mode = cfg->frame_mode;
 	
+	cam_cfg.force = cfg->force;
 	sprintf(cam_cfg.src,"camera.xml");
 }
 
@@ -453,6 +456,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 			else if (strcmp( image_element->Attribute("fps"), "min" ) == 0) cam_cfg.cam_fps = SETTING_MIN;
 			else cam_cfg.cam_fps = atof(image_element->Attribute("fps"));
 		}
+		if ((image_element->Attribute("force")!=NULL) && ( strcmp( image_element->Attribute("force"), "true" ) == 0 )) cam_cfg.force = true;
 	}
 	
 	tinyxml2::XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();

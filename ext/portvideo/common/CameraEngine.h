@@ -136,6 +136,8 @@ struct CameraConfig {
     int red;
     int blue;
     int green;
+	
+	bool force;
 
     bool operator < (const CameraConfig& c) const {
 

@@ -257,6 +257,8 @@ CameraEngine* AVfoundationCamera::getCamera(CameraConfig *cam_cfg) {
 	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
 	
+	if (cam_cfg->force) return new AVfoundationCamera(cam_cfg);
+	
 	for (int i=0;i<cfg_list.size();i++) {
 		
 		if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
