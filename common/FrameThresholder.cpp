@@ -193,7 +193,7 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 
 #ifdef WIN32
 		DWORD threadId;
-		tdata[i].ghWriteEvent = CreateEvent(NULL, FALSE, FALSE, TEXT("ProcessEvent"));
+		tdata[i].ghWriteEvent = CreateEvent(NULL, FALSE, FALSE, TEXT("ProcessEvent"+i));
 		tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
 #else
 		tdata[i].cond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
