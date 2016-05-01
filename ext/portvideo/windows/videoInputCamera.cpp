@@ -128,8 +128,8 @@ unsigned char* videoInputCamera::getFrame()
 
 	} else {
 
-		if (cfg->frame) flip_crop(cfg->cam_width,cfg->cam_height,src,dest,cfg->src_format);
-		else flip(cfg->cam_width,cfg->cam_height,src,dest,cfg->src_format);
+		if (cfg->frame) flip_crop(cfg->cam_width,cfg->cam_height,src,dest,cfg->buf_format);
+		else flip(cfg->cam_width,cfg->cam_height,src,dest,cfg->buf_format);
 	}
 
 		lost_frames = 0;
