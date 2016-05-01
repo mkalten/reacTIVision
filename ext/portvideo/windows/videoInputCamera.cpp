@@ -234,9 +234,9 @@ bool videoInputCamera::getCameraSettingAuto(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
-		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, flags, false); break;
-		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, flags, false); break;
-		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, flags, false); break;
+		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, flags, default); break;
+		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, flags, default); break;
+		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, flags, default); break;
 		default: return false;
 	} 
 
