@@ -339,7 +339,8 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="camera.xml">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </DeploymentContent>
     </Xml>
     <Xml Include="reacTIVision.xml">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>

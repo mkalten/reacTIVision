@@ -257,12 +257,9 @@
   <ItemGroup>
     <Xml Include="camera.xml">
       <SubType>Designer</SubType>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </Xml>
     <Xml Include="portvideo.xml">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <SubType>Designer</SubType>
     </Xml>
   </ItemGroup>
   <ItemGroup>
