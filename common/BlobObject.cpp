@@ -221,7 +221,7 @@ void BlobObject::computeFullContourList() {
 	
 	fullContour.clear();
 	
-	for (int row=0;row<spanList.size();row++) {
+	for (unsigned int row=0;row<spanList.size();row++) {
 		
 		BlobSpan *row_span = &spanList[row];
 		

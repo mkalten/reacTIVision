@@ -60,7 +60,7 @@ namespace TUIO {
 		
 		unsigned int conflict_threshold;
 		unsigned int conflict_counter;
-		unsigned int conflict_id;
+		int conflict_id;
 		
 	public:
 		/**

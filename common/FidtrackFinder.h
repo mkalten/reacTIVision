@@ -140,7 +140,7 @@ private:
 	bool setBlobSize, setObjectBlob, setFingerBlob;
 	bool objFilter, curFilter, blbFilter;
 	
-	unsigned int max_fiducial_id;
+	int max_fiducial_id;
 	bool detect_yamaarashi;
 	bool invert_yamaarashi;
 	void decodeYamaarashi(FiducialX *yama, unsigned char *img);
