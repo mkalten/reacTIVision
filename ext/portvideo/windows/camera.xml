@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <portvideo>
     <camera driver="default" id="0">
-        <capture width="640" height="480" fps="30" format="mjpeg" color="true"/>
-        <settings brightness="default" gain="min" exposure="default" sharpness="default" gamma="max" focus="min" white="max" backlight="min" hue="default"/>
+        <capture width="640" height="480" fps="max" format="default"/>
+        <settings brightness="default" gain="default" exposure="default" sharpness="default" gamma="default" focus="default" white="default" backlight="default"/>
         <frame width="max" height="max" xoff="0" yoff="0"/>
     </camera>
 </portvideo>
