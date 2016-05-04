@@ -160,7 +160,10 @@ int QTKitCamera::getDeviceCount() {
 	
 	NSArray *dev_list0 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo];
 	NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
-	return [dev_list0 count] + [dev_list1 count];
+	int count =  [dev_list0 count] + [dev_list1 count];
+	[dev_list0 release];
+	[dev_list1 release];
+	return count;
 }
 
 std::vector<CameraConfig> QTKitCamera::getCameraConfigs(int dev_id) {
@@ -176,6 +179,8 @@ std::vector<CameraConfig> QTKitCamera::getCameraConfigs(int dev_id) {
 	for (QTCaptureDevice* dev in dev_list0) [dev_list addObject:dev];
     NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
 	for (QTCaptureDevice* dev in dev_list1) [dev_list addObject:dev];
+	[dev_list0 release];
+	[dev_list1 release];
     
     int cam_id = -1;
     for (QTCaptureDevice* dev in dev_list) {
@@ -188,6 +193,11 @@ std::vector<CameraConfig> QTKitCamera::getCameraConfigs(int dev_id) {
         sprintf(cam_cfg.name,"%s",[[dev localizedDisplayName] cStringUsingEncoding:1]);
         cam_cfg.driver = DRIVER_DEFAULT;
         cam_cfg.device = cam_id;
+		
+		
+		NSArray *formats = [dev formatDescriptions];
+		std::cout << "F: " <<[formats count] << std::endl;
+		[formats release];
 		
         for (QTFormatDescription* fd in [dev formatDescriptions]) {
             
@@ -227,7 +237,9 @@ CameraEngine* QTKitCamera::getCamera(CameraConfig *cam_cfg) {
 	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
 	
-	for (int i=0;i<cfg_list.size();i++) {
+	if (cam_cfg->force)return new QTKitCamera(cam_cfg);
+	
+	for (unsigned int i=0;i<cfg_list.size();i++) {
 		
 		if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
 		if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
@@ -251,6 +263,8 @@ bool QTKitCamera::initCamera() {
 	for (QTCaptureDevice* dev in dev_list0) [dev_list addObject:dev];
 	NSArray *dev_list1 = [QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed];
 	for (QTCaptureDevice* dev in dev_list1) [dev_list addObject:dev];
+	[dev_list0 release];
+	[dev_list1 release];
 	
 	//Get the capture device
     captureDevice = [dev_list objectAtIndex:cfg->device];
