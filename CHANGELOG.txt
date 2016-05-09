@@ -1,4 +1,4 @@
-reacTIVision 1.5.1
+﻿reacTIVision 1.5.1
 —————————————————-
 * revert FrameEqualizer to equalization rather than subtraction
 * added a dedicated PS3 camera driver on MacOSX (thanks to Sebestyén Gábor)
@@ -8,6 +8,7 @@ reacTIVision 1.5.1
 * updated the SDL2 Framework to 2.0.4
 * minimum supported MacOSX version is 10.8
 * code sign MacOSX application
+* add Windows 64bit build
 
 reacTIVision 1.5
 ————————————————
