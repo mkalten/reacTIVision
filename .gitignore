@@ -21,3 +21,6 @@ project.xcworkspace
 *.exe
 
 *.opensdf
+
+.DS_Store
+
