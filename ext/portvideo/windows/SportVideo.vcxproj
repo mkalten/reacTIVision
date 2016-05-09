@@ -127,7 +127,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -157,7 +157,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <PrecompiledHeader />
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <FloatingPointModel>Precise</FloatingPointModel>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
@@ -196,7 +196,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <FloatingPointModel>Precise</FloatingPointModel>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
