@@ -339,7 +339,7 @@ bool SDLinterface::setupWindow() {
 
 	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, renderdriver);
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderdriver);
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
 
  	SDL_CreateWindowAndRenderer(width_,height_,0,&window_,&renderer_);
 
@@ -349,14 +349,19 @@ bool SDLinterface::setupWindow() {
 		return false;
 	} else SDL_SetWindowTitle(window_,app_name_.c_str());
 
+	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
+	SDL_EventState(SDL_MOUSEBUTTONDOWN,SDL_IGNORE);
+	SDL_EventState(SDL_MOUSEBUTTONUP,SDL_IGNORE);
+	SDL_EventState(SDL_FINGERMOTION,SDL_IGNORE);
+	SDL_EventState(SDL_FINGERDOWN,SDL_IGNORE);
+	SDL_EventState(SDL_FINGERUP,SDL_IGNORE);
+	SDL_EventState(SDL_KEYUP,SDL_IGNORE);
+	SDL_EventState(SDL_TEXTINPUT,SDL_IGNORE);
+	SDL_EventState(SDL_WINDOWEVENT,SDL_IGNORE);
+
 	SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
 	SDL_RenderClear(renderer_);
 	SDL_RenderPresent(renderer_);
-
-	/*iconImage_ = getIcon();
-	#ifndef __APPLE__
-	SDL_SetWindowIcon(window_, iconImage_);
-	#endif*/
 
 	FontTool::init();
 	return true;
