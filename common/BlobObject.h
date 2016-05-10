@@ -70,7 +70,7 @@ namespace TUIO {
 		}
 		
 		int getColour() {
-			return colour;
+			return blobRegion->colour;
 		}
 		
 		static void setDimensions(int w, int h) {
@@ -90,7 +90,6 @@ namespace TUIO {
 		std::vector<BlobPoint> fullContour;
 		std::vector<BlobSpan> spanList;
 		
-		int colour;
 		RegionX *blobRegion;
 		
 		std::list<Span*> sortedSpanList;

@@ -124,10 +124,7 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool d
 		angle+=3*M_PI/2.0f;
 	}
 	angle=2*M_PI-angle;
-	if (angle<0) angle = 0;
-	
-	colour = region->colour;
-	
+	if (angle<0) angle = 0;	
 }
 
 /*

@@ -28,7 +28,7 @@
 #include "fidtrackX.h"
 #include <assert.h>
 
-#define MAX_FIDUCIAL_COUNT 512
+#define MAX_FIDUCIAL_COUNT 1024
 
 using namespace TUIO;
 

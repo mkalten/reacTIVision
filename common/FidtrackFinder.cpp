@@ -40,7 +40,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	BlobObject::setDimensions(width,height);
 
-	average_fiducial_size = 0;
+	average_fiducial_size = height/2;
 	position_threshold = 1.0f/(2*width); // half a pixel
 	rotation_threshold = M_PI/360.0f;	 // half a degree
 	//position_threshold = 1.0f/(width); // one pixel
@@ -385,10 +385,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	float min_object_size = average_fiducial_size / 1.5f;
 	float max_object_size = average_fiducial_size * 1.5f;
-	if (average_fiducial_size==0) {
+	/*if (average_fiducial_size==0) {
 		min_object_size=4;
 		max_object_size=height;
-	}
+	}*/
 	
 	float min_finger_size = average_finger_size / 2.0f;
 	float max_finger_size = average_finger_size * 2.0f;
@@ -444,7 +444,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		regions[reg_count].area = r->area;
 		regions[reg_count].colour = r->colour;
 		
-		if ((regions[reg_count].width>=min_region_size) && (regions[reg_count].width<=max_region_size) && (regions[reg_count].height>=min_region_size) && (regions[reg_count].height<=max_region_size)) {
+		//if ((regions[reg_count].width>=min_region_size) && (regions[reg_count].width<=max_region_size) && (regions[reg_count].height>=min_region_size) && (regions[reg_count].height<=max_region_size)) {
+		if ((regions[reg_count].width>3) && (regions[reg_count].width<height) && (regions[reg_count].height>3) && (regions[reg_count].height<height)) {
 			regions[reg_count].x = r->left+regions[reg_count].width/2.0f;
 			regions[reg_count].y = r->top+regions[reg_count].height/2.0f;
 			
@@ -759,7 +760,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			for (std::list<BlobObject*>::iterator rblb = rootBlobs.begin(); rblb!=rootBlobs.end(); rblb++) {
 				BlobObject *root_blob = (*rblb);
 				float distance = fpos.getScreenDistance(root_blob->getX(),root_blob->getY(),width,height);
-
 				if ((distance<closest) && (distance<existing_object->getRootSize()/1.1f) && (root_blob->getColour()==existing_object->getRootColour())) {
 					closest_rblob = root_blob;
 					closest = distance;
