@@ -96,7 +96,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\sdldemo;..\interface;.\videoInput;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\sdldemo;..\interface;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -107,9 +107,9 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>.\videoInput\$(Platform);.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)SportVideo.pdb</ProgramDatabaseFile>
@@ -123,20 +123,20 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\sdldemo;..\interface;.\videoInput;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\sdldemo;..\interface;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>.\videoInput\$(Platform);.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)SportVideo.pdb</ProgramDatabaseFile>
@@ -154,7 +154,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\interface;..\sdldemo;.\videoInput;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\interface;..\sdldemo;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -169,11 +169,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInput.lib;SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <Version>0.6</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>.\videoInput\$(Platform);.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)SportVideo.pdb</ProgramDatabaseFile>
@@ -193,7 +193,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\interface;..\sdldemo;.\videoInput;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\tinyxml;..\common;..\interface;..\sdldemo;.\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -209,11 +209,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInput.lib;SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <Version>0.6</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>.\videoInput\$(Platform);.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)SportVideo.pdb</ProgramDatabaseFile>
@@ -241,6 +241,7 @@
     <ClCompile Include="..\common\FileCamera.cpp" />
     <ClCompile Include="..\common\FolderCamera.cpp" />
     <ClCompile Include="..\tinyxml\tinyxml2.cpp" />
+    <ClCompile Include="videoInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\ConsoleInterface.h" />
@@ -259,6 +260,7 @@
     <ClInclude Include="..\common\FileCamera.h" />
     <ClInclude Include="..\common\FolderCamera.h" />
     <ClInclude Include="..\tinyxml\tinyxml2.h" />
+    <ClInclude Include="videoInput.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="camera.xml">

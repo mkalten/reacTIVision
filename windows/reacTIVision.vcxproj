@@ -98,7 +98,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -109,9 +109,9 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>..\ext\portvideo\windows\videoInput\$(Platform);..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)reacTIVision.pdb</ProgramDatabaseFile>
@@ -125,21 +125,21 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\videoInput;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level1</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>..\ext\portvideo\windows\videoInput\$(Platform);..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)reacTIVision.pdb</ProgramDatabaseFile>
@@ -157,7 +157,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -172,11 +172,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInput.lib;SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <Version>1.6</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\ext\portvideo\windows\videoInput\$(Platform);..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)reacTIVision.pdb</ProgramDatabaseFile>
@@ -196,7 +196,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -212,7 +212,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInput.lib;SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <Version>1.6</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -241,6 +241,7 @@
     <ClCompile Include="..\common\FrameThresholder.cpp" />
     <ClCompile Include="..\common\Main.cpp" />
     <ClCompile Include="..\ext\portvideo\common\ConsoleInterface.cpp" />
+    <ClCompile Include="..\ext\portvideo\windows\videoInput.cpp" />
     <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp" />
     <ClCompile Include="..\ext\portvideo\interface\Resources.c" />
     <ClCompile Include="..\ext\portvideo\interface\SDLinterface.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="..\common\FrameThresholder.h" />
     <ClInclude Include="..\common\Main.h" />
     <ClInclude Include="..\ext\portvideo\common\ConsoleInterface.h" />
+    <ClInclude Include="..\ext\portvideo\windows\videoInput.h" />
     <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h" />
     <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h" />
     <ClInclude Include="..\ext\portvideo\interface\Resources.h" />
