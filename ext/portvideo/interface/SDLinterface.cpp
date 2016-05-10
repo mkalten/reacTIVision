@@ -243,13 +243,6 @@ char* SDLinterface::checkRenderDriver()
 	return (char*)fallback;
 }
 
-
-void SDLinterface::setVsync(bool vsync)
-{
-	
-	vsync_ = vsync;
-}
-
 bool SDLinterface::setupWindow()
 {
 	
@@ -265,8 +258,7 @@ bool SDLinterface::setupWindow()
 	
 	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, renderdriver);
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderdriver);
-	if (vsync_) SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-	else  SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
 	
 	SDL_CreateWindowAndRenderer(width_,height_,0,&window_,&renderer_);
 	
@@ -284,6 +276,17 @@ bool SDLinterface::setupWindow()
 	}
 	
 	SDL_SetWindowTitle(window_,app_name_.c_str());
+
+	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
+	SDL_EventState(SDL_MOUSEBUTTONDOWN,SDL_IGNORE);
+	SDL_EventState(SDL_MOUSEBUTTONUP,SDL_IGNORE);
+	SDL_EventState(SDL_FINGERMOTION,SDL_IGNORE);
+	SDL_EventState(SDL_FINGERDOWN,SDL_IGNORE);
+	SDL_EventState(SDL_FINGERUP,SDL_IGNORE);
+	SDL_EventState(SDL_KEYUP,SDL_IGNORE);
+	SDL_EventState(SDL_TEXTINPUT,SDL_IGNORE);
+	SDL_EventState(SDL_WINDOWEVENT,SDL_IGNORE);
+
 	allocateBuffers();
 	processEvents();
 	
@@ -438,6 +441,9 @@ void SDLinterface::processEvents()
 			case SDL_QUIT:
 				engine_->stop();
 				return;
+			/*default:
+				std::cout << event.type << std::endl;
+				break;*/
 		}
 	}
 	if (select_) updateDisplay();
@@ -777,7 +783,6 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 #ifndef NDEBUG
 , recording_(false )
 #endif
-, vsync_( true )
 , frames_( 0 )
 , current_fps_( 0 )
 {

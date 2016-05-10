@@ -61,7 +61,6 @@ public:
     void updateDisplay();
     void closeDisplay();
 	unsigned char* getDisplay();
-	void setVsync(bool vsync);
 
     void setHelpText(std::vector<std::string> hlp);
     void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format);
@@ -119,7 +118,6 @@ private:
     bool recording_;
 #endif
     bool fullscreen_;
-	bool vsync_;
 
 	long frames_;
   	long lastTime_;

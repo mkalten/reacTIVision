@@ -120,9 +120,7 @@ void VisionEngine::saveBuffer(unsigned char* buffer, int bytes) {
 // the principal program sequence
 void VisionEngine::start() {
     
-	if (interface_) {
-		if (fps_>60) interface_->setVsync(false);
-	} else interface_ = new ConsoleInterface(app_name_.c_str());
+	if (!interface_) interface_ = new ConsoleInterface(app_name_.c_str());
 	
 	if (!interface_->openDisplay(this)) {
 		delete interface_;

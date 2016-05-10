@@ -41,7 +41,6 @@ public:
 	bool openDisplay(VisionEngine *engine);
     void updateDisplay();
     void closeDisplay();
-	void setVsync(bool vsync) {};
     
     void setHelpText(std::vector<std::string> hlp);
     void setBuffers(unsigned char *src, unsigned char *dest, int width, int height, int format);
