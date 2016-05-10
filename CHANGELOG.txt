@@ -2,42 +2,24 @@
 ————————————————
 * added new Yamaarashi 20bit fiducials
 * enabled alternative amoeba symbol sets (default, small, tiny)
-* fully implemented /tuio/2Dblb profile
-  detect plain blobs, 
+* fully implemented /tuio/2Dblb profile to detect plain blobs, 
   plus optional blobs for fingers and fiducials
-
 * improved precision and robustness of finger tracking
-
 * improved angle and position resolution of fiducial tracking
-
 * optional 1EUR filter to avoid position and angle jitter
 * integrated the TUIO 1.1 library
-
   allows alternative UDP,TCP, Web and Flash transport
-
-
 * converted portVideo into an external LGPL library
-
   - allow camera selection during runtime (press K)
-
   - process all available cameras and image formats
-
   - extended camera configuration options
-
   - implement V4L2_PIX_FMT_GREY pixelformat for Video4Linux2
   - dedicated PS3Eye driver for MacOS X (thanks to Sebestyén Gábor)
-
 * completely removed SDL dependencies for all non-GUI classes
-
 * removed the classic fiducials and legacy amoeba tree
-
 * removed the alternative MIDI functionality
-
   (this should be provided by an external TUIOtoMIDI converter)
-
-
 * native Linux Samsung SUR40 support (Microsoft Pixelsense)
-
 * armv7 and armv8 Linux support (RaspberryPI, Odroid etc.)
 
 reacTIVision 1.5
