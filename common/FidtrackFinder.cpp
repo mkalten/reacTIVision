@@ -41,7 +41,6 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	BlobObject::setDimensions(width,height);
 
 	average_fiducial_size = height/2;
-	min_fiducial_size = max_fiducial_size = (int)average_fiducial_size;
 	position_threshold = 1.0f/(2*width); // half a pixel
 	rotation_threshold = M_PI/360.0f;	 // half a degree
 	//position_threshold = 1.0f/(width); // one pixel
@@ -386,10 +385,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	float min_object_size = min_fiducial_size / 1.1f;
 	float max_object_size = max_fiducial_size * 1.1f;
-	/*if (average_fiducial_size==0) {
-		min_object_size=4;
-		max_object_size=height;
-	}*/
+	min_fiducial_size = max_fiducial_size = (int)average_fiducial_size;
 	
 	float min_finger_size = average_finger_size / 2.0f;
 	float max_finger_size = average_finger_size * 2.0f;
