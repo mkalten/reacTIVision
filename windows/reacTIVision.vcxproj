@@ -154,9 +154,9 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>false</OmitFramePointers>
+      <OmitFramePointers>true</OmitFramePointers>
       <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -193,9 +193,9 @@
     <ClCompile>
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <OmitFramePointers>false</OmitFramePointers>
+      <OmitFramePointers>true</OmitFramePointers>
       <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\windows\videoInput;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
