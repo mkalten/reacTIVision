@@ -285,7 +285,7 @@ bool SDLinterface::setupWindow()
 	SDL_EventState(SDL_FINGERUP,SDL_IGNORE);
 	SDL_EventState(SDL_KEYUP,SDL_IGNORE);
 	SDL_EventState(SDL_TEXTINPUT,SDL_IGNORE);
-	SDL_EventState(SDL_WINDOWEVENT,SDL_IGNORE);
+	//SDL_EventState(SDL_WINDOWEVENT,SDL_IGNORE);
 
 	allocateBuffers();
 	processEvents();
