@@ -127,6 +127,7 @@ private:
 	bool send_finger_blobs;
 
 	float average_fiducial_size;
+	int min_fiducial_size, max_fiducial_size;
 	bool send_fiducial_blobs;
 
 	bool detect_blobs;

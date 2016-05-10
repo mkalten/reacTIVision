@@ -41,6 +41,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	BlobObject::setDimensions(width,height);
 
 	average_fiducial_size = height/2;
+	min_fiducial_size = max_fiducial_size = (int)average_fiducial_size;
 	position_threshold = 1.0f/(2*width); // half a pixel
 	rotation_threshold = M_PI/360.0f;	 // half a degree
 	//position_threshold = 1.0f/(width); // one pixel
@@ -383,8 +384,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	std::list<BlobObject*> rootBlobs;
 	std::list<BlobObject*> plainBlobs;
 	
-	float min_object_size = average_fiducial_size / 1.5f;
-	float max_object_size = average_fiducial_size * 1.5f;
+	float min_object_size = min_fiducial_size / 1.1f;
+	float max_object_size = max_fiducial_size * 1.1f;
 	/*if (average_fiducial_size==0) {
 		min_object_size=4;
 		max_object_size=height;
@@ -509,6 +510,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (fiducials[fid_count].id>=0) {
 				valid_fiducial_count ++;
 				total_fiducial_size += fiducials[fid_count].root_size;
+				if (fiducials[fid_count].root_size < min_fiducial_size) min_fiducial_size = fiducials[fid_count].root_size;
+				if (fiducials[fid_count].root_size > max_fiducial_size) max_fiducial_size = fiducials[fid_count].root_size;
 			} else if (fiducials[fid_count].id==YAMA_ID) fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
 
 			if (fiducials[fid_count].id!=INVALID_FIDUCIAL_ID) {
