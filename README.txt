@@ -96,7 +96,6 @@ image analysis completely, hitting 'ESC' will quit the application.
 
 XML configuration file
 ----------------------
-
 Common settings can be edited within the file "reacTIVision.xml" where 
 all changes are stored automatically when closing the application.
 Under Mac OS X this XML configuration file can be found within the 
@@ -181,15 +180,15 @@ Compilation
 The source distribution includes projects for all three supported
 platforms and their respective build systems: Linux, Win32, MacOS X.
 
-Win32:
+Windows:
 A Visual Studio 2012 project as well as all the necessary libraries
 and headers (SDL2, videoInput) are included. The project should build
-right away without any additional configuration.
+right away for 32bit and 64bit targets without additional configuration.
 
 Mac OS X:
 An Xcode project for Xcode version 3.2 or later is included.
-The build will require an installed SDL2 framework in order to
-compile properly.
+The build will require the SDL2 and VVUVCKit frameworks, in order 
+to compile properly, just unzip the included Frameworks.zip
 
 Linux:
 Call make to build the application, the distribution also
