@@ -23,3 +23,7 @@ macosx/reacTIVision.xcodeproj/project.xcworkspace
 *.suo
 
 .DS_Store
+
+*.o
+
+linux/reacTIVision
