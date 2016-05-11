@@ -167,12 +167,12 @@ of the full image.
 Compilation
 -----------
 The source distribution includes projects for all three supported
-platforms and their respective build systems: Linux, Win32, MacOS X.
+platforms and their respective build systems: Linux, Windows, MacOS X.
 
-Win32:
-A Visual Studio 2012 project as well as all the necessary libraries
-and headers (SDL2, videoInput) are included. The project should build
-right away without any additional configuration.
+Windows:
+A Visual Studio 2012 project as well as the necessary SDL2 libraries 
+and headers are included. The project should build right away for 
+32bit and 64bit targets without any additional configuration.
 
 Mac OS X:
 An Xcode project for Xcode version 3.2 or later is included.
@@ -183,8 +183,8 @@ Linux:
 Call make to build the application, the distribution also
 includes configurations for the creation of RPM packages, as well
 as a project file for the Codeblocks IDE. 
-Make sure you have the libSDL 2.0 and libdc1394 2.0 (or later) 
-as well as turbojpeg libraries and headers installed. 
+Make sure you have the libSDL-2.0 and libdc1394-2.0 (or later) 
+as well as libjpeg-turbo libraries and headers installed. 
 
 License
 -------
