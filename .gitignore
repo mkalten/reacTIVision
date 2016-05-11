@@ -24,3 +24,8 @@ project.xcworkspace
 
 .DS_Store
 
+*.o
+
+linux/reacTIVision
+
+ext/portvideo/linux/SportVideo
