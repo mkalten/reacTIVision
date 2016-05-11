@@ -385,7 +385,7 @@ void SDLinterface::process_events()
 			//printf("%d\n",event.key.keysym.sym);
             if( event.key.keysym.sym == SDLK_F1 ){
                 //if (!calibrate_)
-                toggleFullScreen();
+                if (!event.key.repeat) toggleFullScreen();
             } else if( event.key.keysym.sym == SDLK_n ){
 				displayMode_ = NO_DISPLAY;
 				// turn the display black
