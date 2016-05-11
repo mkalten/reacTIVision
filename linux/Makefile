@@ -1,11 +1,11 @@
 TARGET = reacTIVision
-CSOURCES = $(shell ls ../ext/libfidtrack/*.c ../common/*.c)  
+CSOURCES = $(shell ls ../ext/libfidtrack/*.c ../common/*.c)
 COBJECTS = $(CSOURCES:.c=.o)
 PMSOURCES = $(shell ls ../ext/portmidi/pm_common/*.c ../ext/portmidi/pm_linux/*.c ../ext/portmidi/porttime/porttime.c ../ext/portmidi/porttime/ptlinux.c)
 PMOBJECTS = $(PMSOURCES:.c=.o)
-CPPSOURCES = $(shell ls ./*.cpp ../common/*.cpp ../ext/libfidtrack/*.cpp ../ext/tinyxml/*.cpp ) 
+CPPSOURCES = $(shell ls ./*.cpp ../common/*.cpp ../ext/libfidtrack/*.cpp ../ext/tinyxml/*.cpp )
 CPPOBJECTS = $(CPPSOURCES:.cpp=.o)
-OSCSOURCES = $(shell ls ../ext/oscpack/ip/posix/*.cpp ../ext/oscpack/osc/*.cpp) 
+OSCSOURCES = $(shell ls ../ext/oscpack/ip/posix/*.cpp ../ext/oscpack/osc/*.cpp)
 OSCOBJECTS = $(OSCSOURCES:.cpp=.o)
 
 SDL_CFLAGS  := $(shell sdl2-config --cflags)
@@ -14,20 +14,29 @@ SDL_LDFLAGS := $(shell sdl2-config --libs)
 INCLUDES = -I../ext/oscpack -I../ext/libfidtrack -I../ext/tinyxml -I../common -I../ext/portmidi/pm_common -I../ext/portmidi/porttime
 COPTS  = -Ofast -w
 CDEBUG = -Wall -g
-CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG -DPMALSA 
+CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG -DPMALSA
 #CFLAGS = $(DEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DPMALSA
 CXXFLAGS = $(CFLAGS)
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lasound -lpthread -lturbojpeg
 
-all:	$(TARGET) 
+all:	$(TARGET)
 
-$(TARGET) : $(CPPOBJECTS) $(COBJECTS) $(OSCOBJECTS) $(PMOBJECTS)
-	$(CXX) -o $@ $+ $(LIBS) 
+%.o: %.cpp
+	@echo [CXX] $@
+	@ $(CXX) $(CFLAGS) -o $@ -c $<
+%.o: %.c
+	@echo [CC] $@
+	@ $(CC) $(CFLAGS) -o $@ -c $<
+
+$(TARGET) : $(CPPOBJECTS) $(OSCOBJECTS) $(COBJECTS) $(PMOBJECTS)
+	@echo [LD] $@
+	@ $(CXX) -o $@ $+ $(LIBS)
 #	strip $(TARGET)
 
 clean:
-	rm -f $(TARGET) $(CPPOBJECTS) $(COBJECTS) $(OSCOBJECTS) $(PMOBJECTS) core*
+	@echo [CLEAN] $(TARGET)
+	@ rm -f $(TARGET) $(CPPOBJECTS) $(OSCOBJECTS) $(COBJECTS) $(PMOBJECTS) core*
 
 run:	$(TARGET)
 	./$(TARGET)
