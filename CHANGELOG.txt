@@ -2,14 +2,15 @@
 —————————————————-
 * revert FrameEqualizer to equalization rather than subtraction
 * added a dedicated PS3 camera driver on MacOSX (thanks to Sebestyén Gábor)
-* implement GAMMA and POWERLINE value configuration on MaxOSX
+* implemented GAMMA and POWERLINE camera configuration on MaxOSX
 * implemented V4L2_PIX_FMT_GREY in Video4Linux2 (for SUR40)
 * fixed the calibration distortion for wide camera formats
 * improved SDL event handling and removed (confusing) VSync
 * updated the SDL2 Framework to 2.0.4
 * minimum supported MacOSX version is 10.8
-* code sign MacOSX application
-* add Windows 64bit build
+  32bit legacy version for older systems
+* code sign MacOSX application bundle
+* add Windows 64bit build (min. Windows 7)
 
 reacTIVision 1.5
 ————————————————
