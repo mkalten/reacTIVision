@@ -1,4 +1,4 @@
-%define version 1.5
+%define version 1.5.1
 %define release 1
 
 Summary:      tangible interaction framework
@@ -26,10 +26,10 @@ Requires: turbojpeg >= 1.3
 reacTIVision is an open source, cross-platform computer vision
 framework for the fast and robust tracking of fiducial markers
 attached onto physical objects, as well as for multi-touch
-finger tracking. It was mainly designed as a toolkit for the 
+finger tracking. It was mainly designed as a toolkit for the
 rapid development of table-based tangible user interfaces (TUI)
-and multi-touch interactive surfaces. This framework has been 
-developed by Martin Kaltenbrunner and Ross Bencina at the Music 
+and multi-touch interactive surfaces. This framework has been
+developed by Martin Kaltenbrunner and Ross Bencina at the Music
 Technology Group at the Universitat Pompeu Fabra in Barcelona, Spain
 as part of the the Reactable project, a novel electronic
 musical instrument with a table-top tangible user interface.
@@ -66,5 +66,3 @@ rm -rf %{buildroot}
 %{_prefix}/share/pixmaps/%{name}.png
 %{_prefix}/share/icons/hicolor/128x128/apps/%{name}.png
 %{_prefix}/share/icons/hicolor/scalable/apps/%{name}.svg
-
-
