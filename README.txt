@@ -181,9 +181,9 @@ The source distribution includes projects for all three supported
 platforms and their respective build systems: Linux, Win32, MacOS X.
 
 Windows:
-A Visual Studio 2012 project as well as all the necessary libraries
-and headers (SDL2, videoInput) are included. The project should build
-right away for 32bit and 64bit targets without additional configuration.
+A Visual Studio 2012 project as well as the necessary SDL2 libraries 
+and headers are included. The project should build right away for 
+32bit and 64bit targets without any additional configuration.
 
 Mac OS X:
 An Xcode project for Xcode version 3.2 or later is included.
