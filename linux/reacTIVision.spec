@@ -51,20 +51,11 @@ rm -rf %{buildroot}
 
 %files
 %{_bindir}/%{name}
-%{_prefix}/share/%{name}/calibration/*.pdf
-%{_prefix}/share/%{name}/amoeba/*.pdf
-%{_prefix}/share/%{name}/amoeba/*.trees
-%{_prefix}/share/%{name}/classic/*.png
+%{_prefix}/share/%{name}/*.txt
 %{_prefix}/share/%{name}/*.xml
-%{_prefix}/share/%{name}/README.txt
-%{_prefix}/share/%{name}/LICENSE.txt
-%{_prefix}/share/%{name}/CHANGELOG.txt
-%{_prefix}/share/%{name}/GPL.txt
-%{_prefix}/share/%{name}/midi/README.txt
-%{_prefix}/share/%{name}/midi/demo.*
+%{_prefix}/share/%{name}/symbols/*.pdf
+%{_prefix}/share/%{name}/calibration/*.pdf
 %{_prefix}/share/applications/%{name}.desktop
 %{_prefix}/share/pixmaps/%{name}.png
 %{_prefix}/share/icons/hicolor/128x128/apps/%{name}.png
 %{_prefix}/share/icons/hicolor/scalable/apps/%{name}.svg
-
-

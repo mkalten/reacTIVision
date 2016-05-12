@@ -56,12 +56,8 @@ install: $(TARGET)
 	install -m 666 -c *.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/128x128/apps/
 	install -d $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/
 	install -m 666 -c *.svg $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/
-	install -d $(DESTDIR)$(PREFIX)/share/$(TARGET)/amoeba
-	install -m 666 -c ../symbols/amoeba/*.pdf $(DESTDIR)$(PREFIX)/share/$(TARGET)/amoeba
-	install -m 666 -c ../symbols/amoeba/*.trees $(DESTDIR)$(PREFIX)/share/$(TARGET)/amoeba
-	install -d $(DESTDIR)$(PREFIX)/share/$(TARGET)/classic
-	install -m 666 -c ../symbols/classic/*.png $(DESTDIR)$(PREFIX)/share/$(TARGET)/classic
+	install -d $(DESTDIR)$(PREFIX)/share/$(TARGET)/symbols
+	install -m 666 -c ../symbols/amoeba/*.pdf $(DESTDIR)$(PREFIX)/share/$(TARGET)/symbols
+	install -m 666 -c ../symbols/yamaarashi/*.pdf $(DESTDIR)$(PREFIX)/share/$(TARGET)/symbols
 	install -d $(DESTDIR)$(PREFIX)/share/$(TARGET)/calibration
 	install -m 666 -c ../calibration/*.pdf $(DESTDIR)$(PREFIX)/share/$(TARGET)/calibration
-	install -d $(DESTDIR)$(PREFIX)/share/$(TARGET)/midi
-	install -m 666 -c ../midi/* $(DESTDIR)$(PREFIX)/share/$(TARGET)/midi
