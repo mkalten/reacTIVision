@@ -186,6 +186,9 @@
     <ClCompile Include="..\common\SDLinterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="videoInput.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\CalibrationEngine.h">
@@ -346,6 +349,9 @@
     </ClInclude>
     <ClInclude Include="..\common\SDLinterface.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="videoInput.h">
+      <Filter>Header Files\portvideo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
