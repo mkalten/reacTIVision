@@ -7,10 +7,11 @@
 * fixed the calibration distortion for wide camera formats
 * improved SDL event handling and removed (confusing) VSync
 * updated the SDL2 Framework to 2.0.4
-* minimum supported MacOSX version is 10.8
-  32bit legacy version for older systems
 * code sign MacOSX application bundle
+* minimum supported MacOSX version is 10.8
+  32bit version for older systems and CPUs
 * add Windows 64bit build (min. Windows 7)
+  32bit version for older systems and CPUs
 
 reacTIVision 1.5
 ————————————————
