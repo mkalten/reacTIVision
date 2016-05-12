@@ -22,6 +22,8 @@ macosx/reacTIVision.xcodeproj/project.xcworkspace
 
 *.suo
 
+*.opensdf
+
 .DS_Store
 
 *.o
