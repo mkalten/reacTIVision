@@ -60,7 +60,7 @@ void DC1394Camera::listDevices() {
     } else if (list->num == 1) printf("1 DC1394 camera found:\n");
     else printf("%d DC1394 cameras found:\n", list->num);
     
-    for (int i=0;i<list->num;i++) {
+    for (unsigned int i=0;i<list->num;i++) {
         dc1394camera_t *camera = dc1394_camera_new (d, list->ids[i].guid);
         if (!camera) continue;
         printf("\t%d: %s\n", i, camera->model);
@@ -73,7 +73,7 @@ void DC1394Camera::listDevices() {
             continue;
         }
         
-        for (int i=0;i<video_modes.num;i++) {
+        for (unsigned int i=0;i<video_modes.num;i++) {
             
             if(video_modes.modes[i]>=DC1394_VIDEO_MODE_FORMAT7_0) {
                 dc1394color_coding_t coding;
@@ -98,7 +98,7 @@ void DC1394Camera::listDevices() {
             
                 dc1394framerates_t framerates;
                 dc1394_video_get_supported_framerates(camera,video_modes.modes[i],&framerates);
-                for (int j=0;j<framerates.num;j++) {
+                for (unsigned int j=0;j<framerates.num;j++) {
                     float fps = framerate_table[framerates.framerates[j]-DC1394_FRAMERATE_MIN];
                     if(int(fps)==fps) printf("%d|",int(fps));
                     else printf("%'.1f|",fps);
