@@ -21,7 +21,7 @@
 #include "PS3EyeCamera.h"
 #include "ps3eye.h"
 
-#define _saturate(v) static_cast<uint8_t>(static_cast<uint32_t>(v) <= 0xff ? v : v > 0 ? 0xff : 0)
+using namespace ps3eye;
 
 static void yuv422_to_gray(const uint8_t *yuv_src, const int stride, uint8_t *dst, const int width, const int height)
 {
@@ -33,8 +33,8 @@ static void yuv422_to_gray(const uint8_t *yuv_src, const int stride, uint8_t *ds
         
         for (i = 0; i < 2*width; i += 4, row += 2)
         {
-            row[0] = _saturate(yuv_src[i]);
-            row[1] = _saturate(yuv_src[i + 2]);
+            row[0] = yuv_src[i];
+            row[1] = yuv_src[i + 2];
         }
     }
 }
@@ -42,17 +42,17 @@ static void yuv422_to_gray(const uint8_t *yuv_src, const int stride, uint8_t *ds
 PS3EyeCamera::PS3EyeCamera(const char* config_file):CameraEngine(config_file)
 {
     cam_buffer = NULL;
-	_gain = 20;
+	frm_buffer = NULL;
 }
 
 PS3EyeCamera::~PS3EyeCamera() {
     if (cam_buffer!=NULL) delete []cam_buffer;
+	if (frm_buffer!=NULL) delete []frm_buffer;
 	eye.reset();
 }
 
 void PS3EyeCamera::listDevices() {
-    using namespace ps3eye;
-    
+	
     // list out the devices
     std::vector<PS3EYECam::PS3EYERef> devices( PS3EYECam::getDevices() );
     
@@ -76,7 +76,6 @@ void PS3EyeCamera::listDevices() {
 }
 
 bool PS3EyeCamera::findCamera() {
-    using namespace ps3eye;
 
     readSettings();
 
@@ -128,14 +127,15 @@ bool PS3EyeCamera::initCamera() {
     eye->init( config.cam_width, config.cam_height, config.cam_fps );
     fps = eye->getFrameRate();
     cam_buffer = new unsigned char[cam_width*cam_height*bytes];
-    
-    // do the rest
-    setupFrame();
+	setupFrame();
+	frm_buffer = new unsigned char[frame_width*frame_height*bytes];
+
     return true;
 }
 
 bool PS3EyeCamera::startCamera() {
     eye->start();
+	applyCameraSettings();
     running = true;
     return true;
 }
@@ -151,31 +151,33 @@ bool PS3EyeCamera::stillRunning() {
 }
 
 bool PS3EyeCamera::resetCamera() {
-    // TODO
-    return false;
+	stopCamera();
+	return startCamera();
 }
 
 bool PS3EyeCamera::closeCamera() {
+	updateSettings();
+	saveSettings();
     return true;
 }
 
-unsigned char*  PS3EyeCamera::getFrame() {
-    using namespace ps3eye;
-
-    
+unsigned char* PS3EyeCamera::getFrame() {
+	
     while (!eye->isNewFrame()) {
         PS3EYECam::updateDevices();
 		if(!running) return NULL;
     }
     
-    //if (eye->isNewFrame()) {
     if (colour) {
         uyvy2rgb(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
     } else {
         yuv422_to_gray((unsigned char *) eye->getLastFramePointer(), eye->getRowBytes(), cam_buffer, cam_width, cam_height);
-    } //} else return NULL;
-        
-    return cam_buffer;
+    }
+	
+	if(config.frame) cropFrame(cam_buffer,frm_buffer);
+	else memcpy(frm_buffer,cam_buffer,cam_width*cam_height*bytes);
+	
+    return frm_buffer;
 }
 
 int PS3EyeCamera::getCameraSettingStep(int mode) {
@@ -185,7 +187,7 @@ int PS3EyeCamera::getCameraSettingStep(int mode) {
 bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
     // supported: gain, awb = Automatic White Balance?
 
-    CameraSetting   _m = (CameraSetting)mode;
+    CameraSetting _m = (CameraSetting)mode;
     if (_m == GAIN) {
         eye->setAutogain(flag);
         return true;
@@ -197,7 +199,7 @@ bool PS3EyeCamera::setCameraSettingAuto(int mode, bool flag) {
 }
 
 bool PS3EyeCamera::getCameraSettingAuto(int mode) {
-    CameraSetting   _m = (CameraSetting)mode;
+    CameraSetting _m = (CameraSetting)mode;
 
     // supported: gain, awb = Automatic White Balance?
 
@@ -208,7 +210,6 @@ bool PS3EyeCamera::setCameraSetting(int mode, int value) {
     CameraSetting _m = (CameraSetting) mode;
     switch (_m) {
         case CameraEngine::GAIN:
-            _gain = value;
             eye->setGain(value);
             return true;
         case CameraEngine::EXPOSURE:
@@ -321,12 +322,13 @@ bool PS3EyeCamera::setDefaultCameraSetting(int mode) {
 int PS3EyeCamera::getDefaultCameraSetting(int mode) {
 	switch (mode) {
 		case EXPOSURE:
-			return 64;
+			return 128;
 		case BRIGHTNESS:
 		case CONTRAST:
 		case SHARPNESS:
-		case GAIN:
 			return 32;
+		case GAIN:
+			return 0;
 	}
 	return 0;
 }

@@ -564,11 +564,11 @@ namespace ps3eye {
             
             if (packet_type == LAST_PACKET)
             {
-                last_frame_time = getTickCount();
                 frame_complete_ind = frame_work_ind;
                 i = (frame_work_ind + 1) & 15;
                 frame_work_ind = i;
                 frame_data_len = 0;
+				last_frame_time = getTickCount();
                 //debug("frame completed %d\n", frame_complete_ind);
             }
         }
