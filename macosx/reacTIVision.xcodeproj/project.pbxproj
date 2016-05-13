@@ -650,6 +650,7 @@
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				STRIP_INSTALLED_PRODUCT = NO;
+				VERSIONING_SYSTEM = "";
 				WARNING_CFLAGS = (
 					"-Wall",
 					"-Wno-four-char-constants",
@@ -696,6 +697,7 @@
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				STRIP_INSTALLED_PRODUCT = YES;
+				VERSIONING_SYSTEM = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -736,6 +738,7 @@
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
 				STRIP_INSTALLED_PRODUCT = NO;
+				VERSIONING_SYSTEM = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
