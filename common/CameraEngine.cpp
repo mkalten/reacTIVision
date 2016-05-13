@@ -22,6 +22,7 @@
 	void CameraEngine::showSettingsDialog() {
 		if (settingsDialog) {
 			settingsDialog = false;
+			updateSettings();
 			saveSettings();
 			SDLinterface::display_lock = false;
 		} else if (!SDLinterface::display_lock) {
@@ -166,18 +167,17 @@
 			CFRelease( mainBundleURL);
 			CFRelease( cfStringRef);
 			sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
-			config_file = full_path;
 #elif !defined WIN32
 			if (access ("./camera.xml", F_OK )==0) config_file = "./camera.xml";
-			else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) config_file = "/usr/share/reacTIVision/camera.xml";
-			else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) config_file = "/usr/local/share/camera.xml";
-			else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) config_file = "/opt/share/reacTIVision/camera.xml";
+			else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/share/reacTIVision/camera.xml");
+			else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/local/share/camera.xml");
+			else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/opt/share/reacTIVision/camera.xml");
 #else
-			config_file = "./camera.xml";
+			sprintf(full_path,"./camera.xml");
 #endif
 		}
 
-		TiXmlDocument xml_settings( config_file );
+		TiXmlDocument xml_settings( full_path );
 		xml_settings.LoadFile();
 		if( xml_settings.Error() )
 		{
@@ -335,27 +335,11 @@
 
 void CameraEngine::saveSettings() {
 
-	if (strcmp( config_file, "none" ) == 0) {
-#ifdef __APPLE__
-		char path[1024];
-		CFBundleRef mainBundle = CFBundleGetMainBundle();
-		CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
-		CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-		CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
-		CFRelease( mainBundleURL);
-		CFRelease( cfStringRef);
-		sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
-		config_file = full_path;
-#else
-		config_file = "./camera.xml";
-#endif
-	}
-
-	TiXmlDocument xml_settings( config_file );
+	TiXmlDocument xml_settings( full_path );
 	xml_settings.LoadFile();
 	if( xml_settings.Error() )
 	{
-		std::cout << "Error loading camera configuration file: " << config_file << std::endl;
+		std::cout << "Error loading camera configuration file: " << full_path << std::endl;
 		return;
 	}
 
@@ -450,7 +434,7 @@ void CameraEngine::saveSettings() {
 	}
 
 	xml_settings.SaveFile();
-	if( xml_settings.Error() ) std::cout << "Error saving camera configuration file: "  << config_file << std::endl;
+	if( xml_settings.Error() ) std::cout << "Error saving camera configuration file: "  << full_path << std::endl;
 
 }
 
@@ -612,48 +596,48 @@ void CameraEngine::applyCameraSettings() {
 
 void CameraEngine::updateSettings()  {
 
-    int brightness = getCameraSetting(BRIGHTNESS);
-    if (brightness==getMinCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MIN;
-    if (brightness==getMaxCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MAX;
-    if (brightness==getDefaultCameraSetting(BRIGHTNESS)) config.brightness=SETTING_DEFAULT;
-    //printf("brightness %d\n",brightness);
+    config.brightness = getCameraSetting(BRIGHTNESS);
+    if (config.brightness==getMinCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MIN;
+    if (config.brightness==getMaxCameraSetting(BRIGHTNESS)) config.brightness=SETTING_MAX;
+    if (config.brightness==getDefaultCameraSetting(BRIGHTNESS)) config.brightness=SETTING_DEFAULT;
+    //printf("brightness %d\n",config.brightness);
 
-    int contrast = getCameraSetting(CONTRAST);
-    if (contrast==getMinCameraSetting(CONTRAST)) config.contrast=SETTING_MIN;
-    if (contrast==getMaxCameraSetting(CONTRAST)) config.contrast=SETTING_MAX;
-    if (contrast==getDefaultCameraSetting(CONTRAST)) config.contrast=SETTING_DEFAULT;
-    //printf("contrast %d\n",contrast);
+    config.contrast = getCameraSetting(CONTRAST);
+    if (config.contrast==getMinCameraSetting(CONTRAST)) config.contrast=SETTING_MIN;
+    if (config.contrast==getMaxCameraSetting(CONTRAST)) config.contrast=SETTING_MAX;
+    if (config.contrast==getDefaultCameraSetting(CONTRAST)) config.contrast=SETTING_DEFAULT;
+    //printf("contrast %d\n",config.contrast);
 
-    int gain = getCameraSetting(GAIN);
-    if (gain==getMinCameraSetting(GAIN)) config.gain=SETTING_MIN;
-    if (gain==getMaxCameraSetting(GAIN)) config.gain=SETTING_MAX;
-    if (gain==getDefaultCameraSetting(GAIN)) config.gain=SETTING_DEFAULT;
-    //printf("gain %d\n",gain);
+	config.gain = getCameraSetting(GAIN);
+    if (config.gain==getMinCameraSetting(GAIN)) config.gain=SETTING_MIN;
+    if (config.gain==getMaxCameraSetting(GAIN)) config.gain=SETTING_MAX;
+    if (config.gain==getDefaultCameraSetting(GAIN)) config.gain=SETTING_DEFAULT;
+    //printf("gain %d\n",config.gain);
 
-    int exposure = getCameraSetting(EXPOSURE);
-    if (exposure==getMinCameraSetting(EXPOSURE)) config.exposure=SETTING_MIN;
-    if (exposure==getMaxCameraSetting(EXPOSURE)) config.exposure=SETTING_MAX;
+    config.exposure = getCameraSetting(EXPOSURE);
+    if (config.exposure==getMinCameraSetting(EXPOSURE)) config.exposure=SETTING_MIN;
+    if (config.exposure==getMaxCameraSetting(EXPOSURE)) config.exposure=SETTING_MAX;
     if (getCameraSettingAuto(EXPOSURE)==true) config.exposure=SETTING_AUTO;
-    if (exposure==getDefaultCameraSetting(EXPOSURE)) config.exposure=SETTING_DEFAULT;
-    //printf("exposure %d\n",exposure);
+    if (config.exposure==getDefaultCameraSetting(EXPOSURE)) config.exposure=SETTING_DEFAULT;
+    //printf("exposure %d\n",config.exposure);
 
-    int sharpness = getCameraSetting(SHARPNESS);
-    if (sharpness==getMinCameraSetting(SHARPNESS)) config.sharpness=SETTING_MIN;
-    if (sharpness==getMaxCameraSetting(SHARPNESS)) config.sharpness=SETTING_MAX;
-    if (sharpness==getDefaultCameraSetting(SHARPNESS)) config.sharpness=SETTING_DEFAULT;
-    //printf("sharpness %d\n",sharpness);
+	config.sharpness = getCameraSetting(SHARPNESS);
+    if (config.sharpness==getMinCameraSetting(SHARPNESS)) config.sharpness=SETTING_MIN;
+    if (config.sharpness==getMaxCameraSetting(SHARPNESS)) config.sharpness=SETTING_MAX;
+    if (config.sharpness==getDefaultCameraSetting(SHARPNESS)) config.sharpness=SETTING_DEFAULT;
+    //printf("sharpness %d\n",config.sharpness);
 
-    int focus = getCameraSetting(FOCUS);
-    if (focus==getMinCameraSetting(FOCUS)) config.focus=SETTING_MIN;
-    if (focus==getMaxCameraSetting(FOCUS)) config.focus=SETTING_MAX;
-    if (focus==getDefaultCameraSetting(FOCUS)) config.focus=SETTING_DEFAULT;
-    //printf("focus %d\n",focus);
+	config.focus = getCameraSetting(FOCUS);
+    if (config.focus==getMinCameraSetting(FOCUS)) config.focus=SETTING_MIN;
+    if (config.focus==getMaxCameraSetting(FOCUS)) config.focus=SETTING_MAX;
+    if (config.focus==getDefaultCameraSetting(FOCUS)) config.focus=SETTING_DEFAULT;
+    //printf("focus %d\n",config.focus);
 
-    int gamma = getCameraSetting(GAMMA);
-    if (gamma==getMinCameraSetting(GAMMA)) config.gamma=SETTING_MIN;
-    if (gamma==getMaxCameraSetting(GAMMA)) config.gamma=SETTING_MAX;
-    if (gamma==getDefaultCameraSetting(GAMMA)) config.gamma=SETTING_DEFAULT;
+    config.gamma = getCameraSetting(GAMMA);
+    if (config.gamma==getMinCameraSetting(GAMMA)) config.gamma=SETTING_MIN;
+    if (config.gamma==getMaxCameraSetting(GAMMA)) config.gamma=SETTING_MAX;
+    if (config.gamma==getDefaultCameraSetting(GAMMA)) config.gamma=SETTING_DEFAULT;
     if (getCameraSettingAuto(GAMMA)==true) config.gamma=SETTING_AUTO;
-    //printf("gamma %d\n",gamma);
+    //printf("gamma %d\n",config.gamma);
 
 }

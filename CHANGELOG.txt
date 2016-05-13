@@ -4,6 +4,7 @@
 * added a dedicated PS3 camera driver on MacOSX (thanks to Sebestyén Gábor)
 * implemented GAMMA and POWERLINE camera configuration on MaxOSX
 * implemented V4L2_PIX_FMT_GREY in Video4Linux2 (for SUR40)
+* save updated camera configuration
 * fixed the calibration distortion for wide camera formats
 * improved SDL event handling and removed (confusing) VSync
 * updated the SDL2 Framework to 2.0.4

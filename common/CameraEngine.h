@@ -115,9 +115,7 @@ protected:
 	portvideo_settings config;
 	const char* config_file;
 	char* image_file;
-	#ifdef __APPLE__
 	char full_path[1024];
-	#endif
 
     bool crop_frame;
     unsigned char* crop_buffer;
