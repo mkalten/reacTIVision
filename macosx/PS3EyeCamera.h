@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  PS3EyeCamera Copyright (C) 2014 Sebestyén Gábor
  
  This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ public:
 private:
     ps3eye::PS3EYECam::PS3EYERef eye;
     
-    int _gain = 20;
+    int _gain;
 };
 
 #endif

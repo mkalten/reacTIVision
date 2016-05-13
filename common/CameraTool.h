@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,11 +35,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../linux/DC1394Camera.h"
+#include "../macosx/PS3EyeCamera.h"
     #ifndef MAC_OS_X_VERSION_10_6
     #include "../macosx/legacy/MacVdigCamera.h"
 	#else
 	#include "../macosx/AVfoundationCamera.h"
-    #include "../macosx/PS3EyeCamera.h"
     #endif
 #endif
 

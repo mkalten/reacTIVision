@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  PS3EyeCamera Copyright (C) 2014 Sebestyén Gábor
  
  This program is free software; you can redistribute it and/or modify
@@ -25,27 +25,24 @@
 
 static void yuv422_to_gray(const uint8_t *yuv_src, const int stride, uint8_t *dst, const int width, const int height)
 {
-    const int yIdx = 0;
     int j, i;
     
     for (j = 0; j < height; j++, yuv_src += stride)
     {
-        uint8_t* row = dst + (width * 1) * j; // 4 channels
+        uint8_t* row = dst + width * j; // 4 channels
         
         for (i = 0; i < 2*width; i += 4, row += 2)
         {
-            row[0] = _saturate(yuv_src[i + yIdx]);
-            row[1] = _saturate(yuv_src[i + yIdx + 2]);
+            row[0] = _saturate(yuv_src[i]);
+            row[1] = _saturate(yuv_src[i + 2]);
         }
     }
 }
 
-
-// --- --- //
-
 PS3EyeCamera::PS3EyeCamera(const char* config_file):CameraEngine(config_file)
 {
     cam_buffer = NULL;
+	_gain = 20;
 }
 
 PS3EyeCamera::~PS3EyeCamera() {
@@ -53,7 +50,6 @@ PS3EyeCamera::~PS3EyeCamera() {
 	eye.reset();
 }
 
-// UNUSED??
 void PS3EyeCamera::listDevices() {
     using namespace ps3eye;
     
@@ -70,7 +66,7 @@ void PS3EyeCamera::listDevices() {
         for (int i=0;i<count;i++) {
             printf("\t%d: PS3Eye%d\n",i,i);
             printf("\t\tformat: YUV422\n");
-            printf("\t\t\t320x240 125|100|75|60|50|40|30 fps\n");
+            printf("\t\t\t320x240 187|150|125|100|75|60|50|40|30 fps\n");
             printf("\t\t\t640x480 60|50|40|30|15 fps\n");
         }
         
@@ -78,8 +74,6 @@ void PS3EyeCamera::listDevices() {
         printf ("no PS3Eye cameras found\n");
     }
 }
-
-
 
 bool PS3EyeCamera::findCamera() {
     using namespace ps3eye;
@@ -94,7 +88,7 @@ bool PS3EyeCamera::findCamera() {
         cameraID = config.device;
         if (cameraID < 0) {
             cameraID = 0;
-        } else if (cameraID>=devices.size()) {
+        } else if ((unsigned int)cameraID>=devices.size()) {
             return false;
         }
         
@@ -114,7 +108,7 @@ bool PS3EyeCamera::initCamera() {
         config.cam_width = 320;
         config.cam_height = 240;
         
-        if (config.cam_fps==SETTING_MAX) config.cam_fps = 125;
+        if (config.cam_fps==SETTING_MAX) config.cam_fps = 187;
         else if (config.cam_fps==SETTING_MIN) config.cam_fps = 30;
             
     } else if (config.cam_width == SETTING_MAX || config.cam_width == 640 || config.cam_height == SETTING_MAX || config.cam_height == 480 ) {

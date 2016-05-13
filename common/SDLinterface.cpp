@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

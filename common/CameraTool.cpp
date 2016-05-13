@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+    Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@ void CameraTool::listDevices() {
     
 #ifdef __APPLE__
     DC1394Camera::listDevices();
+	PS3EyeCamera::listDevices();
     
 #ifndef MAC_OS_X_VERSION_10_6
     MacVdigCamera::listDevices();
 #else
-    PS3EyeCamera::listDevices();
     AVfoundationCamera::listDevices();
 #endif
     
@@ -67,16 +67,16 @@ CameraEngine* CameraTool::findCamera(const char* config_file) {
 	camera = new DC1394Camera(config_file);
 	if( !camera->findCamera() ) delete camera;
 	else return camera;
+	
+	camera = new PS3EyeCamera(config_file);
+	if( !camera->findCamera()) delete camera;
+	else return camera;
 
 	#ifndef MAC_OS_X_VERSION_10_6
 		camera = new MacVdigCamera(config_file);
 		if( !camera->findCamera()) delete camera;
 		else return camera;	
 	#else
-        camera = new PS3EyeCamera(config_file);
-        if( !camera->findCamera()) delete camera;
-        else return camera;
-    
 		camera = new AVfoundationCamera(config_file);
 		if( !camera->findCamera()) delete camera;
 		else return camera;

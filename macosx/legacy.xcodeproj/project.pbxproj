@@ -22,7 +22,11 @@
 		B265EE7B19E485A300B46A0F /* VdigGrab.c in Sources */ = {isa = PBXBuildFile; fileRef = B265EE7819E485A300B46A0F /* VdigGrab.c */; };
 		B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B26725ED0C5E3FD100D7FD74 /* IOKit.framework */; };
 		B269752819DFEC2200B46119 /* threshold.c in Sources */ = {isa = PBXBuildFile; fileRef = B269752619DFEC2200B46119 /* threshold.c */; };
-		B26E016C19C9AD5F00F0CBCB /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B26E016B19C9AD5F00F0CBCB /* SDL2.framework */; };
+		B27667BA1CE611FF006724B9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B27667B91CE611FF006724B9 /* SDL2.framework */; };
+		B27668231CE61493006724B9 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B27667B91CE611FF006724B9 /* SDL2.framework */; };
+		B27668271CE614A2006724B9 /* SDL2.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B27667B91CE611FF006724B9 /* SDL2.framework */; };
+		B27668381CE6162E006724B9 /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B27668361CE6162E006724B9 /* PS3EyeCamera.cpp */; };
+		B276683D1CE61653006724B9 /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B276683B1CE61653006724B9 /* ps3eye.cpp */; };
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */; };
 		B2884A7E0A2CF0FC00AFF79A /* FingerObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A7B0A2CF0FC00AFF79A /* FingerObject.cpp */; };
@@ -77,12 +81,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		B276681D1CE61404006724B9 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B2E7620A0DD39B19008A46C0 /* Copy Frameworks Into .app Bundle */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B27668271CE614A2006724B9 /* SDL2.framework in Copy Frameworks Into .app Bundle */,
 			);
 			name = "Copy Frameworks Into .app Bundle";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,7 +181,11 @@
 		B26725ED0C5E3FD100D7FD74 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = SOURCE_ROOT; };
 		B269752619DFEC2200B46119 /* threshold.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = threshold.c; path = ../ext/libfidtrack/threshold.c; sourceTree = "<group>"; };
 		B269752719DFEC2200B46119 /* threshold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = threshold.h; path = ../ext/libfidtrack/threshold.h; sourceTree = "<group>"; };
-		B26E016B19C9AD5F00F0CBCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<absolute>"; };
+		B27667B91CE611FF006724B9 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		B27668361CE6162E006724B9 /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = PS3EyeCamera.cpp; sourceTree = SOURCE_ROOT; };
+		B27668371CE6162E006724B9 /* PS3EyeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PS3EyeCamera.h; sourceTree = SOURCE_ROOT; };
+		B276683B1CE61653006724B9 /* ps3eye.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ps3eye.cpp; path = ps3eye/ps3eye.cpp; sourceTree = SOURCE_ROOT; };
+		B276683C1CE61653006724B9 /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ps3eye/ps3eye.h; sourceTree = SOURCE_ROOT; };
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CalibrationGrid.cpp; path = ../common/CalibrationGrid.cpp; sourceTree = SOURCE_ROOT; };
 		B2884A780A2CF0E800AFF79A /* CalibrationGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CalibrationGrid.h; path = ../common/CalibrationGrid.h; sourceTree = SOURCE_ROOT; };
@@ -228,12 +246,13 @@
 				B2E9BB3B09D0D2C1005DF348 /* CoreMIDI.framework in Frameworks */,
 				B2E9BB4009D0D2E0005DF348 /* CoreAudio.framework in Frameworks */,
 				B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */,
-				B26E016C19C9AD5F00F0CBCB /* SDL2.framework in Frameworks */,
 				B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */,
 				B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */,
 				B2B6BE9C19C45A66005B7174 /* QTKit.framework in Frameworks */,
 				B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */,
 				B29F24C819E0113400C8428D /* QuickTime.framework in Frameworks */,
+				B27667BA1CE611FF006724B9 /* SDL2.framework in Frameworks */,
+				B27668231CE61493006724B9 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +304,7 @@
 			children = (
 				B244E81519C6D4DC008ADD32 /* libusb.a */,
 				B2CA60030CD623FA00B46958 /* libdc1394.a */,
-				B26E016B19C9AD5F00F0CBCB /* SDL2.framework */,
+				B27667B91CE611FF006724B9 /* SDL2.framework */,
 				B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */,
 				B26725ED0C5E3FD100D7FD74 /* IOKit.framework */,
 				B24EA4F20015EB5000096D13 /* Cocoa.framework */,
@@ -403,6 +422,15 @@
 			name = tinyxml;
 			sourceTree = "<group>";
 		};
+		B27668391CE61653006724B9 /* ps3eye */ = {
+			isa = PBXGroup;
+			children = (
+				B276683B1CE61653006724B9 /* ps3eye.cpp */,
+				B276683C1CE61653006724B9 /* ps3eye.h */,
+			);
+			path = ps3eye;
+			sourceTree = SOURCE_ROOT;
+		};
 		B2E9BB0C09D0D0FE005DF348 /* portmidi */ = {
 			isa = PBXGroup;
 			children = (
@@ -428,6 +456,9 @@
 		B2F486A407788A9A00370074 /* portvideo */ = {
 			isa = PBXGroup;
 			children = (
+				B27668391CE61653006724B9 /* ps3eye */,
+				B27668361CE6162E006724B9 /* PS3EyeCamera.cpp */,
+				B27668371CE6162E006724B9 /* PS3EyeCamera.h */,
 				B265EE7619E485A300B46A0F /* MacVdigCamera.cpp */,
 				B265EE7719E485A300B46A0F /* MacVdigCamera.h */,
 				B265EE7819E485A300B46A0F /* VdigGrab.c */,
@@ -464,6 +495,7 @@
 				B297D3B9097536E2004AB0FE /* Sources */,
 				B297D3E3097536E2004AB0FE /* Frameworks */,
 				B2E7620A0DD39B19008A46C0 /* Copy Frameworks Into .app Bundle */,
+				B276681D1CE61404006724B9 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -573,6 +605,8 @@
 				B269752819DFEC2200B46119 /* threshold.c in Sources */,
 				B265EE7A19E485A300B46A0F /* MacVdigCamera.cpp in Sources */,
 				B265EE7B19E485A300B46A0F /* VdigGrab.c in Sources */,
+				B27668381CE6162E006724B9 /* PS3EyeCamera.cpp in Sources */,
+				B276683D1CE61653006724B9 /* ps3eye.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -598,8 +632,8 @@
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = stabs;
 				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -639,10 +673,11 @@
 		B297D3EA097536E2004AB0FE /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -680,9 +715,11 @@
 		B297D3EB097536E2004AB0FE /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
-					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+					"\"$(SRCROOT)/Frameworks\"",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
