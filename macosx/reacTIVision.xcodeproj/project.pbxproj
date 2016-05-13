@@ -652,6 +652,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
@@ -696,6 +697,7 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
@@ -734,6 +736,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";

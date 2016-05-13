@@ -5,23 +5,27 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>reacTIVision</string>
+	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleGetInfoString</key>
 	<string>1.5.1</string>
 	<key>CFBundleIconFile</key>
 	<string>reacTIVision</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.tuio.reactivision</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>reacTIVision</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.5.1</string>
 	<key>CFBundleSignature</key>
 	<string>TUIO</string>
 	<key>CFBundleVersion</key>
 	<string>1605</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.developer-tools</string>
 	<key>LSMinimumSystemVersionByArchitecture</key>
 	<dict>
 		<key>i386</key>
