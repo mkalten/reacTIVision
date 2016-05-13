@@ -141,10 +141,10 @@ dc1394_deinterlace_stereo(uint8_t *src, uint8_t *dest, uint32_t width, uint32_t 
  *  - Bilinear         : OpenCV library                                                         *
  *  - HQLinear         : High-Quality Linear Interpolation For Demosaicing Of Bayer-Patterned   *
  *                       Color Images, by Henrique S. Malvar, Li-wei He, and Ross Cutler,       *
- *                          in Proceedings of the ICASSP'04 Conference.                            *
+ *                       in Proceedings of the ICASSP'04 Conference.                            *
  *  - Edge Sense II    : Laroche, Claude A. "Apparatus and method for adaptively interpolating  *
  *                       a full color image utilizing chrominance gradients"                    *
- *                          U.S. Patent 5,373,322. Based on the code found on the website          *
+ *                       U.S. Patent 5,373,322. Based on the code found on the website          *
  *                       http://www-ise.stanford.edu/~tingchen/ Converted to C and adapted to   *
  *                       all four elementary patterns.                                          *
  *  - Downsample       : "Known to the Ancients"                                                *
