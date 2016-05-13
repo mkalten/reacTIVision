@@ -53,7 +53,6 @@ public:
 	bool getCameraSettingAuto(int mode);
 	bool setDefaultCameraSetting(int mode);
 	int getDefaultCameraSetting(int mode);
-	void updateSettings();
 
 	void control(int key);
 	void showSettingsDialog();
