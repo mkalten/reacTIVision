@@ -336,11 +336,16 @@ bool SDLinterface::setupWindow() {
 	if(headless_) return true;
 	char *renderdriver = checkRenderDriver();
 	printf("render: %s\n",renderdriver);
+	
+	SDL_DisplayMode mode;
+	SDL_GetCurrentDisplayMode(0,&mode);
+	if ((camera_!=NULL) && (camera_->getFps()>mode.refresh_rate))
+		SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
+	else SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
 	SDL_SetHint(SDL_HINT_FRAMEBUFFER_ACCELERATION, renderdriver);
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, renderdriver);
-    SDL_SetHint(SDL_HINT_RENDER_VSYNC, "0");
-
+	
  	SDL_CreateWindowAndRenderer(width_,height_,0,&window_,&renderer_);
 
 	if ( window_ == NULL ) {
@@ -348,7 +353,7 @@ bool SDLinterface::setupWindow() {
 		SDL_Quit();
 		return false;
 	} else SDL_SetWindowTitle(window_,app_name_.c_str());
-
+	
 	SDL_EventState(SDL_MOUSEMOTION,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEBUTTONDOWN,SDL_IGNORE);
 	SDL_EventState(SDL_MOUSEBUTTONUP,SDL_IGNORE);
