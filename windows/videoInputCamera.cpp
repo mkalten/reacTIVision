@@ -38,17 +38,20 @@ videoInputCamera::~videoInputCamera()
 
 void videoInputCamera::listDevices() {
 
-	videoInput VI;
-	std::vector <std::string> devList = VI.getDeviceList();
+	std::vector <std::string> devList = videoInput::getDeviceList();
 
 	int count = devList.size();
 	if (count==0) { std::cout << " no videoInput camera found!" << std::endl; return; }
 	else if (count==1) std::cout << "1 videoInput camera found:" << std::endl;
 	else std::cout << count << " videoInput cameras found:" << std::endl;
 	
-	for(int i = 0; i <count; i++){
+	/*for(int i = 0; i <count; i++){
 		std::cout << "\t" << i << ": " << devList[i] << std::endl;
-	}
+	}*/
+
+	videoInput *tVI = new videoInput();
+	videoInput::listDevicesAndFormats();
+	delete tVI;
 }
 
 bool videoInputCamera::findCamera() {
@@ -71,13 +74,18 @@ bool videoInputCamera::findCamera() {
 
 bool videoInputCamera::initCamera() {
 
-	// TODO: get actual video formats
-	if (config.cam_width<=0) config.cam_width=640;
-	if (config.cam_height<=0) config.cam_height=480;
-	if (config.cam_fps<=0) config.cam_fps=30;
+	if (config.compress == true) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
+	int min_width,max_width,min_height,max_height,min_fps,max_fps;
+	//VI->getMinMaxConfiguration(&min_width,&max_width,&min_height,&max_height,&min_fps,&max_fps);
+
+	if (config.cam_width==SETTING_MIN) config.cam_width=min_width;
+	else if (config.cam_width==SETTING_MAX) config.cam_width=max_width;
+	if (config.cam_height==SETTING_MIN) config.cam_height=min_height;
+	else if (config.cam_height==SETTING_MAX) config.cam_height=max_height;
+	if (config.cam_fps==SETTING_MIN) config.cam_fps=min_fps;
+	else if (config.cam_fps==SETTING_MAX) config.cam_fps=max_fps;
 
 	VI->setIdealFramerate(this->cameraID, config.cam_fps);
-	if (config.compress == true) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
 	bool bOk = VI->setupDevice(cameraID, config.cam_width, config.cam_height);
 
 	if (bOk == true) {	

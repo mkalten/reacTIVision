@@ -270,6 +270,7 @@ class videoInput{
 		//Functions in rough order they should be used.
 		static int listDevices(bool silent = false);
 		static std::vector <std::string> getDeviceList(); 
+		static void listDevicesAndFormats();
 
 		//needs to be called after listDevices - otherwise returns NULL
 		static const char * getDeviceName(int deviceID);
@@ -375,9 +376,9 @@ class videoInput{
 		void processPixels(unsigned char * src, unsigned char * dst, int width, int height, bool bRGB, bool bFlip);
 		int  start(int deviceID, videoDevice * VD);
 		int  getDeviceCount();
-		void getMediaSubtypeAsString(GUID type, char * typeAsString);
+		static void getMediaSubtypeAsString(GUID type, char * typeAsString);
 
-		HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
+		static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
 		static HRESULT ShowFilterPropertyPages(IBaseFilter *pFilter);
 		HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath);
 		HRESULT routeCrossbar(ICaptureGraphBuilder2 **ppBuild, IBaseFilter **pVidInFilter, int conType, GUID captureMode);

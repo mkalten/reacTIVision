@@ -825,6 +825,137 @@ std::vector <std::string> videoInput::getDeviceList(){
 	return deviceList;
 }
 
+//-------------------------------------------------------------------------------------------
+void videoInput::listDevicesAndFormats() {
+
+	comInit();
+	int count = listDevices(true);
+
+	char 	nDeviceName[255];
+	WCHAR 	wDeviceName[255];
+	memset(wDeviceName, 0, sizeof(WCHAR) * 255);
+	memset(nDeviceName, 0, sizeof(char) * 255);
+
+	HRESULT hr;
+	ICaptureGraphBuilder2 *pCaptureGraph;
+	IGraphBuilder *pGraph;
+	IBaseFilter *pVideoInputFilter;
+	IAMStreamConfig *pStreamConf;
+
+	for (int i=0;i<count;i++) {
+
+    hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void **)&pCaptureGraph);
+    if (FAILED(hr))	// FAILED is a macro that tests the return value
+    {
+        printf("ERROR - Could not create the Filter Graph Manager\n");
+        return;
+    }
+
+    // Create the Filter Graph Manager.
+    hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void**)&pGraph);
+    if (FAILED(hr))
+    {
+		printf("ERROR - Could not add the graph builder!\n");
+	    pCaptureGraph->Release();
+        return;
+	}
+
+    hr = pCaptureGraph->SetFiltergraph(pGraph);
+	if (FAILED(hr))
+    {
+		printf("ERROR - Could not set filtergraph\n");
+	    pGraph->Release();
+	    pCaptureGraph->Release();
+        return;
+	}
+
+	hr = getDevice(&pVideoInputFilter, i, wDeviceName, nDeviceName);
+
+	if (SUCCEEDED(hr)){
+		printf("\t%d: %s\n", i, nDeviceName);
+		hr = pGraph->AddFilter(pVideoInputFilter, wDeviceName);
+	}else{
+        printf("ERROR - Could not find specified video device\n");
+		pGraph->Release();
+	    pCaptureGraph->Release();
+        return;
+	}
+
+	hr = pCaptureGraph->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, pVideoInputFilter, IID_IAMStreamConfig, (void **)&pStreamConf);
+	if(FAILED(hr)){
+		printf("ERROR: Couldn't config the stream!\n");
+		pVideoInputFilter->Release();
+		pGraph->Release();
+	    pCaptureGraph->Release();
+		return;
+	}
+
+	int iCount = 0;
+	int iSize = 0;
+	hr = pStreamConf->GetNumberOfCapabilities(&iCount, &iSize);
+
+	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
+	{
+			GUID format = MEDIASUBTYPE_None;
+
+	    for (int iFormat = 0; iFormat < iCount; iFormat+=2)
+	    {
+			VIDEO_STREAM_CONFIG_CAPS scc;
+			AM_MEDIA_TYPE *pmtConfig;
+			hr =  pStreamConf->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
+			if (SUCCEEDED(hr)){
+				if ( pmtConfig->subtype != format) {
+					char guidStr[8];
+					getMediaSubtypeAsString(pmtConfig->subtype, guidStr);
+					printf("\t\tformat: %s\n",guidStr);
+					format= pmtConfig->subtype;
+				}
+
+	            int stepX = scc.OutputGranularityX;
+	            int stepY = scc.OutputGranularityY;
+	       		if(stepX < 1 || stepY < 1) continue;
+
+				else if ((stepX==1) && (stepY==1)) {
+
+					printf("\t\t\t%dx%d ",scc.InputSize.cx,scc.InputSize.cy);
+					int maxFrameInterval = scc.MaxFrameInterval;
+					if (maxFrameInterval==0) maxFrameInterval = 10000000;
+					int last_fps=-1;
+					VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
+					for (int iv=scc.MinFrameInterval;iv<=maxFrameInterval;iv=iv*1.99) {
+						pVih->AvgTimePerFrame = iv;
+						hr = pStreamConf->SetFormat(pmtConfig);
+						if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
+						int fps = (int)floor(10000000.0f/(float)pVih->AvgTimePerFrame+0.5f);
+						if (fps!=last_fps) {
+							printf("%d|",fps);
+							last_fps=fps;
+						} }
+					} printf("\b fps\n");
+
+				} else {
+					printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
+	       			printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
+					/*for(int x = scc.MinOutputSize.cx; x <= scc.MaxOutputSize.cx; x+= stepX){}
+					for(int y = scc.MinOutputSize.cy; y <= scc.MaxOutputSize.cy; y+= stepY){}*/
+				}
+
+				MyDeleteMediaType(pmtConfig);
+	        }
+	     }
+		}
+
+		pStreamConf->Release();
+		pVideoInputFilter->Release();
+		pGraph->Release();
+	    pCaptureGraph->Release();
+
+	}
+
+	comUnInit();
+    //if(VDList[deviceNumber]->readyToCapture)
+}
+
 int videoInput::listDevices(bool silent){
 
     //COM Library Intialization
@@ -1695,9 +1826,11 @@ void videoInput::getMediaSubtypeAsString(GUID type, char * typeAsString){
 	else if(type == MEDIASUBTYPE_Y41P) strncpy_s(tmpStr, "Y41P", maxStr);
 	else if(type == MEDIASUBTYPE_Y211) strncpy_s(tmpStr, "Y211", maxStr);
 	else if(type == MEDIASUBTYPE_AYUV) strncpy_s(tmpStr, "AYUV", maxStr);
-	else if(type == MEDIASUBTYPE_Y800) strncpy_s(tmpStr, "Y800", maxStr);
-	else if(type == MEDIASUBTYPE_Y8) strncpy_s(tmpStr, "Y8", maxStr);
-	else if(type == MEDIASUBTYPE_GREY) strncpy_s(tmpStr, "GREY", maxStr);
+	//else if(type == MEDIASUBTYPE_Y800) strncpy_s(tmpStr, "Y800", maxStr);
+	//else if(type == MEDIASUBTYPE_Y8) strncpy_s(tmpStr, "Y8", maxStr);
+	//else if(type == MEDIASUBTYPE_GREY) strncpy_s(tmpStr, "GREY", maxStr);
+	else if(type == MEDIASUBTYPE_MJPG) strncpy_s(tmpStr, "MJPG", maxStr);
+	else if(type == MEDIASUBTYPE_H264 ) strncpy_s(tmpStr, "H264", maxStr);
 	else strncpy_s(tmpStr, "OTHER", maxStr);
 
 	memcpy(typeAsString, tmpStr, sizeof(char)*8);
@@ -1990,10 +2123,6 @@ int videoInput::start(int deviceID, videoDevice *VD){
 
 		}
 
-
-
-
-
 		//if we didn't find the requested size - lets try and find the closest matching size
 		if( foundSize == false ){
 			if( verbose )printf("SETUP: couldn't find requested size - searching for closest matching size\n");
@@ -2133,7 +2262,6 @@ int videoInput::start(int deviceID, videoDevice *VD){
 			pMediaFilter->Release();
 		}
 	}
-
 
 	//LETS RUN THE STREAM!
 	hr = VD->pControl->Run();
