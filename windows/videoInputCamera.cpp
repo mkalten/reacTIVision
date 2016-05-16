@@ -74,24 +74,36 @@ bool videoInputCamera::findCamera() {
 
 bool videoInputCamera::initCamera() {
 
+	if ((config.cam_width<0) || (config.cam_height<0)) {
+		int min_width,max_width,min_height,max_height;
+		min_width=max_width=min_height=max_height=0;
+		videoInput::getMinMaxDimension(this->cameraID,min_width,max_width,min_height,max_height,config.compress);
+		//std::cout << min_width << " " << min_height << " " << max_width << " " << max_height << " " << std::endl;
+
+		if (config.cam_width==SETTING_MIN) config.cam_width=min_width;
+		else if (config.cam_width==SETTING_MAX) config.cam_width=max_width;
+		if (config.cam_height==SETTING_MIN) config.cam_height=min_height;
+		else if (config.cam_height==SETTING_MAX) config.cam_height=max_height;
+	}
+
+	if (config.cam_fps<0) {
+		float min_fps,max_fps;
+		min_fps=max_fps=0.0f;
+		videoInput::getMinMaxFramerate(this->cameraID,config.cam_width,config.cam_height,min_fps,max_fps,config.compress);
+		//std::cout << config.cam_width << " " << config.cam_height << " " << min_fps << " " << max_fps << " " << std::endl;
+
+		if (config.cam_fps==SETTING_MIN) config.cam_fps=min_fps;
+		else if (config.cam_fps==SETTING_MAX) config.cam_fps=max_fps;
+	}
+
 	if (config.compress == true) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
-	int min_width,max_width,min_height,max_height,min_fps,max_fps;
-	//VI->getMinMaxConfiguration(&min_width,&max_width,&min_height,&max_height,&min_fps,&max_fps);
-
-	if (config.cam_width==SETTING_MIN) config.cam_width=min_width;
-	else if (config.cam_width==SETTING_MAX) config.cam_width=max_width;
-	if (config.cam_height==SETTING_MIN) config.cam_height=min_height;
-	else if (config.cam_height==SETTING_MAX) config.cam_height=max_height;
-	if (config.cam_fps==SETTING_MIN) config.cam_fps=min_fps;
-	else if (config.cam_fps==SETTING_MAX) config.cam_fps=max_fps;
-
 	VI->setIdealFramerate(this->cameraID, config.cam_fps);
 	bool bOk = VI->setupDevice(cameraID, config.cam_width, config.cam_height);
 
 	if (bOk == true) {	
 		this->cam_width = VI->getWidth(cameraID);
 		this->cam_height = VI->getHeight(cameraID);
-		this->fps = config.cam_fps;
+		this->fps = VI->getActualFramerate(cameraID);
 	} else return false;
 
 

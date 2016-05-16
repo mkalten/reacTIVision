@@ -225,14 +225,17 @@
 
 			if(image_element->Attribute("width")!=NULL) {
 				if (strcmp( image_element->Attribute("width"), "max" ) == 0) config.cam_width = SETTING_MAX;
+				else if (strcmp( image_element->Attribute("width"), "min" ) == 0) config.cam_width = SETTING_MIN;
 				else config.cam_width = atoi(image_element->Attribute("width"));
 			}
 			if(image_element->Attribute("height")!=NULL) {
 				if (strcmp( image_element->Attribute("height"), "max" ) == 0) config.cam_height = SETTING_MAX;
+				else if (strcmp( image_element->Attribute("height"), "min" ) == 0) config.cam_height = SETTING_MIN;
 				else config.cam_height = atoi(image_element->Attribute("height"));
 			}
 			if(image_element->Attribute("fps")!=NULL) {
 				if (strcmp( image_element->Attribute("fps"), "max" ) == 0) config.cam_fps = SETTING_MAX;
+				else if (strcmp( image_element->Attribute("fps"), "min" ) == 0) config.cam_fps = SETTING_MIN;
 				else config.cam_fps = atof(image_element->Attribute("fps"));
 			}
 		}
@@ -252,7 +255,6 @@
                 else if (strcmp( frame_element->Attribute("height"), "min" ) == 0) config.frame_height = 0;
                 else config.frame_height = atoi(frame_element->Attribute("height"));
             }
-
 
 			if(frame_element->Attribute("xoff")!=NULL) {
 				if (strcmp( frame_element->Attribute("xoff"), "max" ) == 0) config.frame_xoff = SETTING_MAX;

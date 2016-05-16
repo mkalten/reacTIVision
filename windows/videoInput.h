@@ -281,7 +281,8 @@ class videoInput{
 
 		//call before setupDevice
 		//directshow will try and get the closest possible framerate to what is requested
-		void setIdealFramerate(int deviceID, int idealFramerate);
+		void setIdealFramerate(int deviceID, float idealFramerate);
+		float getActualFramerate(int deviceID);
 
 		//some devices will stop delivering frames after a while - this method gives you the option to try and reconnect
 		//to a device if videoInput detects that a device has stopped delivering frames.
@@ -304,6 +305,9 @@ class videoInput{
 		//can be called multiple times
 		bool setFormat(int deviceNumber, int format);
 		void setRequestedMediaSubType(int mediatype); // added by gameover
+
+		static void getMinMaxDimension(int deviceNumber, int &min_width, int &max_width, int &min_height, int &max_height, bool compress);
+		static void getMinMaxFramerate(int deviceNumber, int cam_width, int cam_height, float &min_fps, float &max_fps, bool compress);
 
 		//Tells you when a new frame has arrived - you should call this if you have specified setAutoReconnectOnFreeze to true
 		bool isFrameNew(int deviceID);
