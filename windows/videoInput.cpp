@@ -920,15 +920,16 @@ void videoInput::listDevicesAndFormats() {
 					printf("\t\t\t%dx%d ",scc.InputSize.cx,scc.InputSize.cy);
 					int maxFrameInterval = scc.MaxFrameInterval;
 					if (maxFrameInterval==0) maxFrameInterval = 10000000;
-					int last_fps=-1;
+					float last_fps=-1;
 					VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
 					for (int iv=scc.MinFrameInterval;iv<=maxFrameInterval;iv=iv*1.99) {
 						pVih->AvgTimePerFrame = iv;
 						hr = pStreamConf->SetFormat(pmtConfig);
 						if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-						int fps = (int)floor(10000000.0f/(float)pVih->AvgTimePerFrame+0.5f);
+						float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
 						if (fps!=last_fps) {
-							printf("%d|",fps);
+							if ((int)fps==fps)printf("%d|",(int)fps);
+							else printf("%.1f|",fps);
 							last_fps=fps;
 						} }
 					} printf("\b fps\n");
