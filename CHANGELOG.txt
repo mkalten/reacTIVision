@@ -1,12 +1,13 @@
 ﻿reacTIVision 1.5.1
 —————————————————-
 * revert FrameEqualizer to equalization rather than subtraction
+* implemented camera format enumeration on Windows
 * added a dedicated PS3 camera driver on MacOSX (thanks to Sebestyén Gábor)
 * implemented GAMMA and POWERLINE camera configuration on MaxOSX
 * implemented V4L2_PIX_FMT_GREY in Video4Linux2 (for SUR40)
 * save updated camera configuration
 * fixed the calibration distortion for wide camera formats
-* improved SDL event handling and removed (confusing) VSync
+* improved SDL event handling and adaptive VSync (for higher fps)
 * updated the SDL2 Framework to 2.0.4
 * code sign MacOSX application bundle
 * minimum supported MacOSX version is 10.8
