@@ -213,6 +213,21 @@ void videoInputCamera::showSettingsDialog() {
 }
 
 bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {
+
+	long auto_flag=2;
+	if (flag) auto_flag = 1;
+
+	switch (mode) {
+		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID, VI->propBrightness, NULL, auto_flag, false); break;
+		case CONTRAST: VI->setVideoSettingFilter(cameraID, VI->propContrast, NULL, auto_flag, false); break;
+		case GAIN: VI->setVideoSettingFilter(cameraID, VI->propGain, NULL, auto_flag, false); break;
+		case EXPOSURE: VI->setVideoSettingFilter(cameraID, VI->propExposure, NULL, auto_flag, false); break;
+		case SHARPNESS: VI->setVideoSettingFilter(cameraID, VI->propSharpness, NULL, auto_flag, false); break;
+		case FOCUS: VI->setVideoSettingFilter(cameraID, VI->propFocus, NULL, auto_flag, false); break;
+		case GAMMA:  VI->setVideoSettingFilter(cameraID, VI->propGamma, NULL, auto_flag, false); break;
+		default: return false;
+	} 
+
 	return true;
 }
 
@@ -229,10 +244,11 @@ bool videoInputCamera::getCameraSettingAuto(int mode) {
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
 		case FOCUS:  VI->getVideoSettingFilter(cameraID, VI->propFocus, min, max,  step, value, flags, default); break;
 		case GAMMA: VI->getVideoSettingFilter(cameraID, VI->propGamma, min, max,  step, value, flags, default); break;
-		default: return 0;
+		default: return false;
 	} 
 
-	return (int)flags;
+	if (flags==1) return true;
+	return false;
 }
 
 
