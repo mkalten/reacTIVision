@@ -223,6 +223,7 @@ bool videoInputCamera::getCameraSettingAuto(int mode) {
 
 	switch (mode) {
 		case BRIGHTNESS: VI->getVideoSettingFilter(cameraID, VI->propBrightness, min, max,  step, value, flags, default); break;
+		case CONTRAST: VI->getVideoSettingFilter(cameraID, VI->propContrast, min, max,  step, value, flags, default); break;
 		case GAIN:  VI->getVideoSettingFilter(cameraID, VI->propGain, min, max,  step, value, flags, default); break;
 		case EXPOSURE: VI->getVideoSettingFilter(cameraID, VI->propExposure, min, max,  step, value, flags, default); break;
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
@@ -245,6 +246,7 @@ bool videoInputCamera::setCameraSetting(int mode, int setting) {
 
 	switch (mode) {
 		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID, VI->propBrightness, setting, NULL, false); break;
+		case CONTRAST: VI->setVideoSettingFilter(cameraID, VI->propContrast, setting, NULL, false); break;
 		case GAIN: VI->setVideoSettingFilter(cameraID, VI->propGain, setting, NULL, false); break;
 		case EXPOSURE: VI->setVideoSettingFilter(cameraID, VI->propExposure, setting, flags, false); break;
 		case SHARPNESS: VI->setVideoSettingFilter(cameraID, VI->propSharpness, setting, NULL, false); break;
@@ -263,6 +265,7 @@ int videoInputCamera::getCameraSetting(int mode) {
 
 	switch (mode) {
 		case BRIGHTNESS: VI->getVideoSettingFilter(cameraID, VI->propBrightness, min, max,  step, value, flags, default); break;
+		case CONTRAST: VI->getVideoSettingFilter(cameraID, VI->propContrast, min, max,  step, value, flags, default); break;
 		case GAIN:  VI->getVideoSettingFilter(cameraID, VI->propGain, min, max,  step, value, flags, default); break;
 		case EXPOSURE: VI->getVideoSettingFilter(cameraID, VI->propExposure, min, max,  step, value, flags, default); break;
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
@@ -281,6 +284,7 @@ int videoInputCamera::getMaxCameraSetting(int mode) {
 
 	switch (mode) {
 		case BRIGHTNESS: VI->getVideoSettingFilter(cameraID, VI->propBrightness, min, max,  step, value, flags, default); break;
+		case CONTRAST: VI->getVideoSettingFilter(cameraID, VI->propContrast, min, max,  step, value, flags, default); break;
 		case GAIN:  VI->getVideoSettingFilter(cameraID, VI->propGain, min, max,  step, value, flags, default); break;
 		case EXPOSURE: VI->getVideoSettingFilter(cameraID, VI->propExposure, min, max,  step, value, flags, default); break;
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
@@ -299,6 +303,7 @@ int videoInputCamera::getMinCameraSetting(int mode) {
 	
 	switch (mode) {
 		case BRIGHTNESS: VI->getVideoSettingFilter(cameraID, VI->propBrightness, min, max,  step, value, flags, default); break;
+		case CONTRAST: VI->getVideoSettingFilter(cameraID, VI->propContrast, min, max,  step, value, flags, default); break;
 		case GAIN:  VI->getVideoSettingFilter(cameraID, VI->propGain, min, max,  step, value, flags, default); break;
 		case EXPOSURE: VI->getVideoSettingFilter(cameraID, VI->propExposure, min, max,  step, value, flags, default); break;
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
@@ -317,6 +322,7 @@ int videoInputCamera::getCameraSettingStep(int mode) {
 	
 	switch (mode) {
 		case BRIGHTNESS: VI->getVideoSettingFilter(cameraID, VI->propBrightness, min, max,  step, value, flags, default); break;
+		case CONTRAST: VI->getVideoSettingFilter(cameraID, VI->propContrast, min, max,  step, value, flags, default); break;
 		case GAIN:  VI->getVideoSettingFilter(cameraID, VI->propGain, min, max,  step, value, flags, default); break;
 		case EXPOSURE: VI->getVideoSettingFilter(cameraID, VI->propExposure, min, max,  step, value, flags, default); break;
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;
@@ -334,6 +340,7 @@ bool videoInputCamera::setDefaultCameraSetting(int mode) {
 
 	switch (mode) {
 		case BRIGHTNESS: VI->setVideoSettingFilter(cameraID,  VI->propBrightness, value, NULL, true); break;
+		case CONTRAST: VI->setVideoSettingFilter(cameraID,  VI->propContrast, value, NULL, true); break;
 		case GAIN: VI->setVideoSettingFilter(cameraID,  VI->propGain, value, NULL, true); break;
 		case EXPOSURE: VI->setVideoSettingFilter(cameraID,  VI->propExposure, value, NULL, true); break;
 		case SHARPNESS:VI->setVideoSettingFilter(cameraID,  VI->propSharpness, value, NULL, true); break;
@@ -352,6 +359,7 @@ int videoInputCamera::getDefaultCameraSetting(int mode) {
 	
 	switch (mode) {
 		case BRIGHTNESS: VI->getVideoSettingFilter(cameraID, VI->propBrightness, min, max,  step, value, flags, default); break;
+		case CONTRAST: VI->getVideoSettingFilter(cameraID, VI->propContrast, min, max,  step, value, flags, default); break;
 		case GAIN:  VI->getVideoSettingFilter(cameraID, VI->propGain, min, max,  step, value, flags, default); break;
 		case EXPOSURE: VI->getVideoSettingFilter(cameraID, VI->propExposure, min, max,  step, value, flags, default); break;
 		case SHARPNESS: VI->getVideoSettingFilter(cameraID, VI->propSharpness, min, max,  step, value, flags, default); break;

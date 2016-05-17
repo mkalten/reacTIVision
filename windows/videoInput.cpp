@@ -832,8 +832,13 @@ std::vector <std::string> videoInput::getDeviceList(){
 
 void videoInput::getMinMaxDimension(int deviceNumber, int &min_width, int &max_width, int &min_height, int &max_height, bool compress) {
 
-	min_width = min_height= INT_MAX;
-	max_width = max_height = 0;
+	bool repeat = false;
+	if ((min_width==INT_MAX) && (max_width==0) && (min_height==INT_MAX) && (max_height==0)) {
+		repeat = true;
+	} else {
+		min_width = min_height= INT_MAX;
+		max_width = max_height = 0;
+	}
 
 	char 	nDeviceName[255];
 	WCHAR 	wDeviceName[255];
@@ -894,17 +899,6 @@ void videoInput::getMinMaxDimension(int deviceNumber, int &min_width, int &max_w
 	int iCount = 0;
 	int iSize = 0;
 	hr = pStreamConf->GetNumberOfCapabilities(&iCount, &iSize);
-
-	if (!iCount) {
-		pStreamConf->Release();
-		pVideoInputFilter->Release();
-		pGraph->Release();
-		pCaptureGraph->Release();
-		comUnInit();
-		min_width = max_width = 640;
-		min_height = max_height = 480;
-		return;
-	}
 
 	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
 	{
@@ -968,14 +962,23 @@ void videoInput::getMinMaxDimension(int deviceNumber, int &min_width, int &max_w
 	comUnInit();
 
 	if ((max_width == 0) && (max_height == 0) && (min_width == INT_MAX) && (min_height == INT_MAX)) {
-		getMinMaxDimension(deviceNumber,min_width,max_width,min_height,max_height,!compress);
+		if (!repeat) getMinMaxDimension(deviceNumber,min_width,max_width,min_height,max_height,!compress);
+		else {
+			min_width = max_width = 640;
+			min_height = max_height = 480;
+		}
 	}
 }
 
 void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_height, float &min_fps, float &max_fps, bool compress) {
 	
-	min_fps = 10000000;
-	max_fps = 0;
+	bool repeat = false;
+	if ((min_fps==10000000) && (max_fps==0)) {
+		repeat = true;
+	} else {
+		min_fps = 10000000;
+		max_fps = 0;
+	}
 
 	char 	nDeviceName[255];
 	WCHAR 	wDeviceName[255];
@@ -1036,16 +1039,6 @@ void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_hei
 	int iCount = 0;
 	int iSize = 0;
 	hr = pStreamConf->GetNumberOfCapabilities(&iCount, &iSize);
-
-	if (!iCount) {
-		pStreamConf->Release();
-		pVideoInputFilter->Release();
-		pGraph->Release();
-		pCaptureGraph->Release();
-		comUnInit();
-		min_fps = max_fps = 30.0f;
-		return;
-	}
 
 	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
 	{
@@ -1141,7 +1134,8 @@ void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_hei
 	comUnInit();
 
 	if ((max_fps == 0) && (min_fps == 10000000)) {
-		getMinMaxFramerate(deviceNumber,cam_width,cam_height,min_fps,max_fps,!compress);
+		if (!repeat) getMinMaxFramerate(deviceNumber,cam_width,cam_height,min_fps,max_fps,!compress);
+		else min_fps=max_fps=30.0f;
 	}
 
 }
