@@ -908,7 +908,7 @@ void videoInput::getMinMaxDimension(int deviceNumber, int &min_width, int &max_w
 
 	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
 	{
-	    for (int iFormat = 0; iFormat < iCount; iFormat++)
+	    for (int iFormat = 0; iFormat < iCount; iFormat+=2)
 	    {
 			VIDEO_STREAM_CONFIG_CAPS scc;
 			AM_MEDIA_TYPE *pmtConfig;
@@ -942,10 +942,18 @@ void videoInput::getMinMaxDimension(int deviceNumber, int &min_width, int &max_w
 					if (scc.InputSize.cy>max_height) max_height=(int)scc.InputSize.cy;
 					else if (scc.InputSize.cy<min_height) min_height=(int)scc.InputSize.cy;
 				} else {
-					printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
-	       			printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
-					/*for(int x = scc.MinOutputSize.cx; x <= scc.MaxOutputSize.cx; x+= stepX){}
-					for(int y = scc.MinOutputSize.cy; y <= scc.MaxOutputSize.cy; y+= stepY){}*/
+
+					int x,y;
+					for (x=scc.MinOutputSize.cx,y=scc.MinOutputSize.cy;x<=scc.MaxOutputSize.cx,y<=scc.MaxOutputSize.cy;x+=stepX,y+=stepY) {
+						if (x>max_width) max_width=x;
+						else if (x<min_width) min_width=x;
+
+						if (y>max_height) max_height=y;
+						else if (y<min_height) min_height=y;
+					}
+
+					//printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
+	       			//printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
 				}
 
 				MyDeleteMediaType(pmtConfig);
@@ -1041,7 +1049,7 @@ void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_hei
 
 	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
 	{
-	    for (int iFormat = 0; iFormat < iCount; iFormat++)
+	    for (int iFormat = 0; iFormat < iCount; iFormat+=2)
 	    {
 			VIDEO_STREAM_CONFIG_CAPS scc;
 			AM_MEDIA_TYPE *pmtConfig;
@@ -1092,10 +1100,33 @@ void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_hei
 					} }
 
 				} else {
-					printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
-	       			printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
-					/*for(int x = scc.MinOutputSize.cx; x <= scc.MaxOutputSize.cx; x+= stepX){}
-					for(int y = scc.MinOutputSize.cy; y <= scc.MaxOutputSize.cy; y+= stepY){}*/
+
+					int x,y;
+					for (x=scc.MinOutputSize.cx,y=scc.MinOutputSize.cy;x<=scc.MaxOutputSize.cx,y<=scc.MaxOutputSize.cy;x+=stepX,y+=stepY) {
+						if ((x==cam_width)&&(y==cam_height)) {
+
+							int maxFrameInterval = scc.MaxFrameInterval;
+							if (maxFrameInterval==0) maxFrameInterval = 10000000;
+							float last_fps=-1;
+							VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
+							for (int iv=scc.MinFrameInterval;iv<=maxFrameInterval;iv=iv*2) {
+								pVih->AvgTimePerFrame = iv;
+								hr = pStreamConf->SetFormat(pmtConfig);
+								if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
+								float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+								if (fps!=last_fps) {
+							
+									if (fps<min_fps) min_fps = fps;
+									else if (fps>max_fps) max_fps = fps;
+									last_fps=fps;
+								}
+							} }
+
+						} else continue;
+					}
+
+					//printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
+	       			//printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
 				}
 
 				MyDeleteMediaType(pmtConfig);
@@ -1121,16 +1152,14 @@ void videoInput::listDevicesAndFormats() {
 	comInit();
 	int count = listDevices(true);
 
-	char 	nDeviceName[255];
-	WCHAR 	wDeviceName[255];
-	memset(wDeviceName, 0, sizeof(WCHAR) * 255);
-	memset(nDeviceName, 0, sizeof(char) * 255);
-
 	HRESULT hr;
 	ICaptureGraphBuilder2 *pCaptureGraph;
 	IGraphBuilder *pGraph;
 	IBaseFilter *pVideoInputFilter;
 	IAMStreamConfig *pStreamConf;
+
+	char 	nDeviceName[255];
+	WCHAR 	wDeviceName[255];
 
 	for (int i=0;i<count;i++) {
 
@@ -1159,6 +1188,8 @@ void videoInput::listDevicesAndFormats() {
         return;
 	}
 
+	memset(wDeviceName, 0, sizeof(WCHAR) * 255);
+	memset(nDeviceName, 0, sizeof(char) * 255);
 	hr = getDevice(&pVideoInputFilter, i, wDeviceName, nDeviceName);
 
 	if (SUCCEEDED(hr)){
@@ -1186,7 +1217,10 @@ void videoInput::listDevicesAndFormats() {
 
 	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
 	{
-			GUID format = MEDIASUBTYPE_None;
+
+		//int lastWidth,lastHeight,lastInterval;
+		//lastWidth=lastHeight=lastInterval = 0;
+		GUID lastFormat = MEDIASUBTYPE_None;
 
 	    for (int iFormat = 0; iFormat < iCount; iFormat+=2)
 	    {
@@ -1194,11 +1228,12 @@ void videoInput::listDevicesAndFormats() {
 			AM_MEDIA_TYPE *pmtConfig;
 			hr =  pStreamConf->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
 			if (SUCCEEDED(hr)){
-				if ( pmtConfig->subtype != format) {
+
+				if ( pmtConfig->subtype != lastFormat) {
 					char guidStr[8];
 					getMediaSubtypeAsString(pmtConfig->subtype, guidStr);
 					printf("\t\tformat: %s\n",guidStr);
-					format= pmtConfig->subtype;
+					lastFormat = pmtConfig->subtype;
 				}
 
 	            int stepX = scc.OutputGranularityX;
@@ -1206,8 +1241,15 @@ void videoInput::listDevicesAndFormats() {
 	       		if(stepX < 1 || stepY < 1) continue;
 
 				else if ((stepX==1) && (stepY==1)) {
-
+					/*if ((scc.InputSize.cx==lastWidth) && (scc.InputSize.cy==lastHeight)) {
+						MyDeleteMediaType(pmtConfig);
+						continue;
+					} else {
+						lastWidth = scc.InputSize.cx;
+						lastHeight = scc.InputSize.cy;
+					}*/
 					printf("\t\t\t%dx%d ",scc.InputSize.cx,scc.InputSize.cy);
+	
 					int maxFrameInterval = scc.MaxFrameInterval;
 					if (maxFrameInterval==0) maxFrameInterval = 10000000;
 					float last_fps=-1;
@@ -1225,8 +1267,30 @@ void videoInput::listDevicesAndFormats() {
 					} printf("\b fps\n");
 
 				} else {
-					printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
-	       			printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
+					int x,y;
+					for (x=scc.MinOutputSize.cx,y=scc.MinOutputSize.cy;x<=scc.MaxOutputSize.cx,y<=scc.MaxOutputSize.cy;x+=stepX,y+=stepY) {
+						printf("\t\t\t%dx%d ",x,y);
+
+						int maxFrameInterval = scc.MaxFrameInterval;
+						if (maxFrameInterval==0) maxFrameInterval = 10000000;
+						float last_fps=-1;
+						VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
+						for (int iv=scc.MinFrameInterval;iv<=maxFrameInterval;iv=iv*2) {
+							pVih->AvgTimePerFrame = iv;
+							hr = pStreamConf->SetFormat(pmtConfig);
+							if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
+							float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+							if (fps!=last_fps) {
+								if ((int)fps==fps)printf("%d|",(int)fps);
+								else printf("%.1f|",fps);
+								last_fps=fps;
+							} }
+						} printf("\b fps\n");
+
+					}
+
+					//printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
+	       			//printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
 					/*for(int x = scc.MinOutputSize.cx; x <= scc.MaxOutputSize.cx; x+= stepX){}
 					for(int y = scc.MinOutputSize.cy; y <= scc.MaxOutputSize.cy; y+= stepY){}*/
 				}
@@ -2099,9 +2163,14 @@ void videoInput::processPixels(unsigned char * src, unsigned char * dst, int wid
 //------------------------------------------------------------------------------------------
 void videoInput::getMediaSubtypeAsString(GUID type, char * typeAsString){
 
+	GUID MEDIASUBTYPE_Y800, MEDIASUBTYPE_Y8, MEDIASUBTYPE_GREY;
+	makeGUID( &MEDIASUBTYPE_Y800, 0x30303859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+	makeGUID( &MEDIASUBTYPE_Y8, 0x20203859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+	makeGUID( &MEDIASUBTYPE_GREY, 0x59455247, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+
 	static const int maxStr = 8;
 	char tmpStr[maxStr];
-	if( type == MEDIASUBTYPE_RGB24) strncpy_s(tmpStr, "RGB24", maxStr);
+	if ( type == MEDIASUBTYPE_RGB24) strncpy_s(tmpStr, "RGB24", maxStr);
 	else if(type == MEDIASUBTYPE_RGB32) strncpy_s(tmpStr, "RGB32", maxStr);
 	else if(type == MEDIASUBTYPE_RGB555)strncpy_s(tmpStr, "RGB555", maxStr);
 	else if(type == MEDIASUBTYPE_RGB565)strncpy_s(tmpStr, "RGB565", maxStr);
@@ -2116,9 +2185,9 @@ void videoInput::getMediaSubtypeAsString(GUID type, char * typeAsString){
 	else if(type == MEDIASUBTYPE_Y41P) strncpy_s(tmpStr, "Y41P", maxStr);
 	else if(type == MEDIASUBTYPE_Y211) strncpy_s(tmpStr, "Y211", maxStr);
 	else if(type == MEDIASUBTYPE_AYUV) strncpy_s(tmpStr, "AYUV", maxStr);
-	//else if(type == MEDIASUBTYPE_Y800) strncpy_s(tmpStr, "Y800", maxStr);
-	//else if(type == MEDIASUBTYPE_Y8) strncpy_s(tmpStr, "Y8", maxStr);
-	//else if(type == MEDIASUBTYPE_GREY) strncpy_s(tmpStr, "GREY", maxStr);
+	else if(type == MEDIASUBTYPE_Y800) strncpy_s(tmpStr, "Y800", maxStr);
+	else if(type == MEDIASUBTYPE_Y8) strncpy_s(tmpStr, "Y8", maxStr);
+	else if(type == MEDIASUBTYPE_GREY) strncpy_s(tmpStr, "GREY", maxStr);
 	else if(type == MEDIASUBTYPE_MJPG) strncpy_s(tmpStr, "MJPG", maxStr);
 	else if(type == MEDIASUBTYPE_H264 ) strncpy_s(tmpStr, "H264", maxStr);
 	else strncpy_s(tmpStr, "OTHER", maxStr);
