@@ -48,13 +48,13 @@ void DC1394Camera::listDevices() {
 
     if (dc1394_camera_enumerate (d, &list) != DC1394_SUCCESS) {
         //fprintf (stderr, "failed to enumerate cameras\n");
-        fprintf (stderr, "no DC1394 cameras found\n");
+        printf("no DC1394 cameras found\n");
         dc1394_free(d);
         return;
     }
     
     if (list->num == 0) {
-        fprintf (stderr, "no DC1394 cameras found\n");
+        printf("no DC1394 cameras found\n");
         dc1394_free(d);
         return;
     } else if (list->num == 1) printf("1 DC1394 camera found:\n");
@@ -119,13 +119,13 @@ bool DC1394Camera::findCamera() {
 	 
 	 if (dc1394_camera_enumerate (d, &list) != DC1394_SUCCESS) {
 		//fprintf (stderr, "failed to enumerate cameras\n");
-		fprintf (stderr, "no DC1394 cameras found\n");
+		printf("no DC1394 cameras found\n");
 		dc1394_free(d);
 		return false;
 	}
 
 	if (list->num == 0) {
-		fprintf (stderr, "no DC1394 cameras found\n");
+		printf("no DC1394 cameras found\n");
 		dc1394_free(d);
 		return false;  
 	} else if (list->num == 1) printf("1 DC1394 camera found\n");
