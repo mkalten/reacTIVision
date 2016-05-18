@@ -73,30 +73,71 @@ bool V4Linux2Camera::initCamera() {
         frmsize.index = i;
         frmsize.pixel_format  = v4l2_form.fmt.pix.pixelformat;
         if (-1 == ioctl(cameraID,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
-        
-        if (frmsize.discrete.width>max_width) max_width=frmsize.discrete.width;
-        if (frmsize.discrete.height>max_height) max_height=frmsize.discrete.height;
-        if (frmsize.discrete.width<min_width) min_width=frmsize.discrete.width;
-        if (frmsize.discrete.height<min_height) min_height=frmsize.discrete.height;
-        
-        if ((config.cam_width==frmsize.discrete.width) && (config.cam_height==frmsize.discrete.height)) {
-            cam_width = frmsize.discrete.width;
-            cam_height = frmsize.discrete.height;
-            break;
-        }
+
+	if (frmsize.type==V4L2_FRMSIZE_TYPE_DISCRETE) {
+        	if (frmsize.discrete.width>max_width) max_width=frmsize.discrete.width;
+        	if (frmsize.discrete.height>max_height) max_height=frmsize.discrete.height;
+        	if (frmsize.discrete.width<min_width) min_width=frmsize.discrete.width;
+        	if (frmsize.discrete.height<min_height) min_height=frmsize.discrete.height;
+
+        	if ((config.cam_width==frmsize.discrete.width) && (config.cam_height==frmsize.discrete.height)) {
+            		cam_width = frmsize.discrete.width;
+            		cam_height = frmsize.discrete.height;
+            		break;
+        	}
+	} else if (frmsize.type == V4L2_FRMSIZE_TYPE_STEPWISE) {
+
+		unsigned int step_w = frmsize.stepwise.step_width;
+		unsigned int step_h = frmsize.stepwise.step_height;
+
+		if ((frmsize.stepwise.max_width != frmsize.stepwise.max_height) && (step_w == step_h)) {
+			float ratio = frmsize.stepwise.max_width/(float)frmsize.stepwise.max_height;
+			if (ratio == 4.0f/3.0f) {
+				step_w *= 16;
+				step_h *= 12;
+			} else if (ratio == 16.0f/9.0f) {
+				step_w *= 16;
+				step_h *= 9;
+			}
+		}
+
+		unsigned int h = frmsize.stepwise.max_height;
+		for (unsigned int w=frmsize.stepwise.max_width;w!=frmsize.stepwise.min_width;w-=step_w) {
+
+			struct v4l2_frmivalenum frmival;
+                       	memset(&frmival, 0, sizeof(v4l2_frmivalenum));
+                        frmival.index = 0;
+                       	frmival.pixel_format = v4l2_form.fmt.pix.pixelformat;
+                     	frmival.width = w;
+                       	frmival.height = h;
+                        if (-1 == ioctl(cameraID,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
+
+	        	if (w>max_width) max_width=w;
+	        	if (h>max_height) max_height=h;
+        		if (w<min_width) min_width=w;
+        		if (h<min_height) min_height=h;
+
+	        	if ((config.cam_width==w) && (config.cam_height==h)) {
+        	    		cam_width = w;
+        	    		cam_height = h;
+        	    		break;
+        		}
+			h-=step_h;
+		}
+	}
     }
-    
+
     if (config.cam_width==SETTING_MAX) cam_width = max_width;
     if (config.cam_height==SETTING_MAX) cam_height = max_height;
     if (config.cam_width==SETTING_MIN) cam_width = min_width;
     if (config.cam_height==SETTING_MIN) cam_height = min_height;
     if (cam_width==0) cam_width = min_width;
     if (cam_height==0) cam_height = min_height;
-    
+
     fps = 0;
     float max_fps = 0;
     float min_fps = INT_MAX;
-    
+
     // select fps
     float last_fps = 0.0f;
     for (int i=0;;i++) {
@@ -208,6 +249,7 @@ void V4Linux2Camera::listDevices() {
                 fmtdesc.index = x;
                 fmtdesc.type  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
                 if (-1 == ioctl(fd,VIDIOC_ENUM_FMT,&fmtdesc)) break;
+
                 printf("\t\tformat: %s%s\n",  fmtdesc.description, fmtdesc.flags & V4L2_FMT_FLAG_COMPRESSED ? " (compressed)" : "");
                 
                 for (int y=0;;y++) {
@@ -216,6 +258,8 @@ void V4Linux2Camera::listDevices() {
                     frmsize.index = y;
                     frmsize.pixel_format  = fmtdesc.pixelformat;
                     if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMESIZES,&frmsize)) break;
+		if (frmsize.type==V4L2_FRMSIZE_TYPE_DISCRETE) {
+
                     printf("\t\t\t %dx%d ",frmsize.discrete.width,frmsize.discrete.height);
                     
                     float last_fps=0.0f;
@@ -235,7 +279,42 @@ void V4Linux2Camera::listDevices() {
                         if (int(frm_fps) == frm_fps) printf("%d|",int(frm_fps));
                         else printf("%'.1f|",frm_fps);
                     }  printf("\b fps\n");
+		} else if (frmsize.type == V4L2_FRMSIZE_TYPE_STEPWISE) {
+
+			unsigned int step_w = frmsize.stepwise.step_width;
+			unsigned int step_h = frmsize.stepwise.step_height;
+
+			if ((frmsize.stepwise.max_width != frmsize.stepwise.max_height) && (step_w == step_h)) {
+				float ratio = frmsize.stepwise.max_width/(float)frmsize.stepwise.max_height;
+				if (ratio == 4.0f/3.0f) {
+					step_w *= 16;
+					step_h *= 12;
+				} else if (ratio == 16.0f/9.0f) {
+					step_w *= 16;
+					step_h *= 9;
+				}
+			}
+
+			unsigned int h = frmsize.stepwise.max_height;
+			for (unsigned int w=frmsize.stepwise.max_width;w!=frmsize.stepwise.min_width;w-=step_w) {
+
+                	        struct v4l2_frmivalenum frmival;
+                       		memset(&frmival, 0, sizeof(v4l2_frmivalenum));
+                        	frmival.index = 0;
+                        	frmival.pixel_format = fmtdesc.pixelformat;
+                     	  	frmival.width = w;
+                       		frmival.height = h;
+                       		if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
+
+				printf("\t\t\t %dx%d ",w,h);
+                        	float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
+				if (int(frm_fps) == frm_fps) printf("%d fps\n",int(frm_fps));
+	                        else printf("%'.1f fps\n",frm_fps);
+				h-=step_h;
+			}
+
                 }
+		}
             }
         }
         close(fd);
