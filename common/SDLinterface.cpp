@@ -328,12 +328,13 @@ char* checkRenderDriver(){
 
 bool SDLinterface::setupWindow() {
 
+	if(headless_) return true;
+
 	if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
 		printf("SDL could not be initialized: %s\n", SDL_GetError());
 		return false;
 	}
 
-	if(headless_) return true;
 	char *renderdriver = checkRenderDriver();
 	printf("render: %s\n",renderdriver);
 	
@@ -636,11 +637,11 @@ SDLinterface::SDLinterface(const char* name, CameraEngine *camera, reactivision_
 	, height_( HEIGHT )
 	, displayMode_( DEST_DISPLAY )
 {
-    camera_ = camera;
+    	camera_ = camera;
 	cameraTime_ = processingTime_ = totalTime_ = 0.0f;
 	headless_ = config->headless;
-    fullscreen_ = config->fullscreen;
-	
+	fullscreen_ = config->fullscreen;
+
 	time_t start_time;
 	time(&start_time);
 	lastTime_ = (long)start_time;
@@ -652,7 +653,7 @@ SDLinterface::SDLinterface(const char* name, CameraEngine *camera, reactivision_
 	window_ = NULL;
 	sourceBuffer_ = NULL;
 	destBuffer_ = NULL;
-		
+
 	help_text.push_back("display:");
  	help_text.push_back("   n - no image");
 	help_text.push_back("   s - source image");

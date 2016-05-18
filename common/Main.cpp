@@ -399,7 +399,7 @@ int main(int argc, char* argv[]) {
 #endif
 
 	readSettings(&config);
-    config.headless = headless;
+    	config.headless = headless;
 
 	CameraEngine *camera = setupCamera(config.camera_config);
 
