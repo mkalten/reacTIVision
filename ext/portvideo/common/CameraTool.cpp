@@ -366,7 +366,6 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 	cam_cfg.frame_mode = cfg->frame_mode;
 	
 	cam_cfg.force = cfg->force;
-	sprintf(cam_cfg.src,"camera.xml");
 }
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
@@ -384,15 +383,15 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
 		CFRelease( mainBundleURL);
 		CFRelease( cfStringRef);
-		sprintf(cam_cfg.path,"%s/Contents/Resources/%s",path,cfgfile);
+		sprintf(cam_cfg.path,"%s/Contents/Resources/camera.xml",path);
 #elif !defined WIN32
-		sprintf(cam_cfg.path,"./%s",cfgfile);
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.portvideo/%s",cfgfile);
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/%s",cfgfile);
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/%s",cfgfile);
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/%s",cfgfile);
+		sprintf(cam_cfg.path,"./camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/camera.xml");
 #else
-		sprintf(cam_cfg.path,"./%s",cfgfile);
+		sprintf(cam_cfg.path,"./camera.xml");
 #endif
 	} else sprintf(cam_cfg.path,"%s",cfgfile);
 	
