@@ -798,6 +798,9 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 	destBuffer_ = NULL;
 	uvBuffer_ = NULL;
 	
+	help_text.push_back("camera:");
+	help_text.push_back("   o - camera options");
+	help_text.push_back("   k - select camera");
 	help_text.push_back("display:");
 	help_text.push_back("   n - no image");
 	help_text.push_back("   s - source image");
@@ -805,12 +808,12 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 	help_text.push_back("   h - toggle help text");
 	help_text.push_back("  F1 - toggle fullscreen");
 	help_text.push_back("");
-	help_text.push_back("commands:");
-	help_text.push_back("   ESC - quit " + app_name_);
+	help_text.push_back("control:");
 	help_text.push_back("   v - verbose output");
-	help_text.push_back("   o - camera options");
 	help_text.push_back("   p - pause processing");
-	help_text.push_back("   k - select camera");
+	help_text.push_back("   ESC - quit " + app_name_);
+
+
 #ifndef NDEBUG
 	help_text.push_back("");
 	help_text.push_back("debug options:");
