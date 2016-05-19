@@ -195,10 +195,7 @@ namespace TUIO {
 				
 	private:
 			
-		void initialize();
-		
-		OscSender *primary_sender;
-		bool local_sender;
+		void initialize(OscSender *oscsend);
 
 		std::vector<OscSender*> senderList;
 		void deliverOscPacket(osc::OutboundPacketStream  *packet);

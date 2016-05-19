@@ -23,48 +23,44 @@ using namespace TUIO;
 using namespace osc;
 
 TuioServer::TuioServer() 
-	:local_sender			(true)
-	,full_update			(false)	
+	:full_update			(false)
 	,periodic_update		(false)	
 	,objectProfileEnabled	(true)
 	,cursorProfileEnabled	(true)
 	,blobProfileEnabled		(true)
 	,source_name			(NULL)
 {
-	primary_sender = new UdpSender();
-	initialize();
+	OscSender *oscsend = new UdpSender();
+	initialize(oscsend);
 }
 
 TuioServer::TuioServer(const char *host, int port) 
-:local_sender			(true)
-,full_update			(false)	
+:full_update			(false)
 ,periodic_update		(false)	
 ,objectProfileEnabled	(true)
 ,cursorProfileEnabled	(true)
 ,blobProfileEnabled		(true)
 ,source_name			(NULL)
 {
-	primary_sender = new UdpSender(host,port);
-	initialize();
+	OscSender *oscsend = new UdpSender(host,port);
+	initialize(oscsend);
 }
 
 TuioServer::TuioServer(OscSender *oscsend)
-	:primary_sender					(oscsend)
-	,local_sender			(false)
-	,full_update			(false)	
+	:full_update			(false)
 	,periodic_update		(false)	
 	,objectProfileEnabled	(true)
 	,cursorProfileEnabled	(true)
 	,blobProfileEnabled		(true)
 	,source_name			(NULL)
 {
-	initialize();
+	initialize(oscsend);
 }
 
-void TuioServer::initialize() {
+void TuioServer::initialize(OscSender *oscsend) {
 	
-	senderList.push_back(primary_sender);
-	int size = primary_sender->getBufferSize();
+	senderList.push_back(oscsend);
+	int size = oscsend->getBufferSize();
 	oscBuffer = new char[size];
 	oscPacket = new osc::OutboundPacketStream(oscBuffer,size);
 	fullBuffer = new char[size];
@@ -105,7 +101,8 @@ TuioServer::~TuioServer() {
 	delete fullPacket;
 	
 	if (source_name) delete[] source_name;
-	if (local_sender) delete primary_sender;
+	for (unsigned int i=0;i<senderList.size();i++)
+		delete senderList[i];
 }
 
 
@@ -147,9 +144,9 @@ void TuioServer::setSourceName(const char *src) {
 	
 	if (!source_name) source_name = new char[256];
 
-	if (primary_sender->isLocal()) {
+	/*if (senderList[0]->isLocal()) {
 		sprintf(source_name,"%s",src);
-	} else { 
+	} else {*/
 		char hostname[64];
 		char *source_addr = NULL;
 		struct hostent *hp = NULL;
@@ -177,9 +174,9 @@ void TuioServer::setSourceName(const char *src) {
 			source_addr = inet_ntoa(*addr);
 		}
 		sprintf(source_name,"%s@%s",src,source_addr);
-	} 
+	//}
 	
-	//std::cout << "source: " << source_name << std::endl;
+	std::cout << "source: " << source_name << std::endl;
 }
 
 void TuioServer::commitFrame() {
