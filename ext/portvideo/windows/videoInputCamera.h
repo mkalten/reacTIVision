@@ -34,7 +34,7 @@ public:
 	videoInputCamera(CameraConfig *cam_cfg);
 	~videoInputCamera();
 
-	static std::vector<CameraConfig> getCameraConfigs();
+	static std::vector<CameraConfig> getCameraConfigs(int dev_id=-1);
 	static int getDeviceCount();
 	static CameraEngine* getCamera(CameraConfig *cam_cfg);
 

@@ -103,6 +103,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 	if (dev_count==0) return cfg_list;
 
 	for (int i=0;i<dev_count;i++) {
+		if ((dev_id>=0) && (dev_id!=i)) continue;
         	sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
 
         	int fd = open(v4l2_device, O_RDONLY);

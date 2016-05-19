@@ -1,19 +1,19 @@
 /*  portVideo, a cross platform camera framework
-    Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "videoInputCamera.h"
@@ -40,8 +40,8 @@ videoInputCamera::~videoInputCamera()
 
 void videoInputCamera::deleteMediaType(AM_MEDIA_TYPE *pmt)
 {
-    if (pmt != NULL) {
-        if (pmt->cbFormat != 0) {
+	if (pmt != NULL) {
+		if (pmt->cbFormat != 0) {
 			CoTaskMemFree((PVOID)pmt->pbFormat);
 			pmt->cbFormat = 0;
 			pmt->pbFormat = NULL;
@@ -52,8 +52,8 @@ void videoInputCamera::deleteMediaType(AM_MEDIA_TYPE *pmt)
 			pmt->pUnk = NULL;
 		}
 
-        CoTaskMemFree(pmt);
-    }
+		CoTaskMemFree(pmt);
+	}
 }
 
 bool videoInputCamera::comInit(){
@@ -66,7 +66,7 @@ bool videoInputCamera::comInit(){
 		//hr = CoInitialize(NULL);
 
 		if( hr == RPC_E_CHANGED_MODE){
-			 //printf("SETUP - COM already setup - threaded VI might not be possible\n");
+			//printf("SETUP - COM already setup - threaded VI might not be possible\n");
 		}
 	}
 
@@ -77,8 +77,8 @@ bool videoInputCamera::comInit(){
 bool videoInputCamera::comUnInit(){
 	if(comInitCount > 0)comInitCount--;		//decrease the count of instances using com
 
-   	if(comInitCount == 0){
-   		CoUninitialize();	//if there are no instances left - uninitialize com
+	if(comInitCount == 0){
+		CoUninitialize();	//if there are no instances left - uninitialize com
 		return true;
 	}
 
@@ -125,10 +125,10 @@ HRESULT videoInputCamera::getDevice(IBaseFilter** gottaFilter, int deviceId, WCH
 						//copy the name to nDeviceName & wDeviceName
 						int count = 0;
 						while( varName.bstrVal[count] != 0x00 ) {
-	                  		 wDeviceName[count] = varName.bstrVal[count];
-	                  		 nDeviceName[count] = (char)varName.bstrVal[count];
-	                  		 count++;
-	                 	}
+							wDeviceName[count] = varName.bstrVal[count];
+							nDeviceName[count] = (char)varName.bstrVal[count];
+							count++;
+						}
 
 						// We found it, so send it back to the caller
 						hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter, (void**)gottaFilter);
@@ -158,7 +158,7 @@ HRESULT videoInputCamera::getDevice(IBaseFilter** gottaFilter, int deviceId, WCH
 
 
 int videoInputCamera::getDeviceCount() {
-	
+
 	ICreateDevEnum *pDevEnum = NULL;
 	IEnumMoniker *pEnum = NULL;
 	int deviceCount = 0;
@@ -166,25 +166,25 @@ int videoInputCamera::getDeviceCount() {
 	comInit();
 
 	HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
-	    CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
-	    reinterpret_cast<void**>(&pDevEnum));
+		CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
+		reinterpret_cast<void**>(&pDevEnum));
 
 	if (SUCCEEDED(hr))
 	{
-	    // Create an enumerator for the video capture category.
-	    hr = pDevEnum->CreateClassEnumerator(
-	    	CLSID_VideoInputDeviceCategory,
-	        &pEnum, 0);
+		// Create an enumerator for the video capture category.
+		hr = pDevEnum->CreateClassEnumerator(
+			CLSID_VideoInputDeviceCategory,
+			&pEnum, 0);
 
-	   if(hr == S_OK) {
+		if(hr == S_OK) {
 			IMoniker *pMoniker = NULL;
 
 			while (pEnum->Next(1, &pMoniker, NULL) == S_OK){
 
-			    pMoniker->Release();
-			    pMoniker = NULL;
+				pMoniker->Release();
+				pMoniker = NULL;
 
-			    deviceCount++;
+				deviceCount++;
 			}
 
 			pDevEnum->Release();
@@ -201,13 +201,13 @@ int videoInputCamera::getDeviceCount() {
 }
 
 void videoInputCamera::makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3,
-	unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
-	unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 ){
-	guid->Data1 = Data1;
-	guid->Data2 = Data2;
-	guid->Data3 = Data3;
-	guid->Data4[0] = b0; guid->Data4[1] = b1; guid->Data4[2] = b2; guid->Data4[3] = b3;
-	guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
+								unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
+								unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 ){
+									guid->Data1 = Data1;
+									guid->Data2 = Data2;
+									guid->Data3 = Data3;
+									guid->Data4[0] = b0; guid->Data4[1] = b1; guid->Data4[2] = b2; guid->Data4[3] = b3;
+									guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
 }
 
 int videoInputCamera::getMediaSubtype(GUID type){
@@ -240,7 +240,7 @@ int videoInputCamera::getMediaSubtype(GUID type){
 	else return 0;
 }
 
-std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
+std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 
 	std::vector<CameraConfig> cfg_list;
 
@@ -258,124 +258,101 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 	char 	nDeviceName[255];
 	WCHAR 	wDeviceName[255];
 
-	for (int i=0;i<count;i++) {
+	for (int cam_id=0;cam_id<count;cam_id++) {
+		if ((dev_id>=0) && (dev_id!=cam_id)) continue;
+		hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void **)&pCaptureGraph);
+		if (FAILED(hr))	// FAILED is a macro that tests the return value
+		{
+			printf("ERROR - Could not create the Filter Graph Manager\n");
+			comUnInit();
+			return cfg_list;
+		}
 
-    hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void **)&pCaptureGraph);
-    if (FAILED(hr))	// FAILED is a macro that tests the return value
-    {
-        printf("ERROR - Could not create the Filter Graph Manager\n");
-		comUnInit();
-        return cfg_list;
-    }
+		// Create the Filter Graph Manager.
+		hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void**)&pGraph);
+		if (FAILED(hr))
+		{
+			printf("ERROR - Could not add the graph builder!\n");
+			pCaptureGraph->Release();
+			comUnInit();
+			return cfg_list;
+		}
 
-    // Create the Filter Graph Manager.
-    hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void**)&pGraph);
-    if (FAILED(hr))
-    {
-		printf("ERROR - Could not add the graph builder!\n");
-	    pCaptureGraph->Release();
-		comUnInit();
-        return cfg_list;
-	}
+		hr = pCaptureGraph->SetFiltergraph(pGraph);
+		if (FAILED(hr))
+		{
+			printf("ERROR - Could not set filtergraph\n");
+			pGraph->Release();
+			pCaptureGraph->Release();
+			comUnInit();
+			return cfg_list;
+		}
 
-    hr = pCaptureGraph->SetFiltergraph(pGraph);
-	if (FAILED(hr))
-    {
-		printf("ERROR - Could not set filtergraph\n");
-	    pGraph->Release();
-	    pCaptureGraph->Release();
-		comUnInit();
-        return cfg_list;
-	}
+		memset(wDeviceName, 0, sizeof(WCHAR) * 255);
+		memset(nDeviceName, 0, sizeof(char) * 255);
+		hr = getDevice(&pVideoInputFilter, cam_id, wDeviceName, nDeviceName);
 
-	memset(wDeviceName, 0, sizeof(WCHAR) * 255);
-	memset(nDeviceName, 0, sizeof(char) * 255);
-	hr = getDevice(&pVideoInputFilter, i, wDeviceName, nDeviceName);
+		if (SUCCEEDED(hr)){
+			hr = pGraph->AddFilter(pVideoInputFilter, wDeviceName);
+		}else{
+			printf("ERROR - Could not find specified video device\n");
+			pGraph->Release();
+			pCaptureGraph->Release();
+			comUnInit();
+			return cfg_list;
+		}
 
-	if (SUCCEEDED(hr)){
-		hr = pGraph->AddFilter(pVideoInputFilter, wDeviceName);
-	}else{
-        printf("ERROR - Could not find specified video device\n");
-		pGraph->Release();
-	    pCaptureGraph->Release();
-		comUnInit();
-        return cfg_list;
-	}
+		hr = pCaptureGraph->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, pVideoInputFilter, IID_IAMStreamConfig, (void **)&pStreamConf);
+		if(FAILED(hr)){
+			printf("ERROR: Couldn't config the stream!\n");
+			pVideoInputFilter->Release();
+			pGraph->Release();
+			pCaptureGraph->Release();
+			comUnInit();
+			return cfg_list;
+		}
 
-	hr = pCaptureGraph->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, pVideoInputFilter, IID_IAMStreamConfig, (void **)&pStreamConf);
-	if(FAILED(hr)){
-		printf("ERROR: Couldn't config the stream!\n");
-		pVideoInputFilter->Release();
-		pGraph->Release();
-	    pCaptureGraph->Release();
-		comUnInit();
-		return cfg_list;
-	}
+		CameraConfig cam_cfg;
+		CameraTool::initCameraConfig(&cam_cfg);
 
-	CameraConfig cam_cfg;
-    CameraTool::initCameraConfig(&cam_cfg);
+		cam_cfg.driver = DRIVER_DEFAULT;
+		cam_cfg.device = cam_id;
+		sprintf(cam_cfg.name, "%s", nDeviceName);
 
-    cam_cfg.driver = DRIVER_DEFAULT;
-    cam_cfg.device = i;
-    sprintf(cam_cfg.name, "%s", nDeviceName);
+		int iCount = 0;
+		int iSize = 0;
+		hr = pStreamConf->GetNumberOfCapabilities(&iCount, &iSize);
+		std::vector<CameraConfig> fmt_list;
 
-	int iCount = 0;
-	int iSize = 0;
-	hr = pStreamConf->GetNumberOfCapabilities(&iCount, &iSize);
-	std::vector<CameraConfig> fmt_list;
+		if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
+		{
+			GUID lastFormat = MEDIASUBTYPE_None;
+			for (int iFormat = 0; iFormat < iCount; iFormat+=2)
+			{
+				VIDEO_STREAM_CONFIG_CAPS scc;
+				AM_MEDIA_TYPE *pmtConfig;
+				hr =  pStreamConf->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
+				if (SUCCEEDED(hr)){
 
-	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
-	{
-		GUID lastFormat = MEDIASUBTYPE_None;
-	    for (int iFormat = 0; iFormat < iCount; iFormat+=2)
-	    {
-			VIDEO_STREAM_CONFIG_CAPS scc;
-			AM_MEDIA_TYPE *pmtConfig;
-			hr =  pStreamConf->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
-			if (SUCCEEDED(hr)){
+					if ( pmtConfig->subtype != lastFormat) {
 
-				if ( pmtConfig->subtype != lastFormat) {
-
-					if (fmt_list.size()>0) {
-						std::sort(fmt_list.begin(), fmt_list.end());
-                        cfg_list.insert( cfg_list.end(), fmt_list.begin(), fmt_list.end() );
-						fmt_list.clear();
-					}
-					cam_cfg.cam_format = getMediaSubtype(pmtConfig->subtype);
-					lastFormat = pmtConfig->subtype;
-				}
-
-	            int stepX = scc.OutputGranularityX;
-	            int stepY = scc.OutputGranularityY;
-	       		if(stepX < 1 || stepY < 1) continue;
-
-				else if ((stepX==1) && (stepY==1)) {
-
-					cam_cfg.cam_width = scc.InputSize.cx;
-					cam_cfg.cam_height = scc.InputSize.cy;
-	
-					int maxFrameInterval = scc.MaxFrameInterval;
-					if (maxFrameInterval==0) maxFrameInterval = 10000000;
-					float last_fps=-1;
-					VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
-					for (int iv=scc.MinFrameInterval;iv<=maxFrameInterval;iv=iv*2) {
-						pVih->AvgTimePerFrame = iv;
-						hr = pStreamConf->SetFormat(pmtConfig);
-						if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-						float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
-						if (fps!=last_fps) {
-							cam_cfg.cam_fps = fps;
-							fmt_list.push_back(cam_cfg);
-							last_fps=fps;
-						} }
+						if (fmt_list.size()>0) {
+							std::sort(fmt_list.begin(), fmt_list.end());
+							cfg_list.insert( cfg_list.end(), fmt_list.begin(), fmt_list.end() );
+							fmt_list.clear();
+						}
+						cam_cfg.cam_format = getMediaSubtype(pmtConfig->subtype);
+						lastFormat = pmtConfig->subtype;
 					}
 
-				} else {
-					int x,y;
-					for (x=scc.MinOutputSize.cx,y=scc.MinOutputSize.cy;x<=scc.MaxOutputSize.cx,y<=scc.MaxOutputSize.cy;x+=stepX,y+=stepY) {
-						
-						cam_cfg.cam_width = x;
-						cam_cfg.cam_height = y;
+					int stepX = scc.OutputGranularityX;
+					int stepY = scc.OutputGranularityY;
+					if(stepX < 1 || stepY < 1) continue;
+
+					else if ((stepX==1) && (stepY==1)) {
+
+						cam_cfg.cam_width = scc.InputSize.cx;
+						cam_cfg.cam_height = scc.InputSize.cy;
 
 						int maxFrameInterval = scc.MaxFrameInterval;
 						if (maxFrameInterval==0) maxFrameInterval = 10000000;
@@ -393,12 +370,35 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 							} }
 						}
 
-					}
-				}
+					} else {
+						int x,y;
+						for (x=scc.MinOutputSize.cx,y=scc.MinOutputSize.cy;x<=scc.MaxOutputSize.cx,y<=scc.MaxOutputSize.cy;x+=stepX,y+=stepY) {
 
-				deleteMediaType(pmtConfig);
-	        }
-	     }
+							cam_cfg.cam_width = x;
+							cam_cfg.cam_height = y;
+
+							int maxFrameInterval = scc.MaxFrameInterval;
+							if (maxFrameInterval==0) maxFrameInterval = 10000000;
+							float last_fps=-1;
+							VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER*)pmtConfig->pbFormat;
+							for (int iv=scc.MinFrameInterval;iv<=maxFrameInterval;iv=iv*2) {
+								pVih->AvgTimePerFrame = iv;
+								hr = pStreamConf->SetFormat(pmtConfig);
+								if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
+								float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+								if (fps!=last_fps) {
+									cam_cfg.cam_fps = fps;
+									fmt_list.push_back(cam_cfg);
+									last_fps=fps;
+								} }
+							}
+
+						}
+					}
+
+					deleteMediaType(pmtConfig);
+				}
+			}
 		}
 
 		if (fmt_list.size()>0) {
@@ -410,7 +410,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 		pStreamConf->Release();
 		pVideoInputFilter->Release();
 		pGraph->Release();
-	    pCaptureGraph->Release();
+		pCaptureGraph->Release();
 
 	}
 
@@ -418,9 +418,32 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 	return cfg_list;
 }
 
- CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
+CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 
-	return new videoInputCamera(cam_cfg);
+	int cam_count = getDeviceCount();
+	if (cam_count==0) return NULL;
+
+	if ((cam_cfg->device==SETTING_MIN) || (cam_cfg->device==SETTING_DEFAULT)) cam_cfg->device=0;
+	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=cam_count-1;
+
+	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cam_cfg->device);
+
+	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
+	setMinMaxConfig(cam_cfg,cfg_list);
+
+	if (cam_cfg->force) return new videoInputCamera(cam_cfg);
+
+	for (unsigned int i=0;i<cfg_list.size();i++) {
+
+		if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
+		if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
+		if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
+		if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
+
+		return new videoInputCamera(cam_cfg);
+	}
+
+	return NULL;
 }
 
 bool videoInputCamera::initCamera() {
@@ -450,7 +473,7 @@ bool videoInputCamera::initCamera() {
 
 	applyCameraSettings();
 	setupFrame();
-	
+
 	if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
 	else cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
 
@@ -479,17 +502,17 @@ unsigned char* videoInputCamera::getFrame()
 			return NULL;
 		}
 
-	unsigned char *dest = cam_buffer;
-	if (!cfg->color) {
+		unsigned char *dest = cam_buffer;
+		if (!cfg->color) {
 
-		if (cfg->frame) flip_crop_rgb2gray(cfg->cam_width,src,dest);
-		else flip_rgb2gray(cfg->cam_width,cfg->cam_height,src,dest);
+			if (cfg->frame) flip_crop_rgb2gray(cfg->cam_width,src,dest);
+			else flip_rgb2gray(cfg->cam_width,cfg->cam_height,src,dest);
 
-	} else {
+		} else {
 
-		if (cfg->frame) flip_crop(cfg->cam_width,cfg->cam_height,src,dest,cfg->buf_format);
-		else flip(cfg->cam_width,cfg->cam_height,src,dest,cfg->buf_format);
-	}
+			if (cfg->frame) flip_crop(cfg->cam_width,cfg->cam_height,src,dest,cfg->buf_format);
+			else flip(cfg->cam_width,cfg->cam_height,src,dest,cfg->buf_format);
+		}
 
 		lost_frames = 0;
 		return cam_buffer;
@@ -515,7 +538,7 @@ bool videoInputCamera::stillRunning() {
 
 bool videoInputCamera::resetCamera()
 {
-  return (stopCamera() && startCamera());
+	return (stopCamera() && startCamera());
 
 }
 
@@ -530,7 +553,7 @@ bool videoInputCamera::closeCamera()
 }
 
 void videoInputCamera::control(int key) {
-	 return;
+	return;
 }
 
 bool videoInputCamera::showSettingsDialog(bool lock) {
@@ -540,18 +563,18 @@ bool videoInputCamera::showSettingsDialog(bool lock) {
 
 bool videoInputCamera::hasCameraSetting(int mode) {
 	switch (mode) {
-		case BRIGHTNESS:
-		case GAIN:
-		case EXPOSURE:
-		case SHARPNESS:
-		case FOCUS:
-		case GAMMA:
-		case WHITE:
-		case BACKLIGHT:
-		case COLOR_HUE:
-			return true;
-		default:
-			return false;
+	case BRIGHTNESS:
+	case GAIN:
+	case EXPOSURE:
+	case SHARPNESS:
+	case FOCUS:
+	case GAMMA:
+	case WHITE:
+	case BACKLIGHT:
+	case COLOR_HUE:
+		return true;
+	default:
+		return false;
 	}
 }
 
@@ -566,37 +589,37 @@ bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {
 	if (flag) setting = FLAGS_AUTO;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device, VI->propBrightness, value, setting, false); break;
-		case GAIN: VI->setVideoSettingFilter(cfg->device, VI->propGain, value, setting, false); break;
-		case EXPOSURE: VI->setVideoSettingFilter(cfg->device, VI->propExposure, value, setting, false); break;
-		case SHARPNESS: VI->setVideoSettingFilter(cfg->device, VI->propSharpness, value, setting, false); break;
-		case FOCUS: VI->setVideoSettingFilter(cfg->device, VI->propFocus, value, setting, false); break;
-		case GAMMA: VI->setVideoSettingFilter(cfg->device, VI->propGamma, value, setting, false); break;
-		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, setting, false); break;
-		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, setting, false); break;
-		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, setting, false); break;
-		default: return false;
+	case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device, VI->propBrightness, value, setting, false); break;
+	case GAIN: VI->setVideoSettingFilter(cfg->device, VI->propGain, value, setting, false); break;
+	case EXPOSURE: VI->setVideoSettingFilter(cfg->device, VI->propExposure, value, setting, false); break;
+	case SHARPNESS: VI->setVideoSettingFilter(cfg->device, VI->propSharpness, value, setting, false); break;
+	case FOCUS: VI->setVideoSettingFilter(cfg->device, VI->propFocus, value, setting, false); break;
+	case GAMMA: VI->setVideoSettingFilter(cfg->device, VI->propGamma, value, setting, false); break;
+	case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, setting, false); break;
+	case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, setting, false); break;
+	case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, setting, false); break;
+	default: return false;
 	}
 
 	return true;
 }
 
 bool videoInputCamera::getCameraSettingAuto(int mode) {
-    
+
 	long min,max,step,value,default,flags;
 	min=max=step=value=default=flags=0;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
-		case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
-		case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
-		case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
-		case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
-		case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
-		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, flags, default); break;
-		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, flags, default); break;
-		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, flags, default); break;
-		default: return false;
+	case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
+	case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
+	case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
+	case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
+	case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
+	case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
+	case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, flags, default); break;
+	case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, flags, default); break;
+	case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, flags, default); break;
+	default: return false;
 	} 
 
 	if (flags==FLAGS_AUTO) return true;
@@ -612,15 +635,15 @@ bool videoInputCamera::setCameraSetting(int mode, int setting) {
 	long flags = FLAGS_MANUAL;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device, VI->propBrightness, setting, flags, false); break;
-		case GAIN: VI->setVideoSettingFilter(cfg->device, VI->propGain, setting, flags, false); break;
-		case EXPOSURE: VI->setVideoSettingFilter(cfg->device, VI->propExposure, setting, flags, false); break;
-		case SHARPNESS: VI->setVideoSettingFilter(cfg->device, VI->propSharpness, setting, flags, false); break;
-		case FOCUS: VI->setVideoSettingFilter(cfg->device, VI->propFocus, setting, flags, false); break;
-		case GAMMA: VI->setVideoSettingFilter(cfg->device, VI->propGamma, setting, flags, false); break;
-		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, setting, flags, false); break;
-		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, setting, flags, false); break;
-		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, setting, flags, false); break;
+	case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device, VI->propBrightness, setting, flags, false); break;
+	case GAIN: VI->setVideoSettingFilter(cfg->device, VI->propGain, setting, flags, false); break;
+	case EXPOSURE: VI->setVideoSettingFilter(cfg->device, VI->propExposure, setting, flags, false); break;
+	case SHARPNESS: VI->setVideoSettingFilter(cfg->device, VI->propSharpness, setting, flags, false); break;
+	case FOCUS: VI->setVideoSettingFilter(cfg->device, VI->propFocus, setting, flags, false); break;
+	case GAMMA: VI->setVideoSettingFilter(cfg->device, VI->propGamma, setting, flags, false); break;
+	case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, setting, flags, false); break;
+	case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, setting, flags, false); break;
+	case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, setting, flags, false); break;
 	}
 
 	return true;
@@ -632,16 +655,16 @@ int videoInputCamera::getCameraSetting(int mode) {
 	min=max=step=value=default=flags=0;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
-		case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
-		case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
-		case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
-		case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
-		case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
-		case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
-		case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
-		case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
-		default: return 0;
+	case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
+	case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
+	case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
+	case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
+	case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
+	case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
+	case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+	case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+	case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
+	default: return 0;
 	} 
 
 	return (int)value;
@@ -653,16 +676,16 @@ int videoInputCamera::getMaxCameraSetting(int mode) {
 	min=max=step=value=default=flags=0;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
-		case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
-		case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
-		case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
-		case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
-		case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
-		case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
-		case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
-		case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
-		default: return 0;
+	case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
+	case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
+	case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
+	case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
+	case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
+	case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
+	case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+	case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+	case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
+	default: return 0;
 	} 
 
 	return (int)max;
@@ -672,18 +695,18 @@ int videoInputCamera::getMinCameraSetting(int mode) {
 
 	long min,max,step,value,default,flags;
 	min=max=step=value=default=flags=0;
-	
+
 	switch (mode) {
-		case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
-		case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
-		case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
-		case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
-		case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
-		case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
-		case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
-		case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
-		case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
-		default: return 0;
+	case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
+	case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
+	case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
+	case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
+	case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
+	case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
+	case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+	case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+	case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
+	default: return 0;
 	} 
 
 	return (int)min;
@@ -693,60 +716,60 @@ int videoInputCamera::getCameraSettingStep(int mode) {
 
 	long min,max,step,value,default,flags;
 	min=max=step=value=default=flags=0;
-	
+
 	switch (mode) {
-		case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
-		case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
-		case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
-		case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
-		case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
-		case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
-		case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
-		case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
-		case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
-		default: return 0;
+	case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
+	case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
+	case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
+	case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
+	case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
+	case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
+	case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+	case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+	case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
+	default: return 0;
 	} 
 
 	return (int)step;
 }
 
 bool videoInputCamera::setDefaultCameraSetting(int mode) {
-    
+
 	long value=0;
 	long flags=0;
 
 	switch (mode) {
-		case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device,  VI->propBrightness, value, flags, true); break;
-		case GAIN: VI->setVideoSettingFilter(cfg->device,  VI->propGain, value, flags, true); break;
-		case EXPOSURE: VI->setVideoSettingFilter(cfg->device,  VI->propExposure, value, flags, true); break;
-		case SHARPNESS:VI->setVideoSettingFilter(cfg->device,  VI->propSharpness, value, flags, true); break;
-		case FOCUS: VI->setVideoSettingFilter(cfg->device,  VI->propFocus, value, flags, true); break;
-		case GAMMA: VI->setVideoSettingFilter(cfg->device,  VI->propGamma, value, flags, true); break;
-		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, flags, true); break;
-		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, flags, true); break;
-		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, flags, true); break;
-		default: return false;
+	case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device,  VI->propBrightness, value, flags, true); break;
+	case GAIN: VI->setVideoSettingFilter(cfg->device,  VI->propGain, value, flags, true); break;
+	case EXPOSURE: VI->setVideoSettingFilter(cfg->device,  VI->propExposure, value, flags, true); break;
+	case SHARPNESS:VI->setVideoSettingFilter(cfg->device,  VI->propSharpness, value, flags, true); break;
+	case FOCUS: VI->setVideoSettingFilter(cfg->device,  VI->propFocus, value, flags, true); break;
+	case GAMMA: VI->setVideoSettingFilter(cfg->device,  VI->propGamma, value, flags, true); break;
+	case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, flags, true); break;
+	case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, flags, true); break;
+	case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, flags, true); break;
+	default: return false;
 	}
 
-    return true;
+	return true;
 }
 
 int videoInputCamera::getDefaultCameraSetting(int mode) {
 
 	long min,max,step,value,default,flags;
 	min=max=step=value=default=flags=0;
-	
+
 	switch (mode) {
-		case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
-		case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
-		case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
-		case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
-		case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
-		case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
-		case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
-		case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
-		case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
-		default: return 0;
+	case BRIGHTNESS: VI->getVideoSettingFilter(cfg->device, VI->propBrightness, min, max,  step, value, flags, default); break;
+	case GAIN:  VI->getVideoSettingFilter(cfg->device, VI->propGain, min, max,  step, value, flags, default); break;
+	case EXPOSURE: VI->getVideoSettingFilter(cfg->device, VI->propExposure, min, max,  step, value, flags, default); break;
+	case SHARPNESS: VI->getVideoSettingFilter(cfg->device, VI->propSharpness, min, max,  step, value, flags, default); break;
+	case FOCUS:  VI->getVideoSettingFilter(cfg->device, VI->propFocus, min, max,  step, value, flags, default); break;
+	case GAMMA: VI->getVideoSettingFilter(cfg->device, VI->propGamma, min, max,  step, value, flags, default); break;
+	case WHITE: VI->getVideoSettingFilter(cfg->device, VI->propWhiteBalance, min, max,  step, value, flags, default); break;
+	case BACKLIGHT:  VI->getVideoSettingFilter(cfg->device, VI->propBacklightCompensation, min, max,  step, value, flags, default); break;
+	case COLOR_HUE: VI->getVideoSettingFilter(cfg->device, VI->propHue, min, max,  step, value, flags, default); break;
+	default: return 0;
 	} 
 
 	return (int)default;
