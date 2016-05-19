@@ -144,9 +144,6 @@
     <ClCompile Include="..\ext\tuio\OneEuroFilter.cpp">
       <Filter>Source Files\tuio</Filter>
     </ClCompile>
-    <ClCompile Include="..\ext\tuio\OscSender.cpp">
-      <Filter>Source Files\tuio</Filter>
-    </ClCompile>
     <ClCompile Include="..\ext\tuio\TcpSender.cpp">
       <Filter>Source Files\tuio</Filter>
     </ClCompile>

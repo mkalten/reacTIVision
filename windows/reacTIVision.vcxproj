@@ -267,7 +267,6 @@
     <ClCompile Include="..\ext\portvideo\tinyxml\tinyxml2.cpp" />
     <ClCompile Include="..\ext\tuio\FlashSender.cpp" />
     <ClCompile Include="..\ext\tuio\OneEuroFilter.cpp" />
-    <ClCompile Include="..\ext\tuio\OscSender.cpp" />
     <ClCompile Include="..\ext\tuio\TcpSender.cpp" />
     <ClCompile Include="..\ext\tuio\TuioBlob.cpp" />
     <ClCompile Include="..\ext\tuio\TuioContainer.cpp" />
