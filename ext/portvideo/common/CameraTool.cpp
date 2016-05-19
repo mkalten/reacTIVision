@@ -400,7 +400,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	if( xml_settings.Error() )
 	{
 		std::cout << "Error loading camera configuration file: " << cam_cfg.path << std::endl;
-		return NULL;
+		return &cam_cfg;
 	}
 	
 	tinyxml2::XMLHandle docHandle( &xml_settings );
@@ -410,7 +410,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	if( camera_element==NULL )
 	{
 		std::cout << "Error loading camera configuration file: " << cam_cfg.path << std::endl;
-		return NULL;
+		return &cam_cfg;
 	}
 	
 	if(camera_element->Attribute("driver")!=NULL) {

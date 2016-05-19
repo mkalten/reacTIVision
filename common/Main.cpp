@@ -287,7 +287,7 @@ void writeSettings(application_settings *config) {
 	xml_settings.LoadFile(config->file);
 	if( xml_settings.Error() )
 	{
-		std::cout << "Error loading configuration file: " << config->file << std::endl;
+		std::cout << "Error saving configuration file: " << config->file << std::endl;
 		return;
 	}
 	
