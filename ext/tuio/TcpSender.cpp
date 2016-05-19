@@ -73,10 +73,11 @@ static DWORD WINAPI ServerThreadFunc( LPVOID obj )
 #endif
 		
 		tcp_client = accept(sender->tcp_socket, (struct sockaddr*)&client_addr, &len);
-		if ((client_addr.sin_addr.S_un.S_addr==3435973836) && (client_addr.sin_port==52428)) return 0; //workaound on exit
-		if (!client_addr.sin_addr.S_un.S_addr && !client_addr.sin_port) return 0; //workaound on exit
-
-		std::cout << client_addr.sin_addr.S_un.S_addr << " " << client_addr.sin_port << std::endl;
+#ifdef WIN32
+		 //win32 workaround on exit
+		if (!client_addr.sin_addr.S_un.S_addr && !client_addr.sin_port) return 0;
+		if ((client_addr.sin_addr.S_un.S_addr==3435973836) && (client_addr.sin_port==52428)) return 0;
+#endif
 
 		if (tcp_client>0) { 
 			std::cout << sender->tuio_type() << " client connected from " << inet_ntoa(client_addr.sin_addr) << "@" << client_addr.sin_port << std::endl;
