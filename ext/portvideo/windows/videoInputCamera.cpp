@@ -218,20 +218,20 @@ int videoInputCamera::getMediaSubtype(GUID type){
 	makeGUID( &MEDIASUBTYPE_GREY, 0x59455247, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
 
 	if ( type == MEDIASUBTYPE_RGB24) return FORMAT_RGB;
-	else if(type == MEDIASUBTYPE_RGB32) return 0;
+	else if(type == MEDIASUBTYPE_RGB32) return FORMAT_RGBA;
 	else if(type == MEDIASUBTYPE_RGB555) return 0;
 	else if(type == MEDIASUBTYPE_RGB565) return 0;
 	else if(type == MEDIASUBTYPE_YUY2) return FORMAT_UYVY;
-	else if(type == MEDIASUBTYPE_YVYU) return 0;
+	else if(type == MEDIASUBTYPE_YVYU) return FORMAT_YVYU;
 	else if(type == MEDIASUBTYPE_YUYV) return FORMAT_YUYV;
-	else if(type == MEDIASUBTYPE_IYUV) return 0;
+	else if(type == MEDIASUBTYPE_IYUV) return FORMAT_420P;
 	else if(type == MEDIASUBTYPE_UYVY) return FORMAT_UYVY;
 	else if(type == MEDIASUBTYPE_YV12) return 0;
 	else if(type == MEDIASUBTYPE_YVU9) return 0;
 	else if(type == MEDIASUBTYPE_Y411) return FORMAT_YUV411;
-	else if(type == MEDIASUBTYPE_Y41P) return 0;
-	else if(type == MEDIASUBTYPE_Y211) return 0;
-	else if(type == MEDIASUBTYPE_AYUV) return 0;
+	else if(type == MEDIASUBTYPE_Y41P) return FORMAT_410P;
+	else if(type == MEDIASUBTYPE_Y211) return FORMAT_YUV211;
+	else if(type == MEDIASUBTYPE_AYUV) return FORMAT_YUV444;
 	else if(type == MEDIASUBTYPE_Y800) return FORMAT_GRAY;
 	else if(type == MEDIASUBTYPE_Y8)   return FORMAT_GRAY;
 	else if(type == MEDIASUBTYPE_GREY) return FORMAT_GRAY;
