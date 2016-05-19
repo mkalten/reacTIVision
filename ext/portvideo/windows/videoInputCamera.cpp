@@ -38,6 +38,23 @@ videoInputCamera::~videoInputCamera()
 	if (cam_buffer!=NULL) delete cam_buffer;
 }
 
+void videoInputCamera::deleteMediaType(AM_MEDIA_TYPE *pmt)
+{
+    if (pmt != NULL) {
+        if (pmt->cbFormat != 0) {
+			CoTaskMemFree((PVOID)pmt->pbFormat);
+			pmt->cbFormat = 0;
+			pmt->pbFormat = NULL;
+		}
+		if (pmt->pUnk != NULL) {
+			// Unecessary because pUnk should not be used, but safest.
+			pmt->pUnk->Release();
+			pmt->pUnk = NULL;
+		}
+
+        CoTaskMemFree(pmt);
+    }
+}
 
 bool videoInputCamera::comInit(){
 	HRESULT hr = NULL;
@@ -57,12 +74,6 @@ bool videoInputCamera::comInit(){
 	return true;
 }
 
-
-// ----------------------------------------------------------------------
-// Same as above but to unitialize com, decreases counter and frees com
-// if no one else is using it
-// ----------------------------------------------------------------------
-
 bool videoInputCamera::comUnInit(){
 	if(comInitCount > 0)comInitCount--;		//decrease the count of instances using com
 
@@ -72,6 +83,77 @@ bool videoInputCamera::comUnInit(){
 	}
 
 	return false;
+}
+
+HRESULT videoInputCamera::getDevice(IBaseFilter** gottaFilter, int deviceId, WCHAR * wDeviceName, char * nDeviceName){
+	BOOL done = false;
+	int deviceCounter = 0;
+
+	// Create the System Device Enumerator.
+	ICreateDevEnum *pSysDevEnum = NULL;
+	HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	// Obtain a class enumerator for the video input category.
+	IEnumMoniker *pEnumCat = NULL;
+	hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
+
+	if (hr == S_OK)
+	{
+		// Enumerate the monikers.
+		IMoniker *pMoniker = NULL;
+		ULONG cFetched;
+		while ((pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) && (!done))
+		{
+			if(deviceCounter == deviceId)
+			{
+				// Bind the first moniker to an object
+				IPropertyBag *pPropBag;
+				hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
+				if (SUCCEEDED(hr))
+				{
+					// To retrieve the filter's friendly name, do the following:
+					VARIANT varName;
+					VariantInit(&varName);
+					hr = pPropBag->Read(L"FriendlyName", &varName, 0);
+					if (SUCCEEDED(hr))
+					{
+
+						//copy the name to nDeviceName & wDeviceName
+						int count = 0;
+						while( varName.bstrVal[count] != 0x00 ) {
+	                  		 wDeviceName[count] = varName.bstrVal[count];
+	                  		 nDeviceName[count] = (char)varName.bstrVal[count];
+	                  		 count++;
+	                 	}
+
+						// We found it, so send it back to the caller
+						hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter, (void**)gottaFilter);
+						done = true;
+					}
+					VariantClear(&varName);
+					pPropBag->Release();
+					pPropBag = NULL;
+					pMoniker->Release();
+					pMoniker = NULL;
+				}
+			}
+			deviceCounter++;
+		}
+		pEnumCat->Release();
+		pEnumCat = NULL;
+	}
+	pSysDevEnum->Release();
+	pSysDevEnum = NULL;
+
+	if (done) {
+		return hr;	// found it, return native error
+	} else {
+		return VFW_E_NOT_FOUND;	// didn't find it error
+	}
 }
 
 
@@ -208,7 +290,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 
 	memset(wDeviceName, 0, sizeof(WCHAR) * 255);
 	memset(nDeviceName, 0, sizeof(char) * 255);
-	hr = videoInput::getDevice(&pVideoInputFilter, i, wDeviceName, nDeviceName);
+	hr = getDevice(&pVideoInputFilter, i, wDeviceName, nDeviceName);
 
 	if (SUCCEEDED(hr)){
 		hr = pGraph->AddFilter(pVideoInputFilter, wDeviceName);
@@ -312,12 +394,9 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 						}
 
 					}
-
-					//printf("min is %i %i max is %i %i - res is %i %i \n", scc.MinOutputSize.cx, scc.MinOutputSize.cy,  scc.MaxOutputSize.cx,  scc.MaxOutputSize.cy, stepX, stepY);
-	       			//printf("min frame is %i  max is %i\n", scc.MinFrameInterval, scc.MaxFrameInterval);
 				}
 
-				videoInput::MyDeleteMediaType(pmtConfig);
+				deleteMediaType(pmtConfig);
 	        }
 	     }
 		}

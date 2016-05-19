@@ -68,11 +68,13 @@ private:
 
 	static bool comInit();
 	static bool comUnInit();
+	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
 
 	static int getMediaSubtype(GUID type);
 	static void makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3, unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
 	unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 );
 
+	static void deleteMediaType(AM_MEDIA_TYPE *pmt);
 };
 
 #endif
