@@ -38,6 +38,10 @@ public:
 	static int getDeviceCount();
 	static CameraEngine* getCamera(CameraConfig *cam_cfg);
 
+	static int getMediaSubtype(GUID type);
+	static void makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3, unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
+	unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 );
+
 	bool initCamera();
 	bool startCamera();
 	unsigned char* getFrame();

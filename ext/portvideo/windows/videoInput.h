@@ -270,6 +270,7 @@ class videoInput{
 		//Functions in rough order they should be used.
 		static int listDevices(bool silent = false);
 		static std::vector <std::string> getDeviceList(); 
+		static void listDevicesAndFormats();
 
 		//needs to be called after listDevices - otherwise returns NULL
 		static const char * getDeviceName(int deviceID);
@@ -280,7 +281,8 @@ class videoInput{
 
 		//call before setupDevice
 		//directshow will try and get the closest possible framerate to what is requested
-		void setIdealFramerate(int deviceID, int idealFramerate);
+		void setIdealFramerate(int deviceID, float idealFramerate);
+		float getActualFramerate(int deviceID);
 
 		//some devices will stop delivering frames after a while - this method gives you the option to try and reconnect
 		//to a device if videoInput detects that a device has stopped delivering frames.
@@ -303,6 +305,9 @@ class videoInput{
 		//can be called multiple times
 		bool setFormat(int deviceNumber, int format);
 		void setRequestedMediaSubType(int mediatype); // added by gameover
+
+		static void getMinMaxDimension(int deviceNumber, int &min_width, int &max_width, int &min_height, int &max_height, bool compress);
+		static void getMinMaxFramerate(int deviceNumber, int cam_width, int cam_height, float &min_fps, float &max_fps, bool compress);
 
 		//Tells you when a new frame has arrived - you should call this if you have specified setAutoReconnectOnFreeze to true
 		bool isFrameNew(int deviceID);
@@ -367,6 +372,16 @@ class videoInput{
 		long propIris;
 		long propFocus;
 
+		//don't touch
+		static bool comInit();
+		static bool comUnInit();
+
+		static void getMediaSubtypeAsString(GUID type, char * typeAsString);
+		static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
+
+		static void MyFreeMediaType(AM_MEDIA_TYPE& mt);
+		static void MyDeleteMediaType(AM_MEDIA_TYPE *pmt);
+
 	private:
 
 		void setPhyCon(int deviceID, int conn);
@@ -375,16 +390,10 @@ class videoInput{
 		void processPixels(unsigned char * src, unsigned char * dst, int width, int height, bool bRGB, bool bFlip);
 		int  start(int deviceID, videoDevice * VD);
 		int  getDeviceCount();
-		void getMediaSubtypeAsString(GUID type, char * typeAsString);
 
-		HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
 		static HRESULT ShowFilterPropertyPages(IBaseFilter *pFilter);
 		HRESULT SaveGraphFile(IGraphBuilder *pGraph, WCHAR *wszPath);
 		HRESULT routeCrossbar(ICaptureGraphBuilder2 **ppBuild, IBaseFilter **pVidInFilter, int conType, GUID captureMode);
-
-		//don't touch
-		static bool comInit();
-		static bool comUnInit();
 
 		int  connection;
 		int  callbackSetCount;
