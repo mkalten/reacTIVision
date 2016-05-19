@@ -188,7 +188,7 @@ namespace TUIO {
 		/**
 		 * The destructor closes the connection. 
 		 */
-		~FlashSender();
+		virtual ~FlashSender();
 		
 		/**
 		 * This method delivers the provided OSC data

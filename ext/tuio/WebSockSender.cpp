@@ -44,10 +44,6 @@ WebSockSender::WebSockSender(int port)
 	port_no = port;
 }
 
-WebSockSender::~WebSockSender()
-{
-}
-
 bool WebSockSender::sendOscPacket (osc::OutboundPacketStream *bundle) {
 	if (!connected) return false; 
 	if ( bundle->Size() > buffer_size ) return false;

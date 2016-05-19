@@ -94,7 +94,7 @@ namespace TUIO {
 		/**
 		 * The destructor closes the socket. 
 		 */
-		~WebSockSender();
+		virtual ~WebSockSender() {}
 		
 		/**
 		 * This method delivers the provided OSC data

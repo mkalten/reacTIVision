@@ -66,7 +66,7 @@ namespace TUIO {
 		/**
 		 * The destructor closes the socket. 
 		 */
-		~UdpSender();
+		virtual ~UdpSender();
 		
 		/**
 		 * This method delivers the provided OSC data

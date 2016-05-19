@@ -72,7 +72,7 @@ namespace TUIO {
 		/**
 		 * The destructor closes the socket. 
 		 */
-		~TcpSender();
+		virtual ~TcpSender();
 		
 		/**
 		 * This method delivers the provided OSC data

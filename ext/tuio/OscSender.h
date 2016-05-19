@@ -45,7 +45,7 @@ namespace TUIO {
 
 		/**
 		 * The destructor is doing nothing in particular. 
-		 */
+		 */ 
 		virtual ~OscSender() {}
 		
 		/**
@@ -84,4 +84,7 @@ namespace TUIO {
 		bool local;
 	};
 }
+
+
 #endif /* INCLUDED_OSCSENDER_H */
+
