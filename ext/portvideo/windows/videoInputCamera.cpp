@@ -38,9 +38,84 @@ videoInputCamera::~videoInputCamera()
 	if (cam_buffer!=NULL) delete cam_buffer;
 }
 
+
+bool videoInputCamera::comInit(){
+	HRESULT hr = NULL;
+
+	//no need for us to start com more than once
+	if(comInitCount == 0 ){
+
+		hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
+		//hr = CoInitialize(NULL);
+
+		if( hr == RPC_E_CHANGED_MODE){
+			 //printf("SETUP - COM already setup - threaded VI might not be possible\n");
+		}
+	}
+
+	comInitCount++;
+	return true;
+}
+
+
+// ----------------------------------------------------------------------
+// Same as above but to unitialize com, decreases counter and frees com
+// if no one else is using it
+// ----------------------------------------------------------------------
+
+bool videoInputCamera::comUnInit(){
+	if(comInitCount > 0)comInitCount--;		//decrease the count of instances using com
+
+   	if(comInitCount == 0){
+   		CoUninitialize();	//if there are no instances left - uninitialize com
+		return true;
+	}
+
+	return false;
+}
+
+
 int videoInputCamera::getDeviceCount() {
-	std::vector <std::string> devList = videoInput::getDeviceList();
-	return  devList.size();
+	
+	ICreateDevEnum *pDevEnum = NULL;
+	IEnumMoniker *pEnum = NULL;
+	int deviceCount = 0;
+
+	comInit();
+
+	HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL,
+	    CLSCTX_INPROC_SERVER, IID_ICreateDevEnum,
+	    reinterpret_cast<void**>(&pDevEnum));
+
+	if (SUCCEEDED(hr))
+	{
+	    // Create an enumerator for the video capture category.
+	    hr = pDevEnum->CreateClassEnumerator(
+	    	CLSID_VideoInputDeviceCategory,
+	        &pEnum, 0);
+
+	   if(hr == S_OK) {
+			IMoniker *pMoniker = NULL;
+
+			while (pEnum->Next(1, &pMoniker, NULL) == S_OK){
+
+			    pMoniker->Release();
+			    pMoniker = NULL;
+
+			    deviceCount++;
+			}
+
+			pDevEnum->Release();
+			pDevEnum = NULL;
+
+			pEnum->Release();
+			pEnum = NULL;
+		}
+	}
+
+	comUnInit();
+
+	return deviceCount;
 }
 
 void videoInputCamera::makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3,
@@ -90,7 +165,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 	int count = getDeviceCount();
 	if (count==0) return cfg_list;
 
-	videoInput::comInit();
+	comInit();
 
 	HRESULT hr;
 	ICaptureGraphBuilder2 *pCaptureGraph;
@@ -107,7 +182,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
     if (FAILED(hr))	// FAILED is a macro that tests the return value
     {
         printf("ERROR - Could not create the Filter Graph Manager\n");
-		videoInput::comUnInit();
+		comUnInit();
         return cfg_list;
     }
 
@@ -117,7 +192,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
     {
 		printf("ERROR - Could not add the graph builder!\n");
 	    pCaptureGraph->Release();
-		videoInput::comUnInit();
+		comUnInit();
         return cfg_list;
 	}
 
@@ -127,7 +202,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 		printf("ERROR - Could not set filtergraph\n");
 	    pGraph->Release();
 	    pCaptureGraph->Release();
-		videoInput::comUnInit();
+		comUnInit();
         return cfg_list;
 	}
 
@@ -141,7 +216,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
         printf("ERROR - Could not find specified video device\n");
 		pGraph->Release();
 	    pCaptureGraph->Release();
-		videoInput::comUnInit();
+		comUnInit();
         return cfg_list;
 	}
 
@@ -151,7 +226,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 		pVideoInputFilter->Release();
 		pGraph->Release();
 	    pCaptureGraph->Release();
-		videoInput::comUnInit();
+		comUnInit();
 		return cfg_list;
 	}
 
@@ -260,7 +335,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs() {
 
 	}
 
-	videoInput::comUnInit();
+	comUnInit();
 	return cfg_list;
 }
 
