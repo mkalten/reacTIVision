@@ -54,7 +54,6 @@
 		B29CCBE01B17680400C106A6 /* BlobObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBD51B17680400C106A6 /* BlobObject.cpp */; };
 		B29CCBE11B17680400C106A6 /* BlobMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBD71B17680400C106A6 /* BlobMatrix.cpp */; };
 		B29CCC031B17685700C106A6 /* FlashSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBE51B17685700C106A6 /* FlashSender.cpp */; };
-		B29CCC041B17685700C106A6 /* OscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBE81B17685700C106A6 /* OscSender.cpp */; };
 		B29CCC051B17685700C106A6 /* TcpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEA1B17685700C106A6 /* TcpSender.cpp */; };
 		B29CCC061B17685700C106A6 /* TuioBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEC1B17685700C106A6 /* TuioBlob.cpp */; };
 		B29CCC071B17685700C106A6 /* TuioContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEE1B17685700C106A6 /* TuioContainer.cpp */; };
@@ -185,7 +184,6 @@
 		B29CCBE51B17685700C106A6 /* FlashSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlashSender.cpp; path = ../ext/tuio/FlashSender.cpp; sourceTree = "<group>"; };
 		B29CCBE61B17685700C106A6 /* FlashSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlashSender.h; path = ../ext/tuio/FlashSender.h; sourceTree = "<group>"; };
 		B29CCBE71B17685700C106A6 /* LibExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibExport.h; path = ../ext/tuio/LibExport.h; sourceTree = "<group>"; };
-		B29CCBE81B17685700C106A6 /* OscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscSender.cpp; path = ../ext/tuio/OscSender.cpp; sourceTree = "<group>"; };
 		B29CCBE91B17685700C106A6 /* OscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscSender.h; path = ../ext/tuio/OscSender.h; sourceTree = "<group>"; };
 		B29CCBEA1B17685700C106A6 /* TcpSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TcpSender.cpp; path = ../ext/tuio/TcpSender.cpp; sourceTree = "<group>"; };
 		B29CCBEB1B17685700C106A6 /* TcpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TcpSender.h; path = ../ext/tuio/TcpSender.h; sourceTree = "<group>"; };
@@ -419,7 +417,6 @@
 				B29CCBFE1B17685700C106A6 /* TuioTime.h */,
 				B225847B1C6CC2920030E390 /* OneEuroFilter.cpp */,
 				B225847C1C6CC2920030E390 /* OneEuroFilter.h */,
-				B29CCBE81B17685700C106A6 /* OscSender.cpp */,
 				B29CCBE91B17685700C106A6 /* OscSender.h */,
 				B29CCBFF1B17685700C106A6 /* UdpSender.cpp */,
 				B29CCC001B17685700C106A6 /* UdpSender.h */,
@@ -565,7 +562,6 @@
 				B29CCC0D1B17685700C106A6 /* TuioServer.cpp in Sources */,
 				B297D3CC097536E2004AB0FE /* IpEndpointName.cpp in Sources */,
 				B297D3CD097536E2004AB0FE /* NetworkingUtils.cpp in Sources */,
-				B29CCC041B17685700C106A6 /* OscSender.cpp in Sources */,
 				B297D3CE097536E2004AB0FE /* UdpSocket.cpp in Sources */,
 				B2985D261B1ED49700A3172B /* ConsoleInterface.cpp in Sources */,
 				B297D3CF097536E2004AB0FE /* OscOutboundPacketStream.cpp in Sources */,
