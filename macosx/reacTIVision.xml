@@ -6,8 +6,9 @@ these are all the possible configuration tags and their default values.
 you only need to specify parameters you want to change from their default setting.
 -->
 
-<!-- the camera configuration is provided in a separate file -->
-	<camera config="camera.xml" />
+<!-- the camera configuration is provided in a separate file 
+use default locations or specify an absolute path -->
+	<camera config="default" />
 <!-- the TUIO server configuration specifies type, host and port
  possible types are: udp, tcp as well as web and flash -->
 	<tuio type="udp" host="127.0.0.1" port="3333" />

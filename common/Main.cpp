@@ -69,7 +69,7 @@ void readSettings(application_settings *config) {
 	
 	sprintf(config->tree_config,"default");
 	sprintf(config->grid_config,"none");
-	sprintf(config->camera_config,"camera.xml");
+	sprintf(config->camera_config,"default");
 	config->invert_x = false;
 	config->invert_y = false;
 	config->invert_a = false;

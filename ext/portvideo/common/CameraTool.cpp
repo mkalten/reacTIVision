@@ -372,25 +372,26 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	
 	initCameraConfig(&cam_cfg);
-	
+	if (strcmp( cfgfile, "default" ) == 0) {
 #ifdef __APPLE__
-	char path[1024];
-	CFBundleRef mainBundle = CFBundleGetMainBundle();
-	CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
-	CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-	CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
-	CFRelease( mainBundleURL);
-	CFRelease( cfStringRef);
-	sprintf(cam_cfg.path,"%s/Contents/Resources/%s",path,cfgfile);
+		char path[1024];
+		CFBundleRef mainBundle = CFBundleGetMainBundle();
+		CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
+		CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
+		CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
+		CFRelease( mainBundleURL);
+		CFRelease( cfStringRef);
+		sprintf(cam_cfg.path,"%s/Contents/Resources/%s",path,cfgfile);
 #elif !defined WIN32
-	sprintf(cam_cfg.path,"./%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.portvideo/%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/%s",cfgfile);
-	if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/%s",cfgfile);
+		sprintf(cam_cfg.path,"./%s",cfgfile);
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.portvideo/%s",cfgfile);
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/%s",cfgfile);
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/%s",cfgfile);
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/%s",cfgfile);
 #else
-	sprintf(cam_cfg.path,"./%s",cfgfile);
+		sprintf(cam_cfg.path,"./%s",cfgfile);
 #endif
+	} else sprintf(cam_cfg.path,"%s",cfgfile);
 	
 	tinyxml2::XMLDocument xml_settings;
 	xml_settings.LoadFile(cam_cfg.path);
