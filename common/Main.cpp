@@ -480,6 +480,7 @@ int main(int argc, char* argv[]) {
 			else server->addOscSender(sender);
 		}
 	}
+	server->setSourceName("rtv");
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 	
 	thresholder = new FrameThresholder(config.gradient_gate, config.tile_size, config.thread_count);
