@@ -1,5 +1,5 @@
 /* portVideo, a cross platform camera framework
- Copyright (C) 2005-2015 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
  V4Linux2Camera initially contributed 2007 by Peter Eschler
 
  This program is free software; you can redistribute it and/or modify
