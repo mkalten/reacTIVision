@@ -371,10 +371,13 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	
+#ifdef __APPLE__
+	char path[1024];
+#endif	
+	
 	initCameraConfig(&cam_cfg);
 	if (strcmp( cfgfile, "default" ) == 0) {
 #ifdef __APPLE__
-		char path[1024];
 		CFBundleRef mainBundle = CFBundleGetMainBundle();
 		CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
 		CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
