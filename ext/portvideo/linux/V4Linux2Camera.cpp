@@ -21,7 +21,7 @@
 #include "CameraTool.h"
 
 unsigned int codec_table[] =  { 0, V4L2_PIX_FMT_GREY, 0,  V4L2_PIX_FMT_RGB24, 0, 0, 0, 0, 0, 0, V4L2_PIX_FMT_YUYV,
-V4L2_PIX_FMT_UYVY, 0, V4L2_PIX_FMT_YUV444, V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YUV410, V4L2_PIX_FMT_YVYZ, 0, 0, 0, V4L2_PIX_FMT_JPEG,
+V4L2_PIX_FMT_UYVY, 0, V4L2_PIX_FMT_YUV444, V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YUV410, V4L2_PIX_FMT_YVYU, 0, 0, 0, V4L2_PIX_FMT_JPEG,
 V4L2_PIX_FMT_MJPEG, V4L2_PIX_FMT_MPEG1, V4L2_PIX_FMT_MPEG2, V4L2_PIX_FMT_MPEG4, V4L2_PIX_FMT_H263, V4L2_PIX_FMT_H264, 0, 0, 0,  V4L2_PIX_FMT_DV, 0 };
 
 V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
@@ -102,9 +102,9 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 	int dev_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
 	if (dev_count==0) return cfg_list;
 
-	for (int i=0;i<dev_count;i++) {
-		if ((dev_id>=0) && (dev_id!=i)) continue;
-        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
+	for (int cam_id=0;cam_id<dev_count;cam_id++) {
+		if ((dev_id>=0) && (dev_id!=cam_id)) continue;
+        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[cam_id]->d_name);
 
         	int fd = open(v4l2_device, O_RDONLY);
         	if (fd < 0) continue;
@@ -125,7 +125,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 			CameraTool::initCameraConfig(&cam_cfg);
 
 			cam_cfg.driver = DRIVER_DEFAULT;
-			cam_cfg.device = i;
+			cam_cfg.device = cam_id;
 			sprintf(cam_cfg.name, "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
 
             		for (int x=0;;x++) {
