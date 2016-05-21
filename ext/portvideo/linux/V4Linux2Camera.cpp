@@ -231,20 +231,22 @@ CameraEngine* V4Linux2Camera::getCamera(CameraConfig *cam_cfg) {
 	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=cam_count-1;
 
 	std::vector<CameraConfig> cfg_list = V4Linux2Camera::getCameraConfigs(cam_cfg->device);
-    if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
+	if (cfg_list.size()==0) return NULL;
+
+    	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
 
-    if (cam_cfg->force) return new V4Linux2Camera(cam_cfg);
+	if (cam_cfg->force) return new V4Linux2Camera(cam_cfg);
 
-    for (unsigned int i=0;i<cfg_list.size();i++) {
+    	for (unsigned int i=0;i<cfg_list.size();i++) {
 
-        if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
-        if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
-        if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
-        if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
+        	if (cam_cfg->cam_format != cfg_list[i].cam_format) continue;
+        	if ((cam_cfg->cam_width >=0) && (cam_cfg->cam_width != cfg_list[i].cam_width)) continue;
+        	if ((cam_cfg->cam_height >=0) && (cam_cfg->cam_height != cfg_list[i].cam_height)) continue;
+        	if ((cam_cfg->cam_fps >=0) && (cam_cfg->cam_fps != cfg_list[i].cam_fps)) continue;
 
-        return new V4Linux2Camera(cam_cfg);
-    }
+	        return new V4Linux2Camera(cam_cfg);
+    	}
 
 	return NULL;
 }
@@ -279,9 +281,9 @@ bool V4Linux2Camera::initCamera() {
 
     sprintf(cfg->name, "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
 
-	std::vector<CameraConfig> cfg_list = V4Linux2Camera::getCameraConfigs(cfg->device);
+    std::vector<CameraConfig> cfg_list = V4Linux2Camera::getCameraConfigs(cfg->device);
     if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
-	setMinMaxConfig(cfg,cfg_list);
+    setMinMaxConfig(cfg,cfg_list);
 
     pixelformat=0;
     for (int i=0;;i++) {

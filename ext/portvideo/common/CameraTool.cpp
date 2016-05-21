@@ -24,6 +24,8 @@
 CameraConfig CameraTool::cam_cfg = {};
 
 void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
+
+	if(cfg_list.size()==0) return;
 	
 	int device = -1;
 	int width = -1;
@@ -388,7 +390,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		sprintf(path,"%s/.portvideo/camera.xml",pw->pw_dir);
 
 		sprintf(cam_cfg.path,"./camera.xml");
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,path);
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"%s",path);
 		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/camera.xml");
