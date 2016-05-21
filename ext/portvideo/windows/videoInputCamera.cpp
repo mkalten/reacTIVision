@@ -196,7 +196,6 @@ int videoInputCamera::getDeviceCount() {
 	}
 
 	comUnInit();
-
 	return deviceCount;
 }
 
@@ -427,7 +426,6 @@ CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=cam_count-1;
 
 	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cam_cfg->device);
-
 	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
 
@@ -448,20 +446,15 @@ CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 
 bool videoInputCamera::initCamera() {
 
+	int count = getDeviceCount();
+	if ((cfg->device==SETTING_MIN) || (cfg->device==SETTING_DEFAULT)) cfg->device=0;
+	else if (cfg->device==SETTING_MAX) cfg->device=count-1;
 
-	std::vector <std::string> devList = VI->getDeviceList();
-	int count = devList.size();
+	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cfg->device);
+	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
+	setMinMaxConfig(cfg,cfg_list);
 
-	if (cfg->device<0) cfg->device=0;
-	if (cfg->device>=count) cfg->device = count-1;
-
-	sprintf(cfg->name,devList[cfg->device].c_str());
-
-	// TODO: get actual video formats
-	if (cfg->cam_width<=0) cfg->cam_width=640;
-	if (cfg->cam_height<=0) cfg->cam_height=480;
-	if (cfg->cam_fps<=0) cfg->cam_fps=30;
-
+    comInit();
 	VI->setIdealFramerate(this->cfg->device, cfg->cam_fps);
 	if (cfg->cam_format==FORMAT_MJPEG) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
 	bool bOk = VI->setupDevice(cfg->device, cfg->cam_width, cfg->cam_height);
