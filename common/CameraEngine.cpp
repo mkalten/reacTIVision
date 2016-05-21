@@ -175,13 +175,13 @@
 #else
 			sprintf(full_path,"./camera.xml");
 #endif
-		}
+		} else sprintf(full_path,config_file);
 
 		TiXmlDocument xml_settings( full_path );
 		xml_settings.LoadFile();
 		if( xml_settings.Error() )
 		{
-			std::cout << "Error loading camera configuration file: " << config_file << std::endl;
+			std::cout << "Error loading camera configuration file: " << full_path << std::endl;
 			return;
 		}
 
@@ -192,7 +192,7 @@
 
 		if( camera_element==NULL )
 		{
-			std::cout << "Error loading camera configuration file: " << config_file << std::endl;
+			std::cout << "Error loading camera configuration file: " << full_path << std::endl;
 			return;
 		}
 
@@ -341,7 +341,7 @@ void CameraEngine::saveSettings() {
 	xml_settings.LoadFile();
 	if( xml_settings.Error() )
 	{
-		std::cout << "Error loading camera configuration file: " << full_path << std::endl;
+		std::cout << "Error saving camera configuration file: " << full_path << std::endl;
 		return;
 	}
 
