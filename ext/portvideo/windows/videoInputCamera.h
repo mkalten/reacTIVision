@@ -27,6 +27,8 @@
 #define FLAGS_AUTO        0X0001L
 #define FLAGS_MANUAL      0X0002L
 
+static int comCount = 0;
+
 class videoInputCamera : public CameraEngine
 {
 
@@ -70,6 +72,7 @@ private:
 	static bool comUnInit();
 	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
 
+	static GUID getMediaSubtype(int type);
 	static int getMediaSubtype(GUID type);
 	static void makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3, unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
 	unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 );

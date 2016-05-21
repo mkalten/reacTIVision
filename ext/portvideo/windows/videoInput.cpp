@@ -512,7 +512,7 @@ void makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned s
 
 videoInput::videoInput(){
 	//start com
-	comInit();
+	//comInit();
 
 	devicesFound 		= 0;
 	callbackSetCount 	= 0;
@@ -1956,7 +1956,7 @@ videoInput::~videoInput(){
 		delete VDList[i];
 	}
 	//Unitialize com
-	comUnInit();
+	//comUnInit();
 }
 
 
@@ -2191,6 +2191,10 @@ void videoInput::getMediaSubtypeAsString(GUID type, char * typeAsString){
 
 void videoInput::setRequestedMediaSubType(int mediatype) {
 	requestedMediaSubType = mediaSubtypes[mediatype];
+}
+
+void videoInput::setRequestedMediaSubType(GUID mediatype) {
+	requestedMediaSubType = mediatype;
 }
 
 

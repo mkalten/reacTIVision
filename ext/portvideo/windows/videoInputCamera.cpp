@@ -60,7 +60,7 @@ bool videoInputCamera::comInit(){
 	HRESULT hr = NULL;
 
 	//no need for us to start com more than once
-	if(comInitCount == 0 ){
+	if(comCount == 0 ){
 
 		hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
 		//hr = CoInitialize(NULL);
@@ -70,14 +70,14 @@ bool videoInputCamera::comInit(){
 		}
 	}
 
-	comInitCount++;
+	comCount++;
 	return true;
 }
 
 bool videoInputCamera::comUnInit(){
-	if(comInitCount > 0)comInitCount--;		//decrease the count of instances using com
+	if(comCount > 0)comCount--;		//decrease the count of instances using com
 
-	if(comInitCount == 0){
+	if(comCount == 0){
 		CoUninitialize();	//if there are no instances left - uninitialize com
 		return true;
 	}
@@ -207,6 +207,127 @@ void videoInputCamera::makeGUID( GUID *guid, unsigned long Data1, unsigned short
 									guid->Data3 = Data3;
 									guid->Data4[0] = b0; guid->Data4[1] = b1; guid->Data4[2] = b2; guid->Data4[3] = b3;
 									guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
+}
+
+
+GUID videoInputCamera::getMediaSubtype(int type){
+
+	int count = getDeviceCount();
+	comInit();
+
+	HRESULT hr;
+	ICaptureGraphBuilder2 *pCaptureGraph;
+	IGraphBuilder *pGraph;
+	IBaseFilter *pVideoInputFilter;
+	IAMStreamConfig *pStreamConf;
+	GUID mediaSubType = MEDIASUBTYPE_NULL;
+
+	char 	nDeviceName[255];
+	WCHAR 	wDeviceName[255];
+
+	for (int cam_id=0;cam_id<count;cam_id++) {
+
+		hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void **)&pCaptureGraph);
+		if (FAILED(hr))	// FAILED is a macro that tests the return value
+		{
+			printf("ERROR - Could not create the Filter Graph Manager\n");
+			comUnInit();
+			return MEDIASUBTYPE_NULL;
+		}
+
+		// Create the Filter Graph Manager.
+		hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void**)&pGraph);
+		if (FAILED(hr))
+		{
+			printf("ERROR - Could not add the graph builder!\n");
+			pCaptureGraph->Release();
+			comUnInit();
+			return MEDIASUBTYPE_NULL;
+		}
+
+		hr = pCaptureGraph->SetFiltergraph(pGraph);
+		if (FAILED(hr))
+		{
+			printf("ERROR - Could not set filtergraph\n");
+			pGraph->Release();
+			pCaptureGraph->Release();
+			comUnInit();
+			return MEDIASUBTYPE_NULL;
+		}
+
+		memset(wDeviceName, 0, sizeof(WCHAR) * 255);
+		memset(nDeviceName, 0, sizeof(char) * 255);
+		hr = getDevice(&pVideoInputFilter, cam_id, wDeviceName, nDeviceName);
+
+		if (SUCCEEDED(hr)){
+			hr = pGraph->AddFilter(pVideoInputFilter, wDeviceName);
+		}else{
+			printf("ERROR - Could not find specified video device\n");
+			pGraph->Release();
+			pCaptureGraph->Release();
+			comUnInit();
+			return MEDIASUBTYPE_NULL;
+		}
+
+		hr = pCaptureGraph->FindInterface(&PIN_CATEGORY_CAPTURE, &MEDIATYPE_Video, pVideoInputFilter, IID_IAMStreamConfig, (void **)&pStreamConf);
+		if(FAILED(hr)){
+			printf("ERROR: Couldn't config the stream!\n");
+			pVideoInputFilter->Release();
+			pGraph->Release();
+			pCaptureGraph->Release();
+			comUnInit();
+			return MEDIASUBTYPE_NULL;
+		}
+
+		int iCount = 0;
+		int iSize = 0;
+		hr = pStreamConf->GetNumberOfCapabilities(&iCount, &iSize);
+		std::vector<CameraConfig> fmt_list;
+
+		if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
+		{
+			GUID lastFormat = MEDIASUBTYPE_None;
+			for (int iFormat = 0; iFormat < iCount; iFormat+=2)
+			{
+				VIDEO_STREAM_CONFIG_CAPS scc;
+				AM_MEDIA_TYPE *pmtConfig;
+				hr =  pStreamConf->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
+				if (SUCCEEDED(hr)){
+
+					if ( pmtConfig->subtype != lastFormat) {
+
+						if (type == getMediaSubtype(pmtConfig->subtype)) {
+
+							GUID mediaSubtype = pmtConfig->subtype;
+
+							deleteMediaType(pmtConfig);
+							pStreamConf->Release();
+							pVideoInputFilter->Release();
+							pGraph->Release();
+							pCaptureGraph->Release();
+							comUnInit();
+
+							return mediaSubtype;
+						}
+
+						lastFormat = pmtConfig->subtype;
+					}
+
+					deleteMediaType(pmtConfig);
+				}
+			}
+		}
+
+		pStreamConf->Release();
+		pVideoInputFilter->Release();
+		pGraph->Release();
+		pCaptureGraph->Release();
+
+	}
+
+	comUnInit();
+	return MEDIASUBTYPE_NULL;
+
 }
 
 int videoInputCamera::getMediaSubtype(GUID type){
@@ -446,17 +567,22 @@ CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 
 bool videoInputCamera::initCamera() {
 
-	int count = getDeviceCount();
+	int dev_count = getDeviceCount();
+	if (dev_count==0) return false;
 	if ((cfg->device==SETTING_MIN) || (cfg->device==SETTING_DEFAULT)) cfg->device=0;
-	else if (cfg->device==SETTING_MAX) cfg->device=count-1;
+	else if (cfg->device==SETTING_MAX) cfg->device=dev_count-1;
 
 	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cfg->device);
+	if (cfg_list.size()==0) return false;
+	sprintf(cfg->name,cfg_list[0].name);
 	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cfg,cfg_list);
 
-    comInit();
+    GUID mediaSubtype = getMediaSubtype(cfg->cam_format);
+	VI->setRequestedMediaSubType(mediaSubtype);
 	VI->setIdealFramerate(this->cfg->device, cfg->cam_fps);
-	if (cfg->cam_format==FORMAT_MJPEG) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
+
+	comInit();
 	bool bOk = VI->setupDevice(cfg->device, cfg->cam_width, cfg->cam_height);
 
 	if (bOk == true) {	
@@ -541,6 +667,7 @@ bool videoInputCamera::closeCamera()
 		updateSettings();
 		CameraTool::saveSettings();
 		VI->stopDevice(cfg->device);
+		comUnInit();
 	}
 	return true;
 }

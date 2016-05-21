@@ -305,6 +305,7 @@ class videoInput{
 		//can be called multiple times
 		bool setFormat(int deviceNumber, int format);
 		void setRequestedMediaSubType(int mediatype); // added by gameover
+		void setRequestedMediaSubType(GUID mediatype); // added by gameover
 
 		static void getMinMaxDimension(int deviceNumber, int &min_width, int &max_width, int &min_height, int &max_height, bool compress);
 		static void getMinMaxFramerate(int deviceNumber, int cam_width, int cam_height, float &min_fps, float &max_fps, bool compress);
