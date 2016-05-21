@@ -172,7 +172,7 @@
 			sprintf(path,"%s/.reacTIVision/camera.xml",pw->pw_dir);
 
 			if (access ("./camera.xml", F_OK )==0) sprintf(full_path,"./camera.xml");
-			else if (access (path, F_OK )==0) sprintf(full_path,path);
+			else if (access (path, F_OK )==0) sprintf(full_path,"%s",path);
 			else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/share/reacTIVision/camera.xml");
 			else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/local/share/camera.xml");
 			else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/opt/share/reacTIVision/camera.xml");
