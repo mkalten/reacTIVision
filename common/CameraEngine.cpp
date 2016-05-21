@@ -18,6 +18,9 @@
 
 #include "CameraEngine.h"
 #include "SDLinterface.h"
+#ifdef LINUX
+#include <pwd.h>
+#endif
 
 	void CameraEngine::showSettingsDialog() {
 		if (settingsDialog) {
@@ -154,10 +157,7 @@
 		default_focus = INT_MIN;
 		default_gamma = INT_MIN;
 
-#ifdef __APPLE__
 		char path[1024];
-#endif
-
 		if (strcmp( config_file, "none" ) == 0) {
 #ifdef __APPLE__
 			CFBundleRef mainBundle = CFBundleGetMainBundle();
@@ -167,11 +167,16 @@
 			CFRelease( mainBundleURL);
 			CFRelease( cfStringRef);
 			sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
-#elif !defined WIN32
+#elif defined LINUX
+			struct passwd *pw = getpwuid(getuid());
+			sprintf(path,"%s/.reacTIVision/camera.xml",pw->pw_dir);
+
 			if (access ("./camera.xml", F_OK )==0) sprintf(full_path,"./camera.xml");
+			else if (access (path, F_OK )==0) sprintf(full_path,path);
 			else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/share/reacTIVision/camera.xml");
 			else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/local/share/camera.xml");
 			else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/opt/share/reacTIVision/camera.xml");
+			else if (access ("/opt/local/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/opt/local/share/reacTIVision/camera.xml");
 #else
 			sprintf(full_path,"./camera.xml");
 #endif
