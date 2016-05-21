@@ -17,7 +17,9 @@
  */
 
 #include "CameraTool.h"
-
+#ifdef LINUX
+#include <pwd.h>
+#endif
 
 CameraConfig CameraTool::cam_cfg = {};
 
@@ -369,11 +371,8 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 }
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
-	
-#ifdef __APPLE__
+
 	char path[1024];
-#endif	
-	
 	initCameraConfig(&cam_cfg);
 	if (strcmp( cfgfile, "default" ) == 0) {
 #ifdef __APPLE__
@@ -384,12 +383,16 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		CFRelease( mainBundleURL);
 		CFRelease( cfStringRef);
 		sprintf(cam_cfg.path,"%s/Contents/Resources/camera.xml",path);
-#elif !defined WIN32
+#elif defined LINUX
+		struct passwd *pw = getpwuid(getuid());
+		sprintf(path,"%s/.portvideo/camera.xml",pw->pw_dir);
+
 		sprintf(cam_cfg.path,"./camera.xml");
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"$HOME/.portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,path);
 		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/local/share/portvideo/camera.xml");
 #else
 		sprintf(cam_cfg.path,"./camera.xml");
 #endif
