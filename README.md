@@ -104,27 +104,23 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `B`		| Blob size configuration & enable /tuio/2Dblb	|
 | `E`		| Toggle image equalization 					|
 | `SPACE` 	| Resets image equalization 					|
-
-| ---------	| --------------------------------------------- |
+|			|												|
 | `O` 		| Camera configuration							|
 | `K` 		| Camera selection								|
-
-| ---------	| --------------------------------------------- |
+|			|												|
 | `C` 		| Enter/Exit Calibration mode					|
 | `Q` 		| Enter/Exit *precise* calibration mode 		|
 | `U` 		| Resets selected points in grid 				|
 | `J` 		| Resets calibration grid						|
 | `L` 		| Reverts calibration to saved grid				|
 | `R` 		| Displays calibrated live video image			|
-
-| ---------	| --------------------------------------------- |
+|			|												|
 | `S`		| Shows original camera image 					|
 | `T` 		| Shows binary thresholded image				|
 | `N` 		| Turns display off	(saves CPU)					|
 | `P` 		| Pauses image processing						|
 | `F1`		| Toggles full screen mode 						|
-
-| ---------	| --------------------------------------------- |
+|			|												|
 | `ESC` 	| Quits application 							|
 | `V` 		| Enables verbose output to console				|
 | `H` 		| Shows help options							|
