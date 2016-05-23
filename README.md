@@ -102,7 +102,7 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `G` 		| Threshold gradient & tile size configuration	|
 | `F`		| Finger size and sensitivity configuration		|
 | `B`		| Blob size configuration & enable /tuio/2Dblb	|
-| `E`		| Toggle image equalization 					|
+| `E`		| Turns image equalization on/off				|
 | `SPACE` 	| Resets image equalization 					|
 |			|												|
 | `O` 		| Camera configuration							|
@@ -113,17 +113,17 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `U` 		| Resets selected points in grid 				|
 | `J` 		| Resets calibration grid						|
 | `L` 		| Reverts calibration to saved grid				|
-| `R` 		| Displays calibrated live video image			|
 |			|												|
 | `S`		| Shows original camera image 					|
 | `T` 		| Shows binary thresholded image				|
+| `R` 		| Shows calibrated camera image					|
 | `N` 		| Turns display off	(saves CPU)					|
-| `P` 		| Pauses image processing						|
 | `F1`		| Toggles full screen mode 						|
 |			|												|
-| `ESC` 	| Quits application 							|
+| `P` 		| Pauses all processing							|
 | `V` 		| Enables verbose output to console				|
 | `H` 		| Shows help options							|
+| `ESC` 	| Quits application 							|
 
 ## Compilation
 
