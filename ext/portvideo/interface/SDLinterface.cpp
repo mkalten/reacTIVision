@@ -605,6 +605,10 @@ void SDLinterface::displayControl(const char *title, int min, int max, int value
 {
 	if (displayMode_==NO_DISPLAY) return;
 	
+	int y = textHeight()-3;
+	drawText(textHeight(),2*y,"LEFT/RIGHT - adjust configuration value");
+	drawText(textHeight(),3*y,"UP/DOWN    - switch to alternative option");
+	
 	int x_offset=width_/2-128;
 	int y_offset=height_-100;
 	int size = (int)(254*(((float)value-(float)min)/(float)(max-min)));

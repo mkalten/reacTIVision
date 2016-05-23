@@ -151,17 +151,6 @@ void CameraEngine::showInterface(UserInterface *uiface) {
     //int maxValue =  getMaxCameraSetting(currentCameraSetting);
     //int minValue =  getMinCameraSetting(currentCameraSetting);
 	
-	int textHeight = 17;
-	int y = textHeight-3;
-	uiface->drawText(textHeight,1*y,"RIGHT - increase configuration value");
-	uiface->drawText(textHeight,2*y,"LEFT  - decrease configuration value");
-	uiface->drawText(textHeight,3*y,"");
-	uiface->drawText(textHeight,4*y,"DOWN  - switch to next option");
-	uiface->drawText(textHeight,5*y,"UP    - switch to previous option");
-	uiface->drawText(textHeight,6*y,"");
-	uiface->drawText(textHeight,6*y,"");
-	uiface->drawText(textHeight,7*y,"O     - exit camera configuration");
-
     const char *settingText = NULL;
     switch (currentCameraSetting) {
         case BRIGHTNESS:	settingText = "Brightness"; break;
@@ -190,6 +179,7 @@ void CameraEngine::showInterface(UserInterface *uiface) {
     char displayText[256];
     sprintf(displayText,"%s %d",settingText,ctrl_val);
 
+	uiface->drawText(17,14,"O          - exit camera configuration");
     uiface->displayControl(displayText, ctrl_min, ctrl_max, ctrl_val);
 }
 
