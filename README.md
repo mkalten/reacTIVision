@@ -40,7 +40,7 @@ This application was designed to track specially designed fiducial markers. You 
 
 ## Finger Tracking
 
-**reacTIVision** also allows multi-touch finger tracking, which is basically interpreting any round white region of a given size as a finger that is touching the surface. Finger tracking is turned off by default and can be enabled by pressing the 'F' key and adjusting the average finger size, which is given in pixels. The general recognition sensitivity can also be adjusted, where its value is given as a percentage. 75 would be less sensitive and 125 more sensitive, which means that also less probable regions are interpreted as a finger. The finger tracking should work with DI (diffuse illumination) as well as with FTIR illumination setups.
+**reacTIVision** also allows multi-touch finger tracking, which is basically interpreting any round white region of a given size as a finger that is touching the surface. Finger tracking is turned off by default and can be enabled by pressing the `F` key and adjusting the average finger size, which is given in pixels. The general recognition sensitivity can also be adjusted, where its value is given as a percentage. 75 would be less sensitive and 125 more sensitive, which means that also less probable regions are interpreted as a finger. The finger tracking should work with DI (diffuse illumination) as well as with FTIR illumination setups.
 
 ## Blob Tracking
 
@@ -58,7 +58,7 @@ The thresholder gradient gate can be adjusted by hitting the`G` key. Lowering th
 The camera options can be adjusted by pressing the `O` key. On Windows and Mac OS this will show a system dialog that allows the adjustment of the available camera parameters. On Linux (Mac OS X when using Firewire cameras), the available camera settings can be adjusted with a simple on screen display. Pressing the `K` key allows
 to browse and select all available cameras and image formats.
 
-In order to produce some more verbose debugging output, hitting the `V` will print the symbol and finger data to the console. Pressing the `H` key will display all these options on the screen. `F1` will toggle the full screen mode, the `P` key pauses the image analysis completely, hitting '`ESC` will quit the application.
+In order to produce some more verbose debugging output, hitting the `V` will print the symbol and finger data to the console. Pressing the `H` key will display all these options on the screen. `F1` will toggle the full screen mode, the `P` key pauses the image analysis completely, hitting `ESC` will quit the application.
 	
 ## XML configuration file
 
@@ -66,12 +66,12 @@ In order to produce some more verbose debugging output, hitting the `V` will pri
 
 Under Mac OS X this XML configuration file can be found within the application bundle's Resources folder. Select *Show Package Contents"* from the application's context menu in order to access and edit the file.
 
-The **reacTIVision** application usually sends the `TUIO/UDP` messages to port `3333` on `localhost (127.0.0.1)`. Alternative transport types are 
-- tcp, web and flc for `TUIO/TCP`
+The **reacTIVision** application usually sends `TUIO/UDP` messages to port `3333` on `localhost (127.0.0.1)`. Alternative transport types are 
+- `TUIO/TCP` (TCP)
 - `TUIO/WEB` (Websocket)
 - `TUIO/FLC` (Flash Local Connection).
 
-You can change this setting by editing or adding the XML tag `<tuio type="udp" host="127.0.0.1" port="3333">` to the configuration. Multiple (up to 32) simultaneous TUIO transport options are allowed.
+You can change this setting by editing or adding the XML tag `<tuio type="udp" host="127.0.0.1" port="3333">` to the configuration. Multiple (up to 32) simultaneous TUIO transport options are allowed, the according type options are: udp, tcp, web and flc.
 
 The `<fiducial amoeba="default" yamaarashi="false" />` XML tag lets you select the default or alternative (small,tiny) *amoeba* fiducial set, or you can point to an alternative `amoeba.trees` file if available. You can also additionally enable the new *Yamaarashi* fiducal symbols.
 
@@ -104,9 +104,11 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `B`		| Blob size configuration & enable /tuio/2Dblb	|
 | `E`		| Toggle image equalization 					|
 | `SPACE` 	| Resets image equalization 					|
+
 | ---------	| --------------------------------------------- |
 | `O` 		| Camera configuration							|
 | `K` 		| Camera selection								|
+
 | ---------	| --------------------------------------------- |
 | `C` 		| Enter/Exit Calibration mode					|
 | `Q` 		| Enter/Exit *precise* calibration mode 		|
@@ -114,12 +116,14 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `J` 		| Resets calibration grid						|
 | `L` 		| Reverts calibration to saved grid				|
 | `R` 		| Displays calibrated live video image			|
+
 | ---------	| --------------------------------------------- |
 | `S`		| Shows original camera image 					|
 | `T` 		| Shows binary thresholded image				|
 | `N` 		| Turns display off	(saves CPU)					|
 | `P` 		| Pauses image processing						|
 | `F1`		| Toggles full screen mode 						|
+
 | ---------	| --------------------------------------------- |
 | `ESC` 	| Quits application 							|
 | `V` 		| Enables verbose output to console				|
