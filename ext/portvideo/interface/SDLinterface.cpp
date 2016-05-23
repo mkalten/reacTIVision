@@ -156,7 +156,7 @@ void SDLinterface::updateDisplay()
 		SDL_RenderClear(renderer_);
 		SDL_SetRenderTarget(renderer_, display_);
 		SDL_RenderClear(renderer_);
-		
+				
 		int y = textHeight()-3;
 		drawText(textHeight(),y,"DOWN - next camera setting");
 		drawText(textHeight(),2*y,"UP - previous camera setting");

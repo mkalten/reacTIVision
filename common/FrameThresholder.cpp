@@ -341,6 +341,17 @@ void FrameThresholder::displayControl() {
 	char displayText[64];
 	int settingValue = 0;
 	int maxValue = 0;
+	
+	
+	int textHeight = 17;
+	int y = textHeight-3;
+	ui->drawText(textHeight,1*y,"RIGHT - increase configuration value");
+	ui->drawText(textHeight,2*y,"LEFT  - decrease configuration value");
+	ui->drawText(textHeight,3*y,"");
+	ui->drawText(textHeight,4*y,"DOWN  - switch to next option");
+	ui->drawText(textHeight,5*y,"UP    - switch to previous option");
+	ui->drawText(textHeight,6*y,"");
+	ui->drawText(textHeight,7*y,"G     - exit threshold configuration");
 
 	if (setGradient) {
 
