@@ -312,23 +312,22 @@ void CameraTool::initCameraConfig(CameraConfig *cfg) {
 	cfg->brightness = SETTING_DEFAULT;
 	cfg->contrast = SETTING_DEFAULT;
 	cfg->sharpness = SETTING_DEFAULT;
-	cfg->gain = SETTING_AUTO;
+	cfg->gain = SETTING_DEFAULT;
 	
-	cfg->exposure = SETTING_AUTO;
-	cfg->shutter = SETTING_AUTO;
-	cfg->focus = SETTING_AUTO;
-	cfg->white = SETTING_AUTO;
-	cfg->gamma = SETTING_AUTO;
+	cfg->exposure = SETTING_DEFAULT;
+	cfg->shutter = SETTING_DEFAULT;
+	cfg->focus = SETTING_DEFAULT;
+	cfg->white = SETTING_DEFAULT;
+	cfg->gamma = SETTING_DEFAULT;
 	cfg->powerline = SETTING_DEFAULT;
-	cfg->backlight = SETTING_AUTO;
+	cfg->backlight = SETTING_DEFAULT;
 	
-	cfg->hue = SETTING_AUTO;
+	cfg->hue = SETTING_DEFAULT;
 	cfg->blue = SETTING_DEFAULT;
 	cfg->red = SETTING_DEFAULT;
 	cfg->green = SETTING_DEFAULT;
 	
 	cfg->force = false;
-	
 }
 
 void CameraTool::setCameraConfig(CameraConfig *cfg) {
@@ -338,17 +337,17 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 		cam_cfg.brightness = SETTING_DEFAULT;
 		cam_cfg.contrast = SETTING_DEFAULT;
 		cam_cfg.sharpness = SETTING_DEFAULT;
-		cam_cfg.gain = SETTING_AUTO;
+		cam_cfg.gain = SETTING_DEFAULT;
 		
-		cam_cfg.exposure = SETTING_AUTO;
-		cam_cfg.shutter = SETTING_AUTO;
-		cam_cfg.focus = SETTING_AUTO;
-		cam_cfg.white = SETTING_AUTO;
-		cam_cfg.gamma = SETTING_AUTO;
+		cam_cfg.exposure = SETTING_DEFAULT;
+		cam_cfg.shutter = SETTING_DEFAULT;
+		cam_cfg.focus = SETTING_DEFAULT;
+		cam_cfg.white = SETTING_DEFAULT;
+		cam_cfg.gamma = SETTING_DEFAULT;
 		cam_cfg.powerline = SETTING_DEFAULT;
-		cam_cfg.backlight = SETTING_AUTO;
+		cam_cfg.backlight = SETTING_DEFAULT;
 		
-		cam_cfg.hue = SETTING_AUTO;
+		cam_cfg.hue = SETTING_DEFAULT;
 		cam_cfg.blue = SETTING_DEFAULT;
 		cam_cfg.red = SETTING_DEFAULT;
 		cam_cfg.green = SETTING_DEFAULT;
