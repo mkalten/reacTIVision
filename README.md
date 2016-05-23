@@ -102,6 +102,8 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `G` 		| Threshold gradient & tile size configuration	|
 | `F`		| Finger size and sensitivity configuration		|
 | `B`		| Blob size configuration & enable /tuio/2Dblb	|
+| `Y` 		| enable/disable Yamaarashi symbol detection	|
+| `I` 		| configure TUIO attribute inversion			|
 | `E`		| Turns image equalization on/off				|
 | `SPACE` 	| Resets image equalization 					|
 |			|												|
