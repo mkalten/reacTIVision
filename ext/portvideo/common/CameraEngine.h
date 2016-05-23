@@ -263,6 +263,7 @@ protected:
     int default_white;
     int default_backlight;
 
+	int default_saturation;
     int default_hue;
     int default_red;
     int default_blue;
