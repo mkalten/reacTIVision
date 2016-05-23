@@ -84,7 +84,7 @@ bool CameraEngine::showSettingsDialog(bool lock) {
         return false;
     } else if (!lock) {
         currentCameraSetting = -1;
-        for (int i=BRIGHTNESS;i<=GAMMA;i++) {
+        for (int i=BRIGHTNESS;i<=COLOR_BLUE;i++) {
             if (hasCameraSetting(i)) {
                 currentCameraSetting = i;
                 break;
@@ -150,7 +150,7 @@ void CameraEngine::showInterface(UserInterface *uiface) {
     //int settingValue = getCameraSetting(currentCameraSetting);
     //int maxValue =  getMaxCameraSetting(currentCameraSetting);
     //int minValue =  getMinCameraSetting(currentCameraSetting);
-
+	
     const char *settingText = NULL;
     switch (currentCameraSetting) {
         case BRIGHTNESS:	settingText = "Brightness"; break;
@@ -168,6 +168,7 @@ void CameraEngine::showInterface(UserInterface *uiface) {
         case WHITE:         settingText = "White Balance"; break;
         case POWERLINE:     settingText = "Powerline Frequency"; break;
         case BACKLIGHT:     settingText = "Backlight Compensation"; break;
+		case SATURATION:    settingText = "Saturation"; break;
         case AUTO_HUE:      settingText = "Auto Hue";  break;
         case COLOR_HUE:     settingText = "Color Hue";  break;
         case COLOR_RED:     settingText = "Red Balance";  break;
@@ -178,6 +179,7 @@ void CameraEngine::showInterface(UserInterface *uiface) {
     char displayText[256];
     sprintf(displayText,"%s %d",settingText,ctrl_val);
 
+	uiface->drawText(17,14,"O          - exit camera configuration");
     uiface->displayControl(displayText, ctrl_min, ctrl_max, ctrl_val);
 }
 
@@ -572,6 +574,7 @@ void CameraEngine::applyCameraSetting(int mode, int value) {
                 setCameraSettingAuto(mode,true);
                 return;
             }
+		case SETTING_OFF:
         case SETTING_DEFAULT:
             setDefaultCameraSetting(mode);
             return;
@@ -611,6 +614,7 @@ void CameraEngine::applyCameraSettings() {
     applyCameraSetting(BACKLIGHT,cfg->backlight);
     applyCameraSetting(GAMMA,cfg->gamma);
 
+	applyCameraSetting(SATURATION,cfg->saturation);
     applyCameraSetting(COLOR_HUE,cfg->hue);
     applyCameraSetting(COLOR_RED,cfg->red);
     applyCameraSetting(COLOR_GREEN,cfg->green);
@@ -645,11 +649,13 @@ void CameraEngine::updateSettings() {
     cfg->gamma = updateSetting(GAMMA);
 
 	if (cfg->color) {
+		cfg->saturation = updateSetting(SATURATION);
 		cfg->hue = updateSetting(COLOR_HUE);
 		cfg->red = updateSetting(COLOR_RED);
 		cfg->green = updateSetting(COLOR_GREEN);
 		cfg->blue = updateSetting(COLOR_BLUE);
 	} else {
+		cfg->saturation = SETTING_OFF;
 		cfg->hue = SETTING_OFF;
 		cfg->red = SETTING_OFF;
 		cfg->green = SETTING_OFF;

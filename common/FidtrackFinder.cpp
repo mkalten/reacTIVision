@@ -186,6 +186,7 @@ void FidtrackFinder::displayControl() {
 	
 	if (setFingerSize) {
 		
+		ui->drawText(17,14,"F          - exit finger configuration");
 		// draw the finger
 		if( average_finger_size>0) {
 			ui->setColor(0,0,255);
@@ -196,11 +197,13 @@ void FidtrackFinder::displayControl() {
 		settingValue = average_finger_size;
 		maxValue = 64;
 	} else if (setFingerSensitivity) {
+		ui->drawText(17,14,"F          - exit finger configuration");
 		sprintf(displayText,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
 		settingValue = (int)floor(finger_sensitivity*100+0.5f);
 		maxValue = 200;
 	} else if (setBlobSize) {
-			
+		
+		ui->drawText(17,14,"B          - exit blob configuration");
 		// draw the blob
 		if( max_blob_size>0) {
 			ui->setColor(0,0,255);
@@ -211,10 +214,12 @@ void FidtrackFinder::displayControl() {
 		settingValue = max_blob_size;
 		maxValue = height;
 	} else if (setObjectBlob) {
+		ui->drawText(17,14,"B          - exit blob configuration");
 		sprintf(displayText,"fiducial blobs %d",send_fiducial_blobs);
 		settingValue = send_fiducial_blobs;
 		maxValue = 1;
 	} else if (setFingerBlob) {
+		ui->drawText(17,14,"B          - exit blob configuration");
 		sprintf(displayText,"finger blobs %d",send_finger_blobs);
 		settingValue = send_finger_blobs;
 		maxValue = 1;

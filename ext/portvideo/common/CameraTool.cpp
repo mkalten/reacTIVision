@@ -508,6 +508,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		cam_cfg.contrast = readAttribute(settings_element, "contrast");
 		cam_cfg.sharpness = readAttribute(settings_element, "sharpness");
 		cam_cfg.gain = readAttribute(settings_element, "gain");
+		
 		cam_cfg.exposure = readAttribute(settings_element, "exposure");
 		cam_cfg.shutter = readAttribute(settings_element, "shutter");
 		cam_cfg.focus = readAttribute(settings_element, "focus");
@@ -517,11 +518,13 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		cam_cfg.gamma = readAttribute(settings_element, "gamma");
 		
 		if (cam_cfg.color) {
+			cam_cfg.saturation= readAttribute(settings_element, "saturation");
 			cam_cfg.hue = readAttribute(settings_element, "hue");
 			cam_cfg.red = readAttribute(settings_element, "red");
 			cam_cfg.green = readAttribute(settings_element, "green");
 			cam_cfg.blue = readAttribute(settings_element, "blue");
 		} else {
+			cam_cfg.saturation = SETTING_OFF;
 			cam_cfg.hue = SETTING_OFF;
 			cam_cfg.red = SETTING_OFF;
 			cam_cfg.green = SETTING_OFF;
@@ -601,6 +604,8 @@ void CameraTool::saveSettings() {
 		if (cam_cfg.gamma!=SETTING_OFF) saveAttribute(settings_element, "gamma", cam_cfg.gamma);
 		else settings_element->DeleteAttribute("gamma");
 		
+		if (cam_cfg.saturation!=SETTING_OFF) saveAttribute(settings_element, "saturation", cam_cfg.saturation);
+		else settings_element->DeleteAttribute("saturation");
 		if (cam_cfg.hue!=SETTING_OFF) saveAttribute(settings_element, "hue", cam_cfg.hue);
 		else settings_element->DeleteAttribute("hue");
 		if (cam_cfg.red!=SETTING_OFF) saveAttribute(settings_element, "red", cam_cfg.red);

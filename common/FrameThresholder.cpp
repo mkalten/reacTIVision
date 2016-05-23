@@ -355,6 +355,7 @@ void FrameThresholder::displayControl() {
 		sprintf(displayText,"tile size %d",settingValue);
 	}
 
+	ui->drawText(17,14,"G          - exit threshold configuration");
 	ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 

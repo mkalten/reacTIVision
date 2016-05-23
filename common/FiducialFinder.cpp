@@ -177,6 +177,7 @@ void FiducialFinder::displayControl() {
 		}
 	}
 	
+	ui->drawText(17,14,"I          - exit inversion configuration");
 	ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 

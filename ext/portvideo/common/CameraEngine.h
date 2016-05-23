@@ -93,7 +93,7 @@ extern const char* dstr[];
 #define SETTING_NEXT     81
 #define SETTING_PREVIOUS 82
 
-enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
+enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, SATURATION, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 
 struct CameraConfig {
 
@@ -135,6 +135,7 @@ struct CameraConfig {
     int powerline;
     int backlight;
 
+	int saturation;
     int hue;
     int red;
     int blue;
@@ -262,6 +263,7 @@ protected:
     int default_white;
     int default_backlight;
 
+	int default_saturation;
     int default_hue;
     int default_red;
     int default_blue;

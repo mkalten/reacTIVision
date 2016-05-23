@@ -505,6 +505,7 @@ bool DC1394Camera::hasCameraSetting(int mode) {
 		case GAMMA: info.id = DC1394_FEATURE_GAMMA; break;
 		case WHITE: info.id = DC1394_FEATURE_WHITE_BALANCE; break;
 		case AUTO_WHITE: return hasCameraSettingAuto(WHITE);
+		case SATURATION: info.id = DC1394_FEATURE_SATURATION; break;
 		case COLOR_HUE: info.id = DC1394_FEATURE_HUE; break;
 		case AUTO_HUE: return hasCameraSettingAuto(COLOR_HUE);
 	} if (info.id<0) return false;
@@ -592,6 +593,7 @@ bool DC1394Camera::setCameraSetting(int mode, int setting) {
 		case GAMMA: feature = DC1394_FEATURE_GAMMA; break;
 		case WHITE: feature = DC1394_FEATURE_WHITE_BALANCE; break;
 		case AUTO_WHITE: return setCameraSettingAuto(WHITE,setting);
+		case SATURATION: feature = DC1394_FEATURE_SATURATION; break;
 		case COLOR_HUE: feature = DC1394_FEATURE_HUE; break;
 		case AUTO_HUE: return setCameraSettingAuto(COLOR_HUE,setting);
 	} if (feature<0) return false;
@@ -619,6 +621,7 @@ int DC1394Camera::getCameraSetting(int mode) {
 		case GAMMA: feature = DC1394_FEATURE_GAMMA; break;
 		case WHITE: feature = DC1394_FEATURE_WHITE_BALANCE; break;
 		case AUTO_WHITE: return getCameraSettingAuto(WHITE);
+		case SATURATION: feature = DC1394_FEATURE_SATURATION; break;
 		case COLOR_HUE: feature = DC1394_FEATURE_HUE; break;
 		case AUTO_HUE: return getCameraSettingAuto(COLOR_HUE);
 	} if (feature<0) return 0;
@@ -643,6 +646,7 @@ int DC1394Camera::getMaxCameraSetting(int mode) {
 		case GAMMA: feature = DC1394_FEATURE_GAMMA; break;
 		case WHITE: feature = DC1394_FEATURE_WHITE_BALANCE; break;
 		case AUTO_WHITE: return 1;
+		case SATURATION: feature = DC1394_FEATURE_SATURATION; break;
 		case COLOR_HUE: feature = DC1394_FEATURE_HUE; break;
 		case AUTO_HUE: return 1;
 	} if (feature<0) return 0;
@@ -668,6 +672,7 @@ int DC1394Camera::getMinCameraSetting(int mode) {
 		case GAMMA: feature = DC1394_FEATURE_GAMMA; break;
 		case WHITE: feature = DC1394_FEATURE_WHITE_BALANCE; break;
 		case AUTO_WHITE: return 0;
+		case SATURATION: feature = DC1394_FEATURE_SATURATION; break;
 		case COLOR_HUE: feature = DC1394_FEATURE_HUE; break;
 		case AUTO_HUE: return 0;
 	} if (feature<0) return 0;
@@ -693,6 +698,7 @@ int DC1394Camera::getCameraSettingStep(int mode) {
 		case GAMMA: feature = DC1394_FEATURE_GAMMA; break;
 		case WHITE: feature = DC1394_FEATURE_WHITE_BALANCE; break;
 		case AUTO_WHITE: return 1;
+		case SATURATION: feature = DC1394_FEATURE_SATURATION; break;
 		case COLOR_HUE: feature = DC1394_FEATURE_HUE; break;
 		case AUTO_HUE: return 1;
 	} if (feature<0) return 0;

@@ -532,38 +532,23 @@ bool AVfoundationCamera::hasCameraSetting(int mode) {
     if (uvcController==NULL) return false;
     
     switch (mode) {
-        case BRIGHTNESS:
-            return [uvcController brightSupported];
-        case CONTRAST:
-            return [uvcController contrastSupported];
-        case SHARPNESS:
-            return [uvcController sharpnessSupported];
-		case GAMMA:
-			return [uvcController gammaSupported];
-        case GAIN:
-            return [uvcController gainSupported];
-        case AUTO_GAIN:
-            return hasCameraSettingAuto(GAIN);
-        case EXPOSURE:
-            return [uvcController exposureTimeSupported];
-        case AUTO_EXPOSURE:
-            return hasCameraSettingAuto(EXPOSURE);
-        case FOCUS:
-            return [uvcController focusSupported];
-        case AUTO_FOCUS:
-            return hasCameraSettingAuto(FOCUS);
-        case WHITE:
-            return [uvcController whiteBalanceSupported];
-        case AUTO_WHITE:
-            return hasCameraSettingAuto(WHITE);
-        case BACKLIGHT:
-            return [uvcController backlightSupported];
-        case COLOR_HUE:
-            return [uvcController hueSupported];
-        case AUTO_HUE:
-            return hasCameraSettingAuto(COLOR_HUE);
-		case POWERLINE:
-			return [uvcController powerLineSupported];
+        case BRIGHTNESS:	return [uvcController brightSupported];
+        case CONTRAST:		return [uvcController contrastSupported];
+        case SHARPNESS:		return [uvcController sharpnessSupported];
+		case GAMMA:			return [uvcController gammaSupported];
+        case GAIN:			return [uvcController gainSupported];
+        case AUTO_GAIN:		return hasCameraSettingAuto(GAIN);
+        case EXPOSURE:		return [uvcController exposureTimeSupported];
+        case AUTO_EXPOSURE:	return hasCameraSettingAuto(EXPOSURE);
+        case FOCUS:			return [uvcController focusSupported];
+        case AUTO_FOCUS:	return hasCameraSettingAuto(FOCUS);
+        case WHITE:			return [uvcController whiteBalanceSupported];
+        case AUTO_WHITE:	return hasCameraSettingAuto(WHITE);
+        case BACKLIGHT:		return [uvcController backlightSupported];
+		case SATURATION:	return [uvcController saturationSupported];
+        case COLOR_HUE:		return [uvcController hueSupported];
+        case AUTO_HUE:		return hasCameraSettingAuto(COLOR_HUE);
+		case POWERLINE:		return [uvcController powerLineSupported];
     }
 	
     return false;
@@ -575,28 +560,18 @@ bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
     if (!hasCameraSetting(mode)) return false;
     
     switch (mode) {
-        case BRIGHTNESS:
-            [uvcController setBright:setting]; return true;
-        case CONTRAST:
-            [uvcController setContrast:setting]; return true;
-        case SHARPNESS:
-            [uvcController setSharpness:setting]; return true;
-        case GAIN:
-            [uvcController setGain:setting]; return true;
-		case GAMMA:
-			[uvcController setGamma:setting]; return true;
-        case EXPOSURE:
-            [uvcController setExposureTime:setting]; return true;
-        case FOCUS:
-            [uvcController setFocus:setting]; return true;
-        case WHITE:
-            [uvcController setWhiteBalance:setting]; return true;
-        case BACKLIGHT:
-            [uvcController setBacklight:setting]; return true;
-        case COLOR_HUE:
-            [uvcController setHue:setting]; return true;
-		case POWERLINE:
-			[uvcController setPowerLine:setting]; return true;
+        case BRIGHTNESS:	[uvcController setBright:setting]; return true;
+        case CONTRAST:		[uvcController setContrast:setting]; return true;
+        case SHARPNESS:		[uvcController setSharpness:setting]; return true;
+        case GAIN:			[uvcController setGain:setting]; return true;
+		case GAMMA:			[uvcController setGamma:setting]; return true;
+        case EXPOSURE:		[uvcController setExposureTime:setting]; return true;
+        case FOCUS:			[uvcController setFocus:setting]; return true;
+        case WHITE:			[uvcController setWhiteBalance:setting]; return true;
+        case BACKLIGHT:		[uvcController setBacklight:setting]; return true;
+		case SATURATION:	[uvcController setSaturation:setting]; return true;
+        case COLOR_HUE:		[uvcController setHue:setting]; return true;
+		case POWERLINE:		[uvcController setPowerLine:setting]; return true;
     }
 	
     return false;
@@ -609,28 +584,18 @@ int AVfoundationCamera::getCameraSetting(int mode) {
     if (getCameraSettingAuto(mode)) return 0;
     
     switch (mode) {
-        case BRIGHTNESS:
-            return [uvcController bright];
-        case CONTRAST:
-            return [uvcController contrast];
-        case SHARPNESS:
-            return [uvcController sharpness];
-        case GAIN:
-            return [uvcController gain];
-		case GAMMA:
-			return [uvcController gamma];
-        case EXPOSURE:
-            return [uvcController exposureTime];
-        case FOCUS:
-            return [uvcController focus];
-        case WHITE:
-            return [uvcController whiteBalance];
-        case BACKLIGHT:
-            return [uvcController backlight];
-        case COLOR_HUE:
-            return [uvcController hue];
-		case POWERLINE:
-			return [uvcController powerLine];
+        case BRIGHTNESS:	return [uvcController bright];
+        case CONTRAST:		return [uvcController contrast];
+        case SHARPNESS:		return [uvcController sharpness];
+        case GAIN:			return [uvcController gain];
+		case GAMMA:			return [uvcController gamma];
+        case EXPOSURE:		return [uvcController exposureTime];
+        case FOCUS:			return [uvcController focus];
+        case WHITE:			return [uvcController whiteBalance];
+        case BACKLIGHT:		return [uvcController backlight];
+		case SATURATION:	return [uvcController saturation];
+        case COLOR_HUE:		return [uvcController hue];
+		case POWERLINE:		return [uvcController powerLine];
     }
 	
     return 0;
@@ -652,6 +617,7 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
         case FOCUS:         return [uvcController maxFocus];
         case WHITE:         return [uvcController maxWhiteBalance];
         case BACKLIGHT:     return [uvcController maxBacklight];
+		case SATURATION:	return [uvcController maxSaturation];
         case COLOR_HUE:     return [uvcController maxHue];
 		case POWERLINE:		return [uvcController maxPowerLine];
     }
@@ -675,7 +641,8 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
         case FOCUS:         return [uvcController minFocus];
         case WHITE:         return [uvcController minWhiteBalance];
         case BACKLIGHT:     return [uvcController minBacklight];
-        case COLOR_HUE:     return [uvcController minHue];
+		case SATURATION:	return [uvcController minSaturation];
+		case COLOR_HUE:     return [uvcController minHue];
 		case POWERLINE:		return [uvcController minPowerLine];
     }
     
@@ -724,7 +691,11 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
             [uvcController resetBacklight];
             default_backlight = [uvcController backlight];
             break;
-        case COLOR_HUE:
+		case SATURATION:
+			[uvcController resetSaturation];
+			default_saturation = [uvcController saturation];
+			break;
+		case COLOR_HUE:
             [uvcController resetHue];
             default_hue = [uvcController hue];
             break;
@@ -752,6 +723,7 @@ int AVfoundationCamera::getDefaultCameraSetting(int mode) {
         case FOCUS: return default_focus;
         case WHITE: return default_white;
         case BACKLIGHT: return default_backlight;
+		case SATURATION: return default_saturation;
         case COLOR_HUE: return default_hue;
 		case POWERLINE: return default_powerline;
     }
