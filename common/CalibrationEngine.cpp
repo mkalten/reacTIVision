@@ -58,9 +58,9 @@ CalibrationEngine::CalibrationEngine(const char* out) {
 	
 	help_text.push_back( "CalibrationEngine:");
 	help_text.push_back( "   c - toggle calibration");
-	help_text.push_back( "   q - toggle quick mode");
+	help_text.push_back( "   q - toggle quick/precise mode");
+	help_text.push_back( "   u - reset selected point");
 	help_text.push_back( "   j - reset calibration grid");
-	help_text.push_back( "   k - reset selected point");
 	help_text.push_back( "   l - revert to saved grid");
 	help_text.push_back( "   r - show calibration result");
 	help_text.push_back( "   a,d,w,x - move within grid");
@@ -144,7 +144,7 @@ bool CalibrationEngine::toggleFlag(unsigned char flag, bool lock) {
 		grid_ypos=3;
 	} else if (flag==KEY_J) {
 		grid->Reset();
-	} else if (flag==KEY_K) {
+	} else if (flag==KEY_U) {
 		grid->Set(grid_xpos,grid_ypos,0.0,0.0);
 	} else if (flag==KEY_L) {
 		if (file_exists) grid->Load(calib_bak);
