@@ -109,9 +109,9 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `K` 		| Camera selection								|
 |			|												|
 | `C` 		| Enter/Exit Calibration mode					|
-| `Q` 		| Enter/Exit *precise* calibration mode 		|
-| `U` 		| Resets selected points in grid 				|
-| `J` 		| Resets calibration grid						|
+| `Q` 		| Toggle quick/precise calibration mode 		|
+| `U` 		| Resets selected calibration grid point		|
+| `J` 		| Resets all calibration grid points			|
 | `L` 		| Reverts calibration to saved grid				|
 |			|												|
 | `S`		| Shows original camera image 					|
@@ -121,7 +121,7 @@ To check if the distortion is working properly press `R`. This will show the ful
 | `F1`		| Toggles full screen mode 						|
 |			|												|
 | `P` 		| Pauses all processing							|
-| `V` 		| Enables verbose output to console				|
+| `V` 		| Verbose output to console						|
 | `H` 		| Shows help options							|
 | `ESC` 	| Quits application 							|
 
