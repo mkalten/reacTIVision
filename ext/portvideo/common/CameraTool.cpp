@@ -508,6 +508,7 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		cam_cfg.contrast = readAttribute(settings_element, "contrast");
 		cam_cfg.sharpness = readAttribute(settings_element, "sharpness");
 		cam_cfg.gain = readAttribute(settings_element, "gain");
+		
 		cam_cfg.exposure = readAttribute(settings_element, "exposure");
 		cam_cfg.shutter = readAttribute(settings_element, "shutter");
 		cam_cfg.focus = readAttribute(settings_element, "focus");
