@@ -878,19 +878,17 @@ int videoInputCamera::getCameraSettingStep(int mode) {
 
 bool videoInputCamera::setDefaultCameraSetting(int mode) {
     
-	long value=0;
-
 	switch (mode) {
-		case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device, VI->propBrightness, value, NULL, true); break;
-		case CONTRAST: VI->setVideoSettingFilter(cfg->device, VI->propContrast, value, NULL, true); break;
-		case GAIN: VI->setVideoSettingFilter(cfg->device, VI->propGain, value, NULL, true); break;
-		case EXPOSURE: VI->setVideoSettingFilter(cfg->device, VI->propExposure, value, NULL, true); break;
-		case SHARPNESS:VI->setVideoSettingFilter(cfg->device, VI->propSharpness, value, NULL, true); break;
-		case FOCUS: VI->setVideoSettingFilter(cfg->device, VI->propFocus, value, NULL, true); break;
-		case GAMMA: VI->setVideoSettingFilter(cfg->device, VI->propGamma, value, NULL, true); break;
-		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, value, NULL, true); break;
-		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, value, NULL, true); break;
-		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, value, NULL, true); break;
+		case BRIGHTNESS: VI->setVideoSettingFilter(cfg->device, VI->propBrightness, NULL, NULL, true); break;
+		case CONTRAST: VI->setVideoSettingFilter(cfg->device, VI->propContrast, NULL, NULL, true); break;
+		case GAIN: VI->setVideoSettingFilter(cfg->device, VI->propGain, NULL, NULL, true); break;
+		case EXPOSURE: VI->setVideoSettingFilter(cfg->device, VI->propExposure, NULL, NULL, true); break;
+		case SHARPNESS:VI->setVideoSettingFilter(cfg->device, VI->propSharpness, NULL, NULL, true); break;
+		case FOCUS: VI->setVideoSettingFilter(cfg->device, VI->propFocus, NULL, NULL, true); break;
+		case GAMMA: VI->setVideoSettingFilter(cfg->device, VI->propGamma, NULL, NULL, true); break;
+		case WHITE: VI->setVideoSettingFilter(cfg->device, VI->propWhiteBalance, NULL, NULL, true); break;
+		case BACKLIGHT: VI->setVideoSettingFilter(cfg->device, VI->propBacklightCompensation, NULL, NULL, true); break;
+		case COLOR_HUE: VI->setVideoSettingFilter(cfg->device, VI->propHue, NULL, NULL, true); break;
 		default: return false;
 	}
 
