@@ -611,7 +611,7 @@ void CameraEngine::applyCameraSettings() {
     applyCameraSetting(BACKLIGHT,cfg->backlight);
     applyCameraSetting(GAMMA,cfg->gamma);
 
-    applyCameraSetting(COLOR_HUE,cfg->red);
+    applyCameraSetting(COLOR_HUE,cfg->hue);
     applyCameraSetting(COLOR_RED,cfg->red);
     applyCameraSetting(COLOR_GREEN,cfg->green);
     applyCameraSetting(COLOR_BLUE,cfg->blue);
@@ -623,9 +623,9 @@ int CameraEngine::updateSetting(int mode) {
     if (getCameraSettingAuto(mode)) return SETTING_AUTO;
 
     int value = getCameraSetting(mode);
-    if (value==getMinCameraSetting(mode)) value = SETTING_MIN;
+	if (value==getDefaultCameraSetting(mode)) value = SETTING_DEFAULT;
+    else if (value==getMinCameraSetting(mode)) value = SETTING_MIN;
     else if (value==getMaxCameraSetting(mode)) value = SETTING_MAX;
-    else if (value==getDefaultCameraSetting(mode)) value = SETTING_DEFAULT;
     return value;
 }
 
@@ -655,4 +655,5 @@ void CameraEngine::updateSettings() {
 		cfg->green = SETTING_OFF;
 		cfg->blue = SETTING_OFF;
 	}
+
 }
