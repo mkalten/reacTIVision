@@ -623,13 +623,14 @@ void CameraEngine::applyCameraSettings() {
 
 int CameraEngine::updateSetting(int mode) {
 
-    if (!hasCameraSetting(mode)) return SETTING_OFF;
+    if (!hasCameraSetting(mode))    return SETTING_OFF;
     if (getCameraSettingAuto(mode)) return SETTING_AUTO;
 
     int value = getCameraSetting(mode);
-	if (value==getDefaultCameraSetting(mode)) value = SETTING_DEFAULT;
+	if (value==getDefaultCameraSetting(mode))  value = SETTING_DEFAULT;
     else if (value==getMinCameraSetting(mode)) value = SETTING_MIN;
     else if (value==getMaxCameraSetting(mode)) value = SETTING_MAX;
+
     return value;
 }
 
