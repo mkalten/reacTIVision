@@ -71,6 +71,17 @@ private:
 	static bool comInit();
 	static bool comUnInit();
 	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
+	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID);
+
+	bool videoInputCamera::setVideoSettingValue(int deviceID, long Property, long lValue, long Flags);
+	bool videoInputCamera::setVideoSettingDefault(int deviceID, long Property);
+	bool videoInputCamera::getVideoSettingValue(int deviceID, long Property, long &currentValue, long &flags);
+	bool videoInputCamera::setVideoSettingAuto(int deviceID, long Property, long lValue, long Flags, bool useDefaultValue);
+	bool videoInputCamera::getVideoSettingAuto(int deviceID, long Property, long &min, long &max, long &SteppingDelta, long &currentValue, long &flags, long &defaultValue);
+	bool videoInputCamera::getVideoSettingRange(int deviceID, long Property, long &min, long &max, long &SteppingDelta, long &flags, long &defaultValue);
+
+	static void __cdecl settingsThread(void * objPtr);
+	static HRESULT ShowFilterPropertyPages(IBaseFilter *pFilter);
 
 	static GUID getMediaSubtype(int type);
 	static int getMediaSubtype(GUID type);
