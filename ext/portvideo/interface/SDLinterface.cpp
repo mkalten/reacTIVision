@@ -158,11 +158,9 @@ void SDLinterface::updateDisplay()
 		SDL_RenderClear(renderer_);
 				
 		int y = textHeight()-3;
-		drawText(textHeight(),y,"DOWN - next camera setting");
-		drawText(textHeight(),2*y,"UP - previous camera setting");
-		drawText(textHeight(),3*y,"");
-		drawText(textHeight(),4*y,"K - cancel camera selection");
-		drawText(textHeight(),5*y,"ENTER - apply camera selection");
+		drawText(textHeight(),1*y,"UP/DOWN - select camera setting");
+		drawText(textHeight(),2*y,"ENTER   - apply camera selection");
+		drawText(textHeight(),3*y,"K       - cancel camera selection");
 		
 		CameraConfig *cfg = &dev_list[selector_];
 		char camera_str[256];
