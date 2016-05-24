@@ -73,15 +73,13 @@ private:
 	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
 	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID);
 
-	bool videoInputCamera::getVideoSettingValue(int deviceID, long Property, long &currentValue, long &flags);
-	bool videoInputCamera::setVideoSettingValue(int deviceID, long Property, long lValue, long Flags);
-	bool videoInputCamera::setVideoSettingDefault(int deviceID, long Property);
-	bool videoInputCamera::getVideoSettingRange(int deviceID, long Property, long &min, long &max, long &SteppingDelta, long &flags, long &defaultValue);
+	bool videoInputCamera::getVideoSettingValue(int deviceID, long prop, long &value, long &flag);
+	bool videoInputCamera::setVideoSettingValue(int deviceID, long prop, long value, long flag);
+	bool videoInputCamera::getVideoSettingRange(int deviceID, long prop, long &min, long &max, long &step, long &flag, long &dflt);
 
-	bool videoInputCamera::getVideoControlValue(int deviceID, long Property, long &currentValue, long &flags);
-	bool videoInputCamera::setVideoControlValue(int deviceID, long Property, long lValue, long Flags);
-	bool videoInputCamera::setVideoControlDefault(int deviceID, long Property);
-	bool videoInputCamera::getVideoControlRange(int deviceID, long Property, long &min, long &max, long &SteppingDelta, long &flags, long &defaultValue);
+	bool videoInputCamera::getVideoControlValue(int deviceID, long prop, long &value, long &flag);
+	bool videoInputCamera::setVideoControlValue(int deviceID, long prop, long value, long flag);
+	bool videoInputCamera::getVideoControlRange(int deviceID, long prop, long &min, long &max, long &step, long &flag, long &dflt);
 
 	static void __cdecl settingsThread(void * objPtr);
 	static HRESULT ShowFilterPropertyPages(IBaseFilter *pFilter);

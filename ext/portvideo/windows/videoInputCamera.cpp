@@ -557,57 +557,6 @@ bool videoInputCamera::setVideoControlValue(int deviceID, long Property, long lV
 	else return true;
 }
 
-bool videoInputCamera::setVideoSettingDefault(int deviceID, long Property ) {
-
-	IBaseFilter *pVideoInputFilter = NULL;
-	IAMVideoProcAmp *pAMVideoProcAmp = NULL;
-
-	HRESULT hr = getDevice(&pVideoInputFilter, deviceID);
-	if (FAILED(hr)) return false;
-
-	hr = pVideoInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&pAMVideoProcAmp);
-	if(FAILED(hr)){
-		if(pVideoInputFilter) pVideoInputFilter->Release();
-		return false;
-	}
-
-	long min, max, step, dflt, flag = 0;
-	hr = pAMVideoProcAmp->GetRange(Property, &min, &max, &step, &dflt, &flag);
-	if (hr==S_OK) hr = pAMVideoProcAmp->Set(Property, dflt, VideoProcAmp_Flags_Manual);
-
-	if(pAMVideoProcAmp) pAMVideoProcAmp->Release();
-	if(pVideoInputFilter) pVideoInputFilter->Release();
-
-	if (FAILED(hr)) return false;
-	else return true;
-}
-
-bool videoInputCamera::setVideoControlDefault(int deviceID, long Property ) {
-
-	IBaseFilter *pVideoInputFilter = NULL;
-	IAMCameraControl *pCameraControl = NULL;
-
-	HRESULT hr = getDevice(&pVideoInputFilter, deviceID);
-	if (FAILED(hr)) return false;
-
-	hr = hr = pVideoInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&pCameraControl);
-	if(FAILED(hr)){
-		if(pVideoInputFilter) pVideoInputFilter->Release();
-		return false;
-	}
-
-	long min, max, step, dflt, flag = 0;
-	hr = pCameraControl->GetRange(Property, &min, &max, &step, &dflt, &flag);
-	if (hr==S_OK) hr = pCameraControl->Set(Property, dflt, VideoProcAmp_Flags_Manual);
-
-	if(pCameraControl) pCameraControl->Release();
-	if(pVideoInputFilter) pVideoInputFilter->Release();
-
-	if (FAILED(hr)) return false;
-	else return true;
-}
-
-
 std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 
 	std::vector<CameraConfig> cfg_list;
@@ -1030,22 +979,21 @@ bool videoInputCamera::hasCameraSettingAuto(int mode) {
 
 bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {
 
-	long value=0;
 	long setting = VideoProcAmp_Flags_Manual;
 	if (flag) setting = VideoProcAmp_Flags_Auto;
 
 	switch (mode) {
-		case BRIGHTNESS: setVideoSettingValue(cfg->device, VideoProcAmp_Brightness, value, setting); break;
-		case CONTRAST: setVideoSettingValue(cfg->device, VideoProcAmp_Contrast, value, setting); break;
-		case GAIN: setVideoSettingValue(cfg->device, VideoProcAmp_Gain, value, setting); break;
-		case EXPOSURE: setVideoControlValue(cfg->device, CameraControl_Exposure, value, setting); break;
-		case SHARPNESS: setVideoSettingValue(cfg->device, VideoProcAmp_Sharpness, value, setting); break;
-		case FOCUS: setVideoControlValue(cfg->device, CameraControl_Focus, value, setting); break;
-		case GAMMA: setVideoSettingValue(cfg->device, VideoProcAmp_Gamma, value, setting); break;
-		case WHITE: setVideoSettingValue(cfg->device, VideoProcAmp_WhiteBalance, value, setting); break;
-		case BACKLIGHT: setVideoSettingValue(cfg->device, VideoProcAmp_BacklightCompensation, value, setting); break;
-		case SATURATION: setVideoSettingValue(cfg->device, VideoProcAmp_Saturation, value, setting); break;
-		case COLOR_HUE: setVideoSettingValue(cfg->device, VideoProcAmp_Hue, value, setting); break;
+		case BRIGHTNESS: setVideoSettingValue(cfg->device, VideoProcAmp_Brightness, getDefaultCameraSetting(BRIGHTNESS), setting); break;
+		case CONTRAST: setVideoSettingValue(cfg->device, VideoProcAmp_Contrast, getDefaultCameraSetting(CONTRAST), setting); break;
+		case GAIN: setVideoSettingValue(cfg->device, VideoProcAmp_Gain, getDefaultCameraSetting(GAIN), setting); break;
+		case EXPOSURE: setVideoControlValue(cfg->device, CameraControl_Exposure, getDefaultCameraSetting(EXPOSURE), setting); break;
+		case SHARPNESS: setVideoSettingValue(cfg->device, VideoProcAmp_Sharpness, getDefaultCameraSetting(SHARPNESS), setting); break;
+		case FOCUS: setVideoControlValue(cfg->device, CameraControl_Focus, getDefaultCameraSetting(FOCUS), setting); break;
+		case GAMMA: setVideoSettingValue(cfg->device, VideoProcAmp_Gamma, getDefaultCameraSetting(GAMMA), setting); break;
+		case WHITE: setVideoSettingValue(cfg->device, VideoProcAmp_WhiteBalance, getDefaultCameraSetting(WHITE), setting); break;
+		case BACKLIGHT: setVideoSettingValue(cfg->device, VideoProcAmp_BacklightCompensation, getDefaultCameraSetting(BACKLIGHT), setting); break;
+		case SATURATION: setVideoSettingValue(cfg->device, VideoProcAmp_Saturation, getDefaultCameraSetting(SATURATION), setting); break;
+		case COLOR_HUE: setVideoSettingValue(cfg->device, VideoProcAmp_Hue, getDefaultCameraSetting(COLOR_HUE), setting); break;
 		default: return false;
 	}
 
@@ -1197,17 +1145,17 @@ int videoInputCamera::getCameraSettingStep(int mode) {
 bool videoInputCamera::setDefaultCameraSetting(int mode) {
     
 	switch (mode) {
-		case BRIGHTNESS: setVideoSettingDefault(cfg->device, VideoProcAmp_Brightness); break;
-		case CONTRAST: setVideoSettingDefault(cfg->device, VideoProcAmp_Contrast); break;
-		case GAIN: setVideoSettingDefault(cfg->device, VideoProcAmp_Gain); break;
-		case EXPOSURE: setVideoControlDefault(cfg->device, CameraControl_Exposure); break;
-		case SHARPNESS:setVideoSettingDefault(cfg->device, VideoProcAmp_Sharpness); break;
-		case FOCUS: setVideoControlDefault(cfg->device, CameraControl_Focus); break;
-		case GAMMA: setVideoSettingDefault(cfg->device, VideoProcAmp_Gamma); break;
-		case WHITE: setVideoSettingDefault(cfg->device, VideoProcAmp_WhiteBalance); break;
-		case BACKLIGHT: setVideoSettingDefault(cfg->device, VideoProcAmp_BacklightCompensation); break;
-		case SATURATION: setVideoSettingDefault(cfg->device, VideoProcAmp_Saturation); break;
-		case COLOR_HUE: setVideoSettingDefault(cfg->device, VideoProcAmp_Hue); break;
+		case BRIGHTNESS: setVideoSettingValue(cfg->device, VideoProcAmp_Brightness, getDefaultCameraSetting(BRIGHTNESS), VideoProcAmp_Flags_Manual); break;
+		case CONTRAST: setVideoSettingValue(cfg->device, VideoProcAmp_Contrast, getDefaultCameraSetting(CONTRAST), VideoProcAmp_Flags_Manual); break;
+		case GAIN: setVideoSettingValue(cfg->device, VideoProcAmp_Gain, getDefaultCameraSetting(GAIN), VideoProcAmp_Flags_Manual); break;
+		case EXPOSURE: setVideoControlValue(cfg->device, CameraControl_Exposure, getDefaultCameraSetting(EXPOSURE), CameraControl_Flags_Manual); break;
+		case SHARPNESS:setVideoSettingValue(cfg->device, VideoProcAmp_Sharpness, getDefaultCameraSetting(SHARPNESS), VideoProcAmp_Flags_Manual); break;
+		case FOCUS: setVideoControlValue(cfg->device, CameraControl_Focus, getDefaultCameraSetting(FOCUS), CameraControl_Flags_Manual); break;
+		case GAMMA: setVideoSettingValue(cfg->device, VideoProcAmp_Gamma, getDefaultCameraSetting(GAMMA), VideoProcAmp_Flags_Manual); break;
+		case WHITE: setVideoSettingValue(cfg->device, VideoProcAmp_WhiteBalance, getDefaultCameraSetting(WHITE), VideoProcAmp_Flags_Manual); break;
+		case BACKLIGHT: setVideoSettingValue(cfg->device, VideoProcAmp_BacklightCompensation, getDefaultCameraSetting(BACKLIGHT), VideoProcAmp_Flags_Manual); break;
+		case SATURATION: setVideoSettingValue(cfg->device, VideoProcAmp_Saturation, getDefaultCameraSetting(SATURATION), VideoProcAmp_Flags_Manual); break;
+		case COLOR_HUE: setVideoSettingValue(cfg->device, VideoProcAmp_Hue, getDefaultCameraSetting(COLOR_HUE), VideoProcAmp_Flags_Manual); break;
 		default: return false;
 	}
 
