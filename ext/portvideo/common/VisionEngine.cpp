@@ -20,14 +20,6 @@
 #include "VisionEngine.h"
 #include "ConsoleInterface.h"
 
-void sleep(int ms=1) {
-#ifndef WIN32
-    usleep(ms*1000);
-#else
-    Sleep(ms);
-#endif
-}
-
 // the thread function which constantly retrieves the latest frame
 #ifndef WIN32
 static void* getFrameFromCamera( void* obj )
@@ -54,14 +46,14 @@ static DWORD WINAPI getFrameFromCamera( LPVOID obj )
                     //long driver_time = VisionEngine::currentMicroSeconds() - start_time;
                     //std::cout << "camera latency: " << driver_time/1000.0f << "ms" << std::endl;
                 }
-                sleep(1);
+				pv_sleep();
             } else {
                 if ((!engine->pause_) && (!engine->camera_->stillRunning())) {
                     engine->running_=false;
                     engine->error_=true;
-                } else sleep(1);
+                } else pv_sleep();
             }
-        } else sleep(5);
+        } else pv_sleep(5);
     }
     return(0);
 }
@@ -207,7 +199,7 @@ void VisionEngine::mainLoop()
         // do nothing if paused
         if (pause_){
             interface_->processEvents();
-            sleep(1);
+            pv_sleep();
             continue;
         }
         
@@ -220,7 +212,7 @@ void VisionEngine::mainLoop()
                 if(error_) interface_->displayError("Camera disconnected!");
                 return;
             }
-            sleep(1);
+            pv_sleep();
             cameraReadBuffer = ringBuffer->getNextBufferToRead();
             //if (cameraReadBuffer!=NULL) break;
         }

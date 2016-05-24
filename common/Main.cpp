@@ -478,6 +478,7 @@ int main(int argc, char* argv[]) {
 		if (sender) {
 			if(i==0) server = new TuioServer(sender);
 			else server->addOscSender(sender);
+			pv_sleep(1);
 		}
 	}
 	server->setSourceName("rtv");

@@ -42,6 +42,14 @@
 #include "RingBuffer.h"
 #include "UserInterface.h"
 
+void pv_sleep(int ms=1) {
+#ifndef WIN32
+	usleep(ms*1000);
+#else
+	Sleep(ms);
+#endif
+}
+
 class VisionEngine
 {
 
