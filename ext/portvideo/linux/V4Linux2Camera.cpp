@@ -699,6 +699,7 @@ bool V4Linux2Camera::hasCameraSetting(int mode) {
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
+        case SATURATION: v4l2_query.id = V4L2_CID_SATURATION; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return hasCameraSettingAuto(COLOR_HUE);
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
@@ -734,6 +735,7 @@ bool V4Linux2Camera::setCameraSetting(int mode, int setting) {
         case BACKLIGHT: v4l2_ctrl.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case POWERLINE: v4l2_ctrl.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case GAMMA: v4l2_ctrl.id = V4L2_CID_GAMMA; break;
+        case SATURATION: v4l2_ctrl.id = V4L2_CID_SATURATION; break;
         case COLOR_HUE: v4l2_ctrl.id = V4L2_CID_HUE; break;
         case AUTO_HUE: v4l2_ctrl.id = V4L2_CID_HUE_AUTO; break;
         case COLOR_RED: v4l2_ctrl.id = V4L2_CID_RED_BALANCE; break;
@@ -767,6 +769,7 @@ int V4Linux2Camera::getCameraSetting(int mode) {
         case BACKLIGHT: v4l2_ctrl.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case POWERLINE: v4l2_ctrl.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case GAMMA: v4l2_ctrl.id = V4L2_CID_GAMMA; break;
+        case SATURATION: v4l2_ctrl.id = V4L2_CID_SATURATION; break;
         case COLOR_HUE: v4l2_ctrl.id = V4L2_CID_HUE; break;
         case AUTO_HUE: v4l2_ctrl.id = V4L2_CID_HUE_AUTO; break;
         case COLOR_RED: v4l2_ctrl.id = V4L2_CID_RED_BALANCE; break;
@@ -803,6 +806,7 @@ int V4Linux2Camera::getDefaultCameraSetting(int mode) {
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
+        case SATURATION: v4l2_query.id = V4L2_CID_SATURATION; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: v4l2_query.id = V4L2_CID_HUE_AUTO; break;
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
@@ -841,6 +845,7 @@ int V4Linux2Camera::getMaxCameraSetting(int mode) {
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
+        case SATURATION: v4l2_query.id = V4L2_CID_SATURATION; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return 1;
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
@@ -881,6 +886,7 @@ int V4Linux2Camera::getMinCameraSetting(int mode) {
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
         case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
+        case SATURATION: v4l2_query.id = V4L2_CID_SATURATION; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return 0;
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
@@ -920,6 +926,7 @@ int V4Linux2Camera::getCameraSettingStep(int mode) {
         case GAMMA: v4l2_query.id = V4L2_CID_GAMMA; break;
         case POWERLINE: v4l2_query.id = V4L2_CID_POWER_LINE_FREQUENCY; break;
         case BACKLIGHT: v4l2_query.id = V4L2_CID_BACKLIGHT_COMPENSATION; break;
+        case SATURATION: v4l2_query.id = V4L2_CID_SATURATION; break;
         case COLOR_HUE: v4l2_query.id = V4L2_CID_HUE; break;
         case AUTO_HUE: return 1;
         case COLOR_RED: v4l2_query.id = V4L2_CID_RED_BALANCE; break;
