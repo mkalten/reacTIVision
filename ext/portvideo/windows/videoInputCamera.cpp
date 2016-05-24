@@ -573,7 +573,7 @@ bool videoInputCamera::setVideoSettingDefault(int deviceID, long Property ) {
 
 	long min, max, step, dflt, flag = 0;
 	hr = pAMVideoProcAmp->GetRange(Property, &min, &max, &step, &dflt, &flag);
-	if (hr==S_OK) hr = pAMVideoProcAmp->Set(Property, dflt, VideoProcAmp_Flags_Auto);
+	if (hr==S_OK) hr = pAMVideoProcAmp->Set(Property, dflt, VideoProcAmp_Flags_Manual);
 
 	if(pAMVideoProcAmp) pAMVideoProcAmp->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
@@ -598,7 +598,7 @@ bool videoInputCamera::setVideoControlDefault(int deviceID, long Property ) {
 
 	long min, max, step, dflt, flag = 0;
 	hr = pCameraControl->GetRange(Property, &min, &max, &step, &dflt, &flag);
-	if (hr==S_OK) hr = pCameraControl->Set(Property, dflt, VideoProcAmp_Flags_Auto);
+	if (hr==S_OK) hr = pCameraControl->Set(Property, dflt, VideoProcAmp_Flags_Manual);
 
 	if(pCameraControl) pCameraControl->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
@@ -1054,8 +1054,8 @@ bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {
 
 bool videoInputCamera::getCameraSettingAuto(int mode) {
 
-	long min,max,step,value,default,flags;
-	min=max=step=value=default=flags=0;
+	long value,flags;
+	value=flags=0;
 
 	switch (mode) {
 		case BRIGHTNESS: getVideoSettingValue(cfg->device, VideoProcAmp_Brightness, value, flags); break;
@@ -1082,7 +1082,7 @@ bool videoInputCamera::setCameraSetting(int mode, int setting) {
 	int current_setting = getCameraSetting(mode);
 	if (setting==current_setting) return true;
 
-	long flags = FLAGS_MANUAL;
+	long flags = VideoProcAmp_Flags_Manual;
 
 	switch (mode) {
 		case BRIGHTNESS: setVideoSettingValue(cfg->device, VideoProcAmp_Brightness, setting, flags); break;

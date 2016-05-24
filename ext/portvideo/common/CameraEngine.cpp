@@ -568,6 +568,8 @@ void CameraEngine::setupFrame() {
 
 void CameraEngine::applyCameraSetting(int mode, int value) {
 
+	if (!hasCameraSetting(mode)) return;
+
     switch (value) {
         case SETTING_AUTO:
             if (hasCameraSettingAuto(mode)) {
