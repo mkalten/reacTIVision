@@ -65,7 +65,7 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 		else if (cfg_list[i].cam_fps != fps) {
 			if(int(cfg_list[i].cam_fps)==cfg_list[i].cam_fps)
 				printf("%d|",int(cfg_list[i].cam_fps));
-			else printf("%'.1f|",cfg_list[i].cam_fps);
+			else printf("%.1f|",cfg_list[i].cam_fps);
 			fps = cfg_list[i].cam_fps;
 		}
 	} printf("\b fps\n");

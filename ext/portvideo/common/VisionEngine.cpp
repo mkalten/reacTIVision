@@ -20,6 +20,15 @@
 #include "VisionEngine.h"
 #include "ConsoleInterface.h"
 
+void pv_sleep(int ms) {
+#ifndef WIN32
+	usleep(ms*1000);
+#else
+	Sleep(ms);
+#endif
+}
+
+
 // the thread function which constantly retrieves the latest frame
 #ifndef WIN32
 static void* getFrameFromCamera( void* obj )
