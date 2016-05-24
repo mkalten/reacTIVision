@@ -419,7 +419,7 @@ int videoInputCamera::getMediaSubtype(GUID type){
 	else return 0;
 }
 
-bool videoInputCamera::getVideoSettingValue(int deviceID, long Property, long &currentValue, long &flags){
+bool videoInputCamera::getVideoSettingValue(int deviceID, long prop, long &value, long &flag){
 
 	IBaseFilter *pVideoInputFilter = NULL;
 	IAMVideoProcAmp *pAMVideoProcAmp = NULL;
@@ -433,7 +433,7 @@ bool videoInputCamera::getVideoSettingValue(int deviceID, long Property, long &c
 		return false;
 	}
 
-	hr = pAMVideoProcAmp->Get(Property, &currentValue, &flags);
+	hr = pAMVideoProcAmp->Get(prop, &value, &flag);
 
 	if(pAMVideoProcAmp) pAMVideoProcAmp->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
@@ -442,7 +442,7 @@ bool videoInputCamera::getVideoSettingValue(int deviceID, long Property, long &c
 	else return true;
 }
 
-bool videoInputCamera::getVideoControlValue(int deviceID, long Property, long &currentValue, long &flags){
+bool videoInputCamera::getVideoControlValue(int deviceID, long prop, long &value, long &flag){
 
 	IBaseFilter *pVideoInputFilter = NULL;
 	IAMCameraControl *pCameraControl = NULL;
@@ -456,7 +456,7 @@ bool videoInputCamera::getVideoControlValue(int deviceID, long Property, long &c
 		return false;
 	}
 
-	hr = pCameraControl->Get(Property, &currentValue, &flags);
+	hr = pCameraControl->Get(prop, &value, &flag);
 
 	if(pCameraControl) pCameraControl->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
@@ -465,7 +465,7 @@ bool videoInputCamera::getVideoControlValue(int deviceID, long Property, long &c
 	else return true;
 }
 
-bool videoInputCamera::getVideoSettingRange(int deviceID, long Property, long &min, long &max, long &SteppingDelta, long &flags, long &defaultValue) {
+bool videoInputCamera::getVideoSettingRange(int deviceID, long prop, long &min, long &max, long &step, long &flag, long &dflt) {
 
 	IBaseFilter *pVideoInputFilter = NULL;
 	IAMVideoProcAmp *pAMVideoProcAmp = NULL;
@@ -479,7 +479,7 @@ bool videoInputCamera::getVideoSettingRange(int deviceID, long Property, long &m
 		return false;
 	}
 
-	hr = pAMVideoProcAmp->GetRange(Property, &min, &max, &SteppingDelta, &defaultValue, &flags);
+	hr = pAMVideoProcAmp->GetRange(prop, &min, &max, &step, &dflt, &flag);
 
 	if(pAMVideoProcAmp) pAMVideoProcAmp->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
@@ -488,7 +488,7 @@ bool videoInputCamera::getVideoSettingRange(int deviceID, long Property, long &m
 	else return true;
 }
 
-bool videoInputCamera::getVideoControlRange(int deviceID, long Property, long &min, long &max, long &SteppingDelta, long &flags, long &defaultValue) {
+bool videoInputCamera::getVideoControlRange(int deviceID, long prop, long &min, long &max, long &step, long &flag, long &dflt) {
 
 	IBaseFilter *pVideoInputFilter = NULL;
 	IAMCameraControl *pCameraControl = NULL;
@@ -502,7 +502,7 @@ bool videoInputCamera::getVideoControlRange(int deviceID, long Property, long &m
 		return false;
 	}
 
-	hr = pCameraControl->GetRange(Property, &min, &max, &SteppingDelta, &defaultValue, &flags);
+	hr = pCameraControl->GetRange(prop, &min, &max, &step, &dflt, &flag);
 
 	if(pCameraControl) pCameraControl->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
@@ -511,7 +511,7 @@ bool videoInputCamera::getVideoControlRange(int deviceID, long Property, long &m
 	else return true;
 }
 
-bool videoInputCamera::setVideoSettingValue(int deviceID, long Property, long lValue, long Flags){
+bool videoInputCamera::setVideoSettingValue(int deviceID, long prop, long value, long flag){
 
 	IBaseFilter *pVideoInputFilter = NULL;
 	IAMVideoProcAmp *pAMVideoProcAmp = NULL;
@@ -525,7 +525,7 @@ bool videoInputCamera::setVideoSettingValue(int deviceID, long Property, long lV
 		return false;
 	}
 
-	hr = pAMVideoProcAmp->Set(Property, lValue, Flags);
+	hr = pAMVideoProcAmp->Set(prop, value, flag);
 
 	if(pAMVideoProcAmp) pAMVideoProcAmp->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
@@ -534,7 +534,7 @@ bool videoInputCamera::setVideoSettingValue(int deviceID, long Property, long lV
 	else return true;
 }
 
-bool videoInputCamera::setVideoControlValue(int deviceID, long Property, long lValue, long Flags){
+bool videoInputCamera::setVideoControlValue(int deviceID, long prop, long value, long flag){
 
 	IBaseFilter *pVideoInputFilter = NULL;
 	IAMCameraControl *pCameraControl = NULL;
@@ -548,7 +548,7 @@ bool videoInputCamera::setVideoControlValue(int deviceID, long Property, long lV
 		return false;
 	}
 
-	hr = pCameraControl->Set(Property, lValue, Flags);
+	hr = pCameraControl->Set(prop, value, flag);
 
 	if(pCameraControl) pCameraControl->Release();
 	if(pVideoInputFilter) pVideoInputFilter->Release();
