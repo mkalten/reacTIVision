@@ -233,7 +233,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
             cam_cfg.cam_height = dim.height;
             
             for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
-                cam_cfg.cam_fps = roundf([frameRateRange maxFrameRate]*100.0f)/100.0f;
+                cam_cfg.cam_fps = roundf([frameRateRange maxFrameRate]*10)/10.0f;
                 fmt_list.push_back(cam_cfg);
             }
         }
@@ -327,7 +327,7 @@ bool AVfoundationCamera::initCamera() {
 		else selectedFormat = format;
         
         for (AVFrameRateRange *frameRateRange in [selectedFormat videoSupportedFrameRateRanges]) {
-            float framerate = roundf([frameRateRange maxFrameRate]*100.0f)/100.0f;
+            float framerate = roundf([frameRateRange maxFrameRate]*10)/10.0f;
             if (framerate==cfg->cam_fps) { // found exact framerate
                 selectedFrameRateRange = frameRateRange;
 				break;
@@ -355,7 +355,7 @@ bool AVfoundationCamera::initCamera() {
 	
     for (AVFrameRateRange *frameRateRange in [[videoDevice activeFormat] videoSupportedFrameRateRanges])
     {
-        cfg->cam_fps = roundf([frameRateRange maxFrameRate]*100.0f)/100.0f;
+        cfg->cam_fps = roundf([frameRateRange maxFrameRate]*10)/10.0f;
 		if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [videoDevice activeVideoMinFrameDuration])) {
 			break;
 		}
