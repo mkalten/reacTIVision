@@ -233,7 +233,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
             cam_cfg.cam_height = dim.height;
             
             for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
-                cam_cfg.cam_fps = roundf([frameRateRange maxFrameRate]*100)/100;
+                cam_cfg.cam_fps = roundf(([frameRateRange maxFrameRate]*100)/100.0f);
                 fmt_list.push_back(cam_cfg);
             }
         }
@@ -313,6 +313,7 @@ bool AVfoundationCamera::initCamera() {
         
         int cam_format=0;
         int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
+		if (codec == '420f') codec = '420v';
 
 		for (int i=FORMAT_MAX;i>0;i--) {
 
@@ -326,7 +327,7 @@ bool AVfoundationCamera::initCamera() {
 		else selectedFormat = format;
         
         for (AVFrameRateRange *frameRateRange in [selectedFormat videoSupportedFrameRateRanges]) {
-            float framerate = round([frameRateRange minFrameRate]*100)/100.0f;
+            float framerate = roundf(([frameRateRange maxFrameRate]*100)/100.0f);
             if (framerate==cfg->cam_fps) { // found exact framerate
                 selectedFrameRateRange = frameRateRange;
 				break;
@@ -341,7 +342,7 @@ bool AVfoundationCamera::initCamera() {
     [videoDevice lockForConfiguration:&error];
     [videoDevice setActiveFormat:selectedFormat];
     if ([[[videoDevice activeFormat] videoSupportedFrameRateRanges] containsObject:selectedFrameRateRange]) {
-        [videoDevice setActiveVideoMaxFrameDuration:[selectedFrameRateRange maxFrameDuration]];
+        //[videoDevice setActiveVideoMaxFrameDuration:[selectedFrameRateRange maxFrameDuration]];
         [videoDevice setActiveVideoMinFrameDuration:[selectedFrameRateRange minFrameDuration]];
 	}
     [videoDevice unlockForConfiguration];
@@ -354,7 +355,7 @@ bool AVfoundationCamera::initCamera() {
 	
     for (AVFrameRateRange *frameRateRange in [[videoDevice activeFormat] videoSupportedFrameRateRanges])
     {
-        cfg->cam_fps = roundf([frameRateRange maxFrameRate]*100)/100;
+        cfg->cam_fps = roundf(([frameRateRange maxFrameRate]*100)/100.0f);
 		if (CMTIME_COMPARE_INLINE([frameRateRange minFrameDuration], ==, [videoDevice activeVideoMinFrameDuration])) {
 			break;
 		}
@@ -507,7 +508,7 @@ bool AVfoundationCamera::setCameraSettingAuto(int mode, bool flag) {
     
     if (uvcController==NULL) return false;
     if (!hasCameraSettingAuto(mode)) return false;
-    
+	
     switch (mode) {
         case EXPOSURE:
             if (flag==true) [uvcController setAutoExposureMode:UVC_AEMode_Auto];
@@ -558,7 +559,8 @@ bool AVfoundationCamera::setCameraSetting(int mode, int setting) {
     
     if (uvcController==NULL) return false;
     if (!hasCameraSetting(mode)) return false;
-    
+	setCameraSettingAuto(mode, false);
+	
     switch (mode) {
         case BRIGHTNESS:	[uvcController setBright:setting]; return true;
         case CONTRAST:		[uvcController setContrast:setting]; return true;
@@ -653,7 +655,8 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
     
     if (uvcController==NULL) return false;
     if (!hasCameraSetting(mode)) return false;
-    
+	setCameraSettingAuto(mode, false);
+
     switch (mode) {
         case BRIGHTNESS:
             [uvcController resetBright];
