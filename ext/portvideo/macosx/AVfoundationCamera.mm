@@ -398,8 +398,7 @@ bool AVfoundationCamera::initCamera() {
         uvcController = [[VVUVCController alloc] initWithDeviceIDString:[videoDevice uniqueID]];
         if (uvcController) [uvcController resetParamsToDefaults];
     } // else std::cout << "VVUVCController NULL" << std::endl;
-    
-    applyCameraSettings();
+
     return true;
 }
 
@@ -426,6 +425,7 @@ unsigned char* AVfoundationCamera::getFrame()
 bool AVfoundationCamera::startCamera()
 {
     [session startRunning];
+	applyCameraSettings();
     running = true;
     return true;
 }
@@ -512,7 +512,7 @@ bool AVfoundationCamera::setCameraSettingAuto(int mode, bool flag) {
     switch (mode) {
         case EXPOSURE:
             if (flag==true) [uvcController setAutoExposureMode:UVC_AEMode_Auto];
-            else [uvcController setAutoExposureMode:UVC_AEMode_Manual];
+			else [uvcController setAutoExposurePriority:true];
             return true;
         case WHITE:
             [uvcController setAutoWhiteBalance:flag];
