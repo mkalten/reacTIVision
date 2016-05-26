@@ -176,7 +176,7 @@ void TuioServer::setSourceName(const char *src) {
 		sprintf(source_name,"%s@%s",src,source_addr);
 	//}
 	
-	std::cout << "source: " << source_name << std::endl;
+	std::cout << "tuio/src " << source_name << std::endl;
 }
 
 void TuioServer::commitFrame() {
