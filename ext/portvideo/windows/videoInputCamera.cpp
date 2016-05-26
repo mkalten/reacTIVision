@@ -23,12 +23,186 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <dshow.h>
 #include <process.h>
 
+//#include "streams.h"
+#pragma include_alias( "dxtrans.h", "qedit.h" )
+#define __IDxtCompositor_INTERFACE_DEFINED__
+#define __IDxtAlphaSetter_INTERFACE_DEFINED__
+#define __IDxtJpeg_INTERFACE_DEFINED__
+#define __IDxtKey_INTERFACE_DEFINED__
+#include <uuids.h>
+#include <aviriff.h>
+#include <windows.h>
+
+#ifndef HEADER
+#define HEADER(pVideoInfo) (&(((VIDEOINFOHEADER *) (pVideoInfo))->bmiHeader))
+#endif
+
+// Due to a missing qedit.h in recent Platform SDKs, we've replicated the relevant contents here
+// #include <qedit.h>
+MIDL_INTERFACE("0579154A-2B53-4994-B0D0-E773148EFF85")
+ISampleGrabberCB : public IUnknown
+{
+  public:
+    virtual HRESULT STDMETHODCALLTYPE SampleCB(
+        double SampleTime,
+        IMediaSample *pSample) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE BufferCB(
+        double SampleTime,
+        BYTE *pBuffer,
+        long BufferLen) = 0;
+
+};
+
+MIDL_INTERFACE("6B652FFF-11FE-4fce-92AD-0266B5D7C78F")
+ISampleGrabber : public IUnknown
+{
+  public:
+    virtual HRESULT STDMETHODCALLTYPE SetOneShot(
+        BOOL OneShot) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE SetMediaType(
+        const AM_MEDIA_TYPE *pType) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE GetConnectedMediaType(
+        AM_MEDIA_TYPE *pType) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE SetBufferSamples(
+        BOOL BufferThem) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentBuffer(
+        /* [out][in] */ long *pBufferSize,
+        /* [out] */ long *pBuffer) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(
+        /* [retval][out] */ IMediaSample **ppSample) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE SetCallback(
+        ISampleGrabberCB *pCallback,
+        long WhichMethodToCallback) = 0;
+
+};
+EXTERN_C const CLSID CLSID_SampleGrabber;
+EXTERN_C const IID IID_ISampleGrabber;
+EXTERN_C const CLSID CLSID_NullRenderer;
+
+//////////////////////////////  CALLBACK  ////////////////////////////////
+
+//Callback class
+class SampleGrabberCallback : public ISampleGrabberCB{
+public:
+
+	//------------------------------------------------
+	SampleGrabberCallback(){
+		InitializeCriticalSection(&critSection);
+
+		bufferSetup 		= false;
+		newFrame			= false;
+		latestBufferLength 	= 0;
+
+		hEvent = CreateEvent(NULL, true, false, NULL);
+	}
+
+
+	//------------------------------------------------
+	~SampleGrabberCallback(){
+		ptrBuffer = NULL;
+		DeleteCriticalSection(&critSection);
+		CloseHandle(hEvent);
+		if(bufferSetup){
+			delete [] pixels;
+		}
+	}
+
+
+	//------------------------------------------------
+	bool setupBuffer(int numBytesIn){
+		if(bufferSetup){
+			return false;
+		}else{
+			numBytes 			= numBytesIn;
+			pixels 				= new unsigned char[numBytes];
+			bufferSetup 		= true;
+			newFrame			= false;
+			latestBufferLength 	= 0;
+		}
+		return true;
+	}
+
+
+	//------------------------------------------------
+    STDMETHODIMP_(ULONG) AddRef() { return 1; }
+    STDMETHODIMP_(ULONG) Release() { return 2; }
+
+
+	//------------------------------------------------
+    STDMETHODIMP QueryInterface(REFIID riid, void **ppvObject){
+        *ppvObject = static_cast<ISampleGrabberCB*>(this);
+        return S_OK;
+    }
+
+
+    //This method is meant to have less overhead
+	//------------------------------------------------
+    STDMETHODIMP SampleCB(double Time, IMediaSample *pSample){
+    	if(WaitForSingleObject(hEvent, 0) == WAIT_OBJECT_0) return S_OK;
+
+    	HRESULT hr = pSample->GetPointer(&ptrBuffer);
+
+    	if(hr == S_OK){
+	    	latestBufferLength = pSample->GetActualDataLength();
+	      	if(latestBufferLength == numBytes){
+				EnterCriticalSection(&critSection);
+	      			memcpy(pixels, ptrBuffer, latestBufferLength);
+					newFrame	= true;
+				LeaveCriticalSection(&critSection);
+				SetEvent(hEvent);
+			}else{
+				printf("ERROR: SampleCB() - buffer sizes do not match\n");
+			}
+		}
+
+		return S_OK;
+    }
+
+
+    //This method is meant to have more overhead
+    STDMETHODIMP BufferCB(double Time, BYTE *pBuffer, long BufferLen){
+    	return E_NOTIMPL;
+    }
+
+	int latestBufferLength;
+	int numBytes;
+	bool newFrame;
+	bool bufferSetup;
+	unsigned char * pixels;
+	unsigned char * ptrBuffer;
+	CRITICAL_SECTION critSection;
+	HANDLE hEvent;
+};
+
+
+
 videoInputCamera::videoInputCamera(CameraConfig *cam_cfg):CameraEngine (cam_cfg)
 {
-	VI = new videoInput();
-	VI->setVerbose(false);
+	//VI = new videoInput();
+	//VI->setVerbose(false);
 	cam_buffer = NULL;
 	running = false;
+
+	pCaptureGraph      = NULL;	// Capture graph builder object
+	pGraph             = NULL;	// Graph builder object
+	pControl           = NULL;	// Media control object
+	pVideoInputFilter  = NULL; // Video Capture filter
+	pGrabber           = NULL; // Grabs frame
+	pDestFilter 		= NULL; // Null Renderer Filter
+	pGrabberF 			= NULL; // Grabber Filter
+	pMediaEvent		= NULL;
+	streamConf			= NULL;
+	pAmMediaType		= NULL;
+
+	//This is our callback class that processes the frame.
+	sgCallback			= new SampleGrabberCallback();
 
 	timeout= 2000;
 	lost_frames=0;
@@ -37,7 +211,7 @@ videoInputCamera::videoInputCamera(CameraConfig *cam_cfg):CameraEngine (cam_cfg)
 
 videoInputCamera::~videoInputCamera()
 {
-	delete VI;
+	//delete VI;
 	if (cam_buffer!=NULL) delete cam_buffer;
 }
 
@@ -772,23 +946,12 @@ bool videoInputCamera::initCamera() {
 
 	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cfg->device);
 	if (cfg_list.size()==0) return false;
-	sprintf(cfg->name,cfg_list[0].name);
 	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cfg,cfg_list);
 
-    GUID mediaSubtype = getMediaSubtype(cfg->cam_format);
-	VI->setRequestedMediaSubType(mediaSubtype);
-	VI->setIdealFramerate(this->cfg->device, cfg->cam_fps);
+	HRESULT hr = setupDevice();
+	if(FAILED(hr)) return false;
 
-	comInit();
-	bool bOk = VI->setupDevice(cfg->device, cfg->cam_width, cfg->cam_height);
-
-	if (bOk == true) {	
-		cfg->cam_width = VI->getWidth(cfg->device);
-		cfg->cam_height = VI->getHeight(cfg->device);
-	} else return false;
-
-	applyCameraSettings();
 	setupFrame();
 
 	if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
@@ -797,28 +960,608 @@ bool videoInputCamera::initCamera() {
 	return true;
 }
 
+bool videoInputCamera::setSizeAndSubtype() {
+
+	//store current mediatype
+	AM_MEDIA_TYPE * tmpType = NULL;
+	HRESULT	hr = streamConf->GetFormat(&tmpType);
+	if(hr != S_OK)return false;
+
+	VIDEOINFOHEADER *pVih =  reinterpret_cast<VIDEOINFOHEADER*>(pAmMediaType->pbFormat);
+	HEADER(pVih)->biWidth  = cfg->cam_width;
+	HEADER(pVih)->biHeight = cfg->cam_height;
+
+	pAmMediaType->formattype = FORMAT_VideoInfo;
+	pAmMediaType->majortype  = MEDIATYPE_Video;
+	pAmMediaType->subtype	 = getMediaSubtype(cfg->cam_format);
+
+	//buffer size
+	pAmMediaType->lSampleSize = cfg->cam_width* cfg->cam_height*3;
+
+	//set fps if requested
+	pVih->AvgTimePerFrame = (unsigned long)(10000000 /  cfg->cam_fps);
+
+	//okay lets try new size
+	hr = streamConf->SetFormat(pAmMediaType);
+	if(hr == S_OK){
+		if( tmpType != NULL )deleteMediaType(tmpType);
+		return true;
+	}else{
+		streamConf->SetFormat(tmpType);
+		if( tmpType != NULL )deleteMediaType(tmpType);
+	}
+
+	return false;
+}
+
+
+HRESULT videoInputCamera::setupDevice() {
+		
+	comInit();
+    GUID CAPTURE_MODE   = PIN_CATEGORY_CAPTURE; //Don't worry - it ends up being preview (which is faster)
+    //printf("SETUP: Setting up device %i\n",deviceID);
+
+	// CREATE THE GRAPH BUILDER //
+    // Create the filter graph manager and query for interfaces.
+    HRESULT hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void **)&pCaptureGraph);
+    if (FAILED(hr))	// FAILED is a macro that tests the return value
+    {
+        printf("ERROR - Could not create the Filter Graph Manager\n");
+        return hr;
+    }
+
+	//FITLER GRAPH MANAGER//
+    // Create the Filter Graph Manager.
+    hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void**)&pGraph);
+    if (FAILED(hr))
+    {
+		printf("ERROR - Could not add the graph builder!\n");
+	    stopDevice();
+        return hr;
+	}
+
+    //SET THE FILTERGRAPH//
+    hr = pCaptureGraph->SetFiltergraph(pGraph);
+	if (FAILED(hr))
+    {
+		printf("ERROR - Could not set filtergraph\n");
+	    stopDevice();
+        return hr;
+	}
+
+	//MEDIA CONTROL (START/STOPS STREAM)//
+	// Using QueryInterface on the graph builder,
+    // Get the Media Control object.
+    hr = pGraph->QueryInterface(IID_IMediaControl, (void **)&pControl);
+    if (FAILED(hr))
+    {
+        printf("ERROR - Could not create the Media Control object\n");
+       	stopDevice();
+        return hr;
+    }
+
+	char 	nDeviceName[255];
+	WCHAR 	wDeviceName[255];
+	memset(wDeviceName, 0, sizeof(WCHAR) * 255);
+	memset(nDeviceName, 0, sizeof(char) * 255);
+
+	//FIND VIDEO DEVICE AND ADD TO GRAPH//
+	//gets the device specified by the second argument.
+	hr = getDevice(&pVideoInputFilter, cfg->device, wDeviceName, nDeviceName);
+
+	if (SUCCEEDED(hr)){
+		sprintf(cfg->name,nDeviceName);
+		//printf("SETUP: %s\n", nDeviceName);
+		hr = pGraph->AddFilter(pVideoInputFilter, wDeviceName);
+	}else{
+        printf("ERROR - Could not find specified video device\n");
+        stopDevice();
+        return hr;
+	}
+
+	//LOOK FOR PREVIEW PIN IF THERE IS NONE THEN WE USE CAPTURE PIN AND THEN SMART TEE TO PREVIEW
+	IAMStreamConfig *streamConfTest = NULL;
+    hr = pCaptureGraph->FindInterface(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, pVideoInputFilter, IID_IAMStreamConfig, (void **)&streamConfTest);
+	if(FAILED(hr)){
+		//printf("SETUP: Couldn't find preview pin using SmartTee\n");
+	}else{
+		 CAPTURE_MODE = PIN_CATEGORY_PREVIEW;
+		 streamConfTest->Release();
+		 streamConfTest = NULL;
+	}
+
+	//CROSSBAR (SELECT PHYSICAL INPUT TYPE)//
+	//my own function that checks to see if the device can support a crossbar and if so it routes it.
+	//webcams tend not to have a crossbar so this function will also detect a webcams and not apply the crossbar
+	/*if(useCrossbar)
+	{
+		//printf("SETUP: Checking crossbar\n");
+		routeCrossbar(&VD->pCaptureGraph, &VD->pVideoInputFilter, VD->connection, CAPTURE_MODE);
+	}*/
+
+
+	//we do this because webcams don't have a preview mode
+	hr = pCaptureGraph->FindInterface(&CAPTURE_MODE, &MEDIATYPE_Video, pVideoInputFilter, IID_IAMStreamConfig, (void **)&streamConf);
+	if(FAILED(hr)){
+		printf("ERROR: Couldn't config the stream!\n");
+		stopDevice();
+		return hr;
+	}
+
+	//NOW LETS DEAL WITH GETTING THE RIGHT SIZE
+	hr = streamConf->GetFormat(&pAmMediaType);
+	if(FAILED(hr)){
+		printf("ERROR: Couldn't getFormat for pAmMediaType!\n");
+		stopDevice();
+		return hr;
+	}
+
+	if (!setSizeAndSubtype()) return false;
+		
+	//hr = streamConf->SetFormat(pAmMediaType);
+	VIDEOINFOHEADER *pVih =  reinterpret_cast<VIDEOINFOHEADER*>(pAmMediaType->pbFormat);
+	cfg->cam_width	=  HEADER(pVih)->biWidth;
+	cfg->cam_height	=  HEADER(pVih)->biHeight;
+	cfg->cam_fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame + 0.5f))/10.0f;
+
+	long bufferSize = cfg->cam_width*cfg->cam_height*3;
+	sgCallback->setupBuffer(bufferSize);
+
+	//SAMPLE GRABBER (ALLOWS US TO GRAB THE BUFFER)//
+	// Create the Sample Grabber.
+	hr = CoCreateInstance(CLSID_SampleGrabber, NULL, CLSCTX_INPROC_SERVER,IID_IBaseFilter, (void**)&pGrabberF);
+	if (FAILED(hr)){
+		printf("Could not Create Sample Grabber - CoCreateInstance()\n");
+		stopDevice();
+		return hr;
+	}
+
+	hr = pGraph->AddFilter(pGrabberF, L"Sample Grabber");
+	if (FAILED(hr)){
+		printf("Could not add Sample Grabber - AddFilter()\n");
+		stopDevice();
+		return hr;
+	}
+
+	hr = pGrabberF->QueryInterface(IID_ISampleGrabber, (void**)&pGrabber);
+	if (FAILED(hr)){
+		printf("ERROR: Could not query SampleGrabber\n");
+		stopDevice();
+		return hr;
+	}
+
+
+	//Set Params - One Shot should be false unless you want to capture just one buffer
+	hr = pGrabber->SetOneShot(FALSE);
+	hr = pGrabber->SetBufferSamples(FALSE);
+
+	//Tell the grabber to use our callback function - 0 is for SampleCB and 1 for BufferCB
+	//We use SampleCB
+	hr = pGrabber->SetCallback(sgCallback, 0);
+	if (FAILED(hr)) {
+		printf("ERROR: problem setting callback\n");
+		stopDevice();
+		return hr;
+	} /*else {
+		printf("SETUP: Capture callback set\n");
+	}*/
+
+	//MEDIA CONVERSION
+	//Get video properties from the stream's mediatype and apply to the grabber (otherwise we don't get an RGB image)
+	//zero the media type - lets try this :) - maybe this works?
+	AM_MEDIA_TYPE mt;
+	ZeroMemory(&mt,sizeof(AM_MEDIA_TYPE));
+
+	mt.majortype 	= MEDIATYPE_Video;
+	mt.subtype 		= MEDIASUBTYPE_RGB24;
+	mt.formattype 	= FORMAT_VideoInfo;
+
+	hr = pGrabber->SetMediaType(&mt);
+
+	//lets try freeing our stream conf here too
+	//this will fail if the device is already running
+	if(streamConf){
+		streamConf->Release();
+		streamConf = NULL;
+	}else{
+		printf("ERROR: connecting device - prehaps it is already being used?\n");
+		stopDevice();
+		return S_FALSE;
+	}
+
+	//NULL RENDERER//
+	//used to give the video stream somewhere to go to.
+	hr = CoCreateInstance(CLSID_NullRenderer, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)(&pDestFilter));
+	if (FAILED(hr)){
+		printf("ERROR: Could not create filter - NullRenderer\n");
+		stopDevice();
+		return hr;
+	}
+
+	hr = pGraph->AddFilter(pDestFilter, L"NullRenderer");
+	if (FAILED(hr)){
+		printf("ERROR: Could not add filter - NullRenderer\n");
+		stopDevice();
+		return hr;
+	}
+
+	//RENDER STREAM//
+	//This is where the stream gets put together.
+	hr = pCaptureGraph->RenderStream(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, pVideoInputFilter, pGrabberF, pDestFilter);
+
+	if (FAILED(hr)){
+		printf("ERROR: Could not connect pins - RenderStream()\n");
+		stopDevice();
+		return hr;
+	}
+
+
+	//EXP - lets try setting the sync source to null - and make it run as fast as possible
+	{
+		IMediaFilter *pMediaFilter = 0;
+		hr = pGraph->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
+		if (FAILED(hr)){
+			printf("ERROR: Could not get IID_IMediaFilter interface\n");
+		}else{
+			pMediaFilter->SetSyncSource(NULL);
+			pMediaFilter->Release();
+		}
+	}
+
+	//printf("SETUP: Device is setup and ready to capture.\n\n");
+
+	//Release filters - seen someone else do this
+	//looks like it solved the freezes
+
+	//if we release this then we don't have access to the settings
+	//we release our video input filter but then reconnect with it
+	//each time we need to use it
+	pVideoInputFilter->Release();
+	pVideoInputFilter = NULL;
+
+	pGrabberF->Release();
+	pGrabberF = NULL;
+
+	pDestFilter->Release();
+	pDestFilter = NULL;
+
+	return S_OK;
+}
+
+/*
+HRESULT videoInputCamera::routeCrossbar(ICaptureGraphBuilder2 **ppBuild, IBaseFilter **pVidInFilter, int conType, GUID captureMode){
+
+    //create local ICaptureGraphBuilder2
+	ICaptureGraphBuilder2 *pBuild = NULL;
+ 	pBuild = *ppBuild;
+
+ 	//create local IBaseFilter
+ 	IBaseFilter *pVidFilter = NULL;
+ 	pVidFilter = * pVidInFilter;
+
+	// Search upstream for a crossbar.
+	IAMCrossbar *pXBar1 = NULL;
+	HRESULT hr = pBuild->FindInterface(&LOOK_UPSTREAM_ONLY, NULL, pVidFilter,
+	        IID_IAMCrossbar, (void**)&pXBar1);
+	if (SUCCEEDED(hr))
+	{
+
+	    bool foundDevice = false;
+
+	    printf("SETUP: You are not a webcam! Setting Crossbar\n");
+	    pXBar1->Release();
+
+	    IAMCrossbar *Crossbar;
+	    hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Interleaved, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
+
+	    if(hr != NOERROR){
+	        hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Video, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
+		}
+
+		LONG lInpin, lOutpin;
+		hr = Crossbar->get_PinCounts(&lOutpin , &lInpin);
+
+		BOOL IPin=TRUE; LONG pIndex=0 , pRIndex=0 , pType=0;
+
+		while( pIndex < lInpin)
+		{
+			hr = Crossbar->get_CrossbarPinInfo( IPin , pIndex , &pRIndex , &pType);
+
+			if( pType == conType){
+					printf("SETUP: Found Physical Interface");
+
+					switch(conType){
+
+						case PhysConn_Video_Composite:
+							printf(" - Composite\n");
+							break;
+						case PhysConn_Video_SVideo:
+							printf(" - S-Video\n");
+							break;
+						case PhysConn_Video_Tuner:
+							printf(" - Tuner\n");
+							break;
+						case PhysConn_Video_USB:
+							printf(" - USB\n");
+							break;
+						case PhysConn_Video_1394:
+							printf(" - Firewire\n");
+							break;
+					}
+
+				foundDevice = true;
+				break;
+			}
+			pIndex++;
+
+		}
+
+		if(foundDevice){
+			BOOL OPin=FALSE; LONG pOIndex=0 , pORIndex=0 , pOType=0;
+			while( pOIndex < lOutpin)
+			{
+				hr = Crossbar->get_CrossbarPinInfo( OPin , pOIndex , &pORIndex , &pOType);
+				if( pOType == PhysConn_Video_VideoDecoder)
+					break;
+			}
+			Crossbar->Route(pOIndex,pIndex);
+		}else{
+			printf("SETUP: Didn't find specified Physical Connection type. Using Defualt. \n");
+		}
+
+		//we only free the crossbar when we close or restart the device
+		//we were getting a crash otherwise
+	    //if(Crossbar)Crossbar->Release();
+		//if(Crossbar)Crossbar = NULL;
+
+		if(pXBar1)pXBar1->Release();
+		if(pXBar1)pXBar1 = NULL;
+
+	}else{
+		printf("SETUP: You are a webcam or snazzy firewire cam! No Crossbar needed\n");
+		return hr;
+	}
+
+	return hr;
+}
+*/
+
+HRESULT videoInputCamera::stopDevice() {
+
+	HRESULT HR = NULL;
+
+	//Stop the callback and free it
+    if( (sgCallback) && (pGrabber) )
+    {
+        //printf("SETUP: freeing Grabber Callback\n");
+    	pGrabber->SetCallback(NULL, 1);
+        sgCallback->Release();
+		delete sgCallback;
+	}
+
+	//Check to see if the graph is running, if so stop it.
+ 	if( (pControl) )
+	{
+		HR = pControl->Pause();
+		if (FAILED(HR)) printf("ERROR - Could not pause pControl\n");
+
+		HR = pControl->Stop();
+		if (FAILED(HR)) printf("ERROR - Could not stop pControl\n");
+    }
+
+    //Disconnect filters from capture device
+    if( (pVideoInputFilter) ) NukeDownstream(pVideoInputFilter);
+
+	//Release and zero pointers to our filters etc
+	if( (pDestFilter) ){ 		//printf("SETUP: freeing Renderer \n");
+								(pDestFilter)->Release();
+								(pDestFilter) = 0;
+	}
+	if( (pVideoInputFilter) ){ 	//printf("SETUP: freeing Capture Source \n");
+								(pVideoInputFilter)->Release();
+								(pVideoInputFilter) = 0;
+	}
+	if( (pGrabberF) ){ 			//printf("SETUP: freeing Grabber Filter  \n");
+								(pGrabberF)->Release();
+								(pGrabberF) = 0;
+	}
+	if( (pGrabber) ){ 			//printf("SETUP: freeing Grabber  \n");
+								(pGrabber)->Release();
+								(pGrabber) = 0;
+	}
+	if( (pControl) ){ 			//printf("SETUP: freeing Control   \n");
+								(pControl)->Release();
+								(pControl) = 0;
+	}
+	if( (pMediaEvent) ){ 		//printf("SETUP: freeing Media Event  \n");
+								(pMediaEvent)->Release();
+								(pMediaEvent) = 0;
+	}
+	if( (streamConf) ){ 		//printf("SETUP: freeing Stream  \n");
+								(streamConf)->Release();
+								(streamConf) = 0;
+	}
+
+	if( (pAmMediaType) ){ 		//printf("SETUP: freeing Media Type  \n");
+								deleteMediaType(pAmMediaType);
+	}
+
+	if((pMediaEvent)){
+			//printf("SETUP: freeing Media Event  \n");
+			(pMediaEvent)->Release();
+			(pMediaEvent) = 0;
+	}
+
+	//Destroy the graph
+	if( (pGraph) )destroyGraph();
+
+	//Release and zero our capture graph and our main graph
+	if( (pCaptureGraph) ){ 		//printf("SETUP: freeing Capture Graph \n");
+								(pCaptureGraph)->Release();
+								(pCaptureGraph) = 0;
+	}
+	if( (pGraph) ){ 			//printf("SETUP: freeing Main Graph \n");
+								(pGraph)->Release();
+								(pGraph) = 0;
+	}
+
+	return S_OK;
+}
+
+void videoInputCamera::NukeDownstream(IBaseFilter *pBF){
+        IPin *pP, *pTo;
+        ULONG u;
+        IEnumPins *pins = NULL;
+        PIN_INFO pininfo;
+        HRESULT hr = pBF->EnumPins(&pins);
+        pins->Reset();
+        while (hr == NOERROR)
+        {
+                hr = pins->Next(1, &pP, &u);
+                if (hr == S_OK && pP)
+                {
+                        pP->ConnectedTo(&pTo);
+                        if (pTo)
+                        {
+                                hr = pTo->QueryPinInfo(&pininfo);
+                                if (hr == NOERROR)
+                                {
+                                        if (pininfo.dir == PINDIR_INPUT)
+                                        {
+                                                NukeDownstream(pininfo.pFilter);
+                                                pGraph->Disconnect(pTo);
+                                                pGraph->Disconnect(pP);
+                                                pGraph->RemoveFilter(pininfo.pFilter);
+                                        }
+                                        pininfo.pFilter->Release();
+										pininfo.pFilter = NULL;
+                                }
+                                pTo->Release();
+                        }
+                        pP->Release();
+                }
+        }
+        if (pins) pins->Release();
+}
+
+void videoInputCamera::destroyGraph(){
+	HRESULT hr = NULL;
+ 	int FuncRetval=0;
+ 	int NumFilters=0;
+
+	int i = 0;
+	while (hr == NOERROR)
+	{
+		IEnumFilters * pEnum = 0;
+		ULONG cFetched;
+
+		// We must get the enumerator again every time because removing a filter from the graph
+		// invalidates the enumerator. We always get only the first filter from each enumerator.
+		hr = pGraph->EnumFilters(&pEnum);
+		//if (FAILED(hr)) { printf("SETUP: pGraph->EnumFilters() failed. \n"); return; }
+
+		IBaseFilter * pFilter = NULL;
+		if (pEnum->Next(1, &pFilter, &cFetched) == S_OK)
+		{
+			FILTER_INFO FilterInfo={0};
+			hr = pFilter->QueryFilterInfo(&FilterInfo);
+			FilterInfo.pGraph->Release();
+
+			int count = 0;
+			char buffer[255];
+			memset(buffer, 0, 255 * sizeof(char));
+
+			while( FilterInfo.achName[count] != 0x00 )
+			{
+				buffer[count] = static_cast<char>(FilterInfo.achName[count]);
+				count++;
+			}
+
+			//printf("SETUP: removing filter %s...\n", buffer);
+			hr = pGraph->RemoveFilter(pFilter);
+			//if (FAILED(hr)) { printf("SETUP: pGraph->RemoveFilter() failed. \n"); return; }
+			//printf("SETUP: filter removed %s  \n",buffer);
+
+			pFilter->Release();
+			pFilter = NULL;
+		}
+		else hr = 1;
+		pEnum->Release();
+		pEnum = NULL;
+		i++;
+	}
+
+ return;
+}
+
+
 bool videoInputCamera::startCamera()
 { 
+	HRESULT hr = pControl->Run();
+
+	if (FAILED(hr)){
+		 //printf("ERROR: Could not start graph\n");
+		 stopDevice();
+		 return false;
+	}
+
+	applyCameraSettings();
+	std::cout << std::flush;
+	/*ResetEvent(sgCallback->hEvent);
+	DWORD result = -1;
+	int counter = 0;
+	//printf("init ");
+	while ( result != WAIT_OBJECT_0) {
+		result = WaitForSingleObject(sgCallback->hEvent, 100);
+
+		counter++;
+		//printf(".");
+		if (counter>100) return false;
+	} //printf(" done\n");
+	ResetEvent(sgCallback->hEvent);*/
+
 	running = true;
 	return true;
 }
 
+/*unsigned char* videoInputCamera::getPixelPointer(){
+
+	DWORD result = WaitForSingleObject(sgCallback->hEvent, 1000);
+	if( result != WAIT_OBJECT_0) return NULL;
+
+	unsigned char * src = sgCallback->pixels;
+	ResetEvent(sgCallback->hEvent);
+	sgCallback->newFrame = false;
+
+	return src;
+}*/
+
+bool videoInputCamera::isFrameNew(){
+
+
+	EnterCriticalSection(&sgCallback->critSection);
+		if  (sgCallback->newFrame) {
+			DWORD result = WaitForSingleObject(sgCallback->hEvent, 1000);
+			if( result != WAIT_OBJECT_0) {
+				LeaveCriticalSection(&sgCallback->critSection);
+				return false;
+			}
+
+			ResetEvent(sgCallback->hEvent);
+			sgCallback->newFrame = false;
+			LeaveCriticalSection(&sgCallback->critSection);
+			return true;
+		}
+	LeaveCriticalSection(&sgCallback->critSection);
+
+	return false;
+}
 unsigned char* videoInputCamera::getFrame()
 {
 
-	if (VI->isFrameNew(cfg->device)){
+	if (isFrameNew()){
 
-		//unsigned char *src = VI->getPixels(cfg->device,false,false);
-		unsigned char *src = VI->getPixelPointer(cfg->device);
-		if (src==NULL) {
-			if (lost_frames>timeout) { // give up after 1 second
-				disconnect = true;
-				running = false;
-			} lost_frames++;
-			Sleep(1);
-			return NULL;
-		}
-
+		unsigned char * src = sgCallback->pixels;
 		unsigned char *dest = cam_buffer;
 		if (!cfg->color) {
 
@@ -864,7 +1607,7 @@ bool videoInputCamera::closeCamera()
 	if (!disconnect) {
 		updateSettings();
 		CameraTool::saveSettings();
-		VI->stopDevice(cfg->device);
+		stopDevice();
 		comUnInit();
 	}
 	return true;

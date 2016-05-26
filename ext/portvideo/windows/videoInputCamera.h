@@ -19,13 +19,40 @@
 #ifndef videoInputCamera_H
 #define videoInputCamera_H
 
-#include <videoInput.h>
+#pragma comment(lib,"Strmiids.lib") 
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <wchar.h>
+#include <string>
+#include <vector>
+
+//this is for TryEnterCriticalSection
+#ifndef _WIN32_WINNT
+	#   define _WIN32_WINNT 0x501
+#endif
+#include <windows.h>
+
+//#include <videoInput.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "CameraEngine.h"
 
-#define FLAGS_AUTO        0X0001L
-#define FLAGS_MANUAL      0X0002L
+//allows us to directShow classes here with the includes in the cpp
+struct ICaptureGraphBuilder2;
+struct IGraphBuilder;
+struct IBaseFilter;
+struct IAMCrossbar;
+struct IMediaControl;
+struct ISampleGrabber;
+struct IMediaEventEx;
+struct IAMStreamConfig;
+struct _AMMediaType;
+class SampleGrabberCallback;
+typedef _AMMediaType AM_MEDIA_TYPE;
+
 
 static int comCount = 0;
 
@@ -66,7 +93,7 @@ public:
 private:
 
 	bool disconnect;
-	videoInput *VI;
+	//videoInput *VI;
 
 	static bool comInit();
 	static bool comUnInit();
@@ -90,6 +117,33 @@ private:
 	unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 );
 
 	static void deleteMediaType(AM_MEDIA_TYPE *pmt);
+	void NukeDownstream(IBaseFilter *pBF);
+	void destroyGraph();
+
+	//HRESULT routeCrossbar(ICaptureGraphBuilder2 **ppBuild, IBaseFilter **pVidInFilter, int conType, GUID captureMode);
+	HRESULT setupDevice();
+	HRESULT stopDevice();
+	bool setSizeAndSubtype();
+
+
+	ICaptureGraphBuilder2 *pCaptureGraph;	// Capture graph builder object
+	IGraphBuilder *pGraph;					// Graph builder object
+	IMediaControl *pControl;				// Media control object
+	IBaseFilter *pVideoInputFilter;  		// Video Capture filter
+	IBaseFilter *pGrabberF;
+	IBaseFilter * pDestFilter;
+	IAMStreamConfig *streamConf;
+	ISampleGrabber * pGrabber;    			// Grabs frame
+	AM_MEDIA_TYPE * pAmMediaType;
+	IMediaEventEx * pMediaEvent;
+	SampleGrabberCallback * sgCallback;
+
+	//unsigned char *pixels;
+	//char *pBuffer;
+
+	bool isFrameNew();
+	//unsigned char* videoInputCamera::getPixelPointer();
+
 };
 
 #endif
