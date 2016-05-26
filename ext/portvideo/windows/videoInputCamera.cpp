@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "videoInputCamera.h"
 #include "CameraTool.h"
+#include "math.h"
 
 #include <dshow.h>
 #include <process.h>
@@ -679,7 +680,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 							pVih->AvgTimePerFrame = iv;
 							hr = pStreamConf->SetFormat(pmtConfig);
 							if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-							float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+							float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame + 0.5f))/10.0f;
 							if (fps!=last_fps) {
 								cam_cfg.cam_fps = fps;
 								fmt_list.push_back(cam_cfg);
@@ -702,7 +703,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 								pVih->AvgTimePerFrame = iv;
 								hr = pStreamConf->SetFormat(pmtConfig);
 								if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-								float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+								float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame + 0.5f))/10.0f;
 								if (fps!=last_fps) {
 									cam_cfg.cam_fps = fps;
 									fmt_list.push_back(cam_cfg);
