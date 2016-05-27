@@ -17,82 +17,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "videoInputCamera.h"
-#include "CameraTool.h"
-#include "math.h"
-
-#include <dshow.h>
-#include <process.h>
-
-//#include "streams.h"
-#pragma include_alias( "dxtrans.h", "qedit.h" )
-#define __IDxtCompositor_INTERFACE_DEFINED__
-#define __IDxtAlphaSetter_INTERFACE_DEFINED__
-#define __IDxtJpeg_INTERFACE_DEFINED__
-#define __IDxtKey_INTERFACE_DEFINED__
-#include <uuids.h>
-#include <aviriff.h>
-#include <windows.h>
-
-#ifndef HEADER
-#define HEADER(pVideoInfo) (&(((VIDEOINFOHEADER *) (pVideoInfo))->bmiHeader))
-#endif
-
-// Due to a missing qedit.h in recent Platform SDKs, we've replicated the relevant contents here
-// #include <qedit.h>
-MIDL_INTERFACE("0579154A-2B53-4994-B0D0-E773148EFF85")
-ISampleGrabberCB : public IUnknown
-{
-  public:
-    virtual HRESULT STDMETHODCALLTYPE SampleCB(
-        double SampleTime,
-        IMediaSample *pSample) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE BufferCB(
-        double SampleTime,
-        BYTE *pBuffer,
-        long BufferLen) = 0;
-
-};
-
-MIDL_INTERFACE("6B652FFF-11FE-4fce-92AD-0266B5D7C78F")
-ISampleGrabber : public IUnknown
-{
-  public:
-    virtual HRESULT STDMETHODCALLTYPE SetOneShot(
-        BOOL OneShot) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetMediaType(
-        const AM_MEDIA_TYPE *pType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetConnectedMediaType(
-        AM_MEDIA_TYPE *pType) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetBufferSamples(
-        BOOL BufferThem) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentBuffer(
-        /* [out][in] */ long *pBufferSize,
-        /* [out] */ long *pBuffer) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentSample(
-        /* [retval][out] */ IMediaSample **ppSample) = 0;
-
-    virtual HRESULT STDMETHODCALLTYPE SetCallback(
-        ISampleGrabberCB *pCallback,
-        long WhichMethodToCallback) = 0;
-
-};
-EXTERN_C const CLSID CLSID_SampleGrabber;
-EXTERN_C const IID IID_ISampleGrabber;
-EXTERN_C const CLSID CLSID_NullRenderer;
 
 //////////////////////////////  CALLBACK  ////////////////////////////////
-
-//Callback class
 class SampleGrabberCallback : public ISampleGrabberCB{
 public:
 
-	//------------------------------------------------
 	SampleGrabberCallback(){
 		InitializeCriticalSection(&critSection);
 
@@ -103,8 +32,6 @@ public:
 		hEvent = CreateEvent(NULL, true, false, NULL);
 	}
 
-
-	//------------------------------------------------
 	~SampleGrabberCallback(){
 		ptrBuffer = NULL;
 		DeleteCriticalSection(&critSection);
@@ -114,8 +41,6 @@ public:
 		}
 	}
 
-
-	//------------------------------------------------
 	bool setupBuffer(int numBytesIn){
 		if(bufferSetup){
 			return false;
@@ -129,21 +54,14 @@ public:
 		return true;
 	}
 
-
-	//------------------------------------------------
     STDMETHODIMP_(ULONG) AddRef() { return 1; }
     STDMETHODIMP_(ULONG) Release() { return 2; }
 
-
-	//------------------------------------------------
     STDMETHODIMP QueryInterface(REFIID riid, void **ppvObject){
         *ppvObject = static_cast<ISampleGrabberCB*>(this);
         return S_OK;
     }
 
-
-    //This method is meant to have less overhead
-	//------------------------------------------------
     STDMETHODIMP SampleCB(double Time, IMediaSample *pSample){
     	if(WaitForSingleObject(hEvent, 0) == WAIT_OBJECT_0) return S_OK;
 
@@ -165,8 +83,6 @@ public:
 		return S_OK;
     }
 
-
-    //This method is meant to have more overhead
     STDMETHODIMP BufferCB(double Time, BYTE *pBuffer, long BufferLen){
     	return E_NOTIMPL;
     }
@@ -180,7 +96,7 @@ public:
 	CRITICAL_SECTION critSection;
 	HANDLE hEvent;
 };
-
+//////////////////////////////  CALLBACK  ////////////////////////////////
 
 
 videoInputCamera::videoInputCamera(CameraConfig *cam_cfg):CameraEngine (cam_cfg)
@@ -208,116 +124,6 @@ videoInputCamera::videoInputCamera(CameraConfig *cam_cfg):CameraEngine (cam_cfg)
 videoInputCamera::~videoInputCamera()
 {
 	if (cam_buffer!=NULL) delete cam_buffer;
-}
-
-void videoInputCamera::deleteMediaType(AM_MEDIA_TYPE *pmt)
-{
-	if (pmt != NULL) {
-		if (pmt->cbFormat != 0) {
-			CoTaskMemFree((PVOID)pmt->pbFormat);
-			pmt->cbFormat = 0;
-			pmt->pbFormat = NULL;
-		}
-		if (pmt->pUnk != NULL) {
-			pmt->pUnk->Release();
-			pmt->pUnk = NULL;
-		}
-
-		CoTaskMemFree(pmt);
-	}
-}
-
-bool videoInputCamera::comInit(){
-
-	if(comCount == 0  ){
-		HRESULT hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
-		if (FAILED(hr)) return false;
-	}
-
-	comCount++;
-	return true;
-}
-
-bool videoInputCamera::comUnInit(){
-	if(comCount > 0)comCount--;	
-
-	if(comCount == 0){
-		CoUninitialize();
-		return true;
-	}
-
-	return false;
-}
-
-HRESULT videoInputCamera::getDevice(IBaseFilter** gottaFilter, int deviceId, WCHAR * wDeviceName, char * nDeviceName){
-	BOOL done = false;
-	int deviceCounter = 0;
-
-	// Create the System Device Enumerator.
-	ICreateDevEnum *pSysDevEnum = NULL;
-	HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-
-	// Obtain a class enumerator for the video input category.
-	IEnumMoniker *pEnumCat = NULL;
-	hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
-
-	if (hr == S_OK)
-	{
-		// Enumerate the monikers.
-		IMoniker *pMoniker = NULL;
-		ULONG cFetched;
-		while ((pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) && (!done))
-		{
-			if(deviceCounter == deviceId)
-			{
-				// Bind the first moniker to an object
-				IPropertyBag *pPropBag;
-				hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
-				if (SUCCEEDED(hr))
-				{
-					// To retrieve the filter's friendly name, do the following:
-					VARIANT varName;
-					VariantInit(&varName);
-					hr = pPropBag->Read(L"FriendlyName", &varName, 0);
-					if (SUCCEEDED(hr))
-					{
-
-						//copy the name to nDeviceName & wDeviceName
-						int count = 0;
-						while( varName.bstrVal[count] != 0x00 ) {
-							wDeviceName[count] = varName.bstrVal[count];
-							nDeviceName[count] = (char)varName.bstrVal[count];
-							count++;
-						}
-
-						// We found it, so send it back to the caller
-						hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter, (void**)gottaFilter);
-						done = true;
-					}
-					VariantClear(&varName);
-					pPropBag->Release();
-					pPropBag = NULL;
-					pMoniker->Release();
-					pMoniker = NULL;
-				}
-			}
-			deviceCounter++;
-		}
-		pEnumCat->Release();
-		pEnumCat = NULL;
-	}
-	pSysDevEnum->Release();
-	pSysDevEnum = NULL;
-
-	if (done) {
-		return hr;	// found it, return native error
-	} else {
-		return VFW_E_NOT_FOUND;	// didn't find it error
-	}
 }
 
 int videoInputCamera::getDeviceCount() {
@@ -360,161 +166,6 @@ int videoInputCamera::getDeviceCount() {
 
 	comUnInit();
 	return deviceCount;
-}
-
-void videoInputCamera::makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3,
-								unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
-								unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 ) {
-
-	guid->Data1 = Data1;
-	guid->Data2 = Data2;
-	guid->Data3 = Data3;
-	guid->Data4[0] = b0; guid->Data4[1] = b1; guid->Data4[2] = b2; guid->Data4[3] = b3;
-	guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
-}
-
-
-GUID videoInputCamera::getMediaSubtype(int type) {
-
-		int iCount = 0;
-		int iSize = 0;
-		HRESULT hr = pStreamConfig->GetNumberOfCapabilities(&iCount, &iSize);
-
-		if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
-		{
-			GUID lastFormat = MEDIASUBTYPE_None;
-			for (int iFormat = 0; iFormat < iCount; iFormat+=2)
-			{
-				VIDEO_STREAM_CONFIG_CAPS scc;
-				AM_MEDIA_TYPE *pmtConfig;
-				hr =  pStreamConfig->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
-				if (SUCCEEDED(hr)){
-
-					if ( pmtConfig->subtype != lastFormat) {
-
-						if (type == getMediaSubtype(pmtConfig->subtype)) {
-
-							GUID mediaSubtype = pmtConfig->subtype;
-							deleteMediaType(pmtConfig);
-							return mediaSubtype;
-						}
-						lastFormat = pmtConfig->subtype;
-					}
-					deleteMediaType(pmtConfig);
-				}
-			}
-		}
-
-
-	return MEDIASUBTYPE_NULL;
-}
-
-int videoInputCamera::getMediaSubtype(GUID type){
-
-	GUID MEDIASUBTYPE_Y800, MEDIASUBTYPE_Y8, MEDIASUBTYPE_GREY;
-	makeGUID( &MEDIASUBTYPE_Y800, 0x30303859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
-	makeGUID( &MEDIASUBTYPE_Y8, 0x20203859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
-	makeGUID( &MEDIASUBTYPE_GREY, 0x59455247, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
-
-	if ( type == MEDIASUBTYPE_RGB24) return FORMAT_RGB;
-	else if(type == MEDIASUBTYPE_RGB32) return FORMAT_RGBA;
-	else if(type == MEDIASUBTYPE_RGB555) return 0;
-	else if(type == MEDIASUBTYPE_RGB565) return 0;
-	else if(type == MEDIASUBTYPE_YUY2) return FORMAT_UYVY;
-	else if(type == MEDIASUBTYPE_YVYU) return FORMAT_YVYU;
-	else if(type == MEDIASUBTYPE_YUYV) return FORMAT_YUYV;
-	else if(type == MEDIASUBTYPE_IYUV) return FORMAT_420P;
-	else if(type == MEDIASUBTYPE_UYVY) return FORMAT_UYVY;
-	else if(type == MEDIASUBTYPE_YV12) return 0;
-	else if(type == MEDIASUBTYPE_YVU9) return 0;
-	else if(type == MEDIASUBTYPE_Y411) return FORMAT_YUV411;
-	else if(type == MEDIASUBTYPE_Y41P) return FORMAT_410P;
-	else if(type == MEDIASUBTYPE_Y211) return FORMAT_YUV211;
-	else if(type == MEDIASUBTYPE_AYUV) return FORMAT_YUV444;
-	else if(type == MEDIASUBTYPE_Y800) return FORMAT_GRAY;
-	else if(type == MEDIASUBTYPE_Y8)   return FORMAT_GRAY;
-	else if(type == MEDIASUBTYPE_GREY) return FORMAT_GRAY;
-	else if(type == MEDIASUBTYPE_MJPG) return FORMAT_MJPEG;
-	else if(type == MEDIASUBTYPE_H264) return FORMAT_H264;
-	else return 0;
-}
-
-bool videoInputCamera::getVideoSettingValue(long prop, long &value, long &flag){
-
-	IAMVideoProcAmp *lpAMVideoProcAmp = NULL;
-	HRESULT hr = pInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&lpAMVideoProcAmp);
-	if (FAILED(hr)) return false;
-
-	hr = lpAMVideoProcAmp->Get(prop, &value, &flag);
-	lpAMVideoProcAmp->Release();
-
-	if(FAILED(hr)) return false;
-	else return true;
-}
-
-bool videoInputCamera::getVideoControlValue( long prop, long &value, long &flag){
-
-	IAMCameraControl *lpCameraControl = NULL;
-	HRESULT hr = pInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&lpCameraControl);
-	if (FAILED(hr)) return false;
-
-	hr = lpCameraControl->Get(prop, &value, &flag);
-	lpCameraControl->Release();
-
-	if (FAILED(hr)) return false;
-	else return true;
-}
-
-bool videoInputCamera::getVideoSettingRange(long prop, long &min, long &max, long &step, long &flag, long &dflt) {
-
-	IAMVideoProcAmp *lpAMVideoProcAmp = NULL;
-	HRESULT hr = pInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&lpAMVideoProcAmp);
-	if (FAILED(hr)) return false;
-
-	hr = lpAMVideoProcAmp->GetRange(prop, &min, &max, &step, &dflt, &flag);
-	lpAMVideoProcAmp->Release();
-
-	if (FAILED(hr)) return false;
-	else return true;
-}
-
-bool videoInputCamera::getVideoControlRange(long prop, long &min, long &max, long &step, long &flag, long &dflt) {
-
-	IAMCameraControl *lpCameraControl = NULL;
-	HRESULT hr = pInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&lpCameraControl);
-	if (FAILED(hr)) return false;
-
-	hr = lpCameraControl->GetRange(prop, &min, &max, &step, &dflt, &flag);
-	lpCameraControl->Release();
-
-	if (FAILED(hr)) return false;
-	else return true;
-}
-
-bool videoInputCamera::setVideoSettingValue(long prop, long value, long flag){
-
-	IAMVideoProcAmp *lpAMVideoProcAmp = NULL;
-	HRESULT hr = pInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&lpAMVideoProcAmp);
-	if (FAILED(hr)) return false;
-
-	hr = lpAMVideoProcAmp->Set(prop, value, flag);
-	lpAMVideoProcAmp->Release();
-
-	if (FAILED(hr)) return false;
-	else return true;
-}
-
-bool videoInputCamera::setVideoControlValue(long prop, long value, long flag){
-
-	IAMCameraControl *lpCameraControl = NULL;
-	HRESULT hr = pInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&lpCameraControl);
-	if (FAILED(hr)) return false;
-
-	hr = lpCameraControl->Set(prop, value, flag);
-	lpCameraControl->Release();
-
-	if (FAILED(hr)) return false;
-	else return true;
 }
 
 std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
@@ -744,41 +395,6 @@ bool videoInputCamera::initCamera() {
 	return true;
 }
 
-bool videoInputCamera::setSizeAndSubtype() {
-
-	//store current mediatype
-	AM_MEDIA_TYPE * tmpType = NULL;
-	HRESULT	hr = pStreamConfig->GetFormat(&tmpType);
-	if(hr != S_OK)return false;
-
-	VIDEOINFOHEADER *pVih =  reinterpret_cast<VIDEOINFOHEADER*>(pAmMediaType->pbFormat);
-	HEADER(pVih)->biWidth  = cfg->cam_width;
-	HEADER(pVih)->biHeight = cfg->cam_height;
-
-	pAmMediaType->formattype = FORMAT_VideoInfo;
-	pAmMediaType->majortype  = MEDIATYPE_Video;
-	pAmMediaType->subtype	 = getMediaSubtype(cfg->cam_format);
-
-	//buffer size
-	pAmMediaType->lSampleSize = cfg->cam_width* cfg->cam_height*3;
-
-	//set fps if requested
-	pVih->AvgTimePerFrame = (unsigned long)(10000000 /  cfg->cam_fps);
-
-	//okay lets try new size
-	hr = pStreamConfig->SetFormat(pAmMediaType);
-	if(hr == S_OK){
-		if( tmpType != NULL )deleteMediaType(tmpType);
-		return true;
-	}else{
-		pStreamConfig->SetFormat(tmpType);
-		if( tmpType != NULL )deleteMediaType(tmpType);
-	}
-
-	return false;
-}
-
-
 HRESULT videoInputCamera::setupDevice() {
 		
 	comInit();
@@ -1007,104 +623,6 @@ HRESULT videoInputCamera::setupDevice() {
 	return S_OK;
 }
 
-/*
-HRESULT videoInputCamera::routeCrossbar(ICaptureGraphBuilder2 **ppBuild, IBaseFilter **pVidInFilter, int conType, GUID captureMode){
-
-    //create local ICaptureGraphBuilder2
-	ICaptureGraphBuilder2 *pBuild = NULL;
- 	pBuild = *ppBuild;
-
- 	//create local IBaseFilter
- 	IBaseFilter *pVidFilter = NULL;
- 	pVidFilter = * pVidInFilter;
-
-	// Search upstream for a crossbar.
-	IAMCrossbar *pXBar1 = NULL;
-	HRESULT hr = pBuild->FindInterface(&LOOK_UPSTREAM_ONLY, NULL, pVidFilter,
-	        IID_IAMCrossbar, (void**)&pXBar1);
-	if (SUCCEEDED(hr))
-	{
-
-	    bool foundDevice = false;
-
-	    printf("SETUP: You are not a webcam! Setting Crossbar\n");
-	    pXBar1->Release();
-
-	    IAMCrossbar *Crossbar;
-	    hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Interleaved, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
-
-	    if(hr != NOERROR){
-	        hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Video, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
-		}
-
-		LONG lInpin, lOutpin;
-		hr = Crossbar->get_PinCounts(&lOutpin , &lInpin);
-
-		BOOL IPin=TRUE; LONG pIndex=0 , pRIndex=0 , pType=0;
-
-		while( pIndex < lInpin)
-		{
-			hr = Crossbar->get_CrossbarPinInfo( IPin , pIndex , &pRIndex , &pType);
-
-			if( pType == conType){
-					printf("SETUP: Found Physical Interface");
-
-					switch(conType){
-
-						case PhysConn_Video_Composite:
-							printf(" - Composite\n");
-							break;
-						case PhysConn_Video_SVideo:
-							printf(" - S-Video\n");
-							break;
-						case PhysConn_Video_Tuner:
-							printf(" - Tuner\n");
-							break;
-						case PhysConn_Video_USB:
-							printf(" - USB\n");
-							break;
-						case PhysConn_Video_1394:
-							printf(" - Firewire\n");
-							break;
-					}
-
-				foundDevice = true;
-				break;
-			}
-			pIndex++;
-
-		}
-
-		if(foundDevice){
-			BOOL OPin=FALSE; LONG pOIndex=0 , pORIndex=0 , pOType=0;
-			while( pOIndex < lOutpin)
-			{
-				hr = Crossbar->get_CrossbarPinInfo( OPin , pOIndex , &pORIndex , &pOType);
-				if( pOType == PhysConn_Video_VideoDecoder)
-					break;
-			}
-			Crossbar->Route(pOIndex,pIndex);
-		}else{
-			printf("SETUP: Didn't find specified Physical Connection type. Using Defualt. \n");
-		}
-
-		//we only free the crossbar when we close or restart the device
-		//we were getting a crash otherwise
-	    //if(Crossbar)Crossbar->Release();
-		//if(Crossbar)Crossbar = NULL;
-
-		if(pXBar1)pXBar1->Release();
-		if(pXBar1)pXBar1 = NULL;
-
-	}else{
-		printf("SETUP: You are a webcam or snazzy firewire cam! No Crossbar needed\n");
-		return hr;
-	}
-
-	return hr;
-}
-*/
-
 HRESULT videoInputCamera::stopDevice() {
 
 	HRESULT HR = NULL;
@@ -1177,93 +695,6 @@ HRESULT videoInputCamera::stopDevice() {
 	return S_OK;
 }
 
-void videoInputCamera::NukeDownstream(IBaseFilter *pBF){
-        IPin *pP, *pTo;
-        ULONG u;
-        IEnumPins *pins = NULL;
-        PIN_INFO pininfo;
-        HRESULT hr = pBF->EnumPins(&pins);
-        pins->Reset();
-        while (hr == NOERROR)
-        {
-                hr = pins->Next(1, &pP, &u);
-                if (hr == S_OK && pP)
-                {
-                        pP->ConnectedTo(&pTo);
-                        if (pTo)
-                        {
-                                hr = pTo->QueryPinInfo(&pininfo);
-                                if (hr == NOERROR)
-                                {
-                                        if (pininfo.dir == PINDIR_INPUT)
-                                        {
-                                                NukeDownstream(pininfo.pFilter);
-                                                pGraphBuilder->Disconnect(pTo);
-                                                pGraphBuilder->Disconnect(pP);
-                                                pGraphBuilder->RemoveFilter(pininfo.pFilter);
-                                        }
-                                        pininfo.pFilter->Release();
-										pininfo.pFilter = NULL;
-                                }
-                                pTo->Release();
-                        }
-                        pP->Release();
-                }
-        }
-        if (pins) pins->Release();
-}
-
-void videoInputCamera::destroyGraph(){
-	HRESULT hr = NULL;
- 	int FuncRetval=0;
- 	int NumFilters=0;
-
-	int i = 0;
-	while (hr == NOERROR)
-	{
-		IEnumFilters * pEnum = 0;
-		ULONG cFetched;
-
-		// We must get the enumerator again every time because removing a filter from the graph
-		// invalidates the enumerator. We always get only the first filter from each enumerator.
-		hr = pGraphBuilder->EnumFilters(&pEnum);
-		//if (FAILED(hr)) { printf("SETUP: pGraph->EnumFilters() failed. \n"); return; }
-
-		IBaseFilter * pFilter = NULL;
-		if (pEnum->Next(1, &pFilter, &cFetched) == S_OK)
-		{
-			FILTER_INFO FilterInfo={0};
-			hr = pFilter->QueryFilterInfo(&FilterInfo);
-			FilterInfo.pGraph->Release();
-
-			int count = 0;
-			char buffer[255];
-			memset(buffer, 0, 255 * sizeof(char));
-
-			while( FilterInfo.achName[count] != 0x00 )
-			{
-				buffer[count] = static_cast<char>(FilterInfo.achName[count]);
-				count++;
-			}
-
-			//printf("SETUP: removing filter %s...\n", buffer);
-			hr = pGraphBuilder->RemoveFilter(pFilter);
-			//if (FAILED(hr)) { printf("SETUP: pGraph->RemoveFilter() failed. \n"); return; }
-			//printf("SETUP: filter removed %s  \n",buffer);
-
-			pFilter->Release();
-			pFilter = NULL;
-		}
-		else hr = 1;
-		pEnum->Release();
-		pEnum = NULL;
-		i++;
-	}
-
- return;
-}
-
-
 bool videoInputCamera::startCamera()
 { 
 	HRESULT hr = pMediaControl->Run();
@@ -1275,6 +706,7 @@ bool videoInputCamera::startCamera()
 	}
 
 	applyCameraSettings();
+
 	/*std::cout << std::flush;
 	ResetEvent(sgCallback->hEvent);
 	DWORD result = -1;
@@ -1292,18 +724,6 @@ bool videoInputCamera::startCamera()
 	running = true;
 	return true;
 }
-
-/*unsigned char* videoInputCamera::getPixelPointer(){
-
-	DWORD result = WaitForSingleObject(sgCallback->hEvent, 1000);
-	if( result != WAIT_OBJECT_0) return NULL;
-
-	unsigned char * src = sgCallback->pixels;
-	ResetEvent(sgCallback->hEvent);
-	sgCallback->newFrame = false;
-
-	return src;
-}*/
 
 bool videoInputCamera::isFrameNew(){
 
@@ -1426,21 +846,11 @@ void __cdecl videoInputCamera::settingsThread(void * objPtr) {
 
 	IBaseFilter *lpInputFilter = (IBaseFilter *)objPtr;
 	ShowFilterPropertyPages(lpInputFilter);
-	//if(lpInputFilter) lpInputFilter->Release();
 	return;
 }
 
 bool videoInputCamera::showSettingsDialog(bool lock) {
 	if (running) {
-
-		/*HANDLE sThread;
-		IBaseFilter *lpInputFilter = NULL;
-
-		HRESULT hr = getDevice(&lpInputFilter, cfg->device);
-		if(hr == S_OK){
-			sThread = (HANDLE)_beginthread(settingsThread, 0, (void *)lpInputFilter);
-		}*/
-
 		HANDLE sThread = (HANDLE)_beginthread(settingsThread, 0, (void *)pInputFilter);
 	}
 	return lock;
@@ -1677,7 +1087,6 @@ bool videoInputCamera::setDefaultCameraSetting(int mode) {
     return true;
 }
 
-
 int videoInputCamera::getDefaultCameraSetting(int mode) {
 
 	long min,max,step,dflt,flag;
@@ -1700,3 +1109,486 @@ int videoInputCamera::getDefaultCameraSetting(int mode) {
 
 	return (int)dflt;
 }
+
+bool videoInputCamera::getVideoSettingValue(long prop, long &value, long &flag){
+
+	IAMVideoProcAmp *lpAMVideoProcAmp = NULL;
+	HRESULT hr = pInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&lpAMVideoProcAmp);
+	if (FAILED(hr)) return false;
+
+	hr = lpAMVideoProcAmp->Get(prop, &value, &flag);
+	lpAMVideoProcAmp->Release();
+
+	if(FAILED(hr)) return false;
+	else return true;
+}
+
+bool videoInputCamera::getVideoControlValue( long prop, long &value, long &flag){
+
+	IAMCameraControl *lpCameraControl = NULL;
+	HRESULT hr = pInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&lpCameraControl);
+	if (FAILED(hr)) return false;
+
+	hr = lpCameraControl->Get(prop, &value, &flag);
+	lpCameraControl->Release();
+
+	if (FAILED(hr)) return false;
+	else return true;
+}
+
+bool videoInputCamera::getVideoSettingRange(long prop, long &min, long &max, long &step, long &flag, long &dflt) {
+
+	IAMVideoProcAmp *lpAMVideoProcAmp = NULL;
+	HRESULT hr = pInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&lpAMVideoProcAmp);
+	if (FAILED(hr)) return false;
+
+	hr = lpAMVideoProcAmp->GetRange(prop, &min, &max, &step, &dflt, &flag);
+	lpAMVideoProcAmp->Release();
+
+	if (FAILED(hr)) return false;
+	else return true;
+}
+
+bool videoInputCamera::getVideoControlRange(long prop, long &min, long &max, long &step, long &flag, long &dflt) {
+
+	IAMCameraControl *lpCameraControl = NULL;
+	HRESULT hr = pInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&lpCameraControl);
+	if (FAILED(hr)) return false;
+
+	hr = lpCameraControl->GetRange(prop, &min, &max, &step, &dflt, &flag);
+	lpCameraControl->Release();
+
+	if (FAILED(hr)) return false;
+	else return true;
+}
+
+bool videoInputCamera::setVideoSettingValue(long prop, long value, long flag){
+
+	IAMVideoProcAmp *lpAMVideoProcAmp = NULL;
+	HRESULT hr = pInputFilter->QueryInterface(IID_IAMVideoProcAmp, (void**)&lpAMVideoProcAmp);
+	if (FAILED(hr)) return false;
+
+	hr = lpAMVideoProcAmp->Set(prop, value, flag);
+	lpAMVideoProcAmp->Release();
+
+	if (FAILED(hr)) return false;
+	else return true;
+}
+
+bool videoInputCamera::setVideoControlValue(long prop, long value, long flag){
+
+	IAMCameraControl *lpCameraControl = NULL;
+	HRESULT hr = pInputFilter->QueryInterface(IID_IAMCameraControl, (void**)&lpCameraControl);
+	if (FAILED(hr)) return false;
+
+	hr = lpCameraControl->Set(prop, value, flag);
+	lpCameraControl->Release();
+
+	if (FAILED(hr)) return false;
+	else return true;
+}
+
+void videoInputCamera::deleteMediaType(AM_MEDIA_TYPE *pmt)
+{
+	if (pmt != NULL) {
+		if (pmt->cbFormat != 0) {
+			CoTaskMemFree((PVOID)pmt->pbFormat);
+			pmt->cbFormat = 0;
+			pmt->pbFormat = NULL;
+		}
+		if (pmt->pUnk != NULL) {
+			pmt->pUnk->Release();
+			pmt->pUnk = NULL;
+		}
+
+		CoTaskMemFree(pmt);
+	}
+}
+
+bool videoInputCamera::comInit(){
+
+	if(comCount == 0  ){
+		HRESULT hr = CoInitializeEx(NULL,COINIT_MULTITHREADED);
+		if (FAILED(hr)) return false;
+	}
+
+	comCount++;
+	return true;
+}
+
+bool videoInputCamera::comUnInit(){
+	if(comCount > 0)comCount--;	
+
+	if(comCount == 0){
+		CoUninitialize();
+		return true;
+	}
+
+	return false;
+}
+
+HRESULT videoInputCamera::getDevice(IBaseFilter** gottaFilter, int deviceId, WCHAR * wDeviceName, char * nDeviceName){
+	BOOL done = false;
+	int deviceCounter = 0;
+
+	// Create the System Device Enumerator.
+	ICreateDevEnum *pSysDevEnum = NULL;
+	HRESULT hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
+	if (FAILED(hr))
+	{
+		return hr;
+	}
+
+	// Obtain a class enumerator for the video input category.
+	IEnumMoniker *pEnumCat = NULL;
+	hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
+
+	if (hr == S_OK)
+	{
+		// Enumerate the monikers.
+		IMoniker *pMoniker = NULL;
+		ULONG cFetched;
+		while ((pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK) && (!done))
+		{
+			if(deviceCounter == deviceId)
+			{
+				// Bind the first moniker to an object
+				IPropertyBag *pPropBag;
+				hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
+				if (SUCCEEDED(hr))
+				{
+					// To retrieve the filter's friendly name, do the following:
+					VARIANT varName;
+					VariantInit(&varName);
+					hr = pPropBag->Read(L"FriendlyName", &varName, 0);
+					if (SUCCEEDED(hr))
+					{
+
+						//copy the name to nDeviceName & wDeviceName
+						int count = 0;
+						while( varName.bstrVal[count] != 0x00 ) {
+							wDeviceName[count] = varName.bstrVal[count];
+							nDeviceName[count] = (char)varName.bstrVal[count];
+							count++;
+						}
+
+						// We found it, so send it back to the caller
+						hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter, (void**)gottaFilter);
+						done = true;
+					}
+					VariantClear(&varName);
+					pPropBag->Release();
+					pPropBag = NULL;
+					pMoniker->Release();
+					pMoniker = NULL;
+				}
+			}
+			deviceCounter++;
+		}
+		pEnumCat->Release();
+		pEnumCat = NULL;
+	}
+	pSysDevEnum->Release();
+	pSysDevEnum = NULL;
+
+	if (done) {
+		return hr;	// found it, return native error
+	} else {
+		return VFW_E_NOT_FOUND;	// didn't find it error
+	}
+}
+
+void videoInputCamera::makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3,
+								unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
+								unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 ) {
+
+	guid->Data1 = Data1;
+	guid->Data2 = Data2;
+	guid->Data3 = Data3;
+	guid->Data4[0] = b0; guid->Data4[1] = b1; guid->Data4[2] = b2; guid->Data4[3] = b3;
+	guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
+}
+
+
+GUID videoInputCamera::getMediaSubtype(int type) {
+
+		int iCount = 0;
+		int iSize = 0;
+		HRESULT hr = pStreamConfig->GetNumberOfCapabilities(&iCount, &iSize);
+
+		if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
+		{
+			GUID lastFormat = MEDIASUBTYPE_None;
+			for (int iFormat = 0; iFormat < iCount; iFormat+=2)
+			{
+				VIDEO_STREAM_CONFIG_CAPS scc;
+				AM_MEDIA_TYPE *pmtConfig;
+				hr =  pStreamConfig->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
+				if (SUCCEEDED(hr)){
+
+					if ( pmtConfig->subtype != lastFormat) {
+
+						if (type == getMediaSubtype(pmtConfig->subtype)) {
+
+							GUID mediaSubtype = pmtConfig->subtype;
+							deleteMediaType(pmtConfig);
+							return mediaSubtype;
+						}
+						lastFormat = pmtConfig->subtype;
+					}
+					deleteMediaType(pmtConfig);
+				}
+			}
+		}
+
+
+	return MEDIASUBTYPE_NULL;
+}
+
+int videoInputCamera::getMediaSubtype(GUID type){
+
+	GUID MEDIASUBTYPE_Y800, MEDIASUBTYPE_Y8, MEDIASUBTYPE_GREY;
+	makeGUID( &MEDIASUBTYPE_Y800, 0x30303859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+	makeGUID( &MEDIASUBTYPE_Y8, 0x20203859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+	makeGUID( &MEDIASUBTYPE_GREY, 0x59455247, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+
+	if ( type == MEDIASUBTYPE_RGB24) return FORMAT_RGB;
+	else if(type == MEDIASUBTYPE_RGB32) return FORMAT_RGBA;
+	else if(type == MEDIASUBTYPE_RGB555) return 0;
+	else if(type == MEDIASUBTYPE_RGB565) return 0;
+	else if(type == MEDIASUBTYPE_YUY2) return FORMAT_UYVY;
+	else if(type == MEDIASUBTYPE_YVYU) return FORMAT_YVYU;
+	else if(type == MEDIASUBTYPE_YUYV) return FORMAT_YUYV;
+	else if(type == MEDIASUBTYPE_IYUV) return FORMAT_420P;
+	else if(type == MEDIASUBTYPE_UYVY) return FORMAT_UYVY;
+	else if(type == MEDIASUBTYPE_YV12) return 0;
+	else if(type == MEDIASUBTYPE_YVU9) return 0;
+	else if(type == MEDIASUBTYPE_Y411) return FORMAT_YUV411;
+	else if(type == MEDIASUBTYPE_Y41P) return FORMAT_410P;
+	else if(type == MEDIASUBTYPE_Y211) return FORMAT_YUV211;
+	else if(type == MEDIASUBTYPE_AYUV) return FORMAT_YUV444;
+	else if(type == MEDIASUBTYPE_Y800) return FORMAT_GRAY;
+	else if(type == MEDIASUBTYPE_Y8)   return FORMAT_GRAY;
+	else if(type == MEDIASUBTYPE_GREY) return FORMAT_GRAY;
+	else if(type == MEDIASUBTYPE_MJPG) return FORMAT_MJPEG;
+	else if(type == MEDIASUBTYPE_H264) return FORMAT_H264;
+	else return 0;
+}
+
+void videoInputCamera::NukeDownstream(IBaseFilter *pBF){
+        IPin *pP, *pTo;
+        ULONG u;
+        IEnumPins *pins = NULL;
+        PIN_INFO pininfo;
+        HRESULT hr = pBF->EnumPins(&pins);
+        pins->Reset();
+        while (hr == NOERROR)
+        {
+                hr = pins->Next(1, &pP, &u);
+                if (hr == S_OK && pP)
+                {
+                        pP->ConnectedTo(&pTo);
+                        if (pTo)
+                        {
+                                hr = pTo->QueryPinInfo(&pininfo);
+                                if (hr == NOERROR)
+                                {
+                                        if (pininfo.dir == PINDIR_INPUT)
+                                        {
+                                                NukeDownstream(pininfo.pFilter);
+                                                pGraphBuilder->Disconnect(pTo);
+                                                pGraphBuilder->Disconnect(pP);
+                                                pGraphBuilder->RemoveFilter(pininfo.pFilter);
+                                        }
+                                        pininfo.pFilter->Release();
+										pininfo.pFilter = NULL;
+                                }
+                                pTo->Release();
+                        }
+                        pP->Release();
+                }
+        }
+        if (pins) pins->Release();
+}
+
+void videoInputCamera::destroyGraph(){
+	HRESULT hr = NULL;
+ 	int FuncRetval=0;
+ 	int NumFilters=0;
+
+	int i = 0;
+	while (hr == NOERROR)
+	{
+		IEnumFilters * pEnum = 0;
+		ULONG cFetched;
+
+		// We must get the enumerator again every time because removing a filter from the graph
+		// invalidates the enumerator. We always get only the first filter from each enumerator.
+		hr = pGraphBuilder->EnumFilters(&pEnum);
+		//if (FAILED(hr)) { printf("SETUP: pGraph->EnumFilters() failed. \n"); return; }
+
+		IBaseFilter * pFilter = NULL;
+		if (pEnum->Next(1, &pFilter, &cFetched) == S_OK)
+		{
+			FILTER_INFO FilterInfo={0};
+			hr = pFilter->QueryFilterInfo(&FilterInfo);
+			FilterInfo.pGraph->Release();
+
+			int count = 0;
+			char buffer[255];
+			memset(buffer, 0, 255 * sizeof(char));
+
+			while( FilterInfo.achName[count] != 0x00 )
+			{
+				buffer[count] = static_cast<char>(FilterInfo.achName[count]);
+				count++;
+			}
+
+			//printf("SETUP: removing filter %s...\n", buffer);
+			hr = pGraphBuilder->RemoveFilter(pFilter);
+			//if (FAILED(hr)) { printf("SETUP: pGraph->RemoveFilter() failed. \n"); return; }
+			//printf("SETUP: filter removed %s  \n",buffer);
+
+			pFilter->Release();
+			pFilter = NULL;
+		}
+		else hr = 1;
+		pEnum->Release();
+		pEnum = NULL;
+		i++;
+	}
+
+ return;
+}
+
+bool videoInputCamera::setSizeAndSubtype() {
+
+	//store current mediatype
+	AM_MEDIA_TYPE * tmpType = NULL;
+	HRESULT	hr = pStreamConfig->GetFormat(&tmpType);
+	if(hr != S_OK)return false;
+
+	VIDEOINFOHEADER *lpVih =  reinterpret_cast<VIDEOINFOHEADER*>(pAmMediaType->pbFormat);
+	HEADER(lpVih)->biWidth  = cfg->cam_width;
+	HEADER(lpVih)->biHeight = cfg->cam_height;
+
+	pAmMediaType->formattype = FORMAT_VideoInfo;
+	pAmMediaType->majortype  = MEDIATYPE_Video;
+	pAmMediaType->subtype	 = getMediaSubtype(cfg->cam_format);
+
+	//buffer size
+	pAmMediaType->lSampleSize = cfg->cam_width* cfg->cam_height*3;
+
+	//set fps if requested
+	lpVih->AvgTimePerFrame = (unsigned long)(10000000 /  cfg->cam_fps);
+
+	//okay lets try new size
+	hr = pStreamConfig->SetFormat(pAmMediaType);
+	if(hr == S_OK){
+		if( tmpType != NULL )deleteMediaType(tmpType);
+		return true;
+	}else{
+		pStreamConfig->SetFormat(tmpType);
+		if( tmpType != NULL )deleteMediaType(tmpType);
+	}
+
+	return false;
+}
+
+/*
+HRESULT videoInputCamera::routeCrossbar(ICaptureGraphBuilder2 **ppBuild, IBaseFilter **pVidInFilter, int conType, GUID captureMode){
+
+    //create local ICaptureGraphBuilder2
+	ICaptureGraphBuilder2 *pBuild = NULL;
+ 	pBuild = *ppBuild;
+
+ 	//create local IBaseFilter
+ 	IBaseFilter *pVidFilter = NULL;
+ 	pVidFilter = * pVidInFilter;
+
+	// Search upstream for a crossbar.
+	IAMCrossbar *pXBar1 = NULL;
+	HRESULT hr = pBuild->FindInterface(&LOOK_UPSTREAM_ONLY, NULL, pVidFilter,
+	        IID_IAMCrossbar, (void**)&pXBar1);
+	if (SUCCEEDED(hr))
+	{
+
+	    bool foundDevice = false;
+
+	    printf("SETUP: You are not a webcam! Setting Crossbar\n");
+	    pXBar1->Release();
+
+	    IAMCrossbar *Crossbar;
+	    hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Interleaved, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
+
+	    if(hr != NOERROR){
+	        hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Video, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
+		}
+
+		LONG lInpin, lOutpin;
+		hr = Crossbar->get_PinCounts(&lOutpin , &lInpin);
+
+		BOOL IPin=TRUE; LONG pIndex=0 , pRIndex=0 , pType=0;
+
+		while( pIndex < lInpin)
+		{
+			hr = Crossbar->get_CrossbarPinInfo( IPin , pIndex , &pRIndex , &pType);
+
+			if( pType == conType){
+					printf("SETUP: Found Physical Interface");
+
+					switch(conType){
+
+						case PhysConn_Video_Composite:
+							printf(" - Composite\n");
+							break;
+						case PhysConn_Video_SVideo:
+							printf(" - S-Video\n");
+							break;
+						case PhysConn_Video_Tuner:
+							printf(" - Tuner\n");
+							break;
+						case PhysConn_Video_USB:
+							printf(" - USB\n");
+							break;
+						case PhysConn_Video_1394:
+							printf(" - Firewire\n");
+							break;
+					}
+
+				foundDevice = true;
+				break;
+			}
+			pIndex++;
+
+		}
+
+		if(foundDevice){
+			BOOL OPin=FALSE; LONG pOIndex=0 , pORIndex=0 , pOType=0;
+			while( pOIndex < lOutpin)
+			{
+				hr = Crossbar->get_CrossbarPinInfo( OPin , pOIndex , &pORIndex , &pOType);
+				if( pOType == PhysConn_Video_VideoDecoder)
+					break;
+			}
+			Crossbar->Route(pOIndex,pIndex);
+		}else{
+			printf("SETUP: Didn't find specified Physical Connection type. Using Defualt. \n");
+		}
+
+		//we only free the crossbar when we close or restart the device
+		//we were getting a crash otherwise
+	    //if(Crossbar)Crossbar->Release();
+		//if(Crossbar)Crossbar = NULL;
+
+		if(pXBar1)pXBar1->Release();
+		if(pXBar1)pXBar1 = NULL;
+
+	}else{
+		printf("SETUP: You are a webcam or snazzy firewire cam! No Crossbar needed\n");
+		return hr;
+	}
+
+	return hr;
+}
+*/
