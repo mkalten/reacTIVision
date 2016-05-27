@@ -395,7 +395,7 @@ void VisionEngine::setupCamera() {
 void VisionEngine::teardownCamera()
 {
     if (camera_!=NULL) {
-	pause_ = true;
+		pause_ = true;
         camera_->stopCamera();
         camera_->closeCamera();
         delete camera_;

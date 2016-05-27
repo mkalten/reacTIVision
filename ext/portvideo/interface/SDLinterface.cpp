@@ -304,8 +304,12 @@ void SDLinterface::selectCamera()
 	engine_->teardownCamera();
 
 	dev_list = CameraTool::findDevices();
+	if (dev_list.size()==0) {
+		displayError("No camera found!");
+		return;
+	}
+
 	selector_ = 0;
-	
 	std::string caption = app_name_ + " - select camera";
 	SDL_SetWindowTitle( window_, caption.c_str());
 	
