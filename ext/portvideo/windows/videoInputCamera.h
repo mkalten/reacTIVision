@@ -93,12 +93,11 @@ public:
 private:
 
 	bool disconnect;
-	//videoInput *VI;
 
 	static bool comInit();
 	static bool comUnInit();
 	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
-	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID);
+	//static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID);
 
 	bool getVideoSettingValue(long prop, long &value, long &flag);
 	bool setVideoSettingValue(long prop, long value, long flag);
@@ -111,7 +110,7 @@ private:
 	static void __cdecl settingsThread(void * objPtr);
 	static HRESULT ShowFilterPropertyPages(IBaseFilter *pFilter);
 
-	static GUID getMediaSubtype(int type);
+	GUID getMediaSubtype(int type);
 	static int getMediaSubtype(GUID type);
 	static void makeGUID( GUID *guid, unsigned long Data1, unsigned short Data2, unsigned short Data3, unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
 	unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 );
@@ -135,10 +134,7 @@ private:
 	IAMStreamConfig *pStreamConfig;
 	ISampleGrabber * pSampleGrabber;
 	AM_MEDIA_TYPE * pAmMediaType;
-	IMediaEventEx * pMediaEvent;
 	SampleGrabberCallback * sgCallback;
-
-
 };
 
 #endif
