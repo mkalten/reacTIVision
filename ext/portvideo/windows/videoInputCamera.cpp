@@ -1,6 +1,6 @@
 /*  portVideo, a cross platform camera framework
 	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
-	videoInputCamera largely based on videoInput by Theo Watson <theo.watson@gmail.com>
+	videoInputCamera based on videoInput by Theo Watson <theo.watson@gmail.com>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ videoInputCamera::videoInputCamera(CameraConfig *cam_cfg):CameraEngine (cam_cfg)
 
 	timeout= 2000;
 	lost_frames=0;
-	disconnect = false;
+	disconnect = true;
 }
 
 videoInputCamera::~videoInputCamera()
@@ -417,7 +417,6 @@ HRESULT videoInputCamera::setupDevice() {
 
 	if (!setSizeAndSubtype()) return false;
 
-	//hr = streamConf->SetFormat(pAmMediaType);
 	VIDEOINFOHEADER *pVih =  reinterpret_cast<VIDEOINFOHEADER*>(pAmMediaType->pbFormat);
 	cfg->cam_width	=  HEADER(pVih)->biWidth;
 	cfg->cam_height	=  HEADER(pVih)->biHeight;
@@ -426,7 +425,6 @@ HRESULT videoInputCamera::setupDevice() {
 	long bufferSize = cfg->cam_width*cfg->cam_height*3;
 	sgCallback->setupBuffer(bufferSize);
 
-	//SAMPLE GRABBER (ALLOWS US TO GRAB THE BUFFER)//
 	// Create the Sample Grabber.
 	hr = CoCreateInstance(CLSID_SampleGrabber, NULL, CLSCTX_INPROC_SERVER,IID_IBaseFilter, (void**)&pGrabberFilter);
 	if (FAILED(hr)){
@@ -449,7 +447,17 @@ HRESULT videoInputCamera::setupDevice() {
 		return hr;
 	}
 
+	//Get video properties from the stream's mediatype and apply to the grabber (otherwise we don't get an RGB image)
+	AM_MEDIA_TYPE mt;
+	ZeroMemory(&mt,sizeof(AM_MEDIA_TYPE));
+	mt.majortype 	= MEDIATYPE_Video;
+	mt.subtype 		= MEDIASUBTYPE_RGB24;
+	//mt.subtype 		= MEDIASUBTYPE_YUY2;
+
+	mt.formattype 	= FORMAT_VideoInfo;
+
 	//Set Params - One Shot should be false unless you want to capture just one buffer
+	hr = pSampleGrabber->SetMediaType(&mt);
 	hr = pSampleGrabber->SetOneShot(FALSE);
 	hr = pSampleGrabber->SetBufferSamples(FALSE);
 
@@ -461,33 +469,21 @@ HRESULT videoInputCamera::setupDevice() {
 		stopDevice();
 		return hr;
 	} /*else {
-	  printf("SETUP: Capture callback set\n");
+		printf("SETUP: Capture callback set\n");
 	  }*/
 
-	//MEDIA CONVERSION
-	//Get video properties from the stream's mediatype and apply to the grabber (otherwise we don't get an RGB image)
-	//zero the media type - lets try this :) - maybe this works?
-	AM_MEDIA_TYPE mt;
-	ZeroMemory(&mt,sizeof(AM_MEDIA_TYPE));
-
-	mt.majortype 	= MEDIATYPE_Video;
-	mt.subtype 		= MEDIASUBTYPE_RGB24;
-	mt.formattype 	= FORMAT_VideoInfo;
-
-	hr = pSampleGrabber->SetMediaType(&mt);
 
 	//lets try freeing our stream conf here too
 	//this will fail if the device is already running
-	/*if(pStreamConfig){
-	pStreamConfig->Release();
-	pStreamConfig = NULL;
-	}else{
-	printf("ERROR: connecting device - prehaps it is already being used?\n");
-	stopDevice();
-	return S_FALSE;
+	/* if(pStreamConfig) {
+		pStreamConfig->Release();
+		pStreamConfig = NULL;
+	} else {
+		printf("ERROR: connecting device - prehaps it is already being used?\n");
+		stopDevice();
+		return S_FALSE;
 	}*/
 
-	//NULL RENDERER//
 	//used to give the video stream somewhere to go to.
 	hr = CoCreateInstance(CLSID_NullRenderer, NULL, CLSCTX_INPROC_SERVER, IID_IBaseFilter, (void**)(&pDestFilter));
 	if (FAILED(hr)){
@@ -503,7 +499,6 @@ HRESULT videoInputCamera::setupDevice() {
 		return hr;
 	}
 
-	//RENDER STREAM//
 	//This is where the stream gets put together.
 	hr = pCaptureGraphBuilder->RenderStream(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, pInputFilter, pGrabberFilter, pDestFilter);
 
@@ -643,6 +638,7 @@ bool videoInputCamera::startCamera()
 	} printf(" done\n");
 	ResetEvent(sgCallback->hEvent);*/
 
+	disconnect = false;
 	running = true;
 	return true;
 }

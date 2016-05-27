@@ -1,6 +1,6 @@
 /*  portVideo, a cross platform camera framework
 	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
-	videoInput largely based on videoInput by Theo Watson <theo.watson@gmail.com>
+	videoInputCamera based on videoInput by Theo Watson <theo.watson@gmail.com>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
