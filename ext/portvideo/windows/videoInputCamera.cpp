@@ -1,5 +1,6 @@
 /*  portVideo, a cross platform camera framework
-Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	videoInputCamera largely based on videoInput by Theo Watson <theo.watson@gmail.com>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -17,87 +18,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "videoInputCamera.h"
-
-//////////////////////////////  CALLBACK  ////////////////////////////////
-class SampleGrabberCallback : public ISampleGrabberCB{
-public:
-
-	SampleGrabberCallback(){
-		InitializeCriticalSection(&critSection);
-
-		bufferSetup 		= false;
-		newFrame			= false;
-		latestBufferLength 	= 0;
-
-		hEvent = CreateEvent(NULL, true, false, NULL);
-	}
-
-	~SampleGrabberCallback(){
-		ptrBuffer = NULL;
-		DeleteCriticalSection(&critSection);
-		CloseHandle(hEvent);
-		if(bufferSetup){
-			delete [] pixels;
-		}
-	}
-
-	bool setupBuffer(int numBytesIn){
-		if(bufferSetup){
-			return false;
-		}else{
-			numBytes 			= numBytesIn;
-			pixels 				= new unsigned char[numBytes];
-			bufferSetup 		= true;
-			newFrame			= false;
-			latestBufferLength 	= 0;
-		}
-		return true;
-	}
-
-    STDMETHODIMP_(ULONG) AddRef() { return 1; }
-    STDMETHODIMP_(ULONG) Release() { return 2; }
-
-    STDMETHODIMP QueryInterface(REFIID riid, void **ppvObject){
-        *ppvObject = static_cast<ISampleGrabberCB*>(this);
-        return S_OK;
-    }
-
-    STDMETHODIMP SampleCB(double Time, IMediaSample *pSample){
-    	if(WaitForSingleObject(hEvent, 0) == WAIT_OBJECT_0) return S_OK;
-
-    	HRESULT hr = pSample->GetPointer(&ptrBuffer);
-
-    	if(hr == S_OK){
-	    	latestBufferLength = pSample->GetActualDataLength();
-	      	if(latestBufferLength == numBytes){
-				EnterCriticalSection(&critSection);
-	      			memcpy(pixels, ptrBuffer, latestBufferLength);
-					newFrame	= true;
-				LeaveCriticalSection(&critSection);
-				SetEvent(hEvent);
-			}else{
-				printf("ERROR: SampleCB() - buffer sizes do not match\n");
-			}
-		}
-
-		return S_OK;
-    }
-
-    STDMETHODIMP BufferCB(double Time, BYTE *pBuffer, long BufferLen){
-    	return E_NOTIMPL;
-    }
-
-	int latestBufferLength;
-	int numBytes;
-	bool newFrame;
-	bool bufferSetup;
-	unsigned char * pixels;
-	unsigned char * ptrBuffer;
-	CRITICAL_SECTION critSection;
-	HANDLE hEvent;
-};
-//////////////////////////////  CALLBACK  ////////////////////////////////
-
 
 videoInputCamera::videoInputCamera(CameraConfig *cam_cfg):CameraEngine (cam_cfg)
 {
@@ -396,49 +316,49 @@ bool videoInputCamera::initCamera() {
 }
 
 HRESULT videoInputCamera::setupDevice() {
-		
+
 	comInit();
-    GUID CAPTURE_MODE   = PIN_CATEGORY_CAPTURE; //Don't worry - it ends up being preview (which is faster)
-    //printf("SETUP: Setting up device %i\n",deviceID);
+	GUID CAPTURE_MODE   = PIN_CATEGORY_CAPTURE; //Don't worry - it ends up being preview (which is faster)
+	//printf("SETUP: Setting up device %i\n",deviceID);
 
 	// CREATE THE GRAPH BUILDER //
-    // Create the filter graph manager and query for interfaces.
-    HRESULT hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void **)&pCaptureGraphBuilder);
-    if (FAILED(hr))	// FAILED is a macro that tests the return value
-    {
-        printf("ERROR - Could not create the Filter Graph Manager\n");
-        return hr;
-    }
-
-	//FITLER GRAPH MANAGER//
-    // Create the Filter Graph Manager.
-    hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void**)&pGraphBuilder);
-    if (FAILED(hr))
-    {
-		printf("ERROR - Could not add the graph builder!\n");
-	    stopDevice();
-        return hr;
+	// Create the filter graph manager and query for interfaces.
+	HRESULT hr = CoCreateInstance(CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, IID_ICaptureGraphBuilder2, (void **)&pCaptureGraphBuilder);
+	if (FAILED(hr))	// FAILED is a macro that tests the return value
+	{
+		printf("ERROR - Could not create the Filter Graph Manager\n");
+		return hr;
 	}
 
-    //SET THE FILTERGRAPH//
-    hr = pCaptureGraphBuilder->SetFiltergraph(pGraphBuilder);
+	//FITLER GRAPH MANAGER//
+	// Create the Filter Graph Manager.
+	hr = CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER,IID_IGraphBuilder, (void**)&pGraphBuilder);
 	if (FAILED(hr))
-    {
+	{
+		printf("ERROR - Could not add the graph builder!\n");
+		stopDevice();
+		return hr;
+	}
+
+	//SET THE FILTERGRAPH//
+	hr = pCaptureGraphBuilder->SetFiltergraph(pGraphBuilder);
+	if (FAILED(hr))
+	{
 		printf("ERROR - Could not set filtergraph\n");
-	    stopDevice();
-        return hr;
+		stopDevice();
+		return hr;
 	}
 
 	//MEDIA CONTROL (START/STOPS STREAM)//
 	// Using QueryInterface on the graph builder,
-    // Get the Media Control object.
-    hr = pGraphBuilder->QueryInterface(IID_IMediaControl, (void **)&pMediaControl);
-    if (FAILED(hr))
-    {
-        printf("ERROR - Could not create the Media Control object\n");
-       	stopDevice();
-        return hr;
-    }
+	// Get the Media Control object.
+	hr = pGraphBuilder->QueryInterface(IID_IMediaControl, (void **)&pMediaControl);
+	if (FAILED(hr))
+	{
+		printf("ERROR - Could not create the Media Control object\n");
+		stopDevice();
+		return hr;
+	}
 
 	char 	nDeviceName[255];
 	WCHAR 	wDeviceName[255];
@@ -454,20 +374,20 @@ HRESULT videoInputCamera::setupDevice() {
 		//printf("SETUP: %s\n", nDeviceName);
 		hr = pGraphBuilder->AddFilter(pInputFilter, wDeviceName);
 	}else{
-        printf("ERROR - Could not find specified video device\n");
-        stopDevice();
-        return hr;
+		printf("ERROR - Could not find specified video device\n");
+		stopDevice();
+		return hr;
 	}
 
 	//LOOK FOR PREVIEW PIN IF THERE IS NONE THEN WE USE CAPTURE PIN AND THEN SMART TEE TO PREVIEW
 	IAMStreamConfig *streamConfTest = NULL;
-    hr = pCaptureGraphBuilder->FindInterface(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, pInputFilter, IID_IAMStreamConfig, (void **)&streamConfTest);
+	hr = pCaptureGraphBuilder->FindInterface(&PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, pInputFilter, IID_IAMStreamConfig, (void **)&streamConfTest);
 	if(FAILED(hr)){
 		//printf("SETUP: Couldn't find preview pin using SmartTee\n");
 	}else{
-		 CAPTURE_MODE = PIN_CATEGORY_PREVIEW;
-		 streamConfTest->Release();
-		 streamConfTest = NULL;
+		CAPTURE_MODE = PIN_CATEGORY_PREVIEW;
+		streamConfTest->Release();
+		streamConfTest = NULL;
 	}
 
 	//CROSSBAR (SELECT PHYSICAL INPUT TYPE)//
@@ -475,8 +395,8 @@ HRESULT videoInputCamera::setupDevice() {
 	//webcams tend not to have a crossbar so this function will also detect a webcams and not apply the crossbar
 	/*if(useCrossbar)
 	{
-		//printf("SETUP: Checking crossbar\n");
-		routeCrossbar(pCaptureGraphBuilder, pInputFilter, connection, CAPTURE_MODE);
+	//printf("SETUP: Checking crossbar\n");
+	routeCrossbar(pCaptureGraphBuilder, pInputFilter, connection, CAPTURE_MODE);
 	}*/
 
 	//we do this because webcams don't have a preview mode
@@ -496,7 +416,7 @@ HRESULT videoInputCamera::setupDevice() {
 	}
 
 	if (!setSizeAndSubtype()) return false;
-		
+
 	//hr = streamConf->SetFormat(pAmMediaType);
 	VIDEOINFOHEADER *pVih =  reinterpret_cast<VIDEOINFOHEADER*>(pAmMediaType->pbFormat);
 	cfg->cam_width	=  HEADER(pVih)->biWidth;
@@ -541,8 +461,8 @@ HRESULT videoInputCamera::setupDevice() {
 		stopDevice();
 		return hr;
 	} /*else {
-		printf("SETUP: Capture callback set\n");
-	}*/
+	  printf("SETUP: Capture callback set\n");
+	  }*/
 
 	//MEDIA CONVERSION
 	//Get video properties from the stream's mediatype and apply to the grabber (otherwise we don't get an RGB image)
@@ -559,12 +479,12 @@ HRESULT videoInputCamera::setupDevice() {
 	//lets try freeing our stream conf here too
 	//this will fail if the device is already running
 	/*if(pStreamConfig){
-		pStreamConfig->Release();
-		pStreamConfig = NULL;
+	pStreamConfig->Release();
+	pStreamConfig = NULL;
 	}else{
-		printf("ERROR: connecting device - prehaps it is already being used?\n");
-		stopDevice();
-		return S_FALSE;
+	printf("ERROR: connecting device - prehaps it is already being used?\n");
+	stopDevice();
+	return S_FALSE;
 	}*/
 
 	//NULL RENDERER//
@@ -628,55 +548,56 @@ HRESULT videoInputCamera::stopDevice() {
 	HRESULT HR = NULL;
 
 	//Stop the callback and free it
-    if( (sgCallback) && (pSampleGrabber) )
-    {
-        //printf("SETUP: freeing Grabber Callback\n");
-    	pSampleGrabber->SetCallback(NULL, 1);
-        sgCallback->Release();
+	if( (sgCallback) && (pSampleGrabber) )
+	{
+		//printf("SETUP: freeing Grabber Callback\n");
+		pSampleGrabber->SetCallback(NULL, 1);
+		sgCallback->Release();
 		delete sgCallback;
+		sgCallback = NULL;
 	}
 
 	//Check to see if the graph is running, if so stop it.
- 	if( (pMediaControl) )
+	if( (pMediaControl) )
 	{
 		HR = pMediaControl->Pause();
 		if (FAILED(HR)) printf("ERROR - Could not pause pControl\n");
 
 		HR = pMediaControl->Stop();
 		if (FAILED(HR)) printf("ERROR - Could not stop pControl\n");
-    }
+	}
 
-    //Disconnect filters from capture device
-    if( (pInputFilter) ) NukeDownstream(pInputFilter);
+	//Disconnect filters from capture device
+	if( (pInputFilter) ) NukeDownstream(pInputFilter);
 
 	//Release and zero pointers to our filters etc
 	if (pDestFilter) { 		//printf("SETUP: freeing Renderer \n");
-								pDestFilter->Release();
-								pDestFilter = NULL;
+		pDestFilter->Release();
+		pDestFilter = NULL;
 	}
 	if (pInputFilter) { 		//printf("SETUP: freeing Capture Source \n");
-								pInputFilter->Release();
-								pInputFilter = NULL;
+		pInputFilter->Release();
+		pInputFilter = NULL;
 	}
 	if (pGrabberFilter) {		//printf("SETUP: freeing Grabber Filter  \n");
-								pGrabberFilter->Release();
-								pGrabberFilter = NULL;
+		pGrabberFilter->Release();
+		pGrabberFilter = NULL;
 	}
 	if (pSampleGrabber) {       //printf("SETUP: freeing Grabber  \n");
-								pSampleGrabber->Release();
-								pSampleGrabber = NULL;
+		pSampleGrabber->Release();
+		pSampleGrabber = NULL;
 	}
 	if (pMediaControl) { 		//printf("SETUP: freeing Control   \n");
-								pMediaControl->Release();
-								pMediaControl = NULL;
+		pMediaControl->Release();
+		pMediaControl = NULL;
 	}
 	if (pStreamConfig) { 		//printf("SETUP: freeing Stream  \n");
-								pStreamConfig->Release();
-								pStreamConfig = NULL;
+		pStreamConfig->Release();
+		pStreamConfig = NULL;
 	}
 
 	if (pAmMediaType) { 		//printf("SETUP: freeing Media Type  \n");
-								deleteMediaType(pAmMediaType);
+		deleteMediaType(pAmMediaType);
 	}
 
 	//Destroy the graph
@@ -684,14 +605,15 @@ HRESULT videoInputCamera::stopDevice() {
 
 	//Release and zero our capture graph and our main graph
 	if (pCaptureGraphBuilder) { 		//printf("SETUP: freeing Capture Graph \n");
-								pCaptureGraphBuilder->Release();
-								pCaptureGraphBuilder = NULL;
+		pCaptureGraphBuilder->Release();
+		pCaptureGraphBuilder = NULL;
 	}
 	if (pGraphBuilder) { 			//printf("SETUP: freeing Main Graph \n");
-								pGraphBuilder->Release();
-								pGraphBuilder = NULL;
+		pGraphBuilder->Release();
+		pGraphBuilder = NULL;
 	}
 
+	comUnInit();
 	return S_OK;
 }
 
@@ -700,9 +622,9 @@ bool videoInputCamera::startCamera()
 	HRESULT hr = pMediaControl->Run();
 
 	if (FAILED(hr)){
-		 //printf("ERROR: Could not start graph\n");
-		 stopDevice();
-		 return false;
+		//printf("ERROR: Could not start graph\n");
+		stopDevice();
+		return false;
 	}
 
 	applyCameraSettings();
@@ -713,11 +635,11 @@ bool videoInputCamera::startCamera()
 	int counter = 0;
 	printf("init ");
 	while ( result != WAIT_OBJECT_0) {
-		result = WaitForSingleObject(sgCallback->hEvent, 100);
+	result = WaitForSingleObject(sgCallback->hEvent, 100);
 
-		counter++;
-		printf(".");
-		if (counter>100) return false;
+	counter++;
+	printf(".");
+	if (counter>100) return false;
 	} printf(" done\n");
 	ResetEvent(sgCallback->hEvent);*/
 
@@ -728,18 +650,18 @@ bool videoInputCamera::startCamera()
 bool videoInputCamera::isFrameNew(){
 
 	EnterCriticalSection(&sgCallback->critSection);
-		if  (sgCallback->newFrame) {
-			DWORD result = WaitForSingleObject(sgCallback->hEvent, 1000);
-			if( result != WAIT_OBJECT_0) {
-				LeaveCriticalSection(&sgCallback->critSection);
-				return false;
-			}
-
-			ResetEvent(sgCallback->hEvent);
-			sgCallback->newFrame = false;
+	if  (sgCallback->newFrame) {
+		DWORD result = WaitForSingleObject(sgCallback->hEvent, 1000);
+		if( result != WAIT_OBJECT_0) {
 			LeaveCriticalSection(&sgCallback->critSection);
-			return true;
+			return false;
 		}
+
+		ResetEvent(sgCallback->hEvent);
+		sgCallback->newFrame = false;
+		LeaveCriticalSection(&sgCallback->critSection);
+		return true;
+	}
 	LeaveCriticalSection(&sgCallback->critSection);
 
 	return false;
@@ -797,7 +719,6 @@ bool videoInputCamera::closeCamera()
 		updateSettings();
 		CameraTool::saveSettings();
 		stopDevice();
-		comUnInit();
 	}
 	return true;
 }
@@ -832,7 +753,7 @@ HRESULT videoInputCamera::ShowFilterPropertyPages(IBaseFilter *pFilter){
 			caGUID.pElems,          // Array of property page CLSIDs
 			0,                      // Locale identifier
 			0, NULL                 // Reserved
-		);
+			);
 
 		// Clean up.
 		if(pFilterUnk)pFilterUnk->Release();
@@ -862,24 +783,24 @@ bool videoInputCamera::hasCameraSetting(int mode) {
 	value = flags = 0;
 
 	switch (mode) {
-		case BRIGHTNESS: return getVideoSettingValue(VideoProcAmp_Brightness, value, flags);
-		case CONTRAST: return getVideoSettingValue(VideoProcAmp_Contrast, value, flags);
-		case GAIN: return getVideoSettingValue(VideoProcAmp_Gain, value, flags);
-		case EXPOSURE: return getVideoControlValue(CameraControl_Exposure, value, flags);
-		case SHARPNESS: return getVideoSettingValue(VideoProcAmp_Sharpness, value, flags);
-		case FOCUS: return getVideoControlValue(CameraControl_Focus, value, flags);
-		case GAMMA: return getVideoSettingValue(VideoProcAmp_Gamma, value, flags);
-		case WHITE: return getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags);
-		case BACKLIGHT: return getVideoSettingValue(VideoProcAmp_BacklightCompensation, value, flags);
-		case SATURATION: return getVideoSettingValue(VideoProcAmp_Saturation, value, flags);
-		case COLOR_HUE: return getVideoSettingValue(VideoProcAmp_Hue, value, flags);
-		case AUTO_GAIN: return hasCameraSettingAuto(GAIN);
-		case AUTO_EXPOSURE: return hasCameraSettingAuto(EXPOSURE);
-		case AUTO_FOCUS: return hasCameraSettingAuto(FOCUS);
-		case AUTO_WHITE: return hasCameraSettingAuto(WHITE);
-		case AUTO_HUE: return hasCameraSettingAuto(COLOR_HUE);
-		default:
-			return false;
+	case BRIGHTNESS: return getVideoSettingValue(VideoProcAmp_Brightness, value, flags);
+	case CONTRAST: return getVideoSettingValue(VideoProcAmp_Contrast, value, flags);
+	case GAIN: return getVideoSettingValue(VideoProcAmp_Gain, value, flags);
+	case EXPOSURE: return getVideoControlValue(CameraControl_Exposure, value, flags);
+	case SHARPNESS: return getVideoSettingValue(VideoProcAmp_Sharpness, value, flags);
+	case FOCUS: return getVideoControlValue(CameraControl_Focus, value, flags);
+	case GAMMA: return getVideoSettingValue(VideoProcAmp_Gamma, value, flags);
+	case WHITE: return getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags);
+	case BACKLIGHT: return getVideoSettingValue(VideoProcAmp_BacklightCompensation, value, flags);
+	case SATURATION: return getVideoSettingValue(VideoProcAmp_Saturation, value, flags);
+	case COLOR_HUE: return getVideoSettingValue(VideoProcAmp_Hue, value, flags);
+	case AUTO_GAIN: return hasCameraSettingAuto(GAIN);
+	case AUTO_EXPOSURE: return hasCameraSettingAuto(EXPOSURE);
+	case AUTO_FOCUS: return hasCameraSettingAuto(FOCUS);
+	case AUTO_WHITE: return hasCameraSettingAuto(WHITE);
+	case AUTO_HUE: return hasCameraSettingAuto(COLOR_HUE);
+	default:
+		return false;
 	}
 }
 
@@ -889,13 +810,13 @@ bool videoInputCamera::hasCameraSettingAuto(int mode) {
 	value = flags = 0;
 
 	switch (mode) {
-		case GAIN: getVideoSettingValue(VideoProcAmp_Gain, value, flags); break;
-		case EXPOSURE: getVideoControlValue(CameraControl_Exposure, value, flags); break;
-		case FOCUS: getVideoControlValue(CameraControl_Focus, value, flags); break;
-		case WHITE: getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags); break;
-		case COLOR_HUE: getVideoSettingValue(VideoProcAmp_Hue, value, flags); break;
-		default:
-			return false;
+	case GAIN: getVideoSettingValue(VideoProcAmp_Gain, value, flags); break;
+	case EXPOSURE: getVideoControlValue(CameraControl_Exposure, value, flags); break;
+	case FOCUS: getVideoControlValue(CameraControl_Focus, value, flags); break;
+	case WHITE: getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags); break;
+	case COLOR_HUE: getVideoSettingValue(VideoProcAmp_Hue, value, flags); break;
+	default:
+		return false;
 	}
 
 	if (flags==0) return false;
@@ -908,18 +829,18 @@ bool videoInputCamera::setCameraSettingAuto(int mode, bool flag) {
 	if (flag) setting = VideoProcAmp_Flags_Auto;
 
 	switch (mode) {
-		case BRIGHTNESS: setVideoSettingValue(VideoProcAmp_Brightness, getDefaultCameraSetting(BRIGHTNESS), setting); break;
-		case CONTRAST: setVideoSettingValue(VideoProcAmp_Contrast, getDefaultCameraSetting(CONTRAST), setting); break;
-		case GAIN: setVideoSettingValue(VideoProcAmp_Gain, getDefaultCameraSetting(GAIN), setting); break;
-		case EXPOSURE: setVideoControlValue(CameraControl_Exposure, getDefaultCameraSetting(EXPOSURE), setting); break;
-		case SHARPNESS: setVideoSettingValue(VideoProcAmp_Sharpness, getDefaultCameraSetting(SHARPNESS), setting); break;
-		case FOCUS: setVideoControlValue(CameraControl_Focus, getDefaultCameraSetting(FOCUS), setting); break;
-		case GAMMA: setVideoSettingValue(VideoProcAmp_Gamma, getDefaultCameraSetting(GAMMA), setting); break;
-		case WHITE: setVideoSettingValue(VideoProcAmp_WhiteBalance, getDefaultCameraSetting(WHITE), setting); break;
-		case BACKLIGHT: setVideoSettingValue(VideoProcAmp_BacklightCompensation, getDefaultCameraSetting(BACKLIGHT), setting); break;
-		case SATURATION: setVideoSettingValue(VideoProcAmp_Saturation, getDefaultCameraSetting(SATURATION), setting); break;
-		case COLOR_HUE: setVideoSettingValue(VideoProcAmp_Hue, getDefaultCameraSetting(COLOR_HUE), setting); break;
-		default: return false;
+	case BRIGHTNESS: setVideoSettingValue(VideoProcAmp_Brightness, getDefaultCameraSetting(BRIGHTNESS), setting); break;
+	case CONTRAST: setVideoSettingValue(VideoProcAmp_Contrast, getDefaultCameraSetting(CONTRAST), setting); break;
+	case GAIN: setVideoSettingValue(VideoProcAmp_Gain, getDefaultCameraSetting(GAIN), setting); break;
+	case EXPOSURE: setVideoControlValue(CameraControl_Exposure, getDefaultCameraSetting(EXPOSURE), setting); break;
+	case SHARPNESS: setVideoSettingValue(VideoProcAmp_Sharpness, getDefaultCameraSetting(SHARPNESS), setting); break;
+	case FOCUS: setVideoControlValue(CameraControl_Focus, getDefaultCameraSetting(FOCUS), setting); break;
+	case GAMMA: setVideoSettingValue(VideoProcAmp_Gamma, getDefaultCameraSetting(GAMMA), setting); break;
+	case WHITE: setVideoSettingValue(VideoProcAmp_WhiteBalance, getDefaultCameraSetting(WHITE), setting); break;
+	case BACKLIGHT: setVideoSettingValue(VideoProcAmp_BacklightCompensation, getDefaultCameraSetting(BACKLIGHT), setting); break;
+	case SATURATION: setVideoSettingValue(VideoProcAmp_Saturation, getDefaultCameraSetting(SATURATION), setting); break;
+	case COLOR_HUE: setVideoSettingValue(VideoProcAmp_Hue, getDefaultCameraSetting(COLOR_HUE), setting); break;
+	default: return false;
 	}
 
 	return true;
@@ -931,18 +852,18 @@ bool videoInputCamera::getCameraSettingAuto(int mode) {
 	value=flags=0;
 
 	switch (mode) {
-		case BRIGHTNESS: getVideoSettingValue(VideoProcAmp_Brightness, value, flags); break;
-		case CONTRAST: getVideoSettingValue(VideoProcAmp_Contrast, value, flags); break;
-		case GAIN:  getVideoSettingValue(VideoProcAmp_Gain, value, flags); break;
-		case EXPOSURE: getVideoControlValue(CameraControl_Exposure, value, flags); break;
-		case SHARPNESS: getVideoSettingValue(VideoProcAmp_Sharpness, value, flags); break;
-		case FOCUS:  getVideoControlValue(CameraControl_Focus, value, flags); break;
-		case GAMMA: getVideoSettingValue(VideoProcAmp_Gamma, value, flags); break;
-		case WHITE: getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags); break;
-		case BACKLIGHT: getVideoSettingValue(VideoProcAmp_BacklightCompensation, value, flags); break;
-		case SATURATION: getVideoSettingValue(VideoProcAmp_Saturation, value, flags); break;
-		case COLOR_HUE: getVideoSettingValue(VideoProcAmp_Hue, value, flags); break;
-		default: return false;
+	case BRIGHTNESS: getVideoSettingValue(VideoProcAmp_Brightness, value, flags); break;
+	case CONTRAST: getVideoSettingValue(VideoProcAmp_Contrast, value, flags); break;
+	case GAIN:  getVideoSettingValue(VideoProcAmp_Gain, value, flags); break;
+	case EXPOSURE: getVideoControlValue(CameraControl_Exposure, value, flags); break;
+	case SHARPNESS: getVideoSettingValue(VideoProcAmp_Sharpness, value, flags); break;
+	case FOCUS:  getVideoControlValue(CameraControl_Focus, value, flags); break;
+	case GAMMA: getVideoSettingValue(VideoProcAmp_Gamma, value, flags); break;
+	case WHITE: getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags); break;
+	case BACKLIGHT: getVideoSettingValue(VideoProcAmp_BacklightCompensation, value, flags); break;
+	case SATURATION: getVideoSettingValue(VideoProcAmp_Saturation, value, flags); break;
+	case COLOR_HUE: getVideoSettingValue(VideoProcAmp_Hue, value, flags); break;
+	default: return false;
 	} 
 
 	if (flags==VideoProcAmp_Flags_Auto) return true;
@@ -958,18 +879,18 @@ bool videoInputCamera::setCameraSetting(int mode, int setting) {
 	long flags = VideoProcAmp_Flags_Manual;
 
 	switch (mode) {
-		case BRIGHTNESS: setVideoSettingValue(VideoProcAmp_Brightness, setting, flags); break;
-		case CONTRAST: setVideoSettingValue(VideoProcAmp_Contrast, setting, flags); break;
-		case GAIN: setVideoSettingValue(VideoProcAmp_Gain, setting, flags); break;
-		case EXPOSURE: setVideoControlValue(CameraControl_Exposure, setting, flags); break;
-		case SHARPNESS: setVideoSettingValue(VideoProcAmp_Sharpness, setting, flags); break;
-		case FOCUS: setVideoControlValue(CameraControl_Focus, setting, flags); break;
-		case GAMMA: setVideoSettingValue(VideoProcAmp_Gamma, setting, flags); break;
-		case WHITE: setVideoSettingValue(VideoProcAmp_WhiteBalance, setting, flags); break;
-		case BACKLIGHT: setVideoSettingValue(VideoProcAmp_BacklightCompensation, setting, flags); break;
-		case SATURATION: setVideoSettingValue(VideoProcAmp_Saturation, setting, flags); break;
-		case COLOR_HUE: setVideoSettingValue(VideoProcAmp_Hue, setting, flags); break;
-		default: return false;
+	case BRIGHTNESS: setVideoSettingValue(VideoProcAmp_Brightness, setting, flags); break;
+	case CONTRAST: setVideoSettingValue(VideoProcAmp_Contrast, setting, flags); break;
+	case GAIN: setVideoSettingValue(VideoProcAmp_Gain, setting, flags); break;
+	case EXPOSURE: setVideoControlValue(CameraControl_Exposure, setting, flags); break;
+	case SHARPNESS: setVideoSettingValue(VideoProcAmp_Sharpness, setting, flags); break;
+	case FOCUS: setVideoControlValue(CameraControl_Focus, setting, flags); break;
+	case GAMMA: setVideoSettingValue(VideoProcAmp_Gamma, setting, flags); break;
+	case WHITE: setVideoSettingValue(VideoProcAmp_WhiteBalance, setting, flags); break;
+	case BACKLIGHT: setVideoSettingValue(VideoProcAmp_BacklightCompensation, setting, flags); break;
+	case SATURATION: setVideoSettingValue(VideoProcAmp_Saturation, setting, flags); break;
+	case COLOR_HUE: setVideoSettingValue(VideoProcAmp_Hue, setting, flags); break;
+	default: return false;
 	}
 
 	return true;
@@ -981,20 +902,20 @@ int videoInputCamera::getCameraSetting(int mode) {
 	value=flags=0;
 
 	switch (mode) {
-		case BRIGHTNESS: getVideoSettingValue(VideoProcAmp_Brightness, value, flags); break;
-		case CONTRAST: getVideoSettingValue(VideoProcAmp_Contrast, value, flags); break;
-		case GAIN:  getVideoSettingValue(VideoProcAmp_Gain, value, flags); break;
-		case EXPOSURE: getVideoControlValue(CameraControl_Exposure, value, flags); break;
-		case SHARPNESS: getVideoSettingValue(VideoProcAmp_Sharpness, value, flags); break;
-		case FOCUS:  getVideoControlValue(CameraControl_Focus, value, flags); break;
-		case GAMMA: getVideoSettingValue(VideoProcAmp_Gamma, value, flags); break;
-		case WHITE: getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags); break;
-		case BACKLIGHT: getVideoSettingValue(VideoProcAmp_BacklightCompensation, value, flags); break;
-		case SATURATION: getVideoSettingValue(VideoProcAmp_Saturation, value, flags); break;
-		case COLOR_HUE: getVideoSettingValue(VideoProcAmp_Hue, value, flags); break;
-		default: return 0;
+	case BRIGHTNESS: getVideoSettingValue(VideoProcAmp_Brightness, value, flags); break;
+	case CONTRAST: getVideoSettingValue(VideoProcAmp_Contrast, value, flags); break;
+	case GAIN:  getVideoSettingValue(VideoProcAmp_Gain, value, flags); break;
+	case EXPOSURE: getVideoControlValue(CameraControl_Exposure, value, flags); break;
+	case SHARPNESS: getVideoSettingValue(VideoProcAmp_Sharpness, value, flags); break;
+	case FOCUS:  getVideoControlValue(CameraControl_Focus, value, flags); break;
+	case GAMMA: getVideoSettingValue(VideoProcAmp_Gamma, value, flags); break;
+	case WHITE: getVideoSettingValue(VideoProcAmp_WhiteBalance, value, flags); break;
+	case BACKLIGHT: getVideoSettingValue(VideoProcAmp_BacklightCompensation, value, flags); break;
+	case SATURATION: getVideoSettingValue(VideoProcAmp_Saturation, value, flags); break;
+	case COLOR_HUE: getVideoSettingValue(VideoProcAmp_Hue, value, flags); break;
+	default: return 0;
 	} 
-	
+
 	return (int)value;
 }
 
@@ -1002,20 +923,20 @@ int videoInputCamera::getMaxCameraSetting(int mode) {
 
 	long min,max,step,dflt,flag;
 	min=max=step=dflt=flag=0;
-	
+
 	switch (mode) {
-		case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
-		case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
-		case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
-		case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
-		case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
-		case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
-		case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
-		case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
-		case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
-		case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
-		case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
-		default: return 0;
+	case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
+	case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
+	case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
+	case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
+	case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
+	case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
+	case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
+	case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
+	case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
+	case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
+	case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
+	default: return 0;
 	} 
 
 	return (int)max;
@@ -1025,20 +946,20 @@ int videoInputCamera::getMinCameraSetting(int mode) {
 
 	long min,max,step,dflt,flag;
 	min=max=step=dflt=flag=0;
-	
+
 	switch (mode) {
-		case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
-		case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
-		case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
-		case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
-		case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
-		case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
-		case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
-		case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
-		case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
-		case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
-		case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
-		default: return 0;
+	case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
+	case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
+	case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
+	case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
+	case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
+	case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
+	case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
+	case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
+	case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
+	case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
+	case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
+	default: return 0;
 	} 
 
 	return (int)min;
@@ -1048,63 +969,63 @@ int videoInputCamera::getCameraSettingStep(int mode) {
 
 	long min,max,step,dflt,flag;
 	min=max=step=dflt=flag=0;
-	
+
 	switch (mode) {
-		case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
-		case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
-		case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
-		case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
-		case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
-		case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
-		case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
-		case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
-		case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
-		case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
-		case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
-		default: return 0;
+	case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
+	case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
+	case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
+	case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
+	case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
+	case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
+	case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
+	case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
+	case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
+	case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
+	case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
+	default: return 0;
 	} 
 
 	return (int)step;
 }
 
 bool videoInputCamera::setDefaultCameraSetting(int mode) {
-    
+
 	switch (mode) {
-		case BRIGHTNESS: setVideoSettingValue(VideoProcAmp_Brightness, getDefaultCameraSetting(BRIGHTNESS), VideoProcAmp_Flags_Manual); break;
-		case CONTRAST: setVideoSettingValue(VideoProcAmp_Contrast, getDefaultCameraSetting(CONTRAST), VideoProcAmp_Flags_Manual); break;
-		case GAIN: setVideoSettingValue(VideoProcAmp_Gain, getDefaultCameraSetting(GAIN), VideoProcAmp_Flags_Manual); break;
-		case EXPOSURE: setVideoControlValue(CameraControl_Exposure, getDefaultCameraSetting(EXPOSURE), CameraControl_Flags_Manual); break;
-		case SHARPNESS:setVideoSettingValue(VideoProcAmp_Sharpness, getDefaultCameraSetting(SHARPNESS), VideoProcAmp_Flags_Manual); break;
-		case FOCUS: setVideoControlValue(CameraControl_Focus, getDefaultCameraSetting(FOCUS), CameraControl_Flags_Manual); break;
-		case GAMMA: setVideoSettingValue(VideoProcAmp_Gamma, getDefaultCameraSetting(GAMMA), VideoProcAmp_Flags_Manual); break;
-		case WHITE: setVideoSettingValue(VideoProcAmp_WhiteBalance, getDefaultCameraSetting(WHITE), VideoProcAmp_Flags_Manual); break;
-		case BACKLIGHT: setVideoSettingValue(VideoProcAmp_BacklightCompensation, getDefaultCameraSetting(BACKLIGHT), VideoProcAmp_Flags_Manual); break;
-		case SATURATION: setVideoSettingValue(VideoProcAmp_Saturation, getDefaultCameraSetting(SATURATION), VideoProcAmp_Flags_Manual); break;
-		case COLOR_HUE: setVideoSettingValue(VideoProcAmp_Hue, getDefaultCameraSetting(COLOR_HUE), VideoProcAmp_Flags_Manual); break;
-		default: return false;
+	case BRIGHTNESS: setVideoSettingValue(VideoProcAmp_Brightness, getDefaultCameraSetting(BRIGHTNESS), VideoProcAmp_Flags_Manual); break;
+	case CONTRAST: setVideoSettingValue(VideoProcAmp_Contrast, getDefaultCameraSetting(CONTRAST), VideoProcAmp_Flags_Manual); break;
+	case GAIN: setVideoSettingValue(VideoProcAmp_Gain, getDefaultCameraSetting(GAIN), VideoProcAmp_Flags_Manual); break;
+	case EXPOSURE: setVideoControlValue(CameraControl_Exposure, getDefaultCameraSetting(EXPOSURE), CameraControl_Flags_Manual); break;
+	case SHARPNESS:setVideoSettingValue(VideoProcAmp_Sharpness, getDefaultCameraSetting(SHARPNESS), VideoProcAmp_Flags_Manual); break;
+	case FOCUS: setVideoControlValue(CameraControl_Focus, getDefaultCameraSetting(FOCUS), CameraControl_Flags_Manual); break;
+	case GAMMA: setVideoSettingValue(VideoProcAmp_Gamma, getDefaultCameraSetting(GAMMA), VideoProcAmp_Flags_Manual); break;
+	case WHITE: setVideoSettingValue(VideoProcAmp_WhiteBalance, getDefaultCameraSetting(WHITE), VideoProcAmp_Flags_Manual); break;
+	case BACKLIGHT: setVideoSettingValue(VideoProcAmp_BacklightCompensation, getDefaultCameraSetting(BACKLIGHT), VideoProcAmp_Flags_Manual); break;
+	case SATURATION: setVideoSettingValue(VideoProcAmp_Saturation, getDefaultCameraSetting(SATURATION), VideoProcAmp_Flags_Manual); break;
+	case COLOR_HUE: setVideoSettingValue(VideoProcAmp_Hue, getDefaultCameraSetting(COLOR_HUE), VideoProcAmp_Flags_Manual); break;
+	default: return false;
 	}
 
-    return true;
+	return true;
 }
 
 int videoInputCamera::getDefaultCameraSetting(int mode) {
 
 	long min,max,step,dflt,flag;
 	min=max=step=dflt=flag=0;
-	
+
 	switch (mode) {
-		case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
-		case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
-		case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
-		case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
-		case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
-		case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
-		case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
-		case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
-		case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
-		case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
-		case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
-		default: return 0;
+	case BRIGHTNESS: getVideoSettingRange(VideoProcAmp_Brightness, min, max, step, flag, dflt); break;
+	case CONTRAST: getVideoSettingRange(VideoProcAmp_Contrast, min, max, step, flag, dflt); break;
+	case GAIN:  getVideoSettingRange(VideoProcAmp_Gain, min, max, step, flag, dflt); break;
+	case EXPOSURE: getVideoControlRange(CameraControl_Exposure, min, max, step, flag, dflt); break;
+	case SHARPNESS: getVideoSettingRange(VideoProcAmp_Sharpness, min, max, step, flag, dflt); break;
+	case FOCUS:  getVideoControlRange(CameraControl_Focus, min, max, step, flag, dflt); break;
+	case GAMMA: getVideoSettingRange(VideoProcAmp_Gamma, min, max, step, flag, dflt); break;
+	case WHITE: getVideoSettingRange(VideoProcAmp_WhiteBalance, min, max, step, flag, dflt); break;
+	case BACKLIGHT:  getVideoSettingRange(VideoProcAmp_BacklightCompensation, min, max, step, flag, dflt); break;
+	case SATURATION: getVideoSettingRange(VideoProcAmp_Saturation, min, max, step, flag, dflt); break;
+	case COLOR_HUE: getVideoSettingRange(VideoProcAmp_Hue, min, max, step, flag, dflt); break;
+	default: return 0;
 	} 
 
 	return (int)dflt;
@@ -1302,44 +1223,44 @@ void videoInputCamera::makeGUID( GUID *guid, unsigned long Data1, unsigned short
 								unsigned char b0, unsigned char b1, unsigned char b2, unsigned char b3,
 								unsigned char b4, unsigned char b5, unsigned char b6, unsigned char b7 ) {
 
-	guid->Data1 = Data1;
-	guid->Data2 = Data2;
-	guid->Data3 = Data3;
-	guid->Data4[0] = b0; guid->Data4[1] = b1; guid->Data4[2] = b2; guid->Data4[3] = b3;
-	guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
+									guid->Data1 = Data1;
+									guid->Data2 = Data2;
+									guid->Data3 = Data3;
+									guid->Data4[0] = b0; guid->Data4[1] = b1; guid->Data4[2] = b2; guid->Data4[3] = b3;
+									guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
 }
 
 
 GUID videoInputCamera::getMediaSubtype(int type) {
 
-		int iCount = 0;
-		int iSize = 0;
-		HRESULT hr = pStreamConfig->GetNumberOfCapabilities(&iCount, &iSize);
+	int iCount = 0;
+	int iSize = 0;
+	HRESULT hr = pStreamConfig->GetNumberOfCapabilities(&iCount, &iSize);
 
-		if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
+	if (iSize == sizeof(VIDEO_STREAM_CONFIG_CAPS))
+	{
+		GUID lastFormat = MEDIASUBTYPE_None;
+		for (int iFormat = 0; iFormat < iCount; iFormat+=2)
 		{
-			GUID lastFormat = MEDIASUBTYPE_None;
-			for (int iFormat = 0; iFormat < iCount; iFormat+=2)
-			{
-				VIDEO_STREAM_CONFIG_CAPS scc;
-				AM_MEDIA_TYPE *pmtConfig;
-				hr =  pStreamConfig->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
-				if (SUCCEEDED(hr)){
+			VIDEO_STREAM_CONFIG_CAPS scc;
+			AM_MEDIA_TYPE *pmtConfig;
+			hr =  pStreamConfig->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
+			if (SUCCEEDED(hr)){
 
-					if ( pmtConfig->subtype != lastFormat) {
+				if ( pmtConfig->subtype != lastFormat) {
 
-						if (type == getMediaSubtype(pmtConfig->subtype)) {
+					if (type == getMediaSubtype(pmtConfig->subtype)) {
 
-							GUID mediaSubtype = pmtConfig->subtype;
-							deleteMediaType(pmtConfig);
-							return mediaSubtype;
-						}
-						lastFormat = pmtConfig->subtype;
+						GUID mediaSubtype = pmtConfig->subtype;
+						deleteMediaType(pmtConfig);
+						return mediaSubtype;
 					}
-					deleteMediaType(pmtConfig);
+					lastFormat = pmtConfig->subtype;
 				}
+				deleteMediaType(pmtConfig);
 			}
 		}
+	}
 
 
 	return MEDIASUBTYPE_NULL;
@@ -1376,45 +1297,45 @@ int videoInputCamera::getMediaSubtype(GUID type){
 }
 
 void videoInputCamera::NukeDownstream(IBaseFilter *pBF){
-        IPin *pP, *pTo;
-        ULONG u;
-        IEnumPins *pins = NULL;
-        PIN_INFO pininfo;
-        HRESULT hr = pBF->EnumPins(&pins);
-        pins->Reset();
-        while (hr == NOERROR)
-        {
-                hr = pins->Next(1, &pP, &u);
-                if (hr == S_OK && pP)
-                {
-                        pP->ConnectedTo(&pTo);
-                        if (pTo)
-                        {
-                                hr = pTo->QueryPinInfo(&pininfo);
-                                if (hr == NOERROR)
-                                {
-                                        if (pininfo.dir == PINDIR_INPUT)
-                                        {
-                                                NukeDownstream(pininfo.pFilter);
-                                                pGraphBuilder->Disconnect(pTo);
-                                                pGraphBuilder->Disconnect(pP);
-                                                pGraphBuilder->RemoveFilter(pininfo.pFilter);
-                                        }
-                                        pininfo.pFilter->Release();
-										pininfo.pFilter = NULL;
-                                }
-                                pTo->Release();
-                        }
-                        pP->Release();
-                }
-        }
-        if (pins) pins->Release();
+	IPin *pP, *pTo;
+	ULONG u;
+	IEnumPins *pins = NULL;
+	PIN_INFO pininfo;
+	HRESULT hr = pBF->EnumPins(&pins);
+	pins->Reset();
+	while (hr == NOERROR)
+	{
+		hr = pins->Next(1, &pP, &u);
+		if (hr == S_OK && pP)
+		{
+			pP->ConnectedTo(&pTo);
+			if (pTo)
+			{
+				hr = pTo->QueryPinInfo(&pininfo);
+				if (hr == NOERROR)
+				{
+					if (pininfo.dir == PINDIR_INPUT)
+					{
+						NukeDownstream(pininfo.pFilter);
+						pGraphBuilder->Disconnect(pTo);
+						pGraphBuilder->Disconnect(pP);
+						pGraphBuilder->RemoveFilter(pininfo.pFilter);
+					}
+					pininfo.pFilter->Release();
+					pininfo.pFilter = NULL;
+				}
+				pTo->Release();
+			}
+			pP->Release();
+		}
+	}
+	if (pins) pins->Release();
 }
 
 void videoInputCamera::destroyGraph(){
 	HRESULT hr = NULL;
- 	int FuncRetval=0;
- 	int NumFilters=0;
+	int FuncRetval=0;
+	int NumFilters=0;
 
 	int i = 0;
 	while (hr == NOERROR)
@@ -1458,7 +1379,7 @@ void videoInputCamera::destroyGraph(){
 		i++;
 	}
 
- return;
+	return;
 }
 
 bool videoInputCamera::setSizeAndSubtype() {
@@ -1498,97 +1419,97 @@ bool videoInputCamera::setSizeAndSubtype() {
 /*
 HRESULT videoInputCamera::routeCrossbar(ICaptureGraphBuilder2 **ppBuild, IBaseFilter **pVidInFilter, int conType, GUID captureMode){
 
-    //create local ICaptureGraphBuilder2
-	ICaptureGraphBuilder2 *pBuild = NULL;
- 	pBuild = *ppBuild;
+//create local ICaptureGraphBuilder2
+ICaptureGraphBuilder2 *pBuild = NULL;
+pBuild = *ppBuild;
 
- 	//create local IBaseFilter
- 	IBaseFilter *pVidFilter = NULL;
- 	pVidFilter = * pVidInFilter;
+//create local IBaseFilter
+IBaseFilter *pVidFilter = NULL;
+pVidFilter = * pVidInFilter;
 
-	// Search upstream for a crossbar.
-	IAMCrossbar *pXBar1 = NULL;
-	HRESULT hr = pBuild->FindInterface(&LOOK_UPSTREAM_ONLY, NULL, pVidFilter,
-	        IID_IAMCrossbar, (void**)&pXBar1);
-	if (SUCCEEDED(hr))
-	{
+// Search upstream for a crossbar.
+IAMCrossbar *pXBar1 = NULL;
+HRESULT hr = pBuild->FindInterface(&LOOK_UPSTREAM_ONLY, NULL, pVidFilter,
+IID_IAMCrossbar, (void**)&pXBar1);
+if (SUCCEEDED(hr))
+{
 
-	    bool foundDevice = false;
+bool foundDevice = false;
 
-	    printf("SETUP: You are not a webcam! Setting Crossbar\n");
-	    pXBar1->Release();
+printf("SETUP: You are not a webcam! Setting Crossbar\n");
+pXBar1->Release();
 
-	    IAMCrossbar *Crossbar;
-	    hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Interleaved, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
+IAMCrossbar *Crossbar;
+hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Interleaved, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
 
-	    if(hr != NOERROR){
-	        hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Video, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
-		}
+if(hr != NOERROR){
+hr = pBuild->FindInterface(&captureMode, &MEDIATYPE_Video, pVidFilter, IID_IAMCrossbar, (void **)&Crossbar);
+}
 
-		LONG lInpin, lOutpin;
-		hr = Crossbar->get_PinCounts(&lOutpin , &lInpin);
+LONG lInpin, lOutpin;
+hr = Crossbar->get_PinCounts(&lOutpin , &lInpin);
 
-		BOOL IPin=TRUE; LONG pIndex=0 , pRIndex=0 , pType=0;
+BOOL IPin=TRUE; LONG pIndex=0 , pRIndex=0 , pType=0;
 
-		while( pIndex < lInpin)
-		{
-			hr = Crossbar->get_CrossbarPinInfo( IPin , pIndex , &pRIndex , &pType);
+while( pIndex < lInpin)
+{
+hr = Crossbar->get_CrossbarPinInfo( IPin , pIndex , &pRIndex , &pType);
 
-			if( pType == conType){
-					printf("SETUP: Found Physical Interface");
+if( pType == conType){
+printf("SETUP: Found Physical Interface");
 
-					switch(conType){
+switch(conType){
 
-						case PhysConn_Video_Composite:
-							printf(" - Composite\n");
-							break;
-						case PhysConn_Video_SVideo:
-							printf(" - S-Video\n");
-							break;
-						case PhysConn_Video_Tuner:
-							printf(" - Tuner\n");
-							break;
-						case PhysConn_Video_USB:
-							printf(" - USB\n");
-							break;
-						case PhysConn_Video_1394:
-							printf(" - Firewire\n");
-							break;
-					}
+case PhysConn_Video_Composite:
+printf(" - Composite\n");
+break;
+case PhysConn_Video_SVideo:
+printf(" - S-Video\n");
+break;
+case PhysConn_Video_Tuner:
+printf(" - Tuner\n");
+break;
+case PhysConn_Video_USB:
+printf(" - USB\n");
+break;
+case PhysConn_Video_1394:
+printf(" - Firewire\n");
+break;
+}
 
-				foundDevice = true;
-				break;
-			}
-			pIndex++;
+foundDevice = true;
+break;
+}
+pIndex++;
 
-		}
+}
 
-		if(foundDevice){
-			BOOL OPin=FALSE; LONG pOIndex=0 , pORIndex=0 , pOType=0;
-			while( pOIndex < lOutpin)
-			{
-				hr = Crossbar->get_CrossbarPinInfo( OPin , pOIndex , &pORIndex , &pOType);
-				if( pOType == PhysConn_Video_VideoDecoder)
-					break;
-			}
-			Crossbar->Route(pOIndex,pIndex);
-		}else{
-			printf("SETUP: Didn't find specified Physical Connection type. Using Defualt. \n");
-		}
+if(foundDevice){
+BOOL OPin=FALSE; LONG pOIndex=0 , pORIndex=0 , pOType=0;
+while( pOIndex < lOutpin)
+{
+hr = Crossbar->get_CrossbarPinInfo( OPin , pOIndex , &pORIndex , &pOType);
+if( pOType == PhysConn_Video_VideoDecoder)
+break;
+}
+Crossbar->Route(pOIndex,pIndex);
+}else{
+printf("SETUP: Didn't find specified Physical Connection type. Using Defualt. \n");
+}
 
-		//we only free the crossbar when we close or restart the device
-		//we were getting a crash otherwise
-	    //if(Crossbar)Crossbar->Release();
-		//if(Crossbar)Crossbar = NULL;
+//we only free the crossbar when we close or restart the device
+//we were getting a crash otherwise
+//if(Crossbar)Crossbar->Release();
+//if(Crossbar)Crossbar = NULL;
 
-		if(pXBar1)pXBar1->Release();
-		if(pXBar1)pXBar1 = NULL;
+if(pXBar1)pXBar1->Release();
+if(pXBar1)pXBar1 = NULL;
 
-	}else{
-		printf("SETUP: You are a webcam or snazzy firewire cam! No Crossbar needed\n");
-		return hr;
-	}
+}else{
+printf("SETUP: You are a webcam or snazzy firewire cam! No Crossbar needed\n");
+return hr;
+}
 
-	return hr;
+return hr;
 }
 */
