@@ -366,23 +366,27 @@ void VisionEngine::setupCamera() {
 		format_ = camera_->getFormat();
 		camera_->printInfo();
     } else {
-		printf("could not initialize camera  ... trying default\n");
-        	camera_->closeCamera();
-        	delete camera_;
+
+		printf("could not initialize selected camera\n");
+        camera_->closeCamera();
+        delete camera_;
 		camera_ = CameraTool::getDefaultCamera();
-		if(camera_->initCamera()) {
+
+		if (camera_ == NULL) {
+			allocateBuffers();
+			return;
+		} else if(camera_->initCamera()) {
 			width_ = camera_->getWidth();
 			height_ = camera_->getHeight();
 			fps_ = camera_->getFps();
 			format_ = camera_->getFormat();
 			camera_->printInfo();
 		} else {
-			printf("could not initialize any camera  ... exit\n");
+			printf("could not initialize default camera\n");
 			camera_->closeCamera();
 			delete camera_;
-			exit(0);
+			camera_ = NULL;
 		}
-		
     }
 		
     allocateBuffers();
