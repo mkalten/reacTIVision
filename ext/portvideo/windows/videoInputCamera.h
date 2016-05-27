@@ -100,13 +100,13 @@ private:
 	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID, WCHAR * wDeviceName, char * nDeviceName);
 	static HRESULT getDevice(IBaseFilter **pSrcFilter, int deviceID);
 
-	bool getVideoSettingValue(int deviceID, long prop, long &value, long &flag);
-	bool setVideoSettingValue(int deviceID, long prop, long value, long flag);
-	bool getVideoSettingRange(int deviceID, long prop, long &min, long &max, long &step, long &flag, long &dflt);
+	bool getVideoSettingValue(long prop, long &value, long &flag);
+	bool setVideoSettingValue(long prop, long value, long flag);
+	bool getVideoSettingRange(long prop, long &min, long &max, long &step, long &flag, long &dflt);
 
-	bool getVideoControlValue(int deviceID, long prop, long &value, long &flag);
-	bool setVideoControlValue(int deviceID, long prop, long value, long flag);
-	bool getVideoControlRange(int deviceID, long prop, long &min, long &max, long &step, long &flag, long &dflt);
+	bool getVideoControlValue(long prop, long &value, long &flag);
+	bool setVideoControlValue(long prop, long value, long flag);
+	bool getVideoControlRange(long prop, long &min, long &max, long &step, long &flag, long &dflt);
 
 	static void __cdecl settingsThread(void * objPtr);
 	static HRESULT ShowFilterPropertyPages(IBaseFilter *pFilter);
@@ -124,25 +124,20 @@ private:
 	HRESULT setupDevice();
 	HRESULT stopDevice();
 	bool setSizeAndSubtype();
+	bool isFrameNew();
 
-
-	ICaptureGraphBuilder2 *pCaptureGraph;	// Capture graph builder object
-	IGraphBuilder *pGraph;					// Graph builder object
-	IMediaControl *pControl;				// Media control object
-	IBaseFilter *pVideoInputFilter;  		// Video Capture filter
-	IBaseFilter *pGrabberF;
+	ICaptureGraphBuilder2 *pCaptureGraphBuilder;
+	IGraphBuilder *pGraphBuilder;
+	IMediaControl *pMediaControl;
+	IBaseFilter *pInputFilter;
+	IBaseFilter *pGrabberFilter;
 	IBaseFilter * pDestFilter;
-	IAMStreamConfig *streamConf;
-	ISampleGrabber * pGrabber;    			// Grabs frame
+	IAMStreamConfig *pStreamConfig;
+	ISampleGrabber * pSampleGrabber;
 	AM_MEDIA_TYPE * pAmMediaType;
 	IMediaEventEx * pMediaEvent;
 	SampleGrabberCallback * sgCallback;
 
-	//unsigned char *pixels;
-	//char *pBuffer;
-
-	bool isFrameNew();
-	//unsigned char* videoInputCamera::getPixelPointer();
 
 };
 
