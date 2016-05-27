@@ -241,7 +241,6 @@
     <ClCompile Include="..\common\FrameThresholder.cpp" />
     <ClCompile Include="..\common\Main.cpp" />
     <ClCompile Include="..\ext\portvideo\common\ConsoleInterface.cpp" />
-    <ClCompile Include="..\ext\portvideo\windows\videoInput.cpp" />
     <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp" />
     <ClCompile Include="..\ext\portvideo\interface\Resources.c" />
     <ClCompile Include="..\ext\portvideo\interface\SDLinterface.cpp" />
@@ -291,7 +290,6 @@
     <ClInclude Include="..\common\FrameThresholder.h" />
     <ClInclude Include="..\common\Main.h" />
     <ClInclude Include="..\ext\portvideo\common\ConsoleInterface.h" />
-    <ClInclude Include="..\ext\portvideo\windows\videoInput.h" />
     <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h" />
     <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h" />
     <ClInclude Include="..\ext\portvideo\interface\Resources.h" />
