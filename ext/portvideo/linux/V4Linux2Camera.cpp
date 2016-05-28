@@ -166,7 +166,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                        					frmival.height = cam_cfg.cam_height;
                        					if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
 
-                        				float frm_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
+                        				float frm_fps = roundf((frmival.discrete.denominator/(float)frmival.discrete.numerator)*10)/10.0f;
                        					if(frm_fps==last_fps) break;
                         				last_fps=frm_fps;
 
@@ -204,7 +204,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
                        					frmival.height = cam_cfg.cam_height;
                        					if (-1 == ioctl(fd,VIDIOC_ENUM_FRAMEINTERVALS,&frmival)) break;
 
-                        				cam_cfg.cam_fps = frmival.discrete.denominator/(float)frmival.discrete.numerator;
+                        				cam_cfg.cam_fps = roundf((frmival.discrete.denominator/(float)frmival.discrete.numerator)*10)/10.0f;
 							tmp_list.push_back(cam_cfg);
 
 							h-=step_h;
@@ -345,7 +345,7 @@ bool V4Linux2Camera::initCamera() {
     pixelformat = v4l2_form.fmt.pix.pixelformat;
     cfg->cam_width = v4l2_form.fmt.pix.width;
     cfg->cam_height = v4l2_form.fmt.pix.height;
-    //cfg->cam_fps = v4l2_parm.parm.capture.timeperframe.denominator/(float)v4l2_parm.parm.capture.timeperframe.numerator;
+    cfg->cam_fps = roundf((v4l2_parm.parm.capture.timeperframe.denominator/(float)v4l2_parm.parm.capture.timeperframe.numerator)*10)/10.0f;
 
     if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) _jpegDecompressor = tjInitDecompress();
 
