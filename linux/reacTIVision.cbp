@@ -190,7 +190,6 @@
 		<Unit filename="../ext/tuio/LibExport.h" />
 		<Unit filename="../ext/tuio/OneEuroFilter.cpp" />
 		<Unit filename="../ext/tuio/OneEuroFilter.h" />
-		<Unit filename="../ext/tuio/OscSender.cpp" />
 		<Unit filename="../ext/tuio/OscSender.h" />
 		<Unit filename="../ext/tuio/TcpSender.cpp" />
 		<Unit filename="../ext/tuio/TcpSender.h" />
