@@ -274,10 +274,13 @@ CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=cam_count-1;
 
 	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cam_cfg->device);
+	if (cfg_list.size()==0) {
+		if (cam_cfg->force) return new videoInputCamera(cam_cfg);
+		else return NULL;
+	}
+
 	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
-
-	if (cam_cfg->force) return new videoInputCamera(cam_cfg);
 
 	for (unsigned int i=0;i<cfg_list.size();i++) {
 
@@ -300,9 +303,12 @@ bool videoInputCamera::initCamera() {
 	else if (cfg->device==SETTING_MAX) cfg->device=dev_count-1;
 
 	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cfg->device);
-	if (cfg_list.size()==0) return false;
-	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
-	setMinMaxConfig(cfg,cfg_list);
+	if (cfg_list.size()==0) {
+			if (!cfg->force) return false;
+	} else {
+		if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
+		setMinMaxConfig(cfg,cfg_list);
+	}
 
 	HRESULT hr = setupDevice();
 	if(FAILED(hr)) return false;
