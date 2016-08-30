@@ -1083,7 +1083,7 @@ void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_hei
 						pVih->AvgTimePerFrame = iv;
 						hr = pStreamConf->SetFormat(pmtConfig);
 						if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-						float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+						float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame+0.5f))/10.0f;
 						if (fps!=last_fps) {
 							
 							if (fps<min_fps) min_fps = fps;
@@ -1106,7 +1106,7 @@ void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_hei
 								pVih->AvgTimePerFrame = iv;
 								hr = pStreamConf->SetFormat(pmtConfig);
 								if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-								float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+								float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame+0.5f))/10.0f;
 								if (fps!=last_fps) {
 							
 									if (fps<min_fps) min_fps = fps;
@@ -1252,7 +1252,7 @@ void videoInput::listDevicesAndFormats() {
 						pVih->AvgTimePerFrame = iv;
 						hr = pStreamConf->SetFormat(pmtConfig);
 						if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-						float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+						float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame+0.5f))/10.0f;
 						if (fps!=last_fps) {
 							if ((int)fps==fps)printf("%d|",(int)fps);
 							else printf("%.1f|",fps);
@@ -1273,7 +1273,7 @@ void videoInput::listDevicesAndFormats() {
 							pVih->AvgTimePerFrame = iv;
 							hr = pStreamConf->SetFormat(pmtConfig);
 							if (hr==S_OK) { hr = pStreamConf->GetFormat(&pmtConfig);
-							float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame))/10.0f;
+							float fps = ((int)floor(100000000.0f/(float)pVih->AvgTimePerFrame+0.5f))/10.0f;
 							if (fps!=last_fps) {
 								if ((int)fps==fps)printf("%d|",(int)fps);
 								else printf("%.1f|",fps);
