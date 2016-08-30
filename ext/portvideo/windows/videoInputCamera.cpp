@@ -195,9 +195,8 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 
 					int stepX = scc.OutputGranularityX;
 					int stepY = scc.OutputGranularityY;
-					if(stepX < 1 || stepY < 1) continue;
 
-					else if ((stepX==1) && (stepY==1)) {
+					if(stepX <= 1 || stepY <= 1) {
 
 						cam_cfg.cam_width = scc.InputSize.cx;
 						cam_cfg.cam_height = scc.InputSize.cy;
@@ -221,7 +220,6 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 					} else {
 						int x,y;
 						for (x=scc.MinOutputSize.cx,y=scc.MinOutputSize.cy;x<=scc.MaxOutputSize.cx,y<=scc.MaxOutputSize.cy;x+=stepX,y+=stepY) {
-
 							cam_cfg.cam_width = x;
 							cam_cfg.cam_height = y;
 
