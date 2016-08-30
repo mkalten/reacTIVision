@@ -925,10 +925,7 @@ void videoInput::getMinMaxDimension(int deviceNumber, int &min_width, int &max_w
 	            int stepX = scc.OutputGranularityX;
 	            int stepY = scc.OutputGranularityY;
 
-	       		if(stepX < 1 || stepY < 1)  {
-					MyDeleteMediaType(pmtConfig);
-					continue; 
-				} else if ((stepX==1) && (stepY==1)) {
+	       		if ((stepX<=1) && (stepY<=1)) {
 
 					if (scc.InputSize.cx>max_width) max_width=(int)scc.InputSize.cx;
 					else if (scc.InputSize.cx<min_width) min_width=(int)scc.InputSize.cx;
@@ -1065,10 +1062,7 @@ void videoInput::getMinMaxFramerate(int deviceNumber, int cam_width, int cam_hei
 	            int stepX = scc.OutputGranularityX;
 	            int stepY = scc.OutputGranularityY;
 
-	       		if(stepX < 1 || stepY < 1) {
-					MyDeleteMediaType(pmtConfig);
-					continue;
-				} else if ((stepX==1) && (stepY==1)) {
+	       		if ((stepX<=1) && (stepY<=1)) {
 
 					if ((scc.InputSize.cx!=cam_width) || (scc.InputSize.cy!=cam_height)) {
 						MyDeleteMediaType(pmtConfig);
@@ -1232,9 +1226,8 @@ void videoInput::listDevicesAndFormats() {
 
 	            int stepX = scc.OutputGranularityX;
 	            int stepY = scc.OutputGranularityY;
-	       		if(stepX < 1 || stepY < 1) continue;
-
-				else if ((stepX==1) && (stepY==1)) {
+	       		
+				if ((stepX<=1) && (stepY<=1)) {
 					/*if ((scc.InputSize.cx==lastWidth) && (scc.InputSize.cy==lastHeight)) {
 						MyDeleteMediaType(pmtConfig);
 						continue;
