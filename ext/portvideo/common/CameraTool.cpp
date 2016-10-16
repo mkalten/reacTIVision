@@ -88,9 +88,6 @@ std::vector<CameraConfig> CameraTool::findDevices() {
 	
 	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
 	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
-	
-	std::vector<CameraConfig> ps3eye_list = PS3EyeCamera::getCameraConfigs();
-	dev_list.insert( dev_list.end(), ps3eye_list.begin(), ps3eye_list.end() );
 
 #endif
 	
@@ -101,7 +98,12 @@ std::vector<CameraConfig> CameraTool::findDevices() {
 	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
 	
 #endif
-	
+
+#ifndef LINUX
+	std::vector<CameraConfig> ps3eye_list = PS3EyeCamera::getCameraConfigs();
+	dev_list.insert(dev_list.end(), ps3eye_list.begin(), ps3eye_list.end());
+#endif
+
 	return dev_list;
 	
 }
@@ -128,15 +130,6 @@ void CameraTool::listDevices() {
 		else  printf("%d DC1394 cameras found:\n",dev_count);
 		printConfig(DC1394Camera::getCameraConfigs());
 	}
-	
-	dev_count = PS3EyeCamera::getDeviceCount();
-	if (dev_count==0) printf("no PS3Eye camera found\n");
-	else {
-		if (dev_count==1) printf("1 PS3Eye camera found:\n");
-		else  printf("%d PS3Eye cameras found:\n",dev_count);
-		printConfig(PS3EyeCamera::getCameraConfigs());
-	}
-	
 #ifdef __x86_64__
 	dev_count = AVfoundationCamera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
@@ -174,6 +167,15 @@ void CameraTool::listDevices() {
 	}
 #endif
 
+#ifndef LINUX
+	dev_count = PS3EyeCamera::getDeviceCount();
+	if(dev_count == 0) printf("no PS3Eye camera found\n");
+	else {
+		if(dev_count == 1) printf("1 PS3Eye camera found:\n");
+		else  printf("%d PS3Eye cameras found:\n", dev_count);
+		printConfig(PS3EyeCamera::getCameraConfigs());
+	}
+#endif
 }
 
 CameraEngine* CameraTool::getDefaultCamera() {
@@ -218,6 +220,15 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 
 #endif
 
+#ifndef LINUX
+	if(cam_cfg->driver == DRIVER_PS3EYE) {
+		dev_count = PS3EyeCamera::getDeviceCount();
+		if(dev_count == 0) printf("no PS3Eye camera found\n");
+		else camera = PS3EyeCamera::getCamera(cam_cfg);
+		if(camera) return camera;
+	}
+#endif
+
 #ifdef WIN32
 
 	dev_count = videoInputCamera::getDeviceCount();
@@ -234,13 +245,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 		dev_count = DC1394Camera::getDeviceCount();
 		if (dev_count==0) printf("no DC1394 camera found\n");
 		else camera = DC1394Camera::getCamera(cam_cfg);
-		if (camera) return camera;
-	}
-
-	if (cam_cfg->driver==DRIVER_PS3EYE) {
-		dev_count = PS3EyeCamera::getDeviceCount();
-		if (dev_count==0) printf("no PS3Eye camera found\n");
-		else camera = PS3EyeCamera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
 
