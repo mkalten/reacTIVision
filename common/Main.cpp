@@ -83,16 +83,16 @@ void readSettings(reactivision_settings *config) {
 	CFBundleRef mainBundle = CFBundleGetMainBundle();
 	CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
 	CFStringRef cfStringRef = CFURLCopyFileSystemPath( mainBundleURL, kCFURLPOSIXPathStyle);
-	CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);	
+	CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);
 	CFRelease( mainBundleURL);
 	CFRelease( cfStringRef);
 	sprintf(config->file,"%s/Contents/Resources/reacTIVision.xml",app_path);
 #elif !defined WIN32
-        
+
     char home_path[1024];
     struct passwd *pw = getpwuid(getuid());
-    sprintf(path,"%s/.reacTIVision/reacTIVision.xml",pw->pw_dir);
-        
+    sprintf(home_path,"%s/.reacTIVision/reacTIVision.xml",pw->pw_dir);
+
     if (access ("./reacTIVision.xml", F_OK )==0) sprintf(config->file,"./reacTIVision.xml");
     else if (access (home_path, F_OK )==0) sprintf(config->file,"%s",home_path);
     else if (access ("/usr/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/usr/share/reacTIVision/reacTIVision.xml");
