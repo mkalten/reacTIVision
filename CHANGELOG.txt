@@ -1,4 +1,11 @@
-﻿reacTIVision 1.5.1
+reacTIVision 1.5.2
+—————————————————-
+* fixed PS3Eye camera support on Windows
+* add list_devices batch file on Windows
+* allow .reacTIVision config in home directory on Linux
+* repaired MacOSX application bundle signature
+
+reacTIVision 1.5.1
 —————————————————-
 * revert FrameEqualizer to equalization rather than subtraction
 * fixed the calibration distortion for wide camera formats

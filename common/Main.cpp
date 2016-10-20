@@ -33,6 +33,7 @@
 
 #ifdef LINUX
 #include <signal.h>
+#include <pwd.h>
 #endif
 
 SDLinterface *engine;
@@ -87,12 +88,18 @@ void readSettings(reactivision_settings *config) {
 	CFRelease( cfStringRef);
 	sprintf(config->file,"%s/Contents/Resources/reacTIVision.xml",app_path);
 #elif !defined WIN32
-        if (access ("./reacTIVision.xml", F_OK )==0) sprintf(config->file,"./reacTIVision.xml");
-        else if (access ("/usr/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/usr/share/reacTIVision/reacTIVision.xml");
-        else if (access ("/usr/local/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/usr/local/share/reacTIVision/reacTIVision.xml");
-        else if (access ("/opt/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/opt/share/reacTIVision/reacTIVision.xml");
+        
+    char home_path[1024];
+    struct passwd *pw = getpwuid(getuid());
+    sprintf(path,"%s/.reacTIVision/reacTIVision.xml",pw->pw_dir);
+        
+    if (access ("./reacTIVision.xml", F_OK )==0) sprintf(config->file,"./reacTIVision.xml");
+    else if (access (home_path, F_OK )==0) sprintf(config->file,"%s",home_path);
+    else if (access ("/usr/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/usr/share/reacTIVision/reacTIVision.xml");
+    else if (access ("/usr/local/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/usr/local/share/reacTIVision/reacTIVision.xml");
+    else if (access ("/opt/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/opt/share/reacTIVision/reacTIVision.xml");
 #else
-        sprintf(config->file,"./reacTIVision.xml");
+    sprintf(config->file,"./reacTIVision.xml");
 #endif
 	}
 
@@ -362,7 +369,7 @@ int main(int argc, char* argv[]) {
 	sprintf(config.file,"none");
 
 	const char *app_name = "reacTIVision";
-	const char *version_no = "1.5.1";
+	const char *version_no = "1.5.2";
 
 	bool headless = false;
 
