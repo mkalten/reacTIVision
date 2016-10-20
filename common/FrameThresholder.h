@@ -25,6 +25,7 @@
 #include <pthread.h>
 #endif
 
+#include <unistd.h>
 #include "FrameProcessor.h"
 #include "tiled_bernsen_threshold.h"
 
