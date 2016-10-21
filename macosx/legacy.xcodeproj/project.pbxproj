@@ -11,7 +11,6 @@
 		B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2505B710ACC635B007C21BB /* CalibrationEngine.cpp */; };
 		B265CD291C8D866E00048220 /* FlashSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B265CD091C8D866E00048220 /* FlashSender.cpp */; };
 		B265CD2A1C8D866E00048220 /* OneEuroFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B265CD0C1C8D866E00048220 /* OneEuroFilter.cpp */; };
-		B265CD2B1C8D866E00048220 /* OscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B265CD0E1C8D866E00048220 /* OscSender.cpp */; };
 		B265CD2C1C8D866E00048220 /* TcpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B265CD101C8D866E00048220 /* TcpSender.cpp */; };
 		B265CD2D1C8D866E00048220 /* TuioBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B265CD121C8D866E00048220 /* TuioBlob.cpp */; };
 		B265CD2E1C8D866E00048220 /* TuioContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B265CD141C8D866E00048220 /* TuioContainer.cpp */; };
@@ -139,7 +138,6 @@
 		B265CD0B1C8D866E00048220 /* LibExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibExport.h; path = ../ext/tuio/LibExport.h; sourceTree = SOURCE_ROOT; };
 		B265CD0C1C8D866E00048220 /* OneEuroFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OneEuroFilter.cpp; path = ../ext/tuio/OneEuroFilter.cpp; sourceTree = SOURCE_ROOT; };
 		B265CD0D1C8D866E00048220 /* OneEuroFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OneEuroFilter.h; path = ../ext/tuio/OneEuroFilter.h; sourceTree = SOURCE_ROOT; };
-		B265CD0E1C8D866E00048220 /* OscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OscSender.cpp; path = ../ext/tuio/OscSender.cpp; sourceTree = SOURCE_ROOT; };
 		B265CD0F1C8D866E00048220 /* OscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscSender.h; path = ../ext/tuio/OscSender.h; sourceTree = SOURCE_ROOT; };
 		B265CD101C8D866E00048220 /* TcpSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TcpSender.cpp; path = ../ext/tuio/TcpSender.cpp; sourceTree = SOURCE_ROOT; };
 		B265CD111C8D866E00048220 /* TcpSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TcpSender.h; path = ../ext/tuio/TcpSender.h; sourceTree = SOURCE_ROOT; };
@@ -204,7 +202,7 @@
 		B265CD731C8D874900048220 /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ../ext/portvideo/macosx/ps3eye/ps3eye.h; sourceTree = SOURCE_ROOT; };
 		B265CDE51C8D8C5000048220 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = ../ext/portvideo/macosx/dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
 		B26725ED0C5E3FD100D7FD74 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = SOURCE_ROOT; };
-		B26E016B19C9AD5F00F0CBCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<absolute>"; };
+		B26E016B19C9AD5F00F0CBCB /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../ext/portvideo/macosx/Frameworks/SDL2.framework; sourceTree = SOURCE_ROOT; };
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CalibrationGrid.cpp; path = ../common/CalibrationGrid.cpp; sourceTree = SOURCE_ROOT; };
 		B2884A780A2CF0E800AFF79A /* CalibrationGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CalibrationGrid.h; path = ../common/CalibrationGrid.h; sourceTree = SOURCE_ROOT; };
@@ -397,7 +395,6 @@
 				B265CD0B1C8D866E00048220 /* LibExport.h */,
 				B265CD0C1C8D866E00048220 /* OneEuroFilter.cpp */,
 				B265CD0D1C8D866E00048220 /* OneEuroFilter.h */,
-				B265CD0E1C8D866E00048220 /* OscSender.cpp */,
 				B265CD0F1C8D866E00048220 /* OscSender.h */,
 				B265CD101C8D866E00048220 /* TcpSender.cpp */,
 				B265CD111C8D866E00048220 /* TcpSender.h */,
@@ -564,7 +561,6 @@
 				B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */,
 				B265CD291C8D866E00048220 /* FlashSender.cpp in Sources */,
 				B265CD2A1C8D866E00048220 /* OneEuroFilter.cpp in Sources */,
-				B265CD2B1C8D866E00048220 /* OscSender.cpp in Sources */,
 				B265CD2C1C8D866E00048220 /* TcpSender.cpp in Sources */,
 				B265CD2D1C8D866E00048220 /* TuioBlob.cpp in Sources */,
 				B265CD2E1C8D866E00048220 /* TuioContainer.cpp in Sources */,
