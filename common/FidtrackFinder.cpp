@@ -320,6 +320,21 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 		yama->id = FUZZY_FIDUCIAL_ID;
 		//std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
 	}
+	
+	yama->raw_x = (yama->raw_x + bx)/2.0f;
+	yama->raw_y = (yama->raw_y + by)/2.0f;
+	
+	if(!empty_grid) {
+		int pixel = width*(int)floor(yama->raw_y+.5f) + (int)floor(yama->raw_x+.5f);
+		if ((pixel>=0) || (pixel<width*height)) {
+			yama->x = dmap[ pixel ].x/width;
+			yama->y = dmap[ pixel ].y/height;
+		}
+	} else {
+		yama->x = yama->raw_x/width;
+		yama->y = yama->raw_y/height;
+	}
+
 }
 
 float FidtrackFinder::checkFinger(BlobObject *fblob) {
