@@ -23,9 +23,9 @@
 #include <windows.h>
 #else
 #include <pthread.h>
+#include <unistd.h>
 #endif
 
-#include <unistd.h>
 #include "FrameProcessor.h"
 #include "tiled_bernsen_threshold.h"
 
