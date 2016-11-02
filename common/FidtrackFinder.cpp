@@ -737,7 +737,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			} else {
 				if (tuioManager->isVerbose()) printf("corrected wrong ID from %d to %d (%ld)\n", alt_fid->id,existing_object->getSymbolID(),existing_object->getSessionID());
 				alt_fid->id=existing_object->getSymbolID();
-				existing_object->setTrackingState(FIDUCIAL_FOUND);
+				existing_object->setTrackingState(FIDUCIAL_FUZZY);
 				
 				tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,alt_fid->angle);
 				drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());

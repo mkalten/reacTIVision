@@ -93,7 +93,13 @@ namespace TUIO {
 			if (c_id == conflict_id) {
 				conflict_counter++;
 				conflict_threshold--;
-				if (conflict_counter>conflict_threshold) return true;
+				
+				if (conflict_counter>conflict_threshold) {
+					conflict_counter=0;
+					conflict_threshold = 2;
+					conflict_id = -1;
+					return true;
+				}
 			} else {
 				conflict_counter = 0;
 				conflict_id = c_id;
@@ -142,7 +148,7 @@ namespace TUIO {
 		 */
 		void setTrackingState (int track) {
 			tracking_state = track;
-			if (tracking_state==FIDUCIAL_FOUND) conflict_threshold++;
+			if ((tracking_state==FIDUCIAL_FOUND) && (conflict_threshold<9))  conflict_threshold++;
 			//else conflict_threshold--;
 		};
 		
