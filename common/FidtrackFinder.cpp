@@ -880,7 +880,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	std::list<TuioObject*> lostObjects = tuioManager->getUntouchedObjects();
 	for(std::list<TuioObject*>::iterator iter = lostObjects.begin(); iter!=lostObjects.end(); iter++) {
 		FiducialObject *tobj = (FiducialObject*)(*iter);
-		tobj->setTrackingState(FIDUCIAL_LOST);
+		if (tobj->getTrackingState()!=FIDUCIAL_LOST) {
+			tobj->stop(frameTime);
+			tobj->setTrackingState(FIDUCIAL_LOST);
+		}
 	}
 
  if (detect_fingers) {
