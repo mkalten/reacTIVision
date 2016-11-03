@@ -660,7 +660,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	// -----------------------------------------------------------------------------------------------
 	// update existing fiducials
-	std::list<TuioObject*> removeObjects;
+	std::list<FiducialObject*> removeObjects;
 	for (std::list<TuioObject*>::iterator tobj = objectList.begin(); tobj!=objectList.end(); tobj++) {
 		//ui->setColor(255,255,0);
 		//ui->fillEllipse((*tobj)->getX()*width,(*tobj)->getY()*height,5,5);
@@ -806,7 +806,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	// remove corrected objects
 	if (removeObjects.size()>0) {
-		for (std::list<TuioObject*>::iterator tobj = removeObjects.begin(); tobj!=removeObjects.end(); tobj++) {
+		for (std::list<FiducialObject*>::iterator tobj = removeObjects.begin(); tobj!=removeObjects.end(); tobj++) {
+			(*tobj)->setTrackingState(FIDUCIAL_LOST);
 			tuioManager->removeTuioObject(*tobj);
 		}
 		objectList = tuioManager->getTuioObjects();
@@ -881,7 +882,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	for(std::list<TuioObject*>::iterator iter = lostObjects.begin(); iter!=lostObjects.end(); iter++) {
 		FiducialObject *tobj = (FiducialObject*)(*iter);
 		if (tobj->getTrackingState()!=FIDUCIAL_LOST) {
-			tobj->stop(frameTime);
+			// update lost object with predicted position ... once only before removal
+			TuioPoint fpos = tobj->predictPosition();
+			tuioManager->updateTuioObject(tobj,fpos.getX(),fpos.getY(),tobj->getAngle());
 			tobj->setTrackingState(FIDUCIAL_LOST);
 		}
 	}
