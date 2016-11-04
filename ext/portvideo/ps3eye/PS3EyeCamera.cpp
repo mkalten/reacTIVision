@@ -178,8 +178,8 @@ bool PS3EyeCamera::initCamera() {
     
     // do the rest
     setupFrame();
-    if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
-    else cam_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->buf_format];
+    if (cfg->frame) cam_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->buf_format];
+    else cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
     return true;
 }
 
