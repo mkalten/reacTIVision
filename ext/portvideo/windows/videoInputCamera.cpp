@@ -515,7 +515,7 @@ HRESULT videoInputCamera::setupDevice() {
 
 	//EXP - lets try setting the sync source to null - and make it run as fast as possible
 	{
-		IMediaFilter *pMediaFilter = 0;
+		IMediaFilter *pMediaFilter = NULL;
 		hr = pGraphBuilder->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
 		if (FAILED(hr)){
 			printf("ERROR: Could not get IID_IMediaFilter interface\n");
