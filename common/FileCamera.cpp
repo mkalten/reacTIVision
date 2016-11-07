@@ -40,7 +40,7 @@ FileCamera::~FileCamera()
 
 bool FileCamera::findCamera() {
 	readSettings();
-	if (config.file==NULL) return false;
+	if ( strcmp( config.file, "none" ) == 0 ) return false;
 	FILE* imagefile=fopen(config.file, "rb");
 	if (imagefile==NULL) return false;
 	fclose(imagefile);
@@ -53,7 +53,7 @@ bool FileCamera::initCamera() {
 	char header[32];
 	char *param;
 	
-	if (config.file==NULL) return false;
+	if ( strcmp( config.file, "none" ) == 0 ) return false;
 	FILE*  imagefile=fopen(config.file, "r");
 	if (imagefile==NULL) return false;
 

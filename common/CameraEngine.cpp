@@ -180,7 +180,7 @@
 #else
 			sprintf(full_path,"./camera.xml");
 #endif
-		} else sprintf(full_path,config_file);
+		} else sprintf(full_path,"%s",config_file);
 
 		TiXmlDocument xml_settings( full_path );
 		xml_settings.LoadFile();

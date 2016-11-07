@@ -39,7 +39,7 @@ FolderCamera::~FolderCamera()
 
 bool FolderCamera::findCamera() {
 	readSettings();
-	if (config.folder==NULL) return false;
+	if ( strcmp( config.folder, "none" ) == 0 ) return false;
 	struct stat info;
 	if (stat(config.folder,&info)!=0) return false;	
 	return true;

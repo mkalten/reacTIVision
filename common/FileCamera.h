@@ -52,9 +52,6 @@ public:
 	int getMaxCameraSetting(int mode);
 	int getMinCameraSetting(int mode);
 	void showSettingsDialog();
-
-private:
-	char *image_file;
 };
 
 #endif
