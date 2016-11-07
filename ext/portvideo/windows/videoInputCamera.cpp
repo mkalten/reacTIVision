@@ -313,7 +313,7 @@ bool videoInputCamera::initCamera() {
 
 	setupFrame();
 
-	if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
+	if (cfg->frame) cam_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->src_format];
 	else cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
 
 	return true;
