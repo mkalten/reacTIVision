@@ -114,6 +114,7 @@ void WebSockSender::newClient( int tcp_client ) {
 		"HTTP/1.1 101 Switching Protocols\r\n"
 		"Upgrade: websocket\r\n"
 		"Connection: Upgrade\r\n"
+		"Access-Control-Allow-Origin: *\r\n"
 		"Sec-WebSocket-Accept: %s\r\n\r\n",
 		base64( digest, SHA1_HASH_SIZE ).c_str() ); 
 
