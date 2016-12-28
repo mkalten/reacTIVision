@@ -20,9 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "VisionEngine.h"
 
 // the thread function
-#ifndef WIN32
-static void* threshold_thread_function( void *obj )
-#else
+#ifdef WIN32
 void usleep(long value) {
 	struct timeval tv;
 	tv.tv_sec = value / 1000000;
@@ -30,20 +28,22 @@ void usleep(long value) {
 	select(0, NULL, NULL, NULL, &tv);
 }
 static DWORD WINAPI threshold_thread_function( LPVOID obj )
+#else
+static void* threshold_thread_function( void *obj )
 #endif
 {
 	threshold_data *data = (threshold_data *)obj;
 
 	while (!data->done) {
 
-#ifndef WIN32
-		pthread_cond_wait(&data->cond, &data->mutex);
-#else
+#ifdef WIN32
 		DWORD dwWaitResult  = WaitForSingleObject(data->ghWriteEvent, INFINITE);
 		if ( dwWaitResult != WAIT_OBJECT_0) {
 			data->process = false;
 			continue;
 		}
+#else
+		pthread_cond_wait(&data->cond, &data->mutex);
 #endif
 		if (data->done) return(0);
 
@@ -101,10 +101,10 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 
 		for (int i=0;i<thread_count;i++) {
 			tdata[i].done = true;
-#ifndef WIN32
-			pthread_cond_signal(&tdata[i].cond);
-#else
+#ifdef WIN32
 			SetEvent(tdata[i].ghWriteEvent);
+#else
+			pthread_cond_signal(&tdata[i].cond);
 #endif
 			while(tdata[i].process) usleep(10);
 
@@ -112,8 +112,8 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 			delete thresholder[i];
 		}
 
-		delete tile_sizes;
-		delete thresholder;
+		delete[] tile_sizes;
+		delete[] thresholder;
 		delete[] pointmap;
 	}
 
@@ -255,10 +255,10 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 		}
 
 		tdata[i].process = true;
-#ifndef WIN32
-		pthread_cond_signal(&tdata[i].cond);
-#else
+#ifdef WIN32
 		SetEvent(tdata[i].ghWriteEvent);
+#else
+		pthread_cond_signal(&tdata[i].cond);
 #endif
 	}
 

@@ -21,12 +21,12 @@
 
 #include "LibExport.h"
 
-#ifndef WIN32
-#include <pthread.h>
-#include <sys/time.h>
-#else
+#ifdef WIN32
 #include <windows.h>
 #include <ctime>
+#else
+#include <pthread.h>
+#include <sys/time.h>
 #endif
 
 #define MSEC_SECOND 1000
