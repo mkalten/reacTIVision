@@ -102,9 +102,11 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 	int dev_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
 	if (dev_count==0) return cfg_list;
 
-	for (int cam_id=0;cam_id<dev_count;cam_id++) {
+	for (int i=0;i<dev_count;i++) {
+		int cam_id;
+		sscanf(v4l2_devices[i]->d_name,"%*[^0-9]%d",&cam_id);
 		if ((dev_id>=0) && (dev_id!=cam_id)) continue;
-        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[cam_id]->d_name);
+        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
 
         	int fd = open(v4l2_device, O_RDONLY);
         	if (fd < 0) continue;
@@ -255,7 +257,7 @@ bool V4Linux2Camera::initCamera() {
 
     struct dirent **v4l2_devices;
     int dev_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
-    if ((dev_count == 0) || (cfg->device<0) || (cfg->device>=dev_count)) return false;
+    if ((dev_count == 0) || (cfg->device<0)) return false;
 
     char v4l2_device[128];
     sprintf(v4l2_device,"/dev/video%d",cfg->device);
