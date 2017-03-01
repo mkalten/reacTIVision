@@ -320,6 +320,21 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
 		yama->id = FUZZY_FIDUCIAL_ID;
 		//std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
 	}
+	
+	yama->raw_x = (yama->raw_x + bx)/2.0f;
+	yama->raw_y = (yama->raw_y + by)/2.0f;
+	
+	if(!empty_grid) {
+		int pixel = width*(int)floor(yama->raw_y+.5f) + (int)floor(yama->raw_x+.5f);
+		if ((pixel>=0) || (pixel<width*height)) {
+			yama->x = dmap[ pixel ].x/width;
+			yama->y = dmap[ pixel ].y/height;
+		}
+	} else {
+		yama->x = yama->raw_x/width;
+		yama->y = yama->raw_y/height;
+	}
+
 }
 
 float FidtrackFinder::checkFinger(BlobObject *fblob) {
@@ -645,7 +660,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	// -----------------------------------------------------------------------------------------------
 	// update existing fiducials
-	std::list<TuioObject*> removeObjects;
+	std::list<FiducialObject*> removeObjects;
 	for (std::list<TuioObject*>::iterator tobj = objectList.begin(); tobj!=objectList.end(); tobj++) {
 		//ui->setColor(255,255,0);
 		//ui->fillEllipse((*tobj)->getX()*width,(*tobj)->getY()*height,5,5);
@@ -737,7 +752,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			} else {
 				if (tuioManager->isVerbose()) printf("corrected wrong ID from %d to %d (%ld)\n", alt_fid->id,existing_object->getSymbolID(),existing_object->getSessionID());
 				alt_fid->id=existing_object->getSymbolID();
-				existing_object->setTrackingState(FIDUCIAL_FOUND);
+				existing_object->setTrackingState(FIDUCIAL_FUZZY);
 				
 				tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,alt_fid->angle);
 				drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
@@ -791,7 +806,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	// remove corrected objects
 	if (removeObjects.size()>0) {
-		for (std::list<TuioObject*>::iterator tobj = removeObjects.begin(); tobj!=removeObjects.end(); tobj++) {
+		for (std::list<FiducialObject*>::iterator tobj = removeObjects.begin(); tobj!=removeObjects.end(); tobj++) {
+			(*tobj)->setTrackingState(FIDUCIAL_LOST);
 			tuioManager->removeTuioObject(*tobj);
 		}
 		objectList = tuioManager->getTuioObjects();
@@ -865,7 +881,12 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	std::list<TuioObject*> lostObjects = tuioManager->getUntouchedObjects();
 	for(std::list<TuioObject*>::iterator iter = lostObjects.begin(); iter!=lostObjects.end(); iter++) {
 		FiducialObject *tobj = (FiducialObject*)(*iter);
-		tobj->setTrackingState(FIDUCIAL_LOST);
+		if (tobj->getTrackingState()!=FIDUCIAL_LOST) {
+			// update lost object with predicted position ... once only before removal
+			TuioPoint fpos = tobj->predictPosition();
+			tuioManager->updateTuioObject(tobj,fpos.getX(),fpos.getY(),tobj->getAngle());
+			tobj->setTrackingState(FIDUCIAL_LOST);
+		}
 	}
 
  if (detect_fingers) {

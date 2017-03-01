@@ -195,9 +195,8 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 
 					int stepX = scc.OutputGranularityX;
 					int stepY = scc.OutputGranularityY;
-					if(stepX < 1 || stepY < 1) continue;
 
-					else if ((stepX==1) && (stepY==1)) {
+					if(stepX <= 1 || stepY <= 1) {
 
 						cam_cfg.cam_width = scc.InputSize.cx;
 						cam_cfg.cam_height = scc.InputSize.cy;
@@ -221,7 +220,6 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 					} else {
 						int x,y;
 						for (x=scc.MinOutputSize.cx,y=scc.MinOutputSize.cy;x<=scc.MaxOutputSize.cx,y<=scc.MaxOutputSize.cy;x+=stepX,y+=stepY) {
-
 							cam_cfg.cam_width = x;
 							cam_cfg.cam_height = y;
 
@@ -274,10 +272,13 @@ CameraEngine* videoInputCamera::getCamera(CameraConfig *cam_cfg) {
 	else if (cam_cfg->device==SETTING_MAX) cam_cfg->device=cam_count-1;
 
 	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cam_cfg->device);
+	if (cfg_list.size()==0) {
+		if (cam_cfg->force) return new videoInputCamera(cam_cfg);
+		else return NULL;
+	}
+
 	if (cam_cfg->cam_format==FORMAT_UNKNOWN) cam_cfg->cam_format = cfg_list[0].cam_format;
 	setMinMaxConfig(cam_cfg,cfg_list);
-
-	if (cam_cfg->force) return new videoInputCamera(cam_cfg);
 
 	for (unsigned int i=0;i<cfg_list.size();i++) {
 
@@ -300,16 +301,19 @@ bool videoInputCamera::initCamera() {
 	else if (cfg->device==SETTING_MAX) cfg->device=dev_count-1;
 
 	std::vector<CameraConfig> cfg_list = videoInputCamera::getCameraConfigs(cfg->device);
-	if (cfg_list.size()==0) return false;
-	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
-	setMinMaxConfig(cfg,cfg_list);
+	if (cfg_list.size()==0) {
+			if (!cfg->force) return false;
+	} else {
+		if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
+		setMinMaxConfig(cfg,cfg_list);
+	}
 
 	HRESULT hr = setupDevice();
 	if(FAILED(hr)) return false;
 
 	setupFrame();
 
-	if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
+	if (cfg->frame) cam_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->src_format];
 	else cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->src_format];
 
 	return true;
@@ -511,7 +515,7 @@ HRESULT videoInputCamera::setupDevice() {
 
 	//EXP - lets try setting the sync source to null - and make it run as fast as possible
 	{
-		IMediaFilter *pMediaFilter = 0;
+		IMediaFilter *pMediaFilter = NULL;
 		hr = pGraphBuilder->QueryInterface(IID_IMediaFilter, (void**)&pMediaFilter);
 		if (FAILED(hr)){
 			printf("ERROR: Could not get IID_IMediaFilter interface\n");

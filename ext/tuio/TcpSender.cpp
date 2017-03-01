@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -19,10 +19,10 @@
 #include "TcpSender.h"
 using namespace TUIO;
 
-#ifndef  WIN32
-static void* ClientThreadFunc( void* obj )
-#else
+#ifdef  WIN32
 static DWORD WINAPI ClientThreadFunc( LPVOID obj )
+#else
+static void* ClientThreadFunc( void* obj )
 #endif
 {
 	TcpSender *sender = static_cast<TcpSender*>(obj);
@@ -47,10 +47,10 @@ static DWORD WINAPI ClientThreadFunc( LPVOID obj )
 	return 0;
 };
 
-#ifndef  WIN32
-static void* ServerThreadFunc( void* obj )
-#else
+#ifdef  WIN32
 static DWORD WINAPI ServerThreadFunc( LPVOID obj )
+#else
+static void* ServerThreadFunc( void* obj )
 #endif
 {
 	TcpSender *sender = static_cast<TcpSender*>(obj);
@@ -78,12 +78,12 @@ static DWORD WINAPI ServerThreadFunc( LPVOID obj )
 			sender->connected=true;
 			sender->newClient(tcp_client);
 			//std::cout << sender->tcp_client_list.size() << " clients connected"<< std::endl;	
-#ifndef WIN32
-			pthread_t client_thread;
-			pthread_create(&client_thread , NULL, ClientThreadFunc,obj);
-#else
+#ifdef WIN32
 			DWORD ClientThreadId;
 			HANDLE client_thread = CreateThread( 0, 0, ClientThreadFunc, obj, 0, &ClientThreadId );
+#else
+			pthread_t client_thread;
+			pthread_create(&client_thread , NULL, ClientThreadFunc,obj);
 #endif
 		} else break;
 	}
@@ -121,10 +121,10 @@ TcpSender::TcpSender()
 		tcp_client_list.push_back(tcp_socket);
 		connected = true;
 		
-#ifndef WIN32
-		pthread_create(&server_thread , NULL, ClientThreadFunc,this);
-#else
+#ifdef WIN32
 		HANDLE server_thread = CreateThread( 0, 0, ClientThreadFunc, this, 0, &ServerThreadId );
+#else
+		pthread_create(&server_thread , NULL, ClientThreadFunc,this);
 #endif
 
 	}
@@ -176,10 +176,10 @@ TcpSender::TcpSender(const char *host, int port)
 		tcp_client_list.push_back(tcp_socket);
 		connected = true;
 		
-#ifndef WIN32
-		pthread_create(&server_thread , NULL, ClientThreadFunc,this);
-#else
+#ifdef WIN32
 		HANDLE server_thread = CreateThread( 0, 0, ClientThreadFunc, this, 0, &ServerThreadId );
+#else
+		pthread_create(&server_thread , NULL, ClientThreadFunc,this);
 #endif
 
 	}
@@ -234,11 +234,11 @@ TcpSender::TcpSender(int port)
 		throw std::exception();
 	}
 				
-#ifndef WIN32
-	pthread_create(&server_thread , NULL, ServerThreadFunc, this);
-#else
+#ifdef WIN32
 	DWORD ServerThreadId;
 	server_thread = CreateThread( 0, 0, ServerThreadFunc, this, 0, &ServerThreadId );
+#else
+	pthread_create(&server_thread , NULL, ServerThreadFunc, this);
 #endif
 	
 }

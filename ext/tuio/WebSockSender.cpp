@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2009-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2009-2017 Martin Kaltenbrunner <martin@tuio.org>
  WebSockSender (c) 2015 Florian Echtler <floe@butterbrot.org>
  
  This library is free software; you can redistribute it and/or
@@ -19,11 +19,8 @@
 
 #include "WebSockSender.h"
 
-#ifdef  WIN32
-#if not 
-	defined int32_t
+#if defined (WIN32) && !defined (int32_t)
 	typedef DWORD int32_t;
-#endif
 #endif
 
 using namespace TUIO;
@@ -114,6 +111,7 @@ void WebSockSender::newClient( int tcp_client ) {
 		"HTTP/1.1 101 Switching Protocols\r\n"
 		"Upgrade: websocket\r\n"
 		"Connection: Upgrade\r\n"
+		"Access-Control-Allow-Origin: *\r\n"
 		"Sec-WebSocket-Accept: %s\r\n\r\n",
 		base64( digest, SHA1_HASH_SIZE ).c_str() ); 
 

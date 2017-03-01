@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -26,75 +26,76 @@
 using namespace TUIO;
 
 TuioDispatcher::TuioDispatcher() {
-#ifndef WIN32	
-	pthread_mutex_init(&cursorMutex,NULL);
-	pthread_mutex_init(&objectMutex,NULL);	
-	pthread_mutex_init(&blobMutex,NULL);	
-#else
+#ifdef WIN32
 	cursorMutex = CreateMutex(NULL,FALSE,TEXT("cursorMutex"));
 	objectMutex = CreateMutex(NULL,FALSE,TEXT("objectMutex"));
 	blobMutex = CreateMutex(NULL,FALSE,TEXT("blobMutex"));
-#endif	
+#else
+	pthread_mutex_init(&cursorMutex,NULL);
+	pthread_mutex_init(&objectMutex,NULL);
+	pthread_mutex_init(&blobMutex,NULL);
+
+#endif
 }
 
 TuioDispatcher::~TuioDispatcher() {
-#ifndef WIN32	
-	pthread_mutex_destroy(&cursorMutex);
-	pthread_mutex_destroy(&objectMutex);
-	pthread_mutex_destroy(&blobMutex);
-#else
+#ifdef WIN32
 	CloseHandle(cursorMutex);
 	CloseHandle(objectMutex);
 	CloseHandle(blobMutex);
-#endif		
+#else
+	pthread_mutex_destroy(&cursorMutex);
+	pthread_mutex_destroy(&objectMutex);
+	pthread_mutex_destroy(&blobMutex);
+#endif
 }
 
 void TuioDispatcher::lockObjectList() {
-#ifndef WIN32	
-	pthread_mutex_lock(&objectMutex);
-#else
+#ifdef WIN32
 	WaitForSingleObject(objectMutex, INFINITE);
-#endif		
+#else
+	pthread_mutex_lock(&objectMutex);
+#endif
 }
 
 void TuioDispatcher::unlockObjectList() {
-#ifndef WIN32	
-	pthread_mutex_unlock(&objectMutex);
-#else
+#ifdef WIN32
 	ReleaseMutex(objectMutex);
+#else
+	pthread_mutex_unlock(&objectMutex);
 #endif
 }
 
 void TuioDispatcher::lockCursorList() {
-#ifndef WIN32	
-	pthread_mutex_lock(&cursorMutex);
-#else
+#ifdef WIN32
 	WaitForSingleObject(cursorMutex, INFINITE);
-#endif		
+#else
+	pthread_mutex_lock(&cursorMutex);
+#endif
 }
 
 void TuioDispatcher::unlockCursorList() {
-#ifndef WIN32	
-	pthread_mutex_unlock(&cursorMutex);
-#else
+#ifdef WIN32
 	ReleaseMutex(cursorMutex);
-#endif		
+#else
+	pthread_mutex_unlock(&cursorMutex);
+#endif
 }
 
 void TuioDispatcher::lockBlobList() {
-#ifndef WIN32	
-	pthread_mutex_lock(&blobMutex);
-#else
+#ifdef WIN32
 	WaitForSingleObject(blobMutex, INFINITE);
-#endif		
+#else
+	pthread_mutex_lock(&blobMutex);
+#endif
 }
 
 void TuioDispatcher::unlockBlobList() {
-#ifndef WIN32	
-	pthread_mutex_unlock(&blobMutex);
-#else
+#ifdef WIN32
 	ReleaseMutex(blobMutex);
-#endif		
+#else
+	pthread_mutex_unlock(&blobMutex);
+#endif
 }
 
 void TuioDispatcher::addTuioListener(TuioListener *listener) {

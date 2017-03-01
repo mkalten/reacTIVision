@@ -23,6 +23,7 @@
 #include <windows.h>
 #else
 #include <pthread.h>
+#include <unistd.h>
 #endif
 
 #include "FrameProcessor.h"
@@ -34,11 +35,11 @@ void usleep(long value);
 
 typedef struct threshold_data {
 	bool process;
-#ifndef WIN32
+#ifdef WIN32
+	HANDLE ghWriteEvent;
+#else
 	pthread_cond_t cond;
 	pthread_mutex_t mutex;
-#else
-	HANDLE ghWriteEvent;
 #endif
 	TiledBernsenThresholder *thresholder;
 	unsigned char *src;
@@ -83,18 +84,18 @@ public:
 			
 			for (int i=0;i<thread_count;i++) {
 				tdata[i].done = true;
-#ifndef WIN32
-				pthread_cond_signal(&tdata[i].cond);
-#else
+#ifdef WIN32
 				SetEvent(tdata[i].ghWriteEvent);
+#else
+				pthread_cond_signal(&tdata[i].cond);
 #endif
 				while(tdata[i].process) usleep(10);
 				terminate_tiled_bernsen_thresholder( thresholder[i] );
 				delete thresholder[i];
 			}
-			
-			delete tile_sizes;
-			delete thresholder;
+
+			delete[] tile_sizes;
+			delete[] thresholder;
 			delete[] pointmap;
 		}
 	};

@@ -598,7 +598,7 @@ errorReturn:
 
 /*
  TUIO C++ Library
- Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -640,7 +640,8 @@ bool FlashSender::isConnected() {
 }
 
 bool FlashSender::sendOscPacket (osc::OutboundPacketStream *bundle) {
-	if (!TFLCSConnectionHasConnectedClient(lcConnection))return false; 
+	if (lcConnection==NULL) return false;
+	if (!TFLCSConnectionHasConnectedClient(lcConnection)) return false; 
 	if ( bundle->Size() > buffer_size ) return false;
 	if ( bundle->Size() == 0 ) return false;
 

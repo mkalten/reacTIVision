@@ -176,8 +176,8 @@ bool PS3EyeCamera::initCamera() {
     
     // do the rest
     setupFrame();
-    if (cfg->frame) cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
-    else cam_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->buf_format];
+    if (cfg->frame) cam_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->buf_format];
+    else cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
     return true;
 }
 
@@ -207,25 +207,27 @@ bool PS3EyeCamera::closeCamera() {
     return true;
 }
 
-unsigned char*  PS3EyeCamera::getFrame() {
+unsigned char* PS3EyeCamera::getFrame() {
 	
     while (!eye->isNewFrame()) {
         PS3EYECam::updateDevices();
 		if(!running) return NULL;
     }
-    
+	
+	unsigned char *eye_buffer = (unsigned char *) eye->getLastFramePointer();
+	
     if (cfg->color) {
         if (cfg->frame)
-            crop_yuyv2rgb(cfg->cam_width, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+            crop_yuyv2rgb(cfg->cam_width, eye_buffer, cam_buffer);
         else
-            yuyv2rgb(cfg->cam_width, cfg->cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+            yuyv2rgb(cfg->cam_width, cfg->cam_height, eye_buffer, cam_buffer);
             
     } else {
         
          if (cfg->frame)
-             crop_yuyv2gray(cfg->cam_width, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+             crop_yuyv2gray(cfg->cam_width, eye_buffer, cam_buffer);
          else
-             yuyv2gray(cfg->cam_width, cfg->cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
+             yuyv2gray(cfg->cam_width, cfg->cam_height, eye_buffer, cam_buffer);
     }
     
     return cam_buffer;

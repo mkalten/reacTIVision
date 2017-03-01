@@ -22,21 +22,21 @@
 #include <math.h>
 #include "TuioObject.h"
 #include "floatpoint.h"
+#include "fidtrackX.h"
 #include <string>
 #include <sstream>
 
-#define FIDUCIAL_FOUND 0
+#define FIDUCIAL_FOUND  0
 #define FIDUCIAL_FUZZY -1
-#define FIDUCIAL_ROOT -2
-#define FIDUCIAL_LOST -3
+#define FIDUCIAL_ROOT  -2
+#define FIDUCIAL_LOST  -3
+
+#define CONFLICT_MAX 9
 
 namespace TUIO {
 	
 	/**
 	 * The FiducialObject extends TuioObject adding a few fiducial specific attributes
-	 *
-	 * @author Martin Kaltenbrunner
-	 * @version 1.6
 	 */
 	class FiducialObject: public TuioObject {
 		
@@ -77,8 +77,8 @@ namespace TUIO {
 		FiducialObject (TuioTime ttime, long si, int sym, float xp, float yp, float a):TuioObject(ttime, si, sym, xp, yp, a) {
 			tracking_state = FIDUCIAL_FOUND;
 			conflict_threshold = 2;
-			conflict_counter = 0;
-			conflict_id = -1;
+			conflict_counter   = 0;
+			conflict_id = INVALID_FIDUCIAL_ID;
 		};
 		
 		
@@ -86,17 +86,23 @@ namespace TUIO {
 		 */
 		void setFiducialInfo (int rcolour, int rsize) {
 			root_colour = rcolour;
-			root_size = rsize;
+			root_size   = rsize;
 		};
 		
 		bool checkIdConflict(int c_id) {
 			if (c_id == conflict_id) {
 				conflict_counter++;
 				conflict_threshold--;
-				if (conflict_counter>conflict_threshold) return true;
+				
+				if (conflict_counter>conflict_threshold) {
+					conflict_threshold = 2;
+					conflict_counter   = 0;
+					conflict_id = INVALID_FIDUCIAL_ID;
+					return true;
+				}
 			} else {
 				conflict_counter = 0;
-				conflict_id = c_id;
+				conflict_id   = c_id;
 			}
 			return false;
 		}
@@ -142,7 +148,7 @@ namespace TUIO {
 		 */
 		void setTrackingState (int track) {
 			tracking_state = track;
-			if (tracking_state==FIDUCIAL_FOUND) conflict_threshold++;
+			if ((tracking_state==FIDUCIAL_FOUND) && (conflict_threshold<CONFLICT_MAX)) conflict_threshold++;
 			//else conflict_threshold--;
 		};
 		

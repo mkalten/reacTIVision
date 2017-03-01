@@ -1,6 +1,6 @@
 /*
  TUIO C++ Library
- Copyright (c) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (c) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -21,10 +21,10 @@
 
 #include "TuioListener.h"
 
-#ifndef WIN32
-#include <pthread.h>
-#else
+#ifdef WIN32
 #include <windows.h>
+#else
+#include <pthread.h>
 #endif
 
 namespace TUIO {
@@ -172,15 +172,15 @@ namespace TUIO {
 		std::list<TuioCursor*> cursorList;
 		std::list<TuioBlob*> blobList;
 		
-#ifndef WIN32
-		pthread_mutex_t objectMutex;
-		pthread_mutex_t cursorMutex;
-		pthread_mutex_t blobMutex;
-#else
+#ifdef WIN32
 		HANDLE objectMutex;
 		HANDLE cursorMutex;
 		HANDLE blobMutex;
-#endif	
+#else
+		pthread_mutex_t objectMutex;
+		pthread_mutex_t cursorMutex;
+		pthread_mutex_t blobMutex;
+#endif
 				
 	};
 }
