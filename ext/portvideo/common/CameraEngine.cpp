@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public
@@ -180,6 +180,7 @@ void CameraEngine::showInterface(UserInterface *uiface) {
     sprintf(displayText,"%s %d",settingText,ctrl_val);
 
 	uiface->drawText(17,14,"O          - exit camera configuration");
+    uiface->drawText(17,56,"D          - reset to default values");
     uiface->displayControl(displayText, ctrl_min, ctrl_max, ctrl_val);
 }
 

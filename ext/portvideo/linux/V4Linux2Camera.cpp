@@ -1,5 +1,5 @@
 /* portVideo, a cross platform camera framework
- Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  V4Linux2Camera initially contributed 2007 by Peter Eschler
 
  This program is free software; you can redistribute it and/or modify
@@ -588,6 +588,7 @@ bool V4Linux2Camera::unmapBuffers() {
 bool V4Linux2Camera::hasCameraSettingAuto(int mode) {
 
     v4l2_queryctrl v4l2_query;
+    memset(&v4l2_query,0,sizeof(v4l2_queryctrl));
 
     switch (mode) {
         case GAIN: v4l2_query.id = V4L2_CID_AUTOGAIN; break;
@@ -684,7 +685,8 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
 
 bool V4Linux2Camera::hasCameraSetting(int mode) {
 
-    struct v4l2_queryctrl v4l2_query = {0};
+    struct v4l2_queryctrl v4l2_query;
+    memset(&v4l2_query,0,sizeof(v4l2_queryctrl));
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
@@ -719,7 +721,8 @@ bool V4Linux2Camera::hasCameraSetting(int mode) {
 bool V4Linux2Camera::setCameraSetting(int mode, int setting) {
 
     if (!hasCameraSetting(mode)) return false;
-    struct v4l2_control v4l2_ctrl = {0};
+    struct v4l2_control v4l2_ctrl;
+    memset(&v4l2_ctrl,0,sizeof(v4l2_control));
     v4l2_ctrl.value = setting;
 
     switch (mode) {
@@ -755,6 +758,7 @@ int V4Linux2Camera::getCameraSetting(int mode) {
 
     if (!hasCameraSetting(mode)) return 0;
     v4l2_control v4l2_ctrl;
+    memset(&v4l2_ctrl,0,sizeof(v4l2_control));
 
     switch (mode) {
         case BRIGHTNESS: v4l2_ctrl.id = V4L2_CID_BRIGHTNESS; break;
@@ -792,6 +796,7 @@ int V4Linux2Camera::getDefaultCameraSetting(int mode) {
 
     if (!hasCameraSetting(mode)) return 0;
     v4l2_queryctrl v4l2_query;
+    memset(&v4l2_query,0,sizeof(v4l2_queryctrl));
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
@@ -831,6 +836,7 @@ int V4Linux2Camera::getMaxCameraSetting(int mode) {
 
     if (!hasCameraSetting(mode)) return 0;
     v4l2_queryctrl v4l2_query;
+    memset(&v4l2_query,0,sizeof(v4l2_queryctrl));
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
@@ -871,7 +877,8 @@ int V4Linux2Camera::getMaxCameraSetting(int mode) {
 int V4Linux2Camera::getMinCameraSetting(int mode) {
 
     if (!hasCameraSetting(mode)) return 0;
-    struct v4l2_queryctrl v4l2_query = {0};
+    struct v4l2_queryctrl v4l2_query;
+    memset(&v4l2_query,0,sizeof(v4l2_queryctrl));
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
@@ -901,7 +908,7 @@ int V4Linux2Camera::getMinCameraSetting(int mode) {
         return 0;
         return 0;
     } else if (v4l2_query.flags & V4L2_CTRL_TYPE_BOOLEAN) {
-        return 1;
+        return 0;
     } else if (v4l2_query.type & V4L2_CTRL_TYPE_INTEGER) {
         return v4l2_query.minimum;
     }
@@ -912,6 +919,7 @@ int V4Linux2Camera::getMinCameraSetting(int mode) {
 int V4Linux2Camera::getCameraSettingStep(int mode) {
 
     struct v4l2_queryctrl v4l2_query = {0};
+    memset(&v4l2_query,0,sizeof(v4l2_queryctrl));
 
     switch (mode) {
         case BRIGHTNESS: v4l2_query.id = V4L2_CID_BRIGHTNESS; break;
