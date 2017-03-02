@@ -32,7 +32,7 @@ V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
     buffers_initialized = false;
 
     cam_cfg->driver = DRIVER_DEFAULT;
-    memset(&v4l2_auto_ctrl,0,sizeof(v4l2_auto_ctrl));
+    memset(&v4l2_auto_ctrl,0,sizeof(v4l2_ext_control));
 }
 
 V4Linux2Camera::~V4Linux2Camera(void)
@@ -749,7 +749,7 @@ bool V4Linux2Camera::setCameraSetting(int mode, int setting) {
     }
 
     if ((ioctl(dev_handle, VIDIOC_S_CTRL, &v4l2_ctrl)) < 0) {
-        //printf("Unable to set value: %s\n" , strerror(errno));
+        //printf("Unable to set value: %s\n", strerror(errno));
         return false;
     } return true;
 }
