@@ -69,7 +69,7 @@ TuioServer::TuioServer(const char* address, int port, const char *src)
 		}
 		sprintf(source, "%s@%s", src,source_addr);
 	}
-	printf("source: %s\n",source);
+	//printf("source: %s\n",source);
 
 	objBuffer = new char[IP_MTU_SIZE];
 	objPacket = new osc::OutboundPacketStream(objBuffer,IP_MTU_SIZE);
