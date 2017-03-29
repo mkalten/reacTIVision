@@ -27,6 +27,7 @@ struct application_settings {
 	int tuio_count;
 	int tuio_type[32];
 	int tuio_port[32];
+	char tuio_source[1024];
 	std::string tuio_host[32];
 	char tree_config[1024];
 	char grid_config[1024];
