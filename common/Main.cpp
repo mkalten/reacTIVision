@@ -57,6 +57,7 @@ void readSettings(reactivision_settings *config) {
 
 	config->port = 3333;
 	sprintf(config->host,"localhost");
+	sprintf(config->source,"reacTIVision");
 	sprintf(config->tree_config,"none");
 	sprintf(config->grid_config,"none");
 	sprintf(config->midi_config,"none");
@@ -119,6 +120,7 @@ void readSettings(reactivision_settings *config) {
 	{
 		if(tuio_element->Attribute("host")!=NULL) sprintf(config->host,"%s",tuio_element->Attribute("host"));
 		if(tuio_element->Attribute("port")!=NULL) config->port = atoi(tuio_element->Attribute("port"));
+		if(tuio_element->Attribute("source")!=NULL) sprintf(config->source,"%s",tuio_element->Attribute("source"));
 	}
 
 	TiXmlElement* camera_element = config_root.FirstChild("camera").Element();
@@ -234,6 +236,7 @@ void writeSettings(reactivision_settings *config) {
 	if( tuio_element!=NULL )
 	{
 		if(tuio_element->Attribute("host")!=NULL) tuio_element->SetAttribute("host",config->host);
+		if(tuio_element->Attribute("source")!=NULL) tuio_element->SetAttribute("source",config->source);
 		if(tuio_element->Attribute("port")!=NULL) {
 			sprintf(config_value,"%d",config->port);
 			tuio_element->SetAttribute("port",config_value);
@@ -427,7 +430,7 @@ int main(int argc, char* argv[]) {
 	FrameProcessor *calibrator	= NULL;
 
 	if(config.midi) server = new MidiServer(config.midi_config);
-	else server = new TuioServer(config.host,config.port);
+	else server = new TuioServer(config.host,config.port,config.source);
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 
     equalizer = new FrameEqualizer();

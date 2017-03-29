@@ -38,16 +38,16 @@ class TuioServer: public MessageServer {
     osc::OutboundPacketStream  *objPacket;
     osc::OutboundPacketStream  *curPacket;
 
-    char *objBuffer; 
+    char *objBuffer;
     char *curBuffer;
 
     int objMessages;
     int curMessages;
-	
-	char source[1024];
- 
-  public: 
-    TuioServer(const char* address, int port);
+
+    char source[1024];
+
+  public:
+    TuioServer(const char* address, int port, const char* src);
 
     bool freeObjSpace();
     void addObjSeq(int fseq);

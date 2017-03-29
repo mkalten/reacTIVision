@@ -24,6 +24,7 @@ struct reactivision_settings {
 	char file[1024];
 	int port;
 	char host[1024];
+	char source[1024];
 	char tree_config[1024];
 	char grid_config[1024];
 	char midi_config[1024];

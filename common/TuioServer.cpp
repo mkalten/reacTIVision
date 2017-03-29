@@ -30,29 +30,29 @@
 #include <stdlib.h>
 #endif
 
-TuioServer::TuioServer(const char* address, int port)
+TuioServer::TuioServer(const char* address, int port, const char *src)
 {
 	//InitializeNetworking();
 	long unsigned int ip = GetHostByName(address);
 	transmitSocket = new UdpTransmitSocket(IpEndpointName(ip, port));
-	
-	
-	if ((strcmp(address, "localhost") == 0) || (strcmp(address, "127.0.0.1") == 0))  sprintf(source, "reacTIVision");
-	else { 
-		
+
+
+	if ((strcmp(address, "localhost") == 0) || (strcmp(address, "127.0.0.1") == 0))  sprintf(source, src);
+	else {
+
 		char hostname[64];
 		char *source_addr = NULL;
 		struct hostent *hp = NULL;
 		struct in_addr *addr = NULL;
-		
+
 		gethostname(hostname, 64);
 		hp = gethostbyname(hostname);
-		
+
 		if (hp==NULL) {
 			sprintf(hostname, "%s.local", hostname);
 			hp = gethostbyname(hostname);
 		}
-		
+
 		if (hp!=NULL) {
 			/*for (int i = 0; hp->h_addr_list[i] != 0; ++i) {
 				addr = (struct in_addr *)(hp->h_addr_list[i]);
@@ -66,11 +66,11 @@ TuioServer::TuioServer(const char* address, int port)
 			int r = rand();
 			addr = (struct in_addr*)&r;
 			source_addr = inet_ntoa(*addr);
-		}		
-		sprintf(source, "reacTIVision@%s", source_addr); 
+		}
+		sprintf(source, "%s@%s", src,source_addr);
 	}
-	//printf("%s\n",source);
-	
+	printf("source: %s\n",source);
+
 	objBuffer = new char[IP_MTU_SIZE];
 	objPacket = new osc::OutboundPacketStream(objBuffer,IP_MTU_SIZE);
 	(*objPacket) << osc::BeginBundleImmediate;
