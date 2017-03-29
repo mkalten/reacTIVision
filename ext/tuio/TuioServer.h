@@ -126,7 +126,7 @@ namespace TUIO {
 		}
 
 		/**
-		 * Disables the periodic full update of all currently active TuioObjects TuioObjects, TuioCursors and TuioBlobs
+		 * Enables the periodic full update of all currently active TuioObjects TuioObjects, TuioCursors and TuioBlobs
 		 *
 		 * @param	interval	update interval in seconds, defaults to one second
 		 */
