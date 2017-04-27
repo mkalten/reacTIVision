@@ -623,7 +623,7 @@ bool V4Linux2Camera::getCameraSettingAuto(int mode) {
 	   if ((ioctl(dev_handle, VIDIOC_G_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
 		printf("Unable to get AUTO mode: %s\n" , strerror(errno));
         	return false;
-    	   } else return (v4l2_auto_ctrl[0].value<1);
+    	   } else return (v4l2_auto_ctrl[0].value!=1);
 
         case WHITE: return getCameraSetting(AUTO_WHITE);
         case COLOR_HUE: return getCameraSetting(AUTO_HUE);
@@ -644,7 +644,7 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
 
 	    struct v4l2_ext_control v4l2_auto_ctrl[1];
             v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
-            if (flag==true) v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+            if (flag==true) v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
             else v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
 
 	    struct v4l2_ext_controls v4l2_auto_ctrls;
@@ -654,8 +654,10 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
 	    if ((ioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
 	        printf("Unable to set AUTO mode: %s\n",strerror(errno));
 	        return false;
-	    } else return true;
-
+	    } else {
+		if (!flag) setDefaultCameraSetting(EXPOSURE);
+		return true;
+	    }
         case WHITE:
             return(setCameraSetting(AUTO_WHITE,flag));
         case COLOR_HUE:
