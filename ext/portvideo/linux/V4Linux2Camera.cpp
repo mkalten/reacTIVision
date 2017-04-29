@@ -652,12 +652,21 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
 	    v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
 
 	    if ((ioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
-	        printf("Unable to set AUTO mode: %s\n",strerror(errno));
-	        return false;
-	    } else {
-		if (!flag) setDefaultCameraSetting(EXPOSURE);
-		return true;
+
+		if (flag==true) {
+			v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+			if ((ioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
+	        		printf("Unable to set AUTO mode: %s\n",strerror(errno));
+	        		return false;
+			}
+		} else {
+	        	printf("Unable to set AUTO mode: %s\n",strerror(errno));
+	        	return false;
+		}
 	    }
+
+	    if (!flag) setDefaultCameraSetting(EXPOSURE);
+	    return true;
         case WHITE:
             return(setCameraSetting(AUTO_WHITE,flag));
         case COLOR_HUE:
