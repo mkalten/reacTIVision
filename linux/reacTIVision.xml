@@ -17,7 +17,7 @@ please note that active tags need to be placed outside of this commented area!
 
  -->
     <finger size="0" sensitivity="75" />
-    <image display="none" equalize="false" fullscreen="false" />
+    <image display="dest" equalize="false" fullscreen="false" />
     <threshold gradient="32" tile="10" threads="max" />
     <calibration file="default.grid" invert=" " />
 </reactivision>
