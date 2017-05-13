@@ -599,7 +599,7 @@ applyCameraSetting(int mode, int value) {
 
 void CameraEngine::resetCameraSettings() {
 
-   for (int mode=BRIGHTNESS;mode<=COLOR_BLUE;mode++)
+   for (int mode=MODE_MIN;mode<=MODE_MAX;mode++)
         setDefaultCameraSetting(mode);
 }
 
