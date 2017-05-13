@@ -34,7 +34,7 @@ static void* ClientThreadFunc( void* obj )
 	int client = sender->tcp_client_list.back();
 #endif
 	
-	int connected = 1;
+	size_t connected = 1;
 	while (connected) {
 		connected = recv(client, buf, sizeof(buf),0);
 	}
