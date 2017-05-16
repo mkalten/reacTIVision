@@ -19,7 +19,7 @@
 
 #include "WebSockSender.h"
 
-#if defined (WIN32) && !defined (int32_t)
+#if defined (WIN32) && !defined (_STDINT)
 	typedef DWORD int32_t;
 #endif
 
@@ -62,7 +62,7 @@ bool WebSockSender::sendOscPacket (osc::OutboundPacketStream *bundle) {
 #endif
 	
 	for (client = tcp_client_list.begin(); client!=tcp_client_list.end(); client++) {
-		int len = bundle->Size();
+		size_t len = bundle->Size();
 		// add WebSocket header on top
 		uint8_t header[4] = {
 			0x82,
@@ -149,7 +149,7 @@ void WebSockSender::newClient( int tcp_client ) {
 
 void WebSockSender::sha1( uint8_t digest[SHA1_HASH_SIZE], const uint8_t* inbuf, size_t length) {
 	
-	size_t i, j;
+	int i, j;
 	int remaining_bytes;
 	uint32_t h0, h1, h2, h3, h4, a, b, c, d, e, temp;
 	uint32_t w[80];
@@ -170,7 +170,7 @@ void WebSockSender::sha1( uint8_t digest[SHA1_HASH_SIZE], const uint8_t* inbuf, 
 	for (i = 0; i < length + 9; i += 64) {
 		
 		/* Perform any padding necessary. */
-		remaining_bytes = length - i;
+		remaining_bytes = (int)length - i;
 		if (remaining_bytes >= 64) {
 			memcpy(buf, inbuf + i, 64);
 		} else if (remaining_bytes >= 0) {

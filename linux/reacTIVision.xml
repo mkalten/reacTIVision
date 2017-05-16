@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <reactivision>
-
-<!--
+    <!--
 these are all the possible configuration tags and their default values.
 you only need to specify parameters you want to change from their default setting.
 -->
-
-<!-- the camera configuration is provided in a separate file 
+    <!-- the camera configuration is provided in a separate file 
 use default locations or specify an absolute path -->
-	<camera config="default" />
-<!-- the TUIO server configuration specifies type, host and port
+    <camera config="default"/>
+    <!-- the TUIO server configuration specifies type, host and port
  possible types are: udp, tcp as well as web and flash -->
-	<tuio type="udp" host="127.0.0.1" port="3333" />
-	<tuio type="tcp" host="server" port="3333" />
-	<tuio type="web" port="8080" />
-	<tuio type="flc" />
-<!-- available amoeba sets are default, small or mini - or an alternative *.trees file
+    <tuio type="udp" host="127.0.0.1" port="3333"/>
+    <tuio type="tcp" host="server" port="3333"/>
+    <tuio type="web" port="8080"/>
+    <tuio type="flc"/>
+    <!-- alternative TUIO source name -->
+    <tuio source="rtv"/>
+    <!-- available amoeba sets are default, small or mini - or an alternative *.trees file
   ... also allows to enable the additional yamaarashi symbols,
       as well as the limitation to a maximum fiducial ID -->
-	<fiducial amoeba="default" yamaarashi="true" mirror="false" max_fid="299" />
-<!-- specifies the maximum finger size and tracking sensitivity - size zero disables fingers -->
-    <finger size="0" sensitivity="75" />
-<!-- specifies the minimum blob size - size zero disables blob tracking
+    <fiducial amoeba="default" yamaarashi="true" mirror="false" max_fid="299"/>
+    <!-- specifies the maximum finger size and tracking sensitivity - size zero disables fingers -->
+    <finger size="0" sensitivity="75"/>
+    <!-- specifies the minimum blob size - size zero disables blob tracking
  ... also allows sending additional blobs for fiducials and fingers -->
-	<blob max_size="0" min_size="32" cur_blob="false" obj_blob="false" />
-<!-- enable 1EUR filter for fiducials, fingers or blobs -->
-	<filter fiducial="false" finger="false" blob="true" />
-<!-- the default display options at startup: dest, source, none
+    <blob max_size="0" min_size="32" cur_blob="false" obj_blob="false"/>
+    <!-- enable 1EUR filter for fiducials, fingers or blobs -->
+    <filter fiducial="false" finger="false" blob="true"/>
+    <!-- the default display options at startup: dest, source, none
  ... also allows to enable the frame equalizer at startup -->
-    <image display="dest" fullscreen="false" equalize="false" />
-<!-- the threshold gradient and tile size ... maximum threads for multithreading -->
-    <threshold gradient="32" tile="10" threads="max" />
-<!-- the calibration file ... X,Y and angle inversion -->
-    <calibration file="default.grid" invert=" " />
-
+    <image display="none" fullscreen="false" equalize="false"/>
+    <!-- the threshold gradient and tile size ... maximum threads for multithreading -->
+    <threshold gradient="32" tile="10" threads="max"/>
+    <!-- the calibration file ... X,Y and angle inversion -->
+    <calibration file="default.grid" invert=" "/>
 </reactivision>

@@ -42,20 +42,20 @@
 #define MAX_LISTENER_NAME_LEN			(64)
 #define MAX_LISTENER_METHOD_NAME		(64)
 
-#define	PROTOCOL_NAME				("localhost")
+#define	PROTOCOL_NAME					("localhost")
 
 #define WIN32_SEMAPHORE_NAME			TEXT("MacromediaMutexOmega")
-#define WIN32_SHMEM_NAME			TEXT("MacromediaFMOmega")
+#define WIN32_SHMEM_NAME				TEXT("MacromediaFMOmega")
 #define POSIX_SEMAPHORE_NAME			("MacromediaSemaphoreDig")
-#define	POSIX_SEMAPHORE_INITIAL_VALUE		(10)
+#define	POSIX_SEMAPHORE_INITIAL_VALUE	(10)
 
 #define	AMF_TYPE_STRING				(0x02)
 #define AMF_TYPE_AMF3OBJ			(0x11)
 #define AMF3_TYPE_BYTEARRAY			(0x0C)
 
-#define AMF_ENVELOPE_LEN			(16)
-#define AMF_ENVELOPE_TIMESTAMP_POS	(8)
-#define AMF_ENVELOPE_SIZE_POS		(12)
+#define AMF_ENVELOPE_LEN				(16)
+#define AMF_ENVELOPE_TIMESTAMP_POS		(8)
+#define AMF_ENVELOPE_SIZE_POS			(12)
 
 void _TFLCSLockSemaphore(TFLCSLocalConnection_t* connection);
 void _TFLCSUnlockSemaphore(TFLCSLocalConnection_t* connection);

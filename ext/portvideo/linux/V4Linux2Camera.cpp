@@ -32,7 +32,6 @@ V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
     buffers_initialized = false;
 
     cam_cfg->driver = DRIVER_DEFAULT;
-    memset(&v4l2_auto_ctrl,0,sizeof(v4l2_ext_control));
 }
 
 V4Linux2Camera::~V4Linux2Camera(void)
@@ -607,43 +606,31 @@ bool V4Linux2Camera::hasCameraSettingAuto(int mode) {
 
 }
 
-static int xioctl(int fd, int request, void * arg)
-{
-	int r;
-
-	do
-	r = ioctl(fd, request, arg); while (-1==r&&EINTR==errno);
-
-	return r;
-}
-
 bool V4Linux2Camera::getCameraSettingAuto(int mode) {
 
     if (!hasCameraSetting(mode)) return false;
-    //v4l2_ext_control v4l2_ctrl[2];
-    //v4l2_control v4l2_ctrl;
-    //memset(&v4l2_ctrl, 0, sizeof (v4l2_ctrl));
 
     switch (mode) {
         case GAIN: return getCameraSetting(AUTO_GAIN);
         case EXPOSURE:
-            v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
-            v4l2_auto_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
-           break;
+
+	   struct v4l2_ext_control v4l2_auto_ctrl[1];
+           v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
+	   struct v4l2_ext_controls v4l2_auto_ctrls;
+	   v4l2_auto_ctrls.count = 1;
+	   v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
+
+	   if ((ioctl(dev_handle, VIDIOC_G_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
+		printf("Unable to get AUTO mode: %s\n" , strerror(errno));
+        	return false;
+    	   } else return (v4l2_auto_ctrl[0].value!=1);
+
         case WHITE: return getCameraSetting(AUTO_WHITE);
         case COLOR_HUE: return getCameraSetting(AUTO_HUE);
         default: return false;
     }
 
-    if ((xioctl(dev_handle, VIDIOC_G_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
-        printf("Unable to get AUTO mode: %s\n" , strerror(errno));
-        return false;
-    }
-
-    if (mode==EXPOSURE) {
-        //printf("get auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
-        return (v4l2_auto_ctrl[1].value<1);
-    } else return false;
+    return false;
 }
 
 bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
@@ -654,30 +641,37 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
         case GAIN:
            return(setCameraSetting(AUTO_GAIN,flag));
         case EXPOSURE:
+
+	    struct v4l2_ext_control v4l2_auto_ctrl[1];
             v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
-            v4l2_auto_ctrl[1].id = V4L2_CID_EXPOSURE_AUTO_PRIORITY;
-            if (flag==true) {
-                v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_AUTO;
-                v4l2_auto_ctrl[1].value = V4L2_EXPOSURE_AUTO;
-            } else {
-                v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
-                v4l2_auto_ctrl[1].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
-           }
-            break;
+            if (flag==true) v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
+            else v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
+
+	    struct v4l2_ext_controls v4l2_auto_ctrls;
+	    v4l2_auto_ctrls.count = 1;
+	    v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
+
+	    if ((ioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
+
+		if (flag==true) {
+			v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+			if ((ioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
+	        		printf("Unable to set AUTO mode: %s\n",strerror(errno));
+	        		return false;
+			}
+		} else {
+	        	printf("Unable to set AUTO mode: %s\n",strerror(errno));
+	        	return false;
+		}
+	    }
+
+	    if (!flag) setDefaultCameraSetting(EXPOSURE);
+	    return true;
         case WHITE:
             return(setCameraSetting(AUTO_WHITE,flag));
         case COLOR_HUE:
             return(setCameraSetting(AUTO_HUE,flag));
         default: return false;
-    }
-    if ((xioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrl)) < 0) {
-        printf("Unable to set AUTO mode: %s\n",strerror(errno));
-        return false;
-    }
-
-    if (mode==EXPOSURE) {
-        //printf("set auto mode: %d %d\n",v4l2_auto_ctrl[0].value,v4l2_auto_ctrl[1].value);
-        return true;
     }
 
     return false;

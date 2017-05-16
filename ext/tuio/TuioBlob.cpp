@@ -74,8 +74,8 @@ int TuioBlob::getBlobID() const{
 	return blob_id;
 }
 
-void TuioBlob::setBlobID(long b_id) {
-	blob_id = b_id;
+void TuioBlob::setBlobID(int bi) {
+	blob_id = bi;
 }
 
 void TuioBlob::update (TuioTime ttime, float xp, float yp, float a, float w, float h, float f, float xs, float ys, float rs, float ma, float ra) {

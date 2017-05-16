@@ -128,9 +128,9 @@ namespace TUIO {
 		
 		/**
 		 * Sets the Blob ID of this TuioBlob.
-		 * @param b_id	the new Blob ID for this TuioBlob
+		 * @param bi	the new Blob ID for this TuioBlob
 		 */
-		void setBlobID(long b_id);
+		void setBlobID(int bi);
 		
 		/**
 		 * Takes a TuioTime argument and assigns it along with the provided 

@@ -15,6 +15,8 @@ use default locations or specify an absolute path -->
 	<tuio type="tcp" host="server" port="3333" />
 	<tuio type="web" port="8080" />
 	<tuio type="flc" />
+<!-- alternative TUIO source name -->
+	<tuio source="rtv"/>
 <!-- available amoeba sets are default, small or mini - or an alternative *.trees file
   ... also allows to enable the additional yamaarashi symbols,
       as well as the limitation to a maximum fiducial ID -->
