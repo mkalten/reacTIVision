@@ -79,6 +79,8 @@ namespace TUIO {
 			conflict_threshold = 2;
 			conflict_counter   = 0;
 			conflict_id = INVALID_FIDUCIAL_ID;
+			root_offset.x = 0.0f;
+			root_offset.y = 0.0f;
 		};
 		
 		
