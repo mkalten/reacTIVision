@@ -403,8 +403,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	std::list<BlobObject*> rootBlobs;
 	std::list<BlobObject*> plainBlobs;
 	
-	float min_object_size = min_fiducial_size / 1.1f;
-	float max_object_size = max_fiducial_size * 1.1f;
+	float min_object_size = min_fiducial_size / 1.2f;
+	float max_object_size = max_fiducial_size * 1.2f;
 	min_fiducial_size = max_fiducial_size = (int)average_fiducial_size;
 	
 	float min_finger_size = average_finger_size / 2.0f;
