@@ -565,17 +565,28 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			(regions[i].height>min_object_size) && (regions[i].height<max_object_size) && diff < max_diff) {
 			
 			
-			// ignore root blobs of found fiducials
+			// ignore root blobs and inner blobs of found fiducials
 			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 				
 				if ((*fid)->root==regions[i].region) {
 					add_blob = false;
 					break;
+				} else {
+					
+					float dx = (*fid)->rootx->raw_x - regions[i].raw_x;
+					float dy = (*fid)->rootx->raw_y - regions[i].raw_y;
+					float distance = sqrtf(dx*dx+dy*dy);
+					
+					if (((regions[i].width+regions[i].height) < ((*fid)->rootx->width+(*fid)->rootx->height)) && (distance < average_fiducial_size/1.5f)) {
+						add_blob = false;
+						break;
+					}
+					
 				}
 			}
 			
 			// ignore inner fiducial blobs
-			if (add_blob) for( int j=0; j < reg_count; ++j ) {
+			/*if (add_blob) for( int j=0; j < reg_count; ++j ) {
 				if (j==i) continue;
 				
 				float dx = regions[j].raw_x - regions[i].raw_x;
@@ -586,7 +597,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 					add_blob = false;
 					break;
 				}
-			}
+			}*/
 			
 			// add the root regions
 			if (add_blob) {
