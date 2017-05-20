@@ -144,7 +144,7 @@ private:
 	int max_fiducial_id;
 	bool detect_yamaarashi;
 	bool invert_yamaarashi;
-	void decodeYamaarashi(FiducialX *yama, unsigned char *img);
+	void decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioTime ftime);
 	float checkFinger(BlobObject *fblob);
 };
 

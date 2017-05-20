@@ -231,11 +231,11 @@ void FidtrackFinder::displayControl() {
 	ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 
-void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img) {
+void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioTime ftime) {
 
 	BlobObject *yamaBlob = NULL;
 	try {
-		yamaBlob = new BlobObject(TuioTime::getSystemTime(),yama->rootx, dmap);
+		yamaBlob = new BlobObject(ftime,yama->rootx, dmap);
 	} catch (std::exception e) {
 		yama->id = INVALID_FIDUCIAL_ID;
 		return;
@@ -516,7 +516,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 					fiducials[fid_count].rootx = &regions[i];
 					// we can also decode the yamaarashis now
 					if (fiducials[fid_count].id==YAMA_ID) {
-						if (detect_yamaarashi) decodeYamaarashi(&fiducials[fid_count], dest);
+						if (detect_yamaarashi) decodeYamaarashi(&fiducials[fid_count], dest, frameTime);
 						else fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
 					}
 					break;
