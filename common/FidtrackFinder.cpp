@@ -40,11 +40,14 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	BlobObject::setDimensions(width,height);
 
-	average_fiducial_size = height/2;
-	position_threshold = 1.0f/(2*width); // half a pixel
-	rotation_threshold = M_PI/360.0f;	 // half a degree
-	//position_threshold = 1.0f/(width); // one pixel
-	//rotation_threshold = M_PI/180.0f;	 // one degree
+	//average_fiducial_size = height/2;
+	average_fiducial_size = 0.0f;
+	min_fiducial_size = max_fiducial_size = (int)average_fiducial_size;
+
+	//position_threshold = 1.0f/(2*width); // half a pixel
+	//rotation_threshold = M_PI/360.0f;	 // half a degree
+	position_threshold = 1.0f/(width); // one pixel
+	rotation_threshold = M_PI/180.0f;	 // one degree
 	
 	setFingerSize = false;
 	setFingerSensitivity = false;
@@ -389,7 +392,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	TuioTime frameTime = TuioTime::getSystemTime();
 	tuioManager->initFrame(frameTime);
 	//std::cout << "frame: " << totalframes << std::endl;
-	
+
 	std::list<TuioObject*> objectList = tuioManager->getTuioObjects();
 	std::list<TuioCursor*> cursorList = tuioManager->getTuioCursors();
 	std::list<TuioBlob*>   blobList   = tuioManager->getTuioBlobs();
@@ -578,8 +581,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				float dx = regions[j].raw_x - regions[i].raw_x;
 				float dy = regions[j].raw_y - regions[i].raw_y;
 				float distance = sqrtf(dx*dx+dy*dy);
-				
-				if (((regions[i].width+regions[i].height) < (regions[j].width+regions[j].height)) && (distance < average_fiducial_size/4.0f)) {
+
+				if (((regions[i].width+regions[i].height) < (regions[j].width+regions[j].height)) && (distance < average_fiducial_size/1.5f)) {
 					add_blob = false;
 					break;
 				}
@@ -611,7 +614,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				int dy = regions[i].raw_y - (*fid)->raw_y;
 				float distance = sqrtf(dx*dx+dy*dy);
 				
-				if (distance < (*fid)->root_size/1.4f) {
+				if (distance < (*fid)->root_size/1.5f) {
 					add_blob = false;
 					break;
 				}
@@ -737,19 +740,17 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
 			
-			BlobObject *fid_blob = NULL;
-			try {
-				fid_blob = new BlobObject(frameTime,alt_fid->rootx,dmap);
-				existing_object->setRootOffset(existing_object->getX()-fid_blob->getX(),existing_object->getY()-fid_blob->getY());
-				
-				if (send_fiducial_blobs) {
-					
+			if (send_fiducial_blobs) {
+				BlobObject *fid_blob = NULL;
+				try {
+					fid_blob = new BlobObject(frameTime,alt_fid->rootx,dmap);
+					existing_object->setRootOffset(existing_object->getX()-fid_blob->getX(),existing_object->getY()-fid_blob->getY());
 					TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
 					if (existing_blob) tuioManager->updateTuioBlob(existing_blob,fid_blob->getX(),fid_blob->getY(),fid_blob->getAngle(),fid_blob->getWidth(),fid_blob->getHeight(),fid_blob->getArea());
-				}
-			} catch (std::exception e) {}
+				} catch (std::exception e) {}
+				if (fid_blob) delete fid_blob;
+			}
 			
-			if (fid_blob) delete fid_blob;
 			fiducialList.remove(alt_fid);
 		}
 		// possibly correct a wrong ID
