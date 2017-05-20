@@ -549,7 +549,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 
 	//std::cout << "fiducials: " << fid_count << std::endl;
 	//std::cout << "regions: " << reg_count << std::endl;
-	
+
 	// -----------------------------------------------------------------------------------------------
 	// assign the plain regions
 	for( int i=0; i < reg_count; ++i ) {
@@ -734,7 +734,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			BlobObject *fid_blob = NULL;
 			try {
 				
-				if ((da>M_PI/180.0f) || (dp>2)) {
+				if ((da>M_PI/90.0f) || (dp>2)) {
 					fid_blob = new BlobObject(frameTime,closest_fid->rootx,dmap);
 					existing_object->setRootOffset(existing_object->getX()-fid_blob->getX(),existing_object->getY()-fid_blob->getY());
 				}
