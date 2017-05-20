@@ -83,7 +83,6 @@ namespace TUIO {
 			root_offset.y = 0.0f;
 		};
 		
-		
 		/**
 		 */
 		void setFiducialInfo (int rcolour, int rsize) {
@@ -107,6 +106,15 @@ namespace TUIO {
 				conflict_id   = c_id;
 			}
 			return false;
+		}
+		
+		/**
+		 */
+		float getAngleDiff (float a) {
+			float da = angle-a;
+			if (da>M_PI) da-=2*M_PI;
+			else if (da<-M_PI) da+=2*M_PI;
+			return da;
 		}
 		
 		/**
