@@ -229,9 +229,9 @@ void TuioBlob::removeSizeThreshold() {
 void TuioBlob::addSizeFilter(float mcut, float beta) {
 	
 	if (widthFilter) delete widthFilter;
-	widthFilter = new OneEuroFilter(60.0f, mcut, beta, 1.0f);
+	widthFilter = new OneEuroFilter(60.0f, mcut, beta, 10.0f);
 	if (heightFilter) delete heightFilter;
-	heightFilter = new OneEuroFilter(60.0f, mcut, beta, 1.0f);
+	heightFilter = new OneEuroFilter(60.0f, mcut, beta, 10.0f);
 }
 
 void TuioBlob::removeSizeFilter() {

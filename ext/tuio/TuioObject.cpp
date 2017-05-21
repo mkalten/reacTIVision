@@ -147,7 +147,7 @@ void TuioObject::removeAngleThreshold() {
 void TuioObject::addAngleFilter(float mcut, float beta) {
 	
 	if (angleFilter) delete angleFilter;
-	angleFilter = new OneEuroFilter(60.0f, mcut, beta, 0.1f);
+	angleFilter = new OneEuroFilter(60.0f, mcut, beta, 10.0f);
 }
 
 void TuioObject::removeAngleFilter() {
