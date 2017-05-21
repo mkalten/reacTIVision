@@ -754,7 +754,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		else if ((alt_fid!=NULL) && (alt_fid->id==FUZZY_FIDUCIAL_ID) && (alt_closest<existing_object->getRootSize()/1.1f)) {
 			
 			existing_object->setTrackingState(FIDUCIAL_FUZZY);
-			tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,existing_object->getAngle());
+			float distance = existing_object->getScreenDistance(alt_fid->x, alt_fid->y, width, height);
+			if (distance<3) alt_fid->angle = existing_object->getAngle(); // don't update fuzzy angle for resting objects
+			tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,alt_fid->angle);
 			
 			drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
 			
