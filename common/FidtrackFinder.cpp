@@ -400,8 +400,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 					}
 					//four pixel threshold for moving fuzzy symbols
 					if (dist<4.0f) fiducials[i].angle=fiducial->getAngle();
-
-					std::cout << "hola" << " " << dist << std::endl;
 					
 					fiducials[i].id=fiducial->fiducial_id;
 					fiducial->state = FIDUCIAL_INVALID;
