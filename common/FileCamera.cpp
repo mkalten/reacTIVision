@@ -87,8 +87,8 @@ bool FileCamera::initCamera() {
 	if ((int)size!=cam_width*cam_height*bytes) std::cerr << "wrong image lenght" << std::endl;
 	fclose(imagefile);
 
-	config.cam_width = cam_width;
-	config.cam_height = cam_height;
+	config.cam_width = config.frame_width = frame_width = cam_width;
+	config.cam_height = config.frame_height = frame_height = cam_height;
 
 	bytes = 1;
 	colour = false;

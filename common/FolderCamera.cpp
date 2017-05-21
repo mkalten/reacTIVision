@@ -106,12 +106,15 @@ bool FolderCamera::initCamera() {
 		param = strtok(header," "); if (param) gray = atoi(param);
 	}
 
+	std::cout << "hola: " << cam_width << " " << cam_height << std::endl;
+	
 	if ((cam_width==0) || (cam_height==0) ) return false; 
 
 	fclose(imagefile);
 
-	config.cam_width = cam_width;
-	config.cam_height = cam_height;
+	config.cam_width = config.frame_width = frame_width = cam_width;
+	config.cam_height = config.frame_height = frame_height = cam_height;
+
 	bytes = 1;
 	colour = false;
 	fps = 50;
