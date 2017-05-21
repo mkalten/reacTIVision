@@ -468,8 +468,10 @@ static void build_regions( Segmenter *s, const unsigned char *source )
                 }else{
                     current_row[x] = new_region( s, x, y, source[i] );
                     make_adjacent( s, current_row[x]->region, previous_row[x]->region );
-                    if( current_row[x-1]->region != previous_row[x]->region )
+                    /* disable diagonal links //mk
+		    if( current_row[x-1]->region != previous_row[x]->region )
                         make_adjacent( s, current_row[x]->region, current_row[x-1]->region );
+		    */
                 }
             }
         }
