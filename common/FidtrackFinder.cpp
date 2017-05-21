@@ -755,7 +755,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			existing_object->setTrackingState(FIDUCIAL_FUZZY);
 			float distance = existing_object->getScreenDistance(alt_fid->x, alt_fid->y, width, height);
-			if (distance<3) alt_fid->angle = existing_object->getAngle(); // don't update fuzzy angle for resting objects
+			if (distance<2) {
+				alt_fid->x = existing_object->getX(); // don't update fuzzy position for resting objects
+				alt_fid->y = existing_object->getY();
+			} if (distance<4) alt_fid->angle = existing_object->getAngle(); // don't update fuzzy angle for resting objects
 			tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,alt_fid->angle);
 			
 			drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
@@ -822,8 +825,16 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (closest_rblob!=NULL) {
 				FloatPoint offset = existing_object->getRootOffset();
 				existing_object->setTrackingState(FIDUCIAL_ROOT);
-				tuioManager->updateTuioObject(existing_object,closest_rblob->getX()+offset.x,closest_rblob->getY()+offset.y,existing_object->getAngle());
- 				drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
+				
+				float distance = existing_object->getScreenDistance(closest_rblob->getX(), closest_rblob->getY(), width, height);
+				if (distance<2) {
+					tuioManager->updateTuioObject(existing_object,closest_rblob->getX(),closest_rblob->getY(),existing_object->getAngle());
+					drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
+				} else {
+					tuioManager->updateTuioObject(existing_object,closest_rblob->getX()+offset.x,closest_rblob->getY()+offset.y,existing_object->getAngle());
+					drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
+				}
+
 				
 				if (send_fiducial_blobs) {
 					TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
