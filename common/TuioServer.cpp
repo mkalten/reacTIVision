@@ -37,7 +37,7 @@ TuioServer::TuioServer(const char* address, int port, const char *src)
 	transmitSocket = new UdpTransmitSocket(IpEndpointName(ip, port));
 
 
-	if ((strcmp(address, "localhost") == 0) || (strcmp(address, "127.0.0.1") == 0))  sprintf(source, src);
+	if ((strcmp(address, "localhost") == 0) || (strcmp(address, "127.0.0.1") == 0))  sprintf(source, "%s", src);
 	else {
 
 		char hostname[64];
