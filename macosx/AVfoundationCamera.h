@@ -23,7 +23,7 @@
 #import <Cocoa/Cocoa.h>
 #import <VVUVCKit/VVUVCKit.h>
 
-#include "../common/cameraEngine.h"
+#include "../common/CameraEngine.h"
 #include "../common/SDLinterface.h"
 
 @interface FrameGrabber : NSObject <AVCaptureVideoDataOutputSampleBufferDelegate>

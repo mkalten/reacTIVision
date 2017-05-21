@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.5.1</string>
+	<string>1.5.2</string>
 	<key>CFBundleIconFile</key>
 	<string>reacTIVision</string>
 	<key>CFBundleIdentifier</key>
@@ -23,7 +23,7 @@
 	<key>CFBundleSignature</key>
 	<string>TUIO</string>
 	<key>CFBundleVersion</key>
-	<string>1610</string>
+	<string>1706</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
 	<key>LSMinimumSystemVersionByArchitecture</key>
