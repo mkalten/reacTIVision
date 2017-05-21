@@ -116,6 +116,12 @@ namespace TUIO {
 			else if (da<-M_PI) da+=2*M_PI;
 			return da;
 		}
+
+		/**
+		 */
+		float getAngleDiff (FiducialObject *f) {
+			return getAngleDiff(f->getAngle());
+		}
 		
 		/**
 		 */

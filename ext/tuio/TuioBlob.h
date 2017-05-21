@@ -41,10 +41,6 @@ namespace TUIO {
 		 */ 
 		float angle;
 		/**
-		 * The accumulated angle value.
-		 */
-		float angle_sum;
-		/**
 		 * The width value.
 		 */ 
 		float width;
@@ -236,12 +232,6 @@ namespace TUIO {
 		 * @return	the rotation angle of this TuioBlob
 		 */
 		float getAngle() const;
-		
-		/**
-		 * Returns the accumulated rotation angle of this TuioBlob.
-		 * @return	the accumulated rotation angle of this TuioBlob
-		 */
-		float getAngleSum() const;
 		
 		/**
 		 * Returns the rotation angle in degrees of this TuioBlob.

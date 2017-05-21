@@ -41,10 +41,6 @@ namespace TUIO {
 		 */ 
 		float angle;
 		/**
-		 * The accumulated angle value.
-		 */
-		float angle_sum;
-		/**
 		 * The rotation speed value.
 		 */ 
 		float rotation_speed;
@@ -170,12 +166,6 @@ namespace TUIO {
 		 * @return	the rotation angle of this TuioObject
 		 */
 		float getAngle() const;
-		
-		/**
-		 * Returns the accumulated rotation angle of this TuioObject.
-		 * @return	the accumulated rotation angle of this TuioObject
-		 */
-		float getAngleSum() const;
 		
 		/**
 		 * Returns the rotation angle in degrees of this TuioObject.
