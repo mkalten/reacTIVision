@@ -381,14 +381,14 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 				// assuming that between two frames
 				// there can't be a rapid exchange of two symbols
 				// at the same place
-				
+
 				for (int j=0;j<fid_count;j++) {
 					if ( (i!=j) && (fiducial->distance(fiducials[j].x,fiducials[j].y)<distance)) goto fiducialList_loop_end;
-				}	
-				
+				}
+
 				if (fiducials[i].id==INVALID_FIDUCIAL_ID) {
 					//printf("corrected invalid ID to %d (%ld)\n", fiducial->fiducial_id,fiducial->session_id);
-					
+
 					//two pixel threshold since missing/added leaf nodes result in a slightly different position
 					float dx = fabs(fiducial->getX() - fiducials[i].x);
 					float dy = fabs(fiducial->getY() - fiducials[i].y);
@@ -396,8 +396,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 						fiducials[i].x = (short int)fiducial->getX();
 						fiducials[i].y = (short int)fiducial->getY();
 					}
-					
-					fiducials[i].angle=fiducial->getAngle();
+					//four pixel threshold for moving fuzzy symbols
+					if ((dx<4.0f) && (dy<4.0f)) fiducials[i].angle=fiducial->getAngle();
+
 					fiducials[i].id=fiducial->fiducial_id;
 					fiducial->state = FIDUCIAL_INVALID;
 					drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),display,0);
