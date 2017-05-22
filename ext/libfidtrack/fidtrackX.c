@@ -465,11 +465,11 @@ void propagate_descendent_count_and_max_depth_upwards(
     }else{
 
         if( r->descendent_count >= ft->min_target_root_descendent_count
-            && r->descendent_count < ft->max_target_root_descendent_count
+            && r->descendent_count <= ft->max_target_root_descendent_count
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ) {
 				link_region( &ft->root_regions_head, r );
        } else if( r->descendent_count >= ft->min_target_root_descendent_range
-            && r->descendent_count < ft->max_target_root_descendent_range
+            && r->descendent_count <= ft->max_target_root_descendent_count
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ) {
 				r->flags |= FUZZY_SYMBOL_FLAG;
 				link_region( &ft->root_regions_head, r );

@@ -55,7 +55,6 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	setBlobSize = false;
 	setObjectBlob = false;
 	setFingerBlob = false;
-
 	return true;
 }
 
@@ -753,14 +752,16 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		// check for fuzzy ID
 		else if ((alt_fid!=NULL) && (alt_fid->id==FUZZY_FIDUCIAL_ID) && (alt_closest<existing_object->getRootSize()/1.1f)) {
 			
-			existing_object->setTrackingState(FIDUCIAL_FUZZY);
+			 // don't update fuzzy position/angle for resting objects
 			float distance = existing_object->getScreenDistance(alt_fid->x, alt_fid->y, width, height);
 			if (distance<2) {
-				alt_fid->x = existing_object->getX(); // don't update fuzzy position for resting objects
+				alt_fid->x = existing_object->getX();
 				alt_fid->y = existing_object->getY();
-			} if (distance<4) alt_fid->angle = existing_object->getAngle(); // don't update fuzzy angle for resting objects
-			tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,alt_fid->angle);
+				alt_fid->angle = existing_object->getAngle();
+			}
 			
+			existing_object->setTrackingState(FIDUCIAL_FUZZY);
+			tuioManager->updateTuioObject(existing_object,alt_fid->x,alt_fid->y,alt_fid->angle);
 			drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
 			
 			if (send_fiducial_blobs) {
