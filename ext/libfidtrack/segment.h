@@ -84,8 +84,9 @@ typedef struct Region{
     struct Region *previous, *next;
     unsigned char colour;
     short left, top, right, bottom;
-    short center_x, center_y;
-
+    //short center_x, center_y;
+	//sort width, height;
+	
 	struct Span *first_span;
 	struct Span *last_span;
 	int area;

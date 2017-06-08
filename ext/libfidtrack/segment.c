@@ -1,6 +1,6 @@
 /*	Fiducial tracking library
 	Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-	Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Maintainer (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -189,7 +189,7 @@ static void make_saturated( Region* r1 )
     r1->flags |= SATURATED_REGION_FLAG;
 }
 
-
+/*
 static void make_fragmented( Region* r1 )
 {
     int i;
@@ -204,7 +204,7 @@ static void make_fragmented( Region* r1 )
     r1->adjacent_region_count = 0;
     r1->flags |= FRAGMENTED_REGION_FLAG;
 }
-
+*/
 
 static void make_adjacent( Segmenter *s, Region* r1, Region* r2 )
 {
@@ -445,10 +445,11 @@ static void build_regions( Segmenter *s, const unsigned char *source )
 				current_row[x-1]->region->area+=i-current_row[x-1]->region->last_span->start;
 
 				// mark single pixels fragmented
+				/*
 				if (current_row[x-1]->region->area<=REGION_GATE_AREA) {
 					if (((y+1)==s->height) || (source[i-1]!=source[i-1+s->width]))
 						make_fragmented(current_row[x-1]->region);
-				}
+				}*/
 
                 if( current_row[x-1]->region->right < x - 1 )
                     current_row[x-1]->region->right = (short)( x - 1 );
@@ -467,8 +468,10 @@ static void build_regions( Segmenter *s, const unsigned char *source )
                 }else{
                     current_row[x] = new_region( s, x, y, source[i] );
                     make_adjacent( s, current_row[x]->region, previous_row[x]->region );
-                    if( current_row[x-1]->region != previous_row[x]->region )
+                    /* disable diagonal links //mk
+					if( current_row[x-1]->region != previous_row[x]->region )
                         make_adjacent( s, current_row[x]->region, current_row[x-1]->region );
+					//*/
                 }
             }
         }

@@ -79,8 +79,9 @@ namespace TUIO {
 			conflict_threshold = 2;
 			conflict_counter   = 0;
 			conflict_id = INVALID_FIDUCIAL_ID;
+			root_offset.x = 0.0f;
+			root_offset.y = 0.0f;
 		};
-		
 		
 		/**
 		 */
@@ -105,6 +106,21 @@ namespace TUIO {
 				conflict_id   = c_id;
 			}
 			return false;
+		}
+		
+		/**
+		 */
+		float getAngleDiff (float a) {
+			float da = angle-a;
+			if (da>M_PI) da-=2*M_PI;
+			else if (da<-M_PI) da+=2*M_PI;
+			return da;
+		}
+
+		/**
+		 */
+		float getAngleDiff (FiducialObject *f) {
+			return getAngleDiff(f->getAngle());
 		}
 		
 		/**

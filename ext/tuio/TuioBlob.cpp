@@ -22,7 +22,6 @@ using namespace TUIO;
 TuioBlob::TuioBlob (TuioTime ttime, long si, int bi, float xp, float yp, float a, float w, float h, float f):TuioContainer(ttime, si, xp, yp) {
 	blob_id = bi;
 	angle = a;
-	angle_sum = a;
 	width = w;
 	height = h;
 	area = f;
@@ -39,7 +38,6 @@ TuioBlob::TuioBlob (TuioTime ttime, long si, int bi, float xp, float yp, float a
 TuioBlob::TuioBlob (long si, int bi, float xp, float yp, float a, float  w, float h, float f):TuioContainer(si, xp, yp) {
 	blob_id = bi;
 	angle = a;
-	angle_sum = a;
 	width = w;
 	height = h; 
 	area = f;
@@ -56,7 +54,6 @@ TuioBlob::TuioBlob (long si, int bi, float xp, float yp, float a, float  w, floa
 TuioBlob::TuioBlob (TuioBlob *tblb):TuioContainer(tblb) {
 	blob_id = tblb->getBlobID();
 	angle = tblb->getAngle();
-	angle_sum = tblb->getAngleSum();
 	width = tblb->getWidth();
 	height = tblb->getHeight();
 	area = tblb->getArea();
@@ -81,7 +78,6 @@ void TuioBlob::setBlobID(int bi) {
 void TuioBlob::update (TuioTime ttime, float xp, float yp, float a, float w, float h, float f, float xs, float ys, float rs, float ma, float ra) {
 	TuioContainer::update(ttime,xp,yp,xs,ys,ma);
 	angle = a;
-	angle_sum = a;
 	width = w;
 	height = h;
 	area = f;
@@ -93,7 +89,6 @@ void TuioBlob::update (TuioTime ttime, float xp, float yp, float a, float w, flo
 void TuioBlob::update (float xp, float yp, float a, float w, float h, float f, float xs, float ys, float rs, float ma, float ra) {
 	TuioContainer::update(xp,yp,xs,ys,ma);
 	angle = a;
-	angle_sum = a;
 	width = w;
 	height = h;
 	area = f;
@@ -110,21 +105,22 @@ void TuioBlob::update (TuioTime ttime, float xp, float yp, float a, float w, flo
 	float dt = diffTime.getTotalMilliseconds()/1000.0f;
 	float last_rotation_speed = rotation_speed;
 	
-	float prev_angle = angle_sum;
 	float da = a-angle;
-	if (da > M_PI/2.0f) angle_sum += (da-2*M_PI);
-	else if (da < M_PI/-2.0f) angle_sum += (da+2*M_PI);
-	else angle_sum += da;
+	if (da > M_PI) da -= 2*M_PI;
+	else if (da < -M_PI) da+=2*M_PI;
 	
-	if (angleFilter) angle_sum = angleFilter->filter(angle_sum,dt);
-	if (fabs(angle_sum-prev_angle)<angleThreshold) angle_sum = prev_angle;
+	float prev_angle = angle;
+	if (angleFilter) angle = angleFilter->filter(angle+da,dt);
+	else angle = angle+da;
+	if (fabs(angle-prev_angle)<angleThreshold) angle = prev_angle;
 	
-	int m = floor(angle_sum/(2*M_PI));
-	angle = angle_sum-(m*(2*M_PI));
+	if (angle > 2*M_PI) angle-=2*M_PI;
+	else if (angle < 0) angle+=2*M_PI;
 	
-	da = (angle-a)/(2*M_PI);
-	if (da > 0.75f) da-=1.0f;
-	else if (da < -0.75f) da+=1.0f;
+	da = angle-prev_angle;
+	if (da > M_PI) da -= 2*M_PI;
+	else if (da < -M_PI) da+=2*M_PI;
+	da = da/(2*M_PI);
 	
 	if (widthFilter && heightFilter) {
 		w = widthFilter->filter(w,dt);
@@ -153,7 +149,6 @@ void TuioBlob::stop (TuioTime ttime) {
 void TuioBlob::update (TuioBlob *tblb) {
 	TuioContainer::update(tblb);
 	angle = tblb->getAngle();
-	angle = tblb->getAngleSum();
 	width = tblb->getWidth();
 	height = tblb->getHeight();
 	area = tblb->getArea();
@@ -184,10 +179,6 @@ float TuioBlob::getArea() const{
 
 float TuioBlob::getAngle() const{
 	return angle;
-}
-
-float TuioBlob::getAngleSum() const{
-	return angle_sum;
 }
 
 float TuioBlob::getAngleDegrees() const{ 
@@ -238,9 +229,9 @@ void TuioBlob::removeSizeThreshold() {
 void TuioBlob::addSizeFilter(float mcut, float beta) {
 	
 	if (widthFilter) delete widthFilter;
-	widthFilter = new OneEuroFilter(60.0f, mcut, beta, 1.0f);
+	widthFilter = new OneEuroFilter(60.0f, mcut, beta, 10.0f);
 	if (heightFilter) delete heightFilter;
-	heightFilter = new OneEuroFilter(60.0f, mcut, beta, 1.0f);
+	heightFilter = new OneEuroFilter(60.0f, mcut, beta, 10.0f);
 }
 
 void TuioBlob::removeSizeFilter() {

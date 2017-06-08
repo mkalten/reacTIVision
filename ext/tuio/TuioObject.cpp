@@ -17,13 +17,13 @@
 */
 
 #include "TuioObject.h"
+#include <iostream>
 
 using namespace TUIO;
 
 TuioObject::TuioObject (TuioTime ttime, long si, int sym, float xp, float yp, float a):TuioContainer(ttime, si, xp, yp) {
 	symbol_id = sym;
 	angle = a;
-	angle_sum = a;
 	rotation_speed = 0.0f;
 	rotation_accel = 0.0f;
 
@@ -34,7 +34,6 @@ TuioObject::TuioObject (TuioTime ttime, long si, int sym, float xp, float yp, fl
 TuioObject::TuioObject (long si, int sym, float xp, float yp, float a):TuioContainer(si, xp, yp) {
 	symbol_id = sym;
 	angle = a;
-	angle_sum = a;
 	rotation_speed = 0.0f;
 	rotation_accel = 0.0f;
 
@@ -45,7 +44,6 @@ TuioObject::TuioObject (long si, int sym, float xp, float yp, float a):TuioConta
 TuioObject::TuioObject (TuioObject *tobj):TuioContainer(tobj) {
 	symbol_id = tobj->getSymbolID();
 	angle = tobj->getAngle();
-	angle_sum = tobj->getAngleSum();
 	rotation_speed = 0.0f;
 	rotation_accel = 0.0f;
 
@@ -56,7 +54,6 @@ TuioObject::TuioObject (TuioObject *tobj):TuioContainer(tobj) {
 void TuioObject::update (TuioTime ttime, float xp, float yp, float a, float xs, float ys, float rs, float ma, float ra) {
 	TuioContainer::update(ttime,xp,yp,xs,ys,ma);
 	angle = a;
-	angle_sum = a;
 	rotation_speed = rs;
 	rotation_accel = ra;
 	if ((rotation_accel!=0) && (state==TUIO_STOPPED)) state = TUIO_ROTATING;
@@ -66,7 +63,6 @@ void TuioObject::update (TuioTime ttime, float xp, float yp, float a, float xs, 
 void TuioObject::update (float xp, float yp, float a, float xs, float ys, float rs, float ma, float ra) {
 	TuioContainer::update(xp,yp,xs,ys,ma);
 	angle = a;
-	angle_sum = a;
 	rotation_speed = rs;
 	rotation_accel = ra;
 	if ((rotation_accel!=0) && (state==TUIO_STOPPED)) state = TUIO_ROTATING;
@@ -80,21 +76,22 @@ void TuioObject::update (TuioTime ttime, float xp, float yp, float a) {
 	float dt = diffTime.getTotalMilliseconds()/1000.0f;
 	float last_rotation_speed = rotation_speed;
 	
-	float prev_angle = angle_sum;
 	float da = a-angle;
-	if (da > M_PI/2.0f) angle_sum += (da-2*M_PI);
-	else if (da < M_PI/-2.0f) angle_sum += (da+2*M_PI);
-	else angle_sum += da;
+	if (da > M_PI) da -= 2*M_PI;
+	else if (da < -M_PI) da+=2*M_PI;
 	
-	if (angleFilter) angle_sum = angleFilter->filter(angle_sum,dt);
-	if (fabs(angle_sum-prev_angle)<angleThreshold) angle_sum = prev_angle;
+	float prev_angle = angle;
+	if (angleFilter) angle = angleFilter->filter(angle+da,dt);
+	else angle = angle+da;
+	if (fabs(angle-prev_angle)<angleThreshold) angle = prev_angle;
 	
-	int m = floor(angle_sum/(2*M_PI));
-	angle = angle_sum-(m*(2*M_PI));
-	
-	da = (angle-a)/(2*M_PI);
-	if (da > 0.75f) da-=1.0f;
-	else if (da < -0.75f) da+=1.0f;
+	if (angle > 2*M_PI) angle-=2*M_PI;
+	else if (angle < 0) angle+=2*M_PI;
+		
+	da = angle-prev_angle;
+	if (da > M_PI) da -= 2*M_PI;
+	else if (da < -M_PI) da+=2*M_PI;
+	da = da/(2*M_PI);
 	
 	rotation_speed = (float)da/dt;
 	rotation_accel =  (rotation_speed - last_rotation_speed)/dt;
@@ -109,7 +106,6 @@ void TuioObject::stop (TuioTime ttime) {
 void TuioObject::update (TuioObject *tobj) {
 	TuioContainer::update(tobj);
 	angle = tobj->getAngle();
-	angle_sum = tobj->getAngleSum();
 	rotation_speed = tobj->getRotationSpeed();
 	rotation_accel = tobj->getRotationAccel();
 	if ((rotation_accel!=0) && (state==TUIO_STOPPED)) state = TUIO_ROTATING;
@@ -121,10 +117,6 @@ int TuioObject::getSymbolID() const{
 
 float TuioObject::getAngle() const{
 	return angle;
-}
-
-float TuioObject::getAngleSum() const{
-	return angle_sum;
 }
 
 float TuioObject::getAngleDegrees() const{ 
@@ -155,7 +147,7 @@ void TuioObject::removeAngleThreshold() {
 void TuioObject::addAngleFilter(float mcut, float beta) {
 	
 	if (angleFilter) delete angleFilter;
-	angleFilter = new OneEuroFilter(60.0f, mcut, beta, 1.0f);
+	angleFilter = new OneEuroFilter(60.0f, mcut, beta, 10.0f);
 }
 
 void TuioObject::removeAngleFilter() {

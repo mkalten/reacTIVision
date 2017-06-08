@@ -457,19 +457,19 @@ void propagate_descendent_count_and_max_depth_upwards(
 
     r->level = TRAVERSED;
 
-    if( r->descendent_count == ft->max_target_root_descendent_count
+    if( (r->descendent_count == ft->max_target_root_descendent_count || r->descendent_count == YAMA_COUNT)
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ){
 
         // found fiducial candidate
         link_region( &ft->root_regions_head, r );
     }else{
 
-        if( (r->descendent_count >= ft->min_target_root_descendent_count || r->descendent_count == YAMA_COUNT)
-            && r->descendent_count < ft->max_target_root_descendent_count
+        if( r->descendent_count >= ft->min_target_root_descendent_count
+            && r->descendent_count <= ft->max_target_root_descendent_count
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ) {
 				link_region( &ft->root_regions_head, r );
        } else if( r->descendent_count >= ft->min_target_root_descendent_range
-            && r->descendent_count < ft->max_target_root_descendent_range
+            && r->descendent_count <= ft->max_target_root_descendent_count
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ) {
 				r->flags |= FUZZY_SYMBOL_FLAG;
 				link_region( &ft->root_regions_head, r );
