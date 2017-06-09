@@ -617,6 +617,7 @@ bool V4Linux2Camera::getCameraSettingAuto(int mode) {
 	   struct v4l2_ext_control v4l2_auto_ctrl[1];
            v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
 	   struct v4l2_ext_controls v4l2_auto_ctrls;
+	   v4l2_auto_ctrls.ctrl_class = V4L2_CTRL_CLASS_CAMERA;
 	   v4l2_auto_ctrls.count = 1;
 	   v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
 
@@ -648,19 +649,22 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
             else v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
 
 	    struct v4l2_ext_controls v4l2_auto_ctrls;
+	    v4l2_auto_ctrls.ctrl_class = V4L2_CTRL_CLASS_CAMERA;
 	    v4l2_auto_ctrls.count = 1;
 	    v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
 
 	    if ((ioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
 
 		if (flag==true) {
+	                v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
 			v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_AUTO;
+			v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
 			if ((ioctl(dev_handle, VIDIOC_S_EXT_CTRLS, &v4l2_auto_ctrls)) < 0) {
 	        		printf("Unable to set AUTO mode: %s\n",strerror(errno));
 	        		return false;
 			}
 		} else {
-	        	printf("Unable to set AUTO mode: %s\n",strerror(errno));
+	        	printf("Unable to set MANUAL mode: %s\n",strerror(errno));
 	        	return false;
 		}
 	    }
