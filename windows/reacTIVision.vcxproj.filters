@@ -183,6 +183,12 @@
     <ClCompile Include="..\ext\portvideo\common\ConsoleInterface.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
+    <ClCompile Include="..\ext\portvideo\ps3eye\ps3eye.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ext\portvideo\ps3eye\PS3EyeCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\CalibrationEngine.h">
@@ -363,6 +369,12 @@
       <Filter>Header Files\tuio</Filter>
     </ClInclude>
     <ClInclude Include="..\ext\portvideo\common\ConsoleInterface.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\ps3eye\ps3eye.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ext\portvideo\ps3eye\PS3EyeCamera.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
   </ItemGroup>

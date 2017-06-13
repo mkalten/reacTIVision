@@ -396,6 +396,10 @@ void VisionEngine::teardownCamera()
 {
     if (camera_!=NULL) {
 		pause_ = true;
+        // after set pause_ stopCamera is executed  to fast for PS3EyeCamera
+        // the camera was stopped while getFrameFromCamera haven't entered the pause idle mode
+        // resulting in a freeze after selected a different Camera
+        pv_sleep(200);
         camera_->stopCamera();
         camera_->closeCamera();
         delete camera_;
