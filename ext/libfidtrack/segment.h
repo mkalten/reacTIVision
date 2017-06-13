@@ -58,20 +58,22 @@ extern "C"
     couldn't be made adjacent, either during a make_adjacent operation or
     during a merge operation.
 */
-#define SATURATED_REGION_FLAG           (4)
+#define SATURATED_REGION_FLAG		(4)
 
 /*
     fragmented regions are those which couldn't be made adjacent to another
     region (or had to be detached from another region) because the other region
     was saturated.
 */
-#define FRAGMENTED_REGION_FLAG          (8)
+#define FRAGMENTED_REGION_FLAG		(8)
 
 #define FUZZY_SYMBOL_FLAG		(16)
 
+#define ROOT_REGION_FLAG		(32)
+
 #define VALID_REGION_FLAG		(64)
 
-#define UNKNOWN_REGION_LEVEL            (-1)
+#define UNKNOWN_REGION_LEVEL	(-1)
 
 #define REGION_GATE_AREA		1
 
@@ -81,11 +83,11 @@ typedef struct Span{
 } Span;
 
 typedef struct Region{
-    struct Region *previous, *next;
-    unsigned char colour;
-    short left, top, right, bottom;
-    //short center_x, center_y;
-	//sort width, height;
+	struct Region *previous, *next;
+	unsigned char colour;
+	short left, top, right, bottom;
+	float x, y, raw_x, raw_y;
+	short width, height, size;
 	
 	struct Span *first_span;
 	struct Span *last_span;

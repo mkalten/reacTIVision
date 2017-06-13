@@ -331,8 +331,8 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	//short vy = all_y-black_y;
 	//float vlength = sqrtf(vx*vx + vy*vy);
 	//f->leaf_size = (float)(ft->average_leaf_size);
-	f->root_size = r->right-r->left;
-	if ((r->bottom-r->top)>f->root_size) f->root_size = r->bottom-r->top;
+	//f->root_size = r->right-r->left;
+	//if ((r->bottom-r->top)>f->root_size) f->root_size = r->bottom-r->top;
 	// f->root_colour=r->colour;
 	// f->node_count=r->descendent_count;
 
@@ -352,26 +352,30 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     assert( r->descendent_count >= ft->min_target_root_descendent_count );
     assert( r->descendent_count <= ft->max_target_root_descendent_count );
 */
+	
+	ft->next_depth_string = 0;
+	depth_string = build_left_heavy_depth_string( ft, r );
+			
+	ft->temp_coloured_depth_string[0] = (char)( r->colour ? 'w' : 'b' );
+	ft->temp_coloured_depth_string[1] = '\0';
+	strcat( ft->temp_coloured_depth_string, depth_string );
+	f->tree = ft->temp_coloured_depth_string;
 
 	if (r->flags & FUZZY_SYMBOL_FLAG) f->id = FUZZY_FIDUCIAL_ID;
 	else {
-        ft->next_depth_string = 0;
-        depth_string = build_left_heavy_depth_string( ft, r );
-			
-        ft->temp_coloured_depth_string[0] = (char)( r->colour ? 'w' : 'b' );
-        ft->temp_coloured_depth_string[1] = '\0';
-        strcat( ft->temp_coloured_depth_string, depth_string );
-
 		f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
-		f->tree =  ft->temp_coloured_depth_string;
-		/*if (f->id != INVALID_FIDUCIAL_ID) {
-			if (!(check_leaf_variation(ft, r, width, height)))  {
-				f->id = INVALID_FIDUCIAL_ID;
-				printf("filtered %f\n",ft->average_leaf_size);
-			}
-		}*/
-    }
+		if (f->id != INVALID_FIDUCIAL_ID) r->flags |= ROOT_REGION_FLAG;
+	}
+	
+	//printf("%d %s\n",f->id,f->tree);
 
+	/*if (f->id != INVALID_FIDUCIAL_ID) {
+		if (!(check_leaf_variation(ft, r, width, height)))  {
+			f->id = INVALID_FIDUCIAL_ID;
+			printf("filtered %f\n",ft->average_leaf_size);
+		}
+	}*/
+	
 	//if ((f->root_size/vlength)>5.0f) f->id = INVALID_FIDUCIAL_ID;
 }
 
@@ -457,9 +461,9 @@ void propagate_descendent_count_and_max_depth_upwards(
 
     r->level = TRAVERSED;
 
-    if( (r->descendent_count == ft->max_target_root_descendent_count || r->descendent_count == YAMA_COUNT)
+    if( (r->descendent_count == ft->max_target_root_descendent_count
+		|| (r->descendent_count==YAMA_COUNT && r->colour==WHITE && r->children_visited_count==3 && r->adjacent_region_count==4))
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ){
-
         // found fiducial candidate
         link_region( &ft->root_regions_head, r );
     }else{

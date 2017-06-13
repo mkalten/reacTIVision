@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ namespace TUIO {
 
 	public:
 		
-		BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool do_full_analysis=false);
+		BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do_full_analysis=false);
 		
 		//void setX(float xp) { xpos = xp; }
 		//void setY(float yp) { ypos = yp; }
@@ -90,19 +90,21 @@ namespace TUIO {
 		std::vector<BlobPoint> fullContour;
 		std::vector<BlobSpan> spanList;
 		
-		RegionX *blobRegion;
+		Region *blobRegion;
 		
+		std::vector<Span*> innerSpanList;
 		std::list<Span*> sortedSpanList;
 		std::list<BlobSpan> fullSpanList;
 		
 		void computeSpanList();
 		void computeFullContourList();
 		void computeOuterContourList();
+		void computeInnerSpanList();
 		void computeOrientedBoundingBox();
 		void computeConvexHull();
 		
-		std::vector<BlobPoint> getInnerContourList(RegionX *region);
-		std::vector<BlobPoint> getFullContourList(RegionX *region);
+		std::vector<BlobPoint> getInnerContourList(Region *region);
+		std::vector<BlobPoint> getFullContourList(Region *region);
 		//std::vector<BlobPoint> getOuterContourList(std::vector<BlobPoint> fullList, std::vector<BlobPoint> innerList);
 		
 		double theta1(BlobPoint *p1, BlobPoint *p2);

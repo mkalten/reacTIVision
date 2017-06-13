@@ -76,21 +76,6 @@ void terminate_fidtrackerX( FidtrackerX *ft );
 #define INVALID_FIDUCIAL_ID  INVALID_TREE_ID
 #define FUZZY_FIDUCIAL_ID (-2)
 #define FUZZY_NODE_RANGE (2)
-
-	
-typedef struct RegionX{
-	
-	Region *region;
-	float x, y;
-	float raw_x, raw_y;
-	short width,height;
-	int area;
-	struct Span *span;
-	struct Span *inner_spans[ 16 ];
-	short inner_span_count;
-	unsigned char colour;
-		
-} RegionX;
 	
 typedef struct FiducialX{
 
@@ -101,8 +86,6 @@ typedef struct FiducialX{
     float angle;
 	float raw_a;
 	Region *root;
-	RegionX *rootx;
-	float root_size;
 //	float vlength;
 //	float leaf_size;
 //  int root_colour;

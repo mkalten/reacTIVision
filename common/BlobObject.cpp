@@ -1,5 +1,5 @@
 /*	reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,26 +23,28 @@ int BlobObject::screenWidth = WIDTH;
 int BlobObject::screenHeight = HEIGHT;
 UserInterface* BlobObject::ui = NULL;
 
-BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool do_full_analyis):TuioBlob(ttime, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
-	
+BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do_full_analyis):TuioBlob(ttime, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
 	
 	if (region==NULL) throw std::exception();
 	blobRegion = region;
 	
-	/*#ifndef NDEBUG
-	 //fill the region candidate with yellow
-	 Span *span = region->span;
-	 iface->setColor(255, 255, 0);
-	 while (span) {
-		iface->drawLine(span->start%screenWidth,span->start/screenWidth,span->end%width,span->end/screenWidth);
+	/*
+	#ifndef NDEBUG
+	//fill the region candidate with yellow
+	Span *span = blobRegion->first_span;
+	ui->setColor(255, 255, 0);
+	while (span) {
+		ui->drawLine(span->start%screenWidth,span->start/screenWidth,span->end%screenWidth,span->end/screenWidth);
 		span = span->next;
-	 }
+	}
 	 
-	 //draw a blue rectangle around the region candidate
-	 iface->setColor(0,0,255);
-	 iface->drawRect(region->left,region->top,region->right-region->left,region->bottom-region->top);
-	 #endif*/
+	//draw a blue rectangle around the region candidate
+	ui->setColor(0,0,255);
+	ui->drawRect(region->left,region->top,region->right-region->left,region->bottom-region->top);
+	#endif
+	//*/
 	
+	computeInnerSpanList();
 	computeOuterContourList();
 	if (outerContour.size()==0) throw std::exception();
 	
@@ -169,29 +171,35 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool d
  }
  */
 
-
+void BlobObject::computeInnerSpanList() {
+	for (int s=0; s<blobRegion->adjacent_region_count;s++) {
+		if ((blobRegion->adjacent_regions[s]->right-blobRegion->adjacent_regions[s]->left)<blobRegion->width) {
+			innerSpanList.push_back(blobRegion->adjacent_regions[s]->first_span);
+		}
+	}
+}
 
 void BlobObject::computeOuterContourList() {
 	
 	outerContour.clear();
 	std::vector<BlobPoint> reverseList;
 	
-	Span *span = blobRegion->span;
+	Span *span = blobRegion->first_span;
 	fullSpanList.clear();
 	while (span) {
 		
 		bool add_start = true;
 		bool add_end = true;
-		for (int i=0;i<blobRegion->inner_span_count;i++) {
-			Span *inner = blobRegion->inner_spans[i];
+		for (int i=0;i<innerSpanList.size();i++) {
+			Span *inner = innerSpanList[i];
 			while (inner) {
 				if (span->end+1==inner->start) {
 					add_end=false;
-					if(!add_start) i=blobRegion->inner_span_count;
+					if(!add_start) i=innerSpanList.size();
 					break;
 				} else if (span->start-1==inner->end) {
 					add_start=false;
-					if(!add_end) i=blobRegion->inner_span_count;
+					if(!add_end) i=innerSpanList.size();
 					break;
 				}
 				inner = inner->next;
@@ -444,7 +452,7 @@ void BlobObject::computeSpanList() {
 	fullSpanList.clear();
 	sortedSpanList.clear();
 	
-	Span *span = blobRegion->span;
+	Span *span = blobRegion->first_span;
 	sortedSpanList.push_back(span);
 	span = span->next;
 	while (span) {
@@ -485,12 +493,11 @@ void BlobObject::computeSpanList() {
 	}
 }
 
-
-std::vector<BlobPoint> BlobObject::getInnerContourList(RegionX *region) {
+std::vector<BlobPoint> BlobObject::getInnerContourList(Region *region) {
 	std::vector<BlobPoint> pointList;
 	
-	for (int i=0;i<region->inner_span_count;i++) {
-		Span *span = region->inner_spans[i];
+	for (int i=0;i<innerSpanList.size();i++) {
+		Span *span = innerSpanList[i];
 		//std::vector<Span*> spanList;
 		while (span) {
 			BlobPoint startPoint;

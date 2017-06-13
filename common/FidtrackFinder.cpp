@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -234,7 +234,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 
 	BlobObject *yamaBlob = NULL;
 	try {
-		yamaBlob = new BlobObject(ftime,yama->rootx, dmap);
+		yamaBlob = new BlobObject(ftime,yama->root, dmap);
 	} catch (std::exception e) {
 		yama->id = INVALID_FIDUCIAL_ID;
 		return;
@@ -454,44 +454,35 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			propagate_descendent_count_and_max_depth_upwards( &segmenter, r, &fidtrackerx);
 		}
 		
-		if( reg_count >= MAX_FIDUCIAL_COUNT ) continue;
+		if( reg_count >= MAX_FIDUCIAL_COUNT*4 ) continue;
 
-		regions[reg_count].region = r;
-		regions[reg_count].width = r->right-r->left+1;
-		regions[reg_count].height = r->bottom-r->top+1;
-		regions[reg_count].span = r->first_span;
-		regions[reg_count].area = r->area;
-		regions[reg_count].colour = r->colour;
+		r->width = r->right-r->left+1;
+		r->height = r->bottom-r->top+1;
 		
-		//if ((regions[reg_count].width>=min_region_size) && (regions[reg_count].width<=max_region_size) && (regions[reg_count].height>=min_region_size) && (regions[reg_count].height<=max_region_size)) {
-		if ((regions[reg_count].width>3) && (regions[reg_count].width<height) && (regions[reg_count].height>3) && (regions[reg_count].height<height)) {
-			regions[reg_count].x = r->left+regions[reg_count].width/2.0f;
-			regions[reg_count].y = r->top+regions[reg_count].height/2.0f;
+		r->size = r->width;
+		if (r->height>r->width) r->size = r->height;
+		
+		if ((r->size>=min_region_size) && (r->size<=max_region_size)) {
+
+			r->x = r->left+r->width/2.0f;
+			r->y = r->top+r->height/2.0f;
 			
-			regions[reg_count].raw_x = regions[reg_count].x;
-			regions[reg_count].raw_y = regions[reg_count].y;
+			r->raw_x = r->x;
+			r->raw_y = r->y;
 			
 			if(!empty_grid) {
-				int pixel = width*(int)floor(regions[reg_count].y+.5f) + (int)floor(regions[reg_count].x+.5f);
+				int pixel = width*(int)floor(r->y+.5f) + (int)floor(r->x+.5f);
 				if ((pixel>=0) || (pixel<width*height)) {
-					regions[reg_count].x = dmap[ pixel ].x;
-					regions[reg_count].y = dmap[ pixel ].y;
+					r->x = dmap[ pixel ].x;
+					r->y = dmap[ pixel ].y;
 				}
 				//if ((regions[reg_count].x==0) && (regions[reg_count].y==0)) continue;
 			}
 			
-			regions[reg_count].x = regions[reg_count].x/width;
-			regions[reg_count].y = regions[reg_count].y/height;
-			
-			regions[reg_count].inner_span_count = 0;
-			for (int s=0; s<r->adjacent_region_count;s++) {
-				if ((r->adjacent_regions[s]->right-r->adjacent_regions[s]->left)<(r->right-r->left)) {
-					regions[reg_count].inner_spans[regions[reg_count].inner_span_count] = r->adjacent_regions[s]->first_span;
-					regions[reg_count].inner_span_count++;
-					if (regions[reg_count].inner_span_count==16) break;
-				}
-			}
-			
+			r->x = r->x/width;
+			r->y = r->y/height;
+
+			regions[reg_count] = r;
 			++reg_count;
 		}
 	}
@@ -509,17 +500,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			fiducials[fid_count].x = fiducials[fid_count].x/width;
 			fiducials[fid_count].y = fiducials[fid_count].y/height;
 			
-			for( int i=0; i < reg_count; ++i ) {
-				if (fiducials[fid_count].root==regions[i].region) {
-					// assign the regionx data to the fiducial
-					fiducials[fid_count].rootx = &regions[i];
-					// we can also decode the yamaarashis now
-					if (fiducials[fid_count].id==YAMA_ID) {
-						if (detect_yamaarashi) decodeYamaarashi(&fiducials[fid_count], dest, frameTime);
-						else fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
-					}
-					break;
-				}
+			if (fiducials[fid_count].id==YAMA_ID) {
+				if (detect_yamaarashi) decodeYamaarashi(&fiducials[fid_count], dest, frameTime);
+				else fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
 			}
 			
 			if (fiducials[fid_count].id>max_fiducial_id)
@@ -527,9 +510,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			if (fiducials[fid_count].id>=0) {
 				valid_fiducial_count ++;
-				total_fiducial_size += fiducials[fid_count].root_size;
-				if (fiducials[fid_count].root_size < min_fiducial_size) min_fiducial_size = fiducials[fid_count].root_size;
-				if (fiducials[fid_count].root_size > max_fiducial_size) max_fiducial_size = fiducials[fid_count].root_size;
+				total_fiducial_size += fiducials[fid_count].root->size;
+				if (fiducials[fid_count].root->size < min_fiducial_size) min_fiducial_size = fiducials[fid_count].root->size;
+				if (fiducials[fid_count].root->size > max_fiducial_size) max_fiducial_size = fiducials[fid_count].root->size;
 			} else if (fiducials[fid_count].id==YAMA_ID) fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
 
 			if (fiducials[fid_count].id!=INVALID_FIDUCIAL_ID) {
@@ -553,31 +536,30 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	// assign the plain regions
 	for( int i=0; i < reg_count; ++i ) {
 		
-		int diff = abs(regions[i].width - regions[i].height);
-		int max_diff = regions[i].width;
-		if (regions[i].height > regions[i].width)
-			max_diff = regions[i].height;
+		int reg_size = regions[i]->size;
+		int reg_diff = abs(regions[i]->width - regions[i]->height);
+		int max_diff = regions[i]->width/2.0f;
+		if (regions[i]->height > regions[i]->width)
+			max_diff = regions[i]->height/2.0f;
 		
 		bool add_blob = true;
 		
-		if ((regions[i].width>min_object_size) && (regions[i].width<max_object_size) &&
-			(regions[i].height>min_object_size) && (regions[i].height<max_object_size) && diff < max_diff) {
-			
+		if ((reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
 			
 			// ignore root blobs and inner blobs of found fiducials
 			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 				
-				if ((*fid)->root==regions[i].region) {
+				if ((*fid)->root==regions[i]) {
 					// ignore root blobs
 					add_blob = false;
 					break;
 				} else {
 					
-					float dx = (*fid)->rootx->raw_x - regions[i].raw_x;
-					float dy = (*fid)->rootx->raw_y - regions[i].raw_y;
+					float dx = (*fid)->root->raw_x - regions[i]->raw_x;
+					float dy = (*fid)->root->raw_y - regions[i]->raw_y;
 					float distance = sqrtf(dx*dx+dy*dy);
 					
-					if (((regions[i].width+regions[i].height) < ((*fid)->rootx->width+(*fid)->rootx->height)) && (distance < average_fiducial_size/1.5f)) {
+					if (((regions[i]->width+regions[i]->height) < ((*fid)->root->width+(*fid)->root->height)) && (distance < average_fiducial_size/1.5f)) {
 						// ignore inside blobs
 						add_blob = false;
 						break;
@@ -586,47 +568,32 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				}
 			}
 			
-			// ignore inner fiducial blobs
-			/*if (add_blob) for( int j=0; j < reg_count; ++j ) {
-				if (j==i) continue;
-				
-				float dx = regions[j].raw_x - regions[i].raw_x;
-				float dy = regions[j].raw_y - regions[i].raw_y;
-				float distance = sqrtf(dx*dx+dy*dy);
-
-				if (((regions[i].width+regions[i].height) < (regions[j].width+regions[j].height)) && (distance < average_fiducial_size/1.5f)) {
-					add_blob = false;
-					break;
-				}
-			}*/
-			
 			// add the root regions
 			if (add_blob) {
 				BlobObject *root_blob = NULL;
 				try {
-					root_blob = new BlobObject(frameTime,&regions[i],dmap);
+					root_blob = new BlobObject(frameTime,regions[i],dmap);
 					rootBlobs.push_back(root_blob);
 				} catch (std::exception e) { if (root_blob) delete root_blob; }
 			}
 			
-		} else if (detect_fingers && (regions[i].colour==WHITE) && (regions[i].width>min_finger_size) && (regions[i].width<max_finger_size) &&
-				   (regions[i].height>min_finger_size) && (regions[i].height<max_finger_size) && diff < max_diff) {
+		} else if (detect_fingers && (regions[i]->colour==WHITE) && (reg_size>=min_finger_size) && (reg_size<=max_finger_size) && reg_diff < max_diff) {
 			
 			// ignore noisy blobs
-			if (regions[i].inner_span_count>3*finger_sensitivity) {
-				//std::cout << "inner spans: "<< regions[j].inner_span_count << std::endl;
+			/*if (regions[i].inner_span_count>3*finger_sensitivity) {
+				//std::cout << "inner spans: "<< regions[i].inner_span_count << std::endl;
 				continue;
-			}
+			}*/
 			
 			// ignore fingers within and near current fiducials
 			//bool add_blob = true;
 			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
 				
-				int dx = regions[i].raw_x - (*fid)->raw_x;
-				int dy = regions[i].raw_y - (*fid)->raw_y;
+				int dx = regions[i]->raw_x - (*fid)->raw_x;
+				int dy = regions[i]->raw_y - (*fid)->raw_y;
 				float distance = sqrtf(dx*dx+dy*dy);
 				
-				if (distance < (*fid)->root_size/1.5f) {
+				if (distance < (*fid)->root->size/1.5f) {
 					add_blob = false;
 					break;
 				}
@@ -636,20 +603,20 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (add_blob) {
 				BlobObject *finger_blob = NULL;
 				try {
-					finger_blob = new BlobObject(frameTime,&regions[i],dmap,true);
+					finger_blob = new BlobObject(frameTime,regions[i],dmap,true);
 					fingerBlobs.push_back(finger_blob);
 				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			}
 			
-		} else if (detect_blobs && (regions[i].colour==WHITE) && (regions[i].width>=min_blob_size) && (regions[i].height>=min_blob_size) && (regions[i].width<=max_blob_size) && (regions[i].height<=max_blob_size)) {
+		} else if (detect_blobs && (regions[i]->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size>=min_blob_size)) {
 			
 			// ignore saturated blobs
-			if (regions[i].inner_span_count==16) continue;
+			// if (regions[i].inner_span_count==16) continue;
 			
 			// add the remaining plain blob
 			BlobObject *plain_blob = NULL;
 			try {
-				plain_blob = new BlobObject(frameTime,&regions[i],dmap);
+				plain_blob = new BlobObject(frameTime,regions[i],dmap);
 				plainBlobs.push_back(plain_blob);
 			} catch (std::exception e) { if (plain_blob) delete plain_blob; }
 		}
@@ -725,7 +692,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			float da = existing_object->getAngleDiff(closest_fid->angle);
 			float dp = width*existing_object->getDistance(closest_fid->x,closest_fid->y);
 			
-			existing_object->setFiducialInfo(closest_fid->root->colour,closest_fid->root_size);
+			existing_object->setFiducialInfo(closest_fid->root->colour,closest_fid->root->size);
 			existing_object->setTrackingState(FIDUCIAL_FOUND);
 			tuioManager->updateTuioObject(existing_object,closest_fid->x,closest_fid->y,closest_fid->angle);
 			drawObject(existing_object->getSymbolID(),existing_object->getX(),existing_object->getY(),existing_object->getTrackingState());
@@ -734,12 +701,12 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			try {
 				
 				if ((da>M_PI/90.0f) || (dp>2)) {
-					fid_blob = new BlobObject(frameTime,closest_fid->rootx,dmap);
+					fid_blob = new BlobObject(frameTime,closest_fid->root,dmap);
 					existing_object->setRootOffset(existing_object->getX()-fid_blob->getX(),existing_object->getY()-fid_blob->getY());
 				}
 				
 				if (send_fiducial_blobs) {
-					if (fid_blob==NULL) fid_blob = new BlobObject(frameTime,closest_fid->rootx,dmap);
+					if (fid_blob==NULL) fid_blob = new BlobObject(frameTime,closest_fid->root,dmap);
 					TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
 					if (existing_blob) tuioManager->updateTuioBlob(existing_blob,fid_blob->getX(),fid_blob->getY(),fid_blob->getAngle(),fid_blob->getWidth(),fid_blob->getHeight(),fid_blob->getArea());
 				}
@@ -767,7 +734,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (send_fiducial_blobs) {
 				BlobObject *fid_blob = NULL;
 				try {
-					fid_blob = new BlobObject(frameTime,alt_fid->rootx,dmap);
+					fid_blob = new BlobObject(frameTime,alt_fid->root,dmap);
 					//existing_object->setRootOffset(existing_object->getX()-fid_blob->getX(),existing_object->getY()-fid_blob->getY());
 					TuioBlob *existing_blob = tuioManager->getTuioBlob(existing_object->getSessionID());
 					if (existing_blob) tuioManager->updateTuioBlob(existing_blob,fid_blob->getX(),fid_blob->getY(),fid_blob->getAngle(),fid_blob->getWidth(),fid_blob->getHeight(),fid_blob->getArea());
@@ -793,7 +760,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				
 				BlobObject *fid_blob = NULL;
 				try {
-					fid_blob = new BlobObject(frameTime,alt_fid->rootx,dmap);
+					fid_blob = new BlobObject(frameTime,alt_fid->root,dmap);
 					existing_object->setRootOffset(existing_object->getX()-fid_blob->getX(),existing_object->getY()-fid_blob->getY());
 					
 					if (send_fiducial_blobs) {
@@ -871,7 +838,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		for (std::list<TuioBlob*>::iterator tblb = blobList.begin(); tblb!=blobList.end(); tblb++) {
 			TuioPoint bpos = (*tblb)->predictPosition();
 			float distance = bpos.getScreenDistance(fiducial->x, fiducial->y,width,height);
-			if (distance<fiducial->root_size/4.0f) {
+			if (distance<fiducial->root->size/4.0f) {
 				tuioManager->removeTuioBlob((*tblb));
 				update_blob_list = true;
 				//break;
@@ -884,7 +851,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		for (std::list<TuioCursor*>::iterator tcur = cursorList.begin(); tcur!=cursorList.end(); tcur++) {
 			TuioPoint bpos = (*tcur)->predictPosition();
 			float distance = bpos.getScreenDistance(fiducial->x, fiducial->y,width,height);
-			if (distance<fiducial->root_size/1.4f) {
+			if (distance<fiducial->root->size/1.4f) {
 				tuioManager->removeTuioCursor((*tcur));
 				update_cursor_list = true;
 			}
@@ -893,7 +860,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		FiducialObject *add_object = new FiducialObject(frameTime,0,fiducial->id,fiducial->x,fiducial->y,fiducial->angle);
 		
-		add_object->setFiducialInfo(fiducial->root->colour,fiducial->root_size);
+		add_object->setFiducialInfo(fiducial->root->colour,fiducial->root->size);
 		add_object->addPositionThreshold(position_threshold);
 		add_object->addAngleThreshold(rotation_threshold);
 
@@ -906,7 +873,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		BlobObject *fid_blob = NULL;
 		try {
-			fid_blob = new BlobObject(frameTime,fiducial->rootx,dmap);
+			fid_blob = new BlobObject(frameTime,fiducial->root,dmap);
 			add_object->setRootOffset(add_object->getX()-fid_blob->getX(),add_object->getY()-fid_blob->getY());
 			
 			if (send_fiducial_blobs) {
