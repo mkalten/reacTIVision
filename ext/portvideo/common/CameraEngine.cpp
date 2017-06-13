@@ -567,8 +567,7 @@ void CameraEngine::setupFrame() {
 
 }
 
-void CameraEngine::
-applyCameraSetting(int mode, int value) {
+void CameraEngine::applyCameraSetting(int mode, int value) {
 
     if (!hasCameraSetting(mode)) return;
 
@@ -578,13 +577,15 @@ applyCameraSetting(int mode, int value) {
                 setCameraSettingAuto(mode,true);
                 return;
             }
-	case SETTING_OFF:
+		case SETTING_OFF:
         case SETTING_DEFAULT:
             setDefaultCameraSetting(mode);
             return;
         case SETTING_MIN:
+			setCameraSettingAuto(mode,false);
             setCameraSetting(mode,getMinCameraSetting(mode)); return;
         case SETTING_MAX:
+			setCameraSettingAuto(mode,false);
             setCameraSetting(mode,getMaxCameraSetting(mode)); return;
         default: {
             int max = getMaxCameraSetting(mode);

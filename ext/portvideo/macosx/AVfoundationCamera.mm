@@ -512,7 +512,7 @@ bool AVfoundationCamera::setCameraSettingAuto(int mode, bool flag) {
     switch (mode) {
         case EXPOSURE:
             if (flag==true) [uvcController setAutoExposureMode:UVC_AEMode_Auto];
-			else [uvcController setAutoExposurePriority:true];
+			else [uvcController setAutoExposureMode:UVC_AEMode_Manual];
             return true;
         case WHITE:
             [uvcController setAutoWhiteBalance:flag];
@@ -583,7 +583,7 @@ int AVfoundationCamera::getCameraSetting(int mode) {
     
     if (uvcController==NULL) return 0;
     if (!hasCameraSetting(mode)) return 0;
-    if (getCameraSettingAuto(mode)) return 0;
+    //if (getCameraSettingAuto(mode)) return 0;
     
     switch (mode) {
         case BRIGHTNESS:	return [uvcController bright];
@@ -607,7 +607,7 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
     
     if (uvcController==NULL) return 0;
     if (!hasCameraSetting(mode)) return 0;
-    if (getCameraSettingAuto(mode)) return 0;
+    //if (getCameraSettingAuto(mode)) return 0;
     
     switch (mode) {
         case BRIGHTNESS:    return [uvcController maxBright];
@@ -631,7 +631,7 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
     
     if (uvcController==NULL) return 0;
     if (!hasCameraSetting(mode)) return 0;
-    if (getCameraSettingAuto(mode)) return 0;
+    //if (getCameraSettingAuto(mode)) return 0;
     
     switch (mode) {
         case BRIGHTNESS:    return [uvcController minBright];
