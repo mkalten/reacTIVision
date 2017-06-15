@@ -22,6 +22,7 @@
 #ifdef WIN32
 #include <windows.h>
 #include "../windows/videoInputCamera.h"
+#include "../macosx/PS3EyeCamera.h"
 #endif
 
 #ifdef LINUX

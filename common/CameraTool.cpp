@@ -21,6 +21,7 @@
 void CameraTool::listDevices() {
 
 #ifdef WIN32
+	PS3EyeCamera::listDevices();
     videoInputCamera::listDevices();
 #endif
     
@@ -57,6 +58,10 @@ CameraEngine* CameraTool::findCamera(const char* config_file) {
 	#endif
 	
 	#ifdef WIN32
+	camera = new PS3EyeCamera(config_file);
+	if( !camera->findCamera()) delete camera;
+	else return camera;
+
 	camera = new videoInputCamera(config_file);
 	if( !camera->findCamera() ) delete camera;
 	else return camera;
