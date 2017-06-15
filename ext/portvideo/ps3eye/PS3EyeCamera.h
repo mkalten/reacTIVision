@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  PS3EyeCamera initially contributed 2014 by Sebestyén Gábor
  
  This library is free software; you can redistribute it and/or

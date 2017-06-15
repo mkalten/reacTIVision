@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  PS3EyeCamera initially contributed 2014 by Sebestyén Gábor
  
  This library is free software; you can redistribute it and/or
@@ -85,8 +85,10 @@ std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
 			cam_cfg.cam_width = 640;
 			cam_cfg.cam_height = 480;
 
+#ifndef WIN32
 			cam_cfg.cam_fps = 75;
 			cfg_list.push_back(cam_cfg);
+#endif
 			cam_cfg.cam_fps = 60;
 			cfg_list.push_back(cam_cfg);
 			cam_cfg.cam_fps = 50;
@@ -161,11 +163,17 @@ bool PS3EyeCamera::initCamera() {
         
         cfg->cam_width =  640;
         cfg->cam_height = 480;
-        
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps  = 75;
+
+#ifdef WIN32
+		int max_fps=60;
+#else
+		int max_fps=75;
+#endif
+
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps  = max_fps;
         else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps  = 15;
         else if (cfg->cam_fps<15) cfg->cam_fps = 15;
-        else if (cfg->cam_fps>75) cfg->cam_fps = 75;
+        else if (cfg->cam_fps>max_fps) cfg->cam_fps = max_fps;
         
 	} else return false;
 	
@@ -216,6 +224,7 @@ bool PS3EyeCamera::closeCamera() {
 
 unsigned char*  PS3EyeCamera::getFrame() {
 
+	if (!eye->isStreaming()) return NULL;
 	eye->getFrame(raw_buffer);
 
 	if(cfg->frame) {
