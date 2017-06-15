@@ -82,23 +82,28 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 
 std::vector<CameraConfig> CameraTool::findDevices() {
 
+	std::vector<CameraConfig> dev_list;
+
 #ifdef __APPLE__
 #ifdef __x86_64__
-	std::vector<CameraConfig> dev_list = AVfoundationCamera::getCameraConfigs();
+	std::vector<CameraConfig> sys_list = AVfoundationCamera::getCameraConfigs();
 #else
-	std::vector<CameraConfig> dev_list = QTKitCamera::getCameraConfigs();
+	std::vector<CameraConfig> sys_list = QTKitCamera::getCameraConfigs();
 #endif
+	dev_list.insert(dev_list.end(), sys_list.begin(), sys_list.end());
 #endif
 	
 #ifdef LINUX
-	std::vector<CameraConfig> dev_list = V4Linux2Camera::getCameraConfigs();
+	std::vector<CameraConfig> sys_list = V4Linux2Camera::getCameraConfigs();
+		dev_list.insert(dev_list.end(), sys_list.begin(), sys_list.end());
 #else // ps3eye for WIN32 and MACOS
 	std::vector<CameraConfig> ps3eye_list = PS3EyeCamera::getCameraConfigs();
 	dev_list.insert(dev_list.end(), ps3eye_list.begin(), ps3eye_list.end());
 #endif
 	
 #ifdef WIN32
-	std::vector<CameraConfig> dev_list = videoInputCamera::getCameraConfigs();
+	std::vector<CameraConfig> sys_list = videoInputCamera::getCameraConfigs();
+	dev_list.insert(dev_list.end(), sys_list.begin(), sys_list.end());
 #else // dc1394 for LINUX and MACOS
 	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
 	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
