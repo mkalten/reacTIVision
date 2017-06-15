@@ -53,7 +53,7 @@ public:
 
 private:
     ps3eye::PS3EYECam::PS3EYERef eye;
-	unsigned char* frm_buffer;
+    unsigned char* frm_buffer;
 };
 
 #endif

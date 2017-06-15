@@ -23,22 +23,6 @@
 
 using namespace ps3eye;
 
-static void yuv422_to_gray(const uint8_t *yuv_src, const int stride, uint8_t *dst, const int width, const int height)
-{
-    int j, i;
-    
-    for (j = 0; j < height; j++, yuv_src += stride)
-    {
-        uint8_t* row = dst + width * j; // 4 channels
-        
-        for (i = 0; i < 2*width; i += 4, row += 2)
-        {
-            row[0] = yuv_src[i];
-            row[1] = yuv_src[i + 2];
-        }
-    }
-}
-
 PS3EyeCamera::PS3EyeCamera(const char* config_file):CameraEngine(config_file)
 {
     cam_buffer = NULL;
