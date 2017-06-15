@@ -189,6 +189,12 @@
     <ClCompile Include="videoInput.cpp">
       <Filter>Source Files\portvideo</Filter>
     </ClCompile>
+    <ClCompile Include="..\macosx\ps3eye\ps3eye.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\macosx\PS3EyeCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\CalibrationEngine.h">
@@ -351,6 +357,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="videoInput.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\macosx\PS3EyeCamera.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\macosx\ps3eye\ps3eye.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
   </ItemGroup>
