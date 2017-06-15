@@ -330,7 +330,7 @@ int PS3EyeCamera::getDefaultCameraSetting(int mode) {
 		case SHARPNESS:
 			return 32;
 		case GAIN:
-			return 0;
+			return 15;
 	}
 	return 0;
 }
