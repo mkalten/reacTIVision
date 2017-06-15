@@ -35,13 +35,8 @@
 #ifdef __APPLE__
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef __x86_64__
 #include "AVfoundationCamera.h"
-#else
-#include "QTKitCamera.h"
-#endif
 #include "DC1394Camera.h"
-//TODO: Merge with new files used for WIN32
 #include "PS3EyeCamera.h"
 #endif
 

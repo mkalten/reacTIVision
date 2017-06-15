@@ -85,11 +85,7 @@ std::vector<CameraConfig> CameraTool::findDevices() {
 	std::vector<CameraConfig> dev_list;
 
 #ifdef __APPLE__
-#ifdef __x86_64__
 	std::vector<CameraConfig> sys_list = AVfoundationCamera::getCameraConfigs();
-#else
-	std::vector<CameraConfig> sys_list = QTKitCamera::getCameraConfigs();
-#endif
 	dev_list.insert(dev_list.end(), sys_list.begin(), sys_list.end());
 #endif
 	
@@ -119,7 +115,6 @@ void CameraTool::listDevices() {
 	int dev_count;
 	
 #ifdef __APPLE__
-#ifdef __x86_64__
 	dev_count = AVfoundationCamera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
 	else {
@@ -127,15 +122,6 @@ void CameraTool::listDevices() {
 		else  printf("%d system cameras found:\n",dev_count);
 		printConfig(AVfoundationCamera::getCameraConfigs());
 	}
-#else
-	dev_count = QTKitCamera::getDeviceCount();
-	if (dev_count==0) printf("no system camera found\n");
-	else {
-		if (dev_count==1) printf("1 system camera found:\n");
-		else  printf("%d system cameras found:\n",dev_count);
-		printConfig(QTKitCamera::getCameraConfigs());
-	}
-#endif
 #endif
 	
 #ifdef LINUX
@@ -185,11 +171,7 @@ CameraEngine* CameraTool::getDefaultCamera() {
 #endif
 	
 #ifdef __APPLE__
-#ifdef __x86_64__
 	return AVfoundationCamera::getCamera(&cam_cfg);
-#else
-	return QTKitCamera::getCamera(&cam_cfg);
-#endif
 #endif
 	
 #ifdef LINUX
@@ -205,7 +187,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 	int dev_count;
 	
 #ifndef NDEBUG
-	
 	if (cam_cfg->driver==DRIVER_FILE) {
 		camera = FileCamera::getCamera(cam_cfg);
 		if (camera) return camera;
@@ -215,7 +196,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 		camera = FolderCamera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
-
 #endif
 
 #ifndef LINUX
@@ -243,7 +223,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 #endif
 
 #ifdef __APPLE__
-#ifdef __x86_64__
 	// default driver
 	dev_count = AVfoundationCamera::getDeviceCount();
 	if (dev_count==0) {
@@ -252,16 +231,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 	} else camera = AVfoundationCamera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-#else
-	// default driver
-	dev_count = QTKitCamera::getDeviceCount();
-	if (dev_count==0) {
-		printf("no system camera found\n");
-		return NULL;
-	} else camera = QTKitCamera::getCamera(cam_cfg);
-	if (camera) return camera;
-	else return getDefaultCamera();
-#endif
 #endif
 
 #ifdef LINUX
@@ -273,7 +242,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 	} else camera = V4Linux2Camera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-
 #endif
 
 	return NULL;
