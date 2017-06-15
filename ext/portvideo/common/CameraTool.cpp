@@ -21,6 +21,14 @@
 #include <pwd.h>
 #endif
 
+void pv_sleep(int ms) {
+#ifndef WIN32
+	usleep(ms*1000);
+#else
+	Sleep(ms);
+#endif
+}
+
 CameraConfig CameraTool::cam_cfg = {};
 
 void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {

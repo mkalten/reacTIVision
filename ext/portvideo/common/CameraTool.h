@@ -54,6 +54,8 @@
 #include <vector>
 #include "tinyxml2.h"
 
+void pv_sleep(int ms=1);
+
 class CameraTool
 {
 public:
