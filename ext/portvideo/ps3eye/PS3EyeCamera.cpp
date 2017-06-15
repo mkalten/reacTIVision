@@ -19,7 +19,6 @@
 
 #include "PS3EyeCamera.h"
 
-
 PS3EyeCamera::PS3EyeCamera(CameraConfig* cam_cfg):CameraEngine(cam_cfg) {
 	cam_buffer = NULL;
 	cam_cfg->driver = DRIVER_PS3EYE;
@@ -86,6 +85,8 @@ std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
 			cam_cfg.cam_width = 640;
 			cam_cfg.cam_height = 480;
 
+			cam_cfg.cam_fps = 75;
+			cfg_list.push_back(cam_cfg);
 			cam_cfg.cam_fps = 60;
 			cfg_list.push_back(cam_cfg);
 			cam_cfg.cam_fps = 50;
@@ -161,15 +162,17 @@ bool PS3EyeCamera::initCamera() {
         cfg->cam_width =  640;
         cfg->cam_height = 480;
         
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps  = 60;
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps  = 75;
         else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps  = 15;
         else if (cfg->cam_fps<15) cfg->cam_fps = 15;
-        else if (cfg->cam_fps>60) cfg->cam_fps = 60;
+        else if (cfg->cam_fps>75) cfg->cam_fps = 75;
         
 	} else return false;
 	
-    // init camera
-    eye->init( cfg->cam_width, cfg->cam_height, cfg->cam_fps, PS3EYECam::EOutputFormat::RGB);
+	PS3EYECam::EOutputFormat eye_fmt = PS3EYECam::EOutputFormat::Gray;
+	if(cfg->color) eye_fmt = PS3EYECam::EOutputFormat::RGB;
+    eye->init( cfg->cam_width, cfg->cam_height, cfg->cam_fps, eye_fmt);
+
 	raw_buffer = new uint8_t[eye->getWidth() * eye->getHeight() * eye->getOutputBytesPerPixel()];
 
     cfg->cam_width = eye->getWidth();
@@ -192,6 +195,8 @@ bool PS3EyeCamera::startCamera() {
 
 bool PS3EyeCamera::stopCamera() {
 	running = false;
+	
+	pv_sleep(100);
     eye->stop();
     return true;
 }
@@ -213,20 +218,11 @@ unsigned char*  PS3EyeCamera::getFrame() {
 
 	eye->getFrame(raw_buffer);
 
-	if(cfg->color) {
-		if(cfg->frame)
-			crop(cfg->cam_width, cfg->cam_height, (unsigned char *)raw_buffer, cam_buffer, 3);
-		else
-			return raw_buffer;
-	}
-	else {
-		if(cfg->frame)
-			crop_rgb2gray(cfg->cam_width, (unsigned char *)raw_buffer, cam_buffer);
-		else
-			rgb2gray(cfg->cam_width, cfg->cam_height, (unsigned char *)raw_buffer, cam_buffer);
-	}
-    
-    return cam_buffer;
+	if(cfg->frame) {
+		crop(cfg->cam_width, cfg->cam_height, (unsigned char *)raw_buffer, cam_buffer, cfg->buf_format);
+		return cam_buffer;
+	} else return raw_buffer;
+
 }
 
 int PS3EyeCamera::getCameraSettingStep(int mode) {
@@ -237,6 +233,7 @@ bool PS3EyeCamera::hasCameraSettingAuto(int mode) {
     
     switch (mode) {
         case GAIN:
+		case EXPOSURE:
         case WHITE:
             return true;
     }
