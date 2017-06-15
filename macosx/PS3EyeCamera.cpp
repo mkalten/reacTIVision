@@ -65,9 +65,13 @@ void PS3EyeCamera::listDevices() {
         
         for (int i=0;i<count;i++) {
             printf("\t%d: PS3Eye%d\n",i,i);
-            printf("\t\tformat: YUV422\n");
+            printf("\t\tformat: RGB8\n");
             printf("\t\t\t320x240 187|150|125|100|75|60|50|40|30 fps\n");
+#ifdef WIN32
             printf("\t\t\t640x480 60|50|40|30|15 fps\n");
+#else
+			printf("\t\t\t640x480 75|60|50|40|30|15 fps\n");
+#endif
         }
         
     } else {
@@ -114,9 +118,13 @@ bool PS3EyeCamera::initCamera() {
         
         config.cam_width = 640;
         config.cam_height = 480;
-        
+
+#ifdef WIN32
         if (config.cam_fps==SETTING_MAX) config.cam_fps = 60;
-        else if (config.cam_fps==SETTING_MIN) config.cam_fps = 15;
+#else 
+		if (config.cam_fps==SETTING_MAX) config.cam_fps = 75;
+#endif
+	else if (config.cam_fps==SETTING_MIN) config.cam_fps = 15;
         
     } else {
         // NOT SUPPORTED CONFIGURATION
@@ -124,7 +132,9 @@ bool PS3EyeCamera::initCamera() {
     }
     
     // init camera
-    eye->init( config.cam_width, config.cam_height, config.cam_fps );
+	PS3EYECam::EOutputFormat eye_fmt = PS3EYECam::EOutputFormat::Gray;
+	if(colour) eye_fmt = PS3EYECam::EOutputFormat::RGB;
+    eye->init( config.cam_width, config.cam_height, config.cam_fps, eye_fmt);
     fps = eye->getFrameRate();
     cam_buffer = new unsigned char[cam_width*cam_height*bytes];
 	setupFrame();
@@ -163,16 +173,8 @@ bool PS3EyeCamera::closeCamera() {
 
 unsigned char* PS3EyeCamera::getFrame() {
 	
-    while (!eye->isNewFrame()) {
-        PS3EYECam::updateDevices();
-		if(!running) return NULL;
-    }
-    
-    if (colour) {
-        uyvy2rgb(cam_width, cam_height, (unsigned char *) eye->getLastFramePointer(), cam_buffer);
-    } else {
-        yuv422_to_gray((unsigned char *) eye->getLastFramePointer(), eye->getRowBytes(), cam_buffer, cam_width, cam_height);
-    }
+	if (!eye->isStreaming()) return NULL;
+	eye->getFrame(cam_buffer);
 	
 	if(config.frame) cropFrame(cam_buffer,frm_buffer);
 	else memcpy(frm_buffer,cam_buffer,cam_width*cam_height*bytes);
