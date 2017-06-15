@@ -1,14 +1,14 @@
 ﻿reacTIVision 1.6
 ————————————————
-* added new Yamaarashi 20bit fiducials
+* added new Yamaarashi 20bit fiducials (one million IDs)
 * enabled alternative amoeba symbol sets (default, small, tiny)
 * fully implemented /tuio/2Dblb profile to detect plain blobs, 
   plus optional blobs for fingers and fiducials
 * improved precision and robustness of finger tracking
 * improved angle and position resolution of fiducial tracking
-* optional 1EUR filter to avoid position and angle jitter
+* optional 1EUR filter to clean  position and angle jitter
 * integrated the TUIO 1.1 library
-  allows alternative UDP,TCP, Web and Flash transport
+  allows alternative UDP, TCP, Web and Flash transport
 * converted portVideo into an external LGPL library
   - allow camera selection during runtime (press K)
   - process all available cameras and image formats
@@ -18,8 +18,14 @@
 * removed the alternative MIDI functionality
   (this should be provided by an external TUIOtoMIDI converter)
 
+reacTIVision 1.5.2
+------------------
+* native PS3Eye camera support on Windows
+* add list_devices batch file on Windows
+* add TUIO source name configuration option
+
 reacTIVision 1.5.1
-—————————————————
+—————————————————-
 * revert FrameEqualizer to equalization rather than subtraction
 * fixed the calibration distortion for wide camera formats
 * correctly save updated camera configuration on exit

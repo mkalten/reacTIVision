@@ -1,6 +1,6 @@
 # reacTIVision 1.6
 
-© 2005-2016 by Martin Kaltenbrunner <martin@tuio.org>
+© 2005-2017 by Martin Kaltenbrunner <martin@tuio.org>
 [https://github.com/mkalten/reacTIVision](https://github.com/mkalten/reacTIVision)
 
 **reacTIVision** is an open source, cross-platform computer vision framework for the fast and robust tracking of fiducial markers attached onto physical objects, as well as for multi-touch finger tracking. It was mainly designed as a toolkit for the rapid development of table-based tangible user interfaces (TUI) and multi-touch interactive surfaces. This framework has been developed by Martin Kaltenbrunner and Ross Bencina as part of the [Reactable project](http://www.reactable.com/), a tangible modular synthesizer.
