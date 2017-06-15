@@ -330,7 +330,7 @@ USBMgr::USBMgr()
 	exit_signaled = false;
 	active_camera_count = 0;
     libusb_init(&usb_context);
-    libusb_set_debug(usb_context, 1);
+    libusb_set_debug(usb_context,  LIBUSB_LOG_LEVEL_NONE);
 }
 
 USBMgr::~USBMgr()
@@ -508,8 +508,6 @@ public:
 		available--;
 	}
 	
-#define HBT(x) (unsigned char)((x)>>8)
-
 	void DebayerGray(int frame_width, int frame_height, const uint8_t* inBayer, uint8_t* outBuffer)
 	{
 		// PSMove output is in the following Bayer format (GRBG):
@@ -965,7 +963,7 @@ static void LIBUSB_CALL transfer_completed_callback(struct libusb_transfer *xfr)
 
         libusb_free_transfer(xfr);
 		urb->transfer_canceled();
-        
+
         if(status != LIBUSB_TRANSFER_CANCELLED)
         {
             urb->close_transfers();
