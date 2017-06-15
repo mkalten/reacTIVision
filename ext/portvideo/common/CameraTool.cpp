@@ -82,34 +82,26 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 
 std::vector<CameraConfig> CameraTool::findDevices() {
 
-#ifdef WIN32
-	std::vector<CameraConfig> dev_list = videoInputCamera::getCameraConfigs();
-#endif
-	
 #ifdef __APPLE__
-	
 #ifdef __x86_64__
 	std::vector<CameraConfig> dev_list = AVfoundationCamera::getCameraConfigs();
 #else
 	std::vector<CameraConfig> dev_list = QTKitCamera::getCameraConfigs();
 #endif
-	
-	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
-	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
-
 #endif
 	
 #ifdef LINUX
-	
 	std::vector<CameraConfig> dev_list = V4Linux2Camera::getCameraConfigs();
-	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
-	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
-	
-#endif
-
-#ifndef LINUX
+#else // ps3eye for WIN32 and MACOS
 	std::vector<CameraConfig> ps3eye_list = PS3EyeCamera::getCameraConfigs();
 	dev_list.insert(dev_list.end(), ps3eye_list.begin(), ps3eye_list.end());
+#endif
+	
+#ifdef WIN32
+	std::vector<CameraConfig> dev_list = videoInputCamera::getCameraConfigs();
+#else // dc1394 for LINUX and MACOS
+	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
+	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
 #endif
 
 	return dev_list;
@@ -120,24 +112,8 @@ std::vector<CameraConfig> CameraTool::findDevices() {
 void CameraTool::listDevices() {
 	
 	int dev_count;
-#ifdef WIN32
-	dev_count = videoInputCamera::getDeviceCount();
-	if (dev_count==0) printf("no system camera found\n");
-	else {
-		if (dev_count==1) printf("1 system camera found:\n");
-		else  printf("%d system cameras found:\n",dev_count);
-		printConfig(videoInputCamera::getCameraConfigs());
-	}
-#endif
 	
 #ifdef __APPLE__
-	dev_count = DC1394Camera::getDeviceCount();
-	if (dev_count==0) printf("no DC1394 camera found\n");
-	else {
-		if (dev_count==1) printf("1 DC1394 camera found:\n");
-		else  printf("%d DC1394 cameras found:\n",dev_count);
-		printConfig(DC1394Camera::getCameraConfigs());
-	}
 #ifdef __x86_64__
 	dev_count = AVfoundationCamera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
@@ -158,14 +134,6 @@ void CameraTool::listDevices() {
 #endif
 	
 #ifdef LINUX
-	dev_count = DC1394Camera::getDeviceCount();
-	if (dev_count==0) printf("no DC1394 camera found\n");
-	else {
-		if (dev_count==1) printf("1 DC1394 camera found:\n");
-		else  printf("%d DC1394 cameras found:\n",dev_count);
-		printConfig(DC1394Camera::getCameraConfigs());
-	}
-
 	dev_count = V4Linux2Camera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
 	else {
@@ -173,9 +141,7 @@ void CameraTool::listDevices() {
 		else  printf("%d system cameras found:\n",dev_count);
 		printConfig(V4Linux2Camera::getCameraConfigs());
 	}
-#endif
-
-#ifndef LINUX
+#else // ps3eye for WIN32 and MACOS
 	dev_count = PS3EyeCamera::getDeviceCount();
 	if(dev_count == 0) printf("no PS3Eye camera found\n");
 	else {
@@ -184,6 +150,25 @@ void CameraTool::listDevices() {
 		printConfig(PS3EyeCamera::getCameraConfigs());
 	}
 #endif
+	
+#ifdef WIN32
+	dev_count = videoInputCamera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else {
+		if (dev_count==1) printf("1 system camera found:\n");
+		else  printf("%d system cameras found:\n",dev_count);
+		printConfig(videoInputCamera::getCameraConfigs());
+	}
+#else // dc1394 for LINUX and MACOS
+	dev_count = DC1394Camera::getDeviceCount();
+	if (dev_count==0) printf("no DC1394 camera found\n");
+	else {
+		if (dev_count==1) printf("1 DC1394 camera found:\n");
+		else  printf("%d DC1394 cameras found:\n",dev_count);
+		printConfig(DC1394Camera::getCameraConfigs());
+	}
+#endif
+	
 }
 
 CameraEngine* CameraTool::getDefaultCamera() {
@@ -238,24 +223,21 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 #endif
 
 #ifdef WIN32
-
 	dev_count = videoInputCamera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
 	else camera = videoInputCamera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-
-#endif
-
-#ifdef __APPLE__
-
+#else
 	if (cam_cfg->driver==DRIVER_DC1394) {
 		dev_count = DC1394Camera::getDeviceCount();
 		if (dev_count==0) printf("no DC1394 camera found\n");
 		else camera = DC1394Camera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
+#endif
 
+#ifdef __APPLE__
 #ifdef __x86_64__
 	// default driver
 	dev_count = AVfoundationCamera::getDeviceCount();
@@ -278,14 +260,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 #endif
 
 #ifdef LINUX
-
-	if (cam_cfg->driver==DRIVER_DC1394) {
-		dev_count = DC1394Camera::getDeviceCount();
-		if (dev_count==0) printf("no DC1394 camera found\n");
-		else camera = DC1394Camera::getCamera(cam_cfg);
-		if (camera) return camera;
-	}
-
 	// default driver
 	dev_count = V4Linux2Camera::getDeviceCount();
 	if (dev_count==0) {
