@@ -1,6 +1,6 @@
-﻿reacTIVision 1.5.1
+﻿reacTIVision 1.5.2
 ------------------
-(c) 2005-2016 by Martin Kaltenbrunner <martin@tuio.org>
+(c) 2005-2017 by Martin Kaltenbrunner <martin@tuio.org>
 https://github.com/mkalten/reacTIVision
 
 reacTIVision is an open source, cross-platform computer vision
