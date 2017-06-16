@@ -44,7 +44,7 @@ public:
 	{
 		Bayer,					// Output in Bayer. Destination buffer must be width * height bytes
 		BGR,					// Output in BGR. Destination buffer must be width * height * 3 bytes
-		RGB	,					// Output in RGB. Destination buffer must be width * height * 3 bytes
+		RGB,					// Output in RGB. Destination buffer must be width * height * 3 bytes
 		Gray					// Output in Grayscale. Destination buffer must be width * height bytes
 	};
 
@@ -162,7 +162,7 @@ public:
 	}
     
 
-    bool isStreaming() const { return is_streaming; }
+	bool isStreaming();
     bool isInitialized() const { return device_ != NULL && handle_ != NULL && usb_buf != NULL; }
 
 	bool getUSBPortPath(char *out_identifier, size_t max_identifier_length) const;

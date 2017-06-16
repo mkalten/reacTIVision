@@ -159,7 +159,8 @@ unsigned char* PS3EyeCamera::getFrame() {
 	
 	if (!eye->isStreaming()) return NULL;
 	eye->getFrame(cam_buffer);
-	
+	if (!eye->isStreaming()) return NULL;
+
 	if(config.frame) cropFrame(cam_buffer,frm_buffer);
 	else memcpy(frm_buffer,cam_buffer,cam_width*cam_height*bytes);
 	

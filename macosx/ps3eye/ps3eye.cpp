@@ -298,12 +298,14 @@ class USBMgr
 {
  public:
     USBMgr();
-	 ~USBMgr();
+	~USBMgr();
 
 	static std::shared_ptr<USBMgr>  instance();
     int listDevices(std::vector<PS3EYECam::PS3EYERef>& list);
 	void cameraStarted();
 	void cameraStopped();
+
+	void killTransferThread();
 
     static std::shared_ptr<USBMgr>  sInstance;
     static int                      sTotalDevices;
@@ -330,7 +332,7 @@ USBMgr::USBMgr()
 	exit_signaled = false;
 	active_camera_count = 0;
     libusb_init(&usb_context);
-    libusb_set_debug(usb_context,  LIBUSB_LOG_LEVEL_NONE);
+    libusb_set_debug(usb_context, LIBUSB_LOG_LEVEL_NONE);
 }
 
 USBMgr::~USBMgr()
@@ -339,10 +341,11 @@ USBMgr::~USBMgr()
     libusb_exit(usb_context);
 }
 
+void null_deleter(USBMgr *) {}
 std::shared_ptr<USBMgr> USBMgr::instance()
 {
     if( !sInstance ) {
-        sInstance = std::shared_ptr<USBMgr>( new USBMgr );
+        sInstance = std::shared_ptr<USBMgr>( new USBMgr,&null_deleter );
     }
     return sInstance;
 }
@@ -361,16 +364,19 @@ void USBMgr::cameraStopped()
 
 void USBMgr::startTransferThread()
 {
+	exit_signaled = false;
 	update_thread = std::thread(&USBMgr::transferThreadFunc, this);
 }
 
+void USBMgr::killTransferThread()
+{
+	exit_signaled = true;
+}
+	
 void USBMgr::stopTransferThread()
 {
 	exit_signaled = true;
 	update_thread.join();
-	// Reset the exit signal flag.
-	// If we don't and we call startTransferThread() again, transferThreadFunc will exit immediately.
-	exit_signaled = false;    
 }
 
 void USBMgr::transferThreadFunc()
@@ -430,6 +436,7 @@ class FrameQueue
 {
 public:
 	FrameQueue(uint32_t frame_size) :
+		disconnected		(false),
 		frame_size			(frame_size),
 		num_frames			(2),
 		frame_buffer		((uint8_t*)malloc(frame_size * num_frames)),
@@ -449,6 +456,12 @@ public:
 		return frame_buffer;
 	}
 
+	void stop() {
+		//printf("stopped\n");
+		available=INT_MAX;
+		empty_condition.notify_one();
+	}
+	
 	uint8_t* Enqueue()
 	{
 		uint8_t* new_frame = NULL;
@@ -485,7 +498,10 @@ public:
 		std::unique_lock<std::mutex> lock(mutex);
 
 		// If there is no data in the buffer, wait until data becomes available
-		empty_condition.wait(lock, [this] () { return available != 0; });
+		empty_condition.wait(lock, [this] () {
+			if(available==INT_MAX) disconnected = true;
+			return available != 0;
+		}); if (disconnected) return;
 
 		// Copy from internal buffer
 		uint8_t* source = frame_buffer + frame_size * tail;
@@ -710,6 +726,7 @@ public:
 			outBuffer[i + (frame_height - 1)*dest_stride]	= outBuffer[i + (frame_height - 2)*dest_stride];
 		}
 	}
+	bool disconnected;
 
 private:
 	uint32_t				frame_size;
@@ -789,7 +806,7 @@ public:
 	void close_transfers()
 	{
 		std::unique_lock<std::mutex> lock(num_active_transfers_mutex);
-		if (num_active_transfers == 0)
+		if ((num_active_transfers == 0) || (frame_queue == NULL))
 			return;
 
 		// Cancel any pending transfers
@@ -799,9 +816,11 @@ public:
 		}
 
 		// Wait for cancelation to finish
-		num_active_transfers_condition.wait(lock, [this]() { return num_active_transfers == 0; });
-
-		USBMgr::instance()->cameraStopped();
+		if (!frame_queue->disconnected) {
+			num_active_transfers_condition.wait(lock, [this]() { return num_active_transfers == 0; });
+			USBMgr::instance()->cameraStopped();
+		} else USBMgr::instance()->killTransferThread();
+		
 
 		free(transfer_buffer);
 		transfer_buffer = NULL;
@@ -960,7 +979,10 @@ static void LIBUSB_CALL transfer_completed_callback(struct libusb_transfer *xfr)
     if (status != LIBUSB_TRANSFER_COMPLETED) 
     {
         debug("transfer status %d\n", status);
-
+		
+		if (urb->frame_queue==NULL) return;
+		urb->frame_queue->stop();
+		
         libusb_free_transfer(xfr);
 		urb->transfer_canceled();
 
@@ -969,7 +991,7 @@ static void LIBUSB_CALL transfer_completed_callback(struct libusb_transfer *xfr)
             urb->close_transfers();
         }
         return;
-    }
+	}
 
     //debug("length:%u, actual_length:%u\n", xfr->length, xfr->actual_length);
 
@@ -1034,10 +1056,25 @@ PS3EYECam::~PS3EYECam()
 
 void PS3EYECam::release()
 {
-	if(handle_ != NULL) 
-		close_usb();
+	if (handle_!=NULL) close_usb();
 	if(usb_buf) free(usb_buf);
 }
+
+bool PS3EYECam::isStreaming() {
+	
+	if(urb->frame_queue==NULL) {
+		handle_ = NULL;
+		return false;
+	}
+	
+	if (urb->frame_queue->disconnected) {
+		is_streaming = false;
+		handle_ = NULL;
+	}
+	
+	return is_streaming;
+}
+	
 
 bool PS3EYECam::init(uint32_t width, uint32_t height, uint16_t desiredFrameRate, EOutputFormat outputFormat)
 {
@@ -1144,7 +1181,9 @@ void PS3EYECam::start()
 
 void PS3EYECam::stop()
 {
-    if(!is_streaming) return;
+	if(!is_streaming) return;
+	if(urb->frame_queue==NULL) return;
+	if(urb->frame_queue->disconnected) return;
 
 	/* stop streaming data */
 	ov534_reg_write(0xe0, 0x09);
