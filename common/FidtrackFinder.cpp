@@ -457,9 +457,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	float min_finger_size = average_finger_size / 2.0f;
 	float max_finger_size = average_finger_size * 2.0f;
 	
-	float min_region_size = min_finger_size;
-	if ((average_finger_size==0) && (min_region_size>min_object_size)) min_region_size = min_object_size;
-	else if ((min_blob_size>0) && (min_region_size>min_blob_size)) min_region_size = min_blob_size;
+	float min_region_size = min_object_size;
+	if ((detect_fingers) && (min_region_size>min_finger_size)) min_region_size = min_finger_size;
+	else if ((detect_blobs) && (min_region_size>min_blob_size)) min_region_size = min_blob_size;
 	
 	float max_region_size = max_blob_size;
 	if (max_region_size<max_object_size) max_region_size = max_object_size;
@@ -502,6 +502,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		}
 		
 		if( reg_count >= MAX_FIDUCIAL_COUNT*4 ) continue;
+		// ignore isolated blobs without adjacent regions
+		if (r->adjacent_region_count==0) continue;
 
 		r->width = r->right-r->left+1;
 		r->height = r->bottom-r->top+1;
@@ -591,7 +593,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		bool add_blob = true;
 		
-		if ((reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
+		if ((fiducialList.size()>0) && (reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
 			
 			// ignore root blobs and adjacent regions of found fiducial roots
 			if (regions[i]->flags & ROOT_REGION_FLAG) {
@@ -617,9 +619,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 		} else if (detect_fingers && (regions[i]->colour==WHITE) && (reg_size>=min_finger_size) && (reg_size<=max_finger_size) && reg_diff < max_diff) {
 			
-			// ignore noisy blobs (only leaf nodes)
+			// ignore noisy blobs with too many adjacencies
 			if (regions[i]->adjacent_region_count-1 >= 2*finger_sensitivity) continue;
-			
 			
 			// ignore fingers that are nodes of current fiducials
 			for (int j=0;j<regions[i]->adjacent_region_count;j++) {
@@ -672,19 +673,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	//std::cout << "roots: " << rootBlobs.size() << std::endl;
 	//std::cout << "fingers: " << fingerBlobs.size() << std::endl;
 	//std::cout << "blobs: " << plainBlobs.size() << std::endl;
-
-/*
-	float dx = fiducials[i].x - regions[j].x;
-	float dy = fiducials[i].y - regions[j].y;
-	distance = sqrt(dx*dx+dy*dy);
-	if ( distance<average_fiducial_size/1.5f) {
-		existing_fiducial->setBlobOffset(dx,dy);
-	}
-	
-	FloatPoint offset = existing_fiducial->getBlobOffset();
-	float xpos = regions[j].x + offset.x;
-	float ypos = regions[j].y + offset.y;
-*/
 	
 	// -----------------------------------------------------------------------------------------------
 	// update existing fiducials
