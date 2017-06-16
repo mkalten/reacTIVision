@@ -47,8 +47,8 @@
 #define KEY_V 25
 #define KEY_W 26
 #define KEY_X 27
-#define KEY_Y 28
-#define KEY_Z 29
+#define KEY_Y 29
+#define KEY_Z 28
 
 #define KEY_SPACE 44
 #define KEY_RIGHT 79

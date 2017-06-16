@@ -107,7 +107,8 @@ public:
 	bool getFingerBlob() { return send_finger_blobs; };
 	bool getFiducialBlob() { return send_fiducial_blobs; };
 	bool getYamaarashi() { return detect_yamaarashi; };
-	
+	bool getYamaFlip() { return invert_yamaarashi; };
+
 	void reset();
 	
 private:
@@ -137,6 +138,7 @@ private:
 	float position_threshold;
 	float rotation_threshold;
 	
+	bool setYamarashi, setYamaFlip;
 	bool setFingerSize, setFingerSensitivity;
 	bool setBlobSize, setObjectBlob, setFingerBlob;
 	bool objFilter, curFilter, blbFilter;

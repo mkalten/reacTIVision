@@ -49,6 +49,9 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	position_threshold = 1.0f/(width); // one pixel
 	rotation_threshold = M_PI/180.0f;	 // one degree
 	
+	setYamarashi = false;
+	setYamaFlip = false;
+	
 	setFingerSize = false;
 	setFingerSensitivity = false;
 	
@@ -61,7 +64,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 	
 	FiducialFinder::toggleFlag(flag,lock);
-	
+
 	if (flag==KEY_F) {
 		if (setFingerSize || setFingerSensitivity) {
 			setFingerSize = false;
@@ -73,7 +76,7 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			show_settings = true;
 			return true;
 		}
-	} if (flag==KEY_B) {
+	} else if (flag==KEY_B) {
 		if (setBlobSize || setObjectBlob || setFingerBlob) {
 			setBlobSize = false;
 			setObjectBlob = false;
@@ -86,7 +89,16 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			return true;
 		}
 	} else if (flag==KEY_Y) {
-		detect_yamaarashi=!detect_yamaarashi;
+		if (setYamarashi || setYamaFlip) {
+			setYamarashi = false;
+			setYamaFlip = false;
+			show_settings = false;
+			return false;
+		} else if(!lock) {
+			setYamarashi = true;
+			show_settings = true;
+			return true;
+		}
 	} else if (setFingerSize || setFingerSensitivity) {
 		switch(flag) {
 			case KEY_LEFT:
@@ -118,6 +130,27 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 				} else {
 					setFingerSize=true;
 					setFingerSensitivity=false;
+				}
+				break;
+		}
+	} else if (setYamarashi || setYamaFlip) {
+		switch(flag) {
+			case KEY_LEFT:
+				if (setYamarashi) detect_yamaarashi = false;
+				else invert_yamaarashi = false;
+				break;
+			case KEY_RIGHT:
+				if (setYamarashi) detect_yamaarashi = true;
+				else invert_yamaarashi = true;
+				break;
+			case KEY_UP:
+			case KEY_DOWN:
+				if (setYamarashi) {
+					setYamarashi=false;
+					setYamaFlip=true;
+				} else {
+					setYamaFlip=false;
+					setYamarashi=true;
 				}
 				break;
 		}
@@ -203,6 +236,18 @@ void FidtrackFinder::displayControl() {
 		sprintf(displayText,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
 		settingValue = (int)floor(finger_sensitivity*100+0.5f);
 		maxValue = 200;
+	} else if (setYamarashi) {
+		
+		ui->drawText(17,14,"Y          - exit yamaarashi configuration");
+		sprintf(displayText,"enable yamaarashi %d",detect_yamaarashi);
+		settingValue = detect_yamaarashi;
+		maxValue = 1;
+	} else if (setYamaFlip) {
+		
+		ui->drawText(17,14,"Y          - exit yamaarashi configuration");
+		sprintf(displayText,"invert yamaarashi %d",invert_yamaarashi);
+		settingValue = invert_yamaarashi;
+		maxValue = 1;
 	} else if (setBlobSize) {
 		
 		ui->drawText(17,14,"B          - exit blob configuration");

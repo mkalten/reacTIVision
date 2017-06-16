@@ -390,6 +390,9 @@ void writeSettings(application_settings *config) {
 		if(fiducial_element->Attribute("yamaarashi")!=NULL)  {
 			if (config->yamaarashi) fiducial_element->SetAttribute("yamaarashi", "true");
 		}
+		if(fiducial_element->Attribute("mirror")!=NULL)  {
+			if (config->yama_flip) fiducial_element->SetAttribute("mirror", "true");
+		}
 		if(fiducial_element->Attribute("amoeba")!=NULL) fiducial_element->SetAttribute("amoeba",config->tree_config);
 	}
 
@@ -513,6 +516,7 @@ int main(int argc, char* argv[]) {
 	config.object_blobs = ((FidtrackFinder*)fiducialfinder)->getFiducialBlob();
 	config.cursor_blobs = ((FidtrackFinder*)fiducialfinder)->getFingerBlob();
 	config.yamaarashi = ((FidtrackFinder*)fiducialfinder)->getYamaarashi();
+	config.yama_flip = ((FidtrackFinder*)fiducialfinder)->getYamaFlip();
 
 	engine->removeFrameProcessor(fiducialfinder);
 	delete fiducialfinder;
