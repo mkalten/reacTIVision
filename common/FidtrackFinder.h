@@ -135,6 +135,9 @@ private:
 	int max_blob_size;
 	int min_blob_size;
 	
+	bool get_black_roots;
+	bool get_white_roots;
+
 	float position_threshold;
 	float rotation_threshold;
 	

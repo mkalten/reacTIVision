@@ -43,6 +43,9 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	//average_fiducial_size = height/2;
 	average_fiducial_size = 0.0f;
 	min_fiducial_size = max_fiducial_size = (int)average_fiducial_size;
+	
+	get_black_roots = false;
+	get_white_roots = false;
 
 	//position_threshold = 1.0f/(2*width); // half a pixel
 	//rotation_threshold = M_PI/360.0f;	 // half a degree
@@ -330,7 +333,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 			
 			pixel = point[p].y*width+point[p].x;
 			if ( (pixel<0) || (pixel>=width*height) ) {
-				yama->id = INVALID_FIDUCIAL_ID;
+				yama->id = FUZZY_FIDUCIAL_ID;
 				return;
 			}
 			
@@ -577,7 +580,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	if (valid_fiducial_count>0) {
 		average_fiducial_size = total_fiducial_size/valid_fiducial_count;
 	}
-
+		
 	//std::cout << "fiducials: " << fid_count << std::endl;
 	//std::cout << "regions: " << reg_count << std::endl;
 
@@ -594,6 +597,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		bool add_blob = true;
 		
 		if ((fiducialList.size()>0) && (reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
+			
+			if(regions[i]->colour==WHITE) {
+				if (!get_white_roots) continue;
+			} else if (!get_black_roots) continue;
 			
 			// ignore root blobs and adjacent regions of found fiducial roots
 			if (regions[i]->flags & ROOT_REGION_FLAG) {
@@ -674,6 +681,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	//std::cout << "fingers: " << fingerBlobs.size() << std::endl;
 	//std::cout << "blobs: " << plainBlobs.size() << std::endl;
 	
+	get_white_roots = false;
+	get_black_roots = false;
+	
 	// -----------------------------------------------------------------------------------------------
 	// update existing fiducials
 	std::list<FiducialObject*> removeObjects;
@@ -684,6 +694,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		TuioPoint fpos = existing_object->predictPosition();
 		//ui->setColor(255,0,0);
 		//ui->fillEllipse(fpos.getX()*width,fpos.getY()*height,10,10);
+		
+		
+		if (existing_object->getRootColour()==WHITE) get_white_roots = true;
+		else get_black_roots = true;
 		
 		float closest = width;
 		float alt_closest = width;
