@@ -103,8 +103,8 @@ namespace TUIO {
 		void computeOrientedBoundingBox();
 		void computeConvexHull();
 		
-		std::vector<BlobPoint> getInnerContourList(Region *region);
-		std::vector<BlobPoint> getFullContourList(Region *region);
+		std::vector<BlobPoint> getInnerContourList();
+		//std::vector<BlobPoint> getFullContourList();
 		//std::vector<BlobPoint> getOuterContourList(std::vector<BlobPoint> fullList, std::vector<BlobPoint> innerList);
 		
 		double theta1(BlobPoint *p1, BlobPoint *p2);
