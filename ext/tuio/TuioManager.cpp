@@ -58,7 +58,7 @@ TuioObject* TuioManager::addTuioObject(int f_id, float x, float y, float a) {
 
 void TuioManager::addExternalTuioObject(TuioObject *tobj) {
 	if (tobj==NULL) return;
-	tobj->setSessionID(sessionID++);
+	tobj->setSessionID(++sessionID);
 	objectList.push_back(tobj);
 	updateObject = true;
 
@@ -157,7 +157,7 @@ TuioCursor* TuioManager::addTuioCursor(float x, float y) {
 
 void TuioManager::addExternalTuioCursor(TuioCursor *tcur) {
 	if (tcur==NULL) return;
-	tcur->setSessionID(sessionID++);
+	tcur->setSessionID(++sessionID);
 	cursorList.push_back(tcur);
 	updateCursor = true;
 
@@ -302,7 +302,7 @@ void TuioManager::addExternalTuioBlob(TuioBlob *tblb) {
 		delete freeBlob;
 	} else maxBlobID = blobID;
 	
-	tblb->setSessionID(sessionID++);
+	tblb->setSessionID(++sessionID);
 	tblb->setBlobID(blobID);
 	
 	blobList.push_back(tblb);
