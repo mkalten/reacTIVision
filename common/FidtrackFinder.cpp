@@ -458,18 +458,20 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	float max_finger_size = average_finger_size * 2.0f;
 	
 	float min_region_size = min_finger_size;
-	if ((average_finger_size==0) || (min_region_size>min_object_size)) min_region_size = min_object_size;
-	else if ((min_blob_size>0) && (min_object_size>min_blob_size)) min_region_size = min_blob_size;
+	if ((average_finger_size==0) && (min_region_size>min_object_size)) min_region_size = min_object_size;
+	else if ((min_blob_size>0) && (min_region_size>min_blob_size)) min_region_size = min_blob_size;
 	
 	float max_region_size = max_blob_size;
-	if (max_blob_size<max_object_size) max_region_size = max_object_size;
+	if (max_region_size<max_object_size) max_region_size = max_object_size;
+	if (max_region_size<max_finger_size) max_region_size = max_finger_size;
 
 	int fid_count = 0;
 	int reg_count = 0;
 	
-	//std::cout << "fiducial size: " << average_fiducial_size << std::endl;
-	//std::cout << "finger size: " << average_finger_size << std::endl;
-	
+	//std::cout << "fiducial size: " << min_fiducial_size << " " max_fiducial_size << std::endl;
+	//std::cout << "finger size: " << min_finger_size << " " << max_finger_size << std::endl;
+	//std::cout << "region size: " << min_region_size << " " << max_region_size << std::endl;
+
 	// -----------------------------------------------------------------------------------------------
 	// do the libfidtrack image segmentation
 	step_segmenter( &segmenter, dest );
@@ -591,21 +593,12 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		if ((reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
 			
-			// ignore root blobs and inner blobs of found fiducials
-			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
-				
-				if ((*fid)->root==regions[i]) {
-					// ignore root blobs
-					add_blob = false;
-					break;
-				} else {
-					
-					float dx = (*fid)->root->raw_x - regions[i]->raw_x;
-					float dy = (*fid)->root->raw_y - regions[i]->raw_y;
-					float distance = sqrtf(dx*dx+dy*dy);
-					
-					if (((regions[i]->width+regions[i]->height) < ((*fid)->root->width+(*fid)->root->height)) && (distance < average_fiducial_size/1.5f)) {
-						// ignore inside blobs
+			// ignore root blobs and adjacent regions of found fiducial roots
+			if (regions[i]->flags & ROOT_REGION_FLAG) {
+				add_blob = false;
+			} else {
+				for (int j=0;j<regions[i]->adjacent_region_count;j++) {
+					if (regions[i]->adjacent_regions[j]->flags & ROOT_REGION_FLAG) {
 						add_blob = false;
 						break;
 					}
@@ -624,25 +617,36 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 		} else if (detect_fingers && (regions[i]->colour==WHITE) && (reg_size>=min_finger_size) && (reg_size<=max_finger_size) && reg_diff < max_diff) {
 			
-			// ignore noisy blobs
-			/*if (regions[i].inner_span_count>3*finger_sensitivity) {
-				//std::cout << "inner spans: "<< regions[i].inner_span_count << std::endl;
-				continue;
-			}*/
+			// ignore noisy blobs (only leaf nodes)
+			if (regions[i]->adjacent_region_count-1 >= 2*finger_sensitivity) continue;
 			
-			// ignore fingers within and near current fiducials
-			//bool add_blob = true;
-			for (std::list<FiducialX*>::iterator fid = fiducialList.begin(); fid!=fiducialList.end(); fid++) {
+			
+			// ignore fingers that are nodes of current fiducials
+			for (int j=0;j<regions[i]->adjacent_region_count;j++) {
+				if (regions[i]->adjacent_regions[j]->flags & ROOT_REGION_FLAG) {
+					add_blob = false;
+					break;
+				} else if (regions[i]->adjacent_region_count == 1) {
+					for (int k=0;k<regions[i]->adjacent_regions[j]->adjacent_region_count;k++) {
+						if (regions[i]->adjacent_regions[j]->adjacent_regions[k]->flags & ROOT_REGION_FLAG) {
+							add_blob = false;
+							break;
+						}
+					}
+				}
+			} if (add_blob==false) continue;
+			
+			// ignore fingers within and near existing fiducial objects
+			for (std::list<TuioObject*>::iterator tobj = objectList.begin(); tobj!=objectList.end(); tobj++) {
 				
-				int dx = regions[i]->raw_x - (*fid)->raw_x;
-				int dy = regions[i]->raw_y - (*fid)->raw_y;
-				float distance = sqrtf(dx*dx+dy*dy);
+				FiducialObject *fid = (FiducialObject*)(*tobj);
+				float distance = fid->getScreenDistance(regions[i]->x, regions[i]->y, width, height);
 				
-				if (distance < (*fid)->root->size/1.5f) {
+				if (distance < fid->getRootSize()/1.5f) {
 					add_blob = false;
 					break;
 				}
-			}
+			 }
 			
 			// add the finger candidates
 			if (add_blob) {
@@ -654,9 +658,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			}
 			
 		} else if (detect_blobs && (regions[i]->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size>=min_blob_size)) {
-			
-			// ignore saturated blobs
-			// if (regions[i].inner_span_count==16) continue;
 			
 			// add the remaining plain blob
 			BlobObject *plain_blob = NULL;
@@ -671,7 +672,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	//std::cout << "roots: " << rootBlobs.size() << std::endl;
 	//std::cout << "fingers: " << fingerBlobs.size() << std::endl;
 	//std::cout << "blobs: " << plainBlobs.size() << std::endl;
-	
+
 /*
 	float dx = fiducials[i].x - regions[j].x;
 	float dy = fiducials[i].y - regions[j].y;
