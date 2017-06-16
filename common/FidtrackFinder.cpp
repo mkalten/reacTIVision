@@ -250,7 +250,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	float bw = yamaBlob->getRawWidth()* 0.73f;
 	float bh = yamaBlob->getRawHeight()* 0.73f;
 	
-	if (yamaBlob->getAngle()>1) {
+	if (yamaBlob->getAngle()>M_PI) {
 		bw = bh;
 		bh = yamaBlob->getRawWidth()* 0.73f;
 	}
