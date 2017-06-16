@@ -304,6 +304,7 @@ class USBMgr
     int listDevices(std::vector<PS3EYECam::PS3EYERef>& list);
 	void cameraStarted();
 	void cameraStopped();
+
 	void killTransferThread();
 
     static std::shared_ptr<USBMgr>  sInstance;
@@ -340,10 +341,11 @@ USBMgr::~USBMgr()
     libusb_exit(usb_context);
 }
 
+void null_deleter(USBMgr *) {}
 std::shared_ptr<USBMgr> USBMgr::instance()
 {
     if( !sInstance ) {
-        sInstance = std::shared_ptr<USBMgr>( new USBMgr );
+        sInstance = std::shared_ptr<USBMgr>( new USBMgr,&null_deleter );
     }
     return sInstance;
 }
@@ -499,12 +501,8 @@ public:
 		empty_condition.wait(lock, [this] () {
 			if(available==INT_MAX) disconnected = true;
 			return available != 0;
-		});
+		}); if (disconnected) return;
 
-		if (disconnected) {
-			printf("disconnected\n");
-			return;
-		}
 		// Copy from internal buffer
 		uint8_t* source = frame_buffer + frame_size * tail;
 
