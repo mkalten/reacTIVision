@@ -90,6 +90,7 @@ bool PS3EyeCamera::findCamera() {
 
 bool PS3EyeCamera::initCamera() {
     // check config parameters
+
     if (config.cam_width == SETTING_MIN || config.cam_width == 320 || config.cam_height == SETTING_MIN || config.cam_height == 240) {
         
         config.cam_width = 320;
@@ -99,7 +100,7 @@ bool PS3EyeCamera::initCamera() {
         else if (config.cam_fps==SETTING_MIN) config.cam_fps = 30;
             
     } else if (config.cam_width == SETTING_MAX || config.cam_width == 640 || config.cam_height == SETTING_MAX || config.cam_height == 480 ) {
-        
+
         config.cam_width = 640;
         config.cam_height = 480;
 
@@ -114,12 +115,16 @@ bool PS3EyeCamera::initCamera() {
         // NOT SUPPORTED CONFIGURATION
         return false;
     }
-    
+
     // init camera
 	PS3EYECam::EOutputFormat eye_fmt = PS3EYECam::EOutputFormat::Gray;
 	if(colour) eye_fmt = PS3EYECam::EOutputFormat::RGB;
     eye->init( config.cam_width, config.cam_height, config.cam_fps, eye_fmt);
-    fps = eye->getFrameRate();
+
+	fps = eye->getFrameRate();
+	cam_width = eye->getWidth();
+	cam_height = eye->getHeight();
+
     cam_buffer = new unsigned char[cam_width*cam_height*bytes];
 	setupFrame();
 	frm_buffer = new unsigned char[frame_width*frame_height*bytes];
