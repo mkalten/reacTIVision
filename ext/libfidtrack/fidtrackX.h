@@ -43,7 +43,7 @@ typedef struct FidtrackerX{
     int max_target_root_descendent_count;
     int min_target_root_descendent_range;
     int max_target_root_descendent_range;
-    int min_depth, max_depth;
+    int min_depth, max_depth, min_leafs;
 
     struct Region root_regions_head;
 
@@ -58,10 +58,9 @@ typedef struct FidtrackerX{
 	double black_x_sum_warped, black_y_sum_warped, black_leaf_count_warped;
     double white_x_sum_warped, white_y_sum_warped, white_leaf_count_warped;
 
-	//int min_leaf_width_or_height;
 	int total_leaf_count;
-    //double total_leaf_size;
-    //double average_leaf_size;
+    double white_leaf_size,black_leaf_size;
+	int white_leaf_nodes, black_leaf_nodes;
 
     TreeIdMap *treeidmap;
     ShortPoint *pixelwarp;
@@ -86,15 +85,9 @@ typedef struct FiducialX{
     float angle;
 	float raw_a;
 	Region *root;
-//	float vlength;
-//	float leaf_size;
-//  int root_colour;
 //  int node_count;
 }FiducialX;
 
-
-
-	
 #ifndef NDEBUG
 	void sanity_check_region_initial_values( Segmenter *s );
 #endif

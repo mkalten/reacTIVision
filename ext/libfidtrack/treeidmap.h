@@ -33,6 +33,7 @@ typedef struct TreeIdMap{
     int min_depth, max_depth;
 
     int max_adjacencies;
+	int min_deep_leafs;
 
 }TreeIdMap;
 
