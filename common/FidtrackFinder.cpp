@@ -278,6 +278,25 @@ void FidtrackFinder::displayControl() {
 	ui->displayControl(displayText, 0, maxValue, settingValue);
 }
 
+int orientation(BlobPoint *p, BlobPoint *q, BlobPoint *r)
+{
+	int val = (q->y - p->y) * (r->x - q->x) - (q->x - p->x) * (r->y - q->y);
+	if (val == 0) return 0;  // colinear
+ 
+	return (val > 0)? 1: 2;  // clock or counterclock wise
+}
+
+bool intersection(BlobPoint *p1, BlobPoint *q1, BlobPoint *p2, BlobPoint *q2)
+{
+	int o1 = orientation(p1, q1, p2);
+	int o2 = orientation(p1, q1, q2);
+	int o3 = orientation(p2, q2, p1);
+	int o4 = orientation(p2, q2, q1);
+	
+	if (o1 != o2 && o3 != o4) return true;
+	else return false;
+}
+
 void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioTime ftime) {
 
 	BlobObject *yamaBlob = NULL;
@@ -314,6 +333,88 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		return;
 	}
 	
+	// get black and white leaf nodes
+	int ib = 0, iw = 0;
+	BlobPoint black_leaf[2], white_leaf[2];
+	for (int i=0; i<yama->root->adjacent_region_count; i++) {
+		Region *black_region = yama->root->adjacent_regions[i];
+		if (black_region->size < yama->root->size) {
+			if (black_region->adjacent_region_count==1) {
+				black_leaf[ib].set(black_region->raw_x, black_region->raw_y);
+				ib++;
+			} else {
+				for (int j=0; j<black_region->adjacent_region_count; j++) {
+					Region *white_region = black_region->adjacent_regions[j];
+					if (white_region->size < black_region->size) {
+						white_leaf[iw].set(white_region->raw_x, white_region->raw_y);
+						iw++;
+					}
+				}
+			}
+		}
+	}
+	
+	// correct intersection
+	if (intersection(&white_leaf[0],&black_leaf[0],&white_leaf[1],&black_leaf[1])) {
+		BlobPoint swap = black_leaf[1];
+		black_leaf[1] = black_leaf[0];
+		black_leaf[0] = swap;
+	}
+	
+	// angles between black and white leaf nodes
+	
+	double leaf_angle_a = 0.;
+	double dx_a = white_leaf[0].x - black_leaf[0].x;
+	double dy_a = white_leaf[0].y - black_leaf[0].y;
+	
+	if( fabs(dx_a) > 0.001 ) {
+		leaf_angle_a = atan(dy_a/dx_a) - M_PI * .5;
+		if( dx_a < 0 ) leaf_angle_a =  leaf_angle_a - M_PI;
+		if( leaf_angle_a < 0 ) leaf_angle_a += 2. * M_PI;
+	} else {
+		if (dy_a>0) leaf_angle_a = 0;
+		else leaf_angle_a = M_PI;
+	}
+	
+	double leaf_angle_b = 0.;
+	double dx_b = white_leaf[1].x - black_leaf[1].x;
+	double dy_b = white_leaf[1].y - black_leaf[1].y;
+	
+	if( fabs(dx_b) > 0.001 ) {
+		leaf_angle_b = atan(dy_b/dx_b) - M_PI * .5;
+		if( dx_b < 0 ) leaf_angle_b =  leaf_angle_b - M_PI;
+		if( leaf_angle_b < 0 ) leaf_angle_b += 2. * M_PI;
+	} else {
+		if (dy_b>0) leaf_angle_b = 0;
+		else leaf_angle_b = M_PI;
+	}
+
+	// ironing out angle jumps from 2_M_PI to 0
+	double yama_angle = yama->angle;
+	if (leaf_angle_a<M_PI_2 && (((yama_angle - leaf_angle_a)>M_PI) || (leaf_angle_b - leaf_angle_a)>M_PI)) leaf_angle_a+=2*M_PI;
+	if (leaf_angle_b<M_PI_2 && (((yama_angle - leaf_angle_b)>M_PI) || (leaf_angle_a - leaf_angle_b)>M_PI)) leaf_angle_b+=2*M_PI;
+	if (yama_angle  <M_PI_2 && (((leaf_angle_a - yama_angle)>M_PI) || (leaf_angle_b -   yama_angle)>M_PI)) yama_angle+=2*M_PI;
+	
+	// averaging the three angles
+	double angle = (leaf_angle_a + leaf_angle_b + yama_angle)/3.0f;
+	if (angle>=2*M_PI) angle-=2*M_PI;
+	yama->angle = angle;
+
+/*
+#ifndef NDEBUG
+	ui->setColor(255, 0, 0);
+	ui->drawLine(black_leaf[0].x,black_leaf[0].y,white_leaf[0].x,white_leaf[0].y);
+	ui->drawLine(black_leaf[1].x,black_leaf[1].y,white_leaf[1].x,white_leaf[1].y);
+#endif
+*/
+
+/*
+	float bx = yama->raw_x;
+	float by = yama->raw_y;
+	float bw = 20.0f;
+	float bh = 20.0f;
+*/
+	
 	IntPoint point[4];
 	int pixel;
 	
@@ -321,15 +422,13 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	unsigned int checksum = 0;
 	unsigned char bitpos = 0;
 	
-	float angle = yama->raw_a - M_PI_2;
-
 	for (int i=0;i<6;i++) {
 		
-		float apos = angle;
+		float apos = angle - M_PI_2;
 		for (int p=0;p<4;p++) {
 			
-			point[p].x = (int)(bx + cosf(apos)*bw);
-			point[p].y = (int)(by + sinf(apos)*bh);
+			point[p].x = (int)roundf(bx + cosf(apos)*bw);
+			point[p].y = (int)roundf(by + sinf(apos)*bh);
 			
 			pixel = point[p].y*width+point[p].x;
 			if ( (pixel<0) || (pixel>=width*height) ) {
@@ -514,13 +613,10 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		r->size = r->width;
 		if (r->height>r->width) r->size = r->height;
 		
+		r->raw_x = r->left+r->width/2.0f;
+		r->raw_y = r->top+r->height/2.0f;
+		
 		if ((r->size>=min_region_size) && (r->size<=max_region_size)) {
-
-			r->x = r->left+r->width/2.0f;
-			r->y = r->top+r->height/2.0f;
-			
-			r->raw_x = r->x;
-			r->raw_y = r->y;
 			
 			if(!empty_grid) {
 				int pixel = width*(int)floor(r->y+.5f) + (int)floor(r->x+.5f);
@@ -531,8 +627,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				//if ((regions[reg_count].x==0) && (regions[reg_count].y==0)) continue;
 			}
 			
-			r->x = r->x/width;
-			r->y = r->y/height;
+			r->x = r->raw_x/width;
+			r->y = r->raw_y/height;
 
 			regions[reg_count] = r;
 			++reg_count;
