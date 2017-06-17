@@ -89,11 +89,11 @@ void FidtrackFinderClassic::process(unsigned char *src, unsigned char *dest, SDL
 
 		if  (existing_fiducial!=NULL) {
 			// just update the fiducial from last frame ...
-			existing_fiducial->update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,0,0);
+			existing_fiducial->update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,0);
 		} else if  (fiducials[i].id!=INVALID_FIDUCIAL120_ID) {
 			// add the newly found object
 			FiducialObject addFiducial(session_id, fiducials[i].id, width, height);
-			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,0,0);
+			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,0);
 			fiducialList.push_back(addFiducial);
 			if (midi_server!=NULL) midi_server->sendAddMessage(fiducials[i].id);
 			if (msg_listener) {

@@ -94,7 +94,6 @@ private:
 	int check_finger(RegionX *finger, unsigned char* image, unsigned char* display);
 
 	bool detect_finger;
-	float average_leaf_size;
 	float average_fiducial_size;
 	int average_finger_size;
 	float finger_sensitivity;

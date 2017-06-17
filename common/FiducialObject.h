@@ -63,7 +63,7 @@ class FiducialObject {
 	bool isUpdated() { return updated; }
 	bool checkIdConflict(int s_id, int f_id);
 	int state;
-	float root_size, leaf_size;
+	float root_size;
 	int root_colour;
 	int node_count;
 	
@@ -88,7 +88,7 @@ class FiducialObject {
 	FiducialObject(int s_id, int f_id, int width, int height);
 	FiducialObject(int s_id, int f_id, int width, int height, int colour, int node_count);
 	~FiducialObject();
-	void update(float x, float y, float a, float root, float leaf);
+	void update(float x, float y, float a, float root);
 	std::string getStatistics();
 	std::string addSetMessage(TuioServer *tserver);
 	std::string addSetMessage(MidiServer *mserver);

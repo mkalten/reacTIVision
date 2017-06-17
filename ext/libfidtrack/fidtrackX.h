@@ -76,9 +76,7 @@ void terminate_fidtrackerX( FidtrackerX *ft );
 typedef struct FiducialX{
     int id;                                 /* can be INVALID_FIDUCIAL_ID */
     float x, y;
-	//float a, b;
     float angle;
-    float leaf_size;
     float root_size;
 	int root_colour;
 	int node_count;

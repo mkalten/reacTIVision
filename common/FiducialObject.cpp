@@ -81,7 +81,7 @@ FiducialObject::FiducialObject (int s_id, int f_id, int width, int height) {
 
 FiducialObject::~FiducialObject() {}
 
-void FiducialObject::update (float x, float y, float a, float root, float leaf) {
+void FiducialObject::update (float x, float y, float a, float root) {
 
 	current.time = getCurrentTime();
 	
@@ -90,7 +90,6 @@ void FiducialObject::update (float x, float y, float a, float root, float leaf) 
 	current.raw_angle = a;
 	
 	root_size = root;
-	leaf_size = leaf;
 	
 	// fix possible position and angle jitter
 	positionFilter();

@@ -40,7 +40,6 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	initialize_segmenter( &segmenter, width, height, treeidmap.max_adjacencies );
 	//finger_buffer = new unsigned char[64*64];
 
-	average_leaf_size = 4.0f;
 	average_fiducial_size = 48.0f;
 
 	setFingerSize = false;
@@ -328,7 +327,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
     //std::cout << "segment latency: " << (segment_time/100.0f)/10.0f << "ms" << std::endl;
     //start_time = SDLinterface::currentTime();
 
-	float total_leaf_size = 0.0f;
 	float total_fiducial_size = 0.0f;
 	int valid_fiducial_count = 0;
 
@@ -336,7 +334,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 	for(int i=0;i< fid_count;i++) {
 		if ( fiducials[i].id >=0 ) {
 			valid_fiducial_count ++;
-			total_leaf_size += fiducials[i].leaf_size;
 			total_fiducial_size += fiducials[i].root_size;
 		}
 		
@@ -423,13 +420,13 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 		
 		if  (existing_fiducial!=NULL) {
 			// just update the fiducial from last frame ...
-			existing_fiducial->update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size,fiducials[i].leaf_size);
+			existing_fiducial->update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size);
 			if(existing_fiducial->state!=FIDUCIAL_INVALID) drawObject(existing_fiducial->fiducial_id,(int)(existing_fiducial->getX()),(int)(existing_fiducial->getY()),display,1);
 		} else if  (fiducials[i].id!=INVALID_FIDUCIAL_ID) {
 			// add the newly found object
 			session_id++;
 			FiducialObject addFiducial(session_id, fiducials[i].id, width, height,fiducials[i].root_colour,fiducials[i].node_count);
-			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size,fiducials[i].leaf_size);
+			addFiducial.update(fiducials[i].x,fiducials[i].y,fiducials[i].angle,fiducials[i].root_size);
 			drawObject(fiducials[i].id,(int)(fiducials[i].x),(int)(fiducials[i].y),display,1);
 			fiducialList.push_back(addFiducial);
 			if (midi_server!=NULL) midi_server->sendAddMessage(fiducials[i].id);
@@ -445,10 +442,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 	}
 
 	if (valid_fiducial_count>0) {
-		average_leaf_size = (average_leaf_size + total_leaf_size/(double)valid_fiducial_count)/2;
 		average_fiducial_size = (average_fiducial_size +  total_fiducial_size/(double)valid_fiducial_count)/2;
 	}
-	//std::cout << "leaf size: " << average_leaf_size << std::endl;
 	//std::cout << "fiducial size: " << average_fiducial_size << std::endl;
 	//std::cout << "finger size: " << average_finger_size << std::endl;
 
@@ -515,7 +510,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 					ypos = existing_fiducial->getY();
 				}
 				
-				existing_fiducial->update(xpos,ypos,angle,(regions[j].width+regions[j].height)/2,0);
+				existing_fiducial->update(xpos,ypos,angle,(regions[j].width+regions[j].height)/2);
 				//printf("region: %d %d\n", regions[j].width, regions[j].height);
 				//printf("recovered plain fiducial %d (%ld)\n", existing_fiducial->fiducial_id,existing_fiducial->session_id);
 				existing_fiducial->state = FIDUCIAL_REGION;
@@ -588,20 +583,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 	
 			drawObject(FINGER_ID,(int)(regions[j].x),(int)(regions[j].y),display,1);
 			region_loop_end:;
-		} /*else if (	(regions[j].width>average_leaf_size*2) && (regions[j].height>average_leaf_size*2)) {
-			plain_analysis:;
-			//do the plain object analysis larger than twice the leaf size.
-	
-			bool analyse = true;
-			// check if object is within any found fiducial
-			for (std::list<FiducialObject>::iterator fiducial = fiducialList.begin(); fiducial!=fiducialList.end(); fiducial++) {
-				float distance = fiducial->distance(regions[j].x,regions[j].y);
-				if (distance<average_fiducial_size/2) { analyse = false; break; }
-			}
-	
-			if (analyse) obj_analyzer->process(&regions[j],src, dest, display);	
-
-		}*/
+		}
 
 	}
 

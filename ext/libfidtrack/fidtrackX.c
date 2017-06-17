@@ -329,10 +329,6 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		f->angle = calculate_angle( all_x - black_x, all_y - black_y );
 	}
 	
-	//f->a = black_x;
-	//f->b = black_y;
-   
-    f->leaf_size = (float)(ft->average_leaf_size);
 	f->root_size = r->right-r->left;
 	if ((r->bottom-r->top)>f->root_size) f->root_size = r->bottom-r->top;
 	f->root_colour=r->colour;
