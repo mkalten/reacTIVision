@@ -37,7 +37,7 @@ typedef struct FidtrackerX{
     int max_target_root_descendent_count;
     int min_target_root_descendent_range;
     int max_target_root_descendent_range;
-    int min_depth, max_depth, min_leafs;
+    int min_depth, max_depth;
 
     struct Region root_regions_head;
 
@@ -53,7 +53,9 @@ typedef struct FidtrackerX{
     double white_x_sum_warped, white_y_sum_warped, white_leaf_count_warped;
 
 	int total_leaf_count;
-
+	double white_leaf_size,black_leaf_size;
+	int white_leaf_nodes, black_leaf_nodes;
+	
     TreeIdMap *treeidmap;
     ShortPoint *pixelwarp;
 

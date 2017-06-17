@@ -102,12 +102,16 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 			ft->black_x_sum += x * n;
 			ft->black_y_sum += y * n;
 			ft->black_leaf_count += n;
-
+			
+			ft->black_leaf_nodes++;
+			ft->black_leaf_size+=((r->right-r->left)+(r->bottom-r->top));
 		}else{
 			ft->white_x_sum += x * n;
 			ft->white_y_sum += y * n;
 			ft->white_leaf_count += n;
 			
+			ft->white_leaf_nodes++;
+			ft->white_leaf_size+=((r->right-r->left)+(r->bottom-r->top));
 		}
 		
 		ft->total_leaf_count +=n;
@@ -243,6 +247,11 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	
     ft->total_leaf_count = 0;
 	
+	ft->white_leaf_size = 0;
+	ft->black_leaf_size = 0;
+	ft->white_leaf_nodes = 0;
+	ft->black_leaf_nodes = 0;
+	
     set_depth( r, 0 );
     sum_leaf_centers( ft, r, width, height );
 
@@ -316,7 +325,18 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     assert( r->descendent_count <= ft->max_target_root_descendent_count );
 */
 	
-	if (r->flags & LOST_SYMBOL_FLAG) f->id = INVALID_FIDUCIAL_ID;
+	double black_average = 0.;
+	double white_average = 0.;
+	if (ft->black_leaf_nodes>0) black_average=ft->black_leaf_size/ft->black_leaf_nodes;
+	if (ft->white_leaf_nodes>0) white_average=ft->white_leaf_size/ft->white_leaf_nodes;
+	
+	double leaf_variation = 1.;
+	if ((white_average>0) && (black_average>0)) {
+		if (black_average>white_average) leaf_variation = black_average/white_average-1;
+		else leaf_variation = white_average/black_average-1;
+	}
+	
+	if ((leaf_variation>0.5) || (f->x<0) || (f->y<0) || (r->flags & LOST_SYMBOL_FLAG)) f->id = INVALID_FIDUCIAL_ID;
 	else {
         ft->next_depth_string = 0;
         depth_string = build_left_heavy_depth_string( ft, r );
