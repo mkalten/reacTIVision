@@ -299,6 +299,7 @@ bool intersection(BlobPoint *p1, BlobPoint *q1, BlobPoint *p2, BlobPoint *q2)
 
 void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioTime ftime) {
 
+	/*
 	BlobObject *yamaBlob = NULL;
 	try {
 		yamaBlob = new BlobObject(ftime,yama->root, dmap);
@@ -332,6 +333,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		yama->id = INVALID_FIDUCIAL_ID;
 		return;
 	}
+	*/
 	
 	// get black and white leaf nodes
 	int ib = 0, iw = 0;
@@ -398,7 +400,10 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	// averaging the three angles
 	double angle = (leaf_angle_a + leaf_angle_b + yama_angle)/3.0f;
 	if (angle>=2*M_PI) angle-=2*M_PI;
+
 	yama->angle = angle;
+	yama->raw_x = (yama->raw_x + yama->root->raw_x)/2.0f;
+	yama->raw_y = (yama->raw_y + yama->root->raw_y)/2.0f;
 
 /*
 #ifndef NDEBUG
@@ -408,27 +413,62 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 #endif
 */
 
-/*
-	float bx = yama->raw_x;
-	float by = yama->raw_y;
-	float bw = 20.0f;
-	float bh = 20.0f;
-*/
+	float bw = yama->root->width/2.5;
+	float bh = yama->root->height/2.5;
+
+	// searching for border distances
+	int pixel,px,py;
+	float apos = angle - M_PI_2;
+
+	while (true) {
+		
+		px = (int)roundf(yama->raw_x + cosf(apos)*bh);
+		py = (int)roundf(yama->raw_y + sinf(apos)*bh);
+
+		pixel = py*width+px;
+		if ( (pixel<0) || (pixel>=width*height) ) {
+			yama->id = FUZZY_FIDUCIAL_ID;
+			return;
+		}
+		
+		if (img[pixel]==0) {
+			bh = bh*1.45f;
+			break;
+		} else bh+=.5f;
+	}
+		
+	if (invert_yamaarashi) apos-=M_PI_2;
+	else apos+=M_PI_2;
+		
+	while (true) {
+
+		px = (int)roundf(yama->raw_x + cosf(apos)*bw);
+		py = (int)roundf(yama->raw_y + sinf(apos)*bw);
+		
+		pixel = py*width+px;
+		if ( (pixel<0) || (pixel>=width*height) ) {
+			yama->id = FUZZY_FIDUCIAL_ID;
+			return;
+		}
+		
+		if (img[pixel]==0) {
+			bw = bw*1.45f;
+			break;
+		} else bw+=.5f;
+	}
 	
 	IntPoint point[4];
-	int pixel;
-	
 	unsigned int value = 0;
 	unsigned int checksum = 0;
 	unsigned char bitpos = 0;
 	
 	for (int i=0;i<6;i++) {
 		
-		float apos = angle - M_PI_2;
+		apos = angle - M_PI_2;
 		for (int p=0;p<4;p++) {
 			
-			point[p].x = (int)roundf(bx + cosf(apos)*bw);
-			point[p].y = (int)roundf(by + sinf(apos)*bh);
+			point[p].x = (int)roundf(yama->raw_x + cosf(apos)*bw);
+			point[p].y = (int)roundf(yama->raw_y + sinf(apos)*bh);
 			
 			pixel = point[p].y*width+point[p].x;
 			if ( (pixel<0) || (pixel>=width*height) ) {
@@ -438,7 +478,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 			
 #ifndef NDEBUG
 			ui->setColor(255, 0, 255);
-			ui->drawLine(bx,by,point[p].x,point[p].y);
+			ui->drawLine(yama->raw_x,yama->raw_y,point[p].x,point[p].y);
 #endif
 			
 			if (bitpos<20) {
@@ -470,8 +510,8 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		//std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
 	}
 	
-	yama->raw_x = (yama->raw_x + bx)/2.0f;
-	yama->raw_y = (yama->raw_y + by)/2.0f;
+	//yama->raw_x = (yama->raw_x + bx)/2.0f;
+	//yama->raw_y = (yama->raw_y + by)/2.0f;
 	
 	if(!empty_grid) {
 		int pixel = width*(int)floor(yama->raw_y+.5f) + (int)floor(yama->raw_x+.5f);
