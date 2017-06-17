@@ -57,17 +57,12 @@ static double calculate_angle( double dx, double dy )
 static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height )
 {
     int i;
-    //float leaf_size;
 
     double radius = .5 + r->depth;
     double n = radius * radius * M_PI;  // weight according to depth circle area
 
     if( r->adjacent_region_count == 1 ) {
         float x, y;
-
-		//leaf_size = ((r->bottom-r->top) + (r->right-r->left)) * .5f;
-		//printf("leaf: %f\n",leaf_size);
-		//ft->total_leaf_size += leaf_size;
 		
         x = ((r->left + r->right) * .5f);
         y = ((r->top + r->bottom) * .5f);
@@ -347,7 +342,6 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		ft->temp_coloured_depth_string[0] = (char)( r->colour ? 'w' : 'b' );
 		ft->temp_coloured_depth_string[1] = '\0';
 		strcat( ft->temp_coloured_depth_string, depth_string );
-		f->tree = ft->temp_coloured_depth_string;
 		
 		if (r->flags & FUZZY_SYMBOL_FLAG) {
 			if ((ft->white_leaf_nodes>=ft->min_leafs) && (ft->black_leaf_nodes>=ft->min_leafs))
@@ -361,7 +355,7 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 				f->id = FUZZY_FIDUCIAL_ID;
 		}
 		
-		//if (f->id != INVALID_FIDUCIAL_ID) printf("%d %s %f\n",f->id,f->tree,leaf_variation);
+		//if (f->id != INVALID_FIDUCIAL_ID) printf("%d %s %f\n",f->id,ft->temp_coloured_depth_string,leaf_variation);
 	}
 }
 

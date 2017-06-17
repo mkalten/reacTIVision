@@ -41,7 +41,7 @@ static int find_maximum_tree_depth( const std::string& s )
     return result;
 }
 
-static int count_tree_deep_leafs( const std::string& s , int depth)
+static int count_deep_tree_leafs( const std::string& s , int depth)
 {
 	int result = 0;
 	for( int i=1; i < (int)s.size(); ++i ){ // skip first character which is the black/white flag
@@ -171,7 +171,7 @@ public:
 					maxNodeCount = depthSequenceLength;
 				
 				int maxTreeDepth = find_maximum_tree_depth( s );
-				int treeDeepLeafs = count_tree_deep_leafs(s, maxTreeDepth);
+				int treeDeepLeafs = count_deep_tree_leafs(s, maxTreeDepth);
 
 				if( maxTreeDepth < minDepth )
 					minDepth = maxTreeDepth;

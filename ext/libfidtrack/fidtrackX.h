@@ -79,13 +79,11 @@ void terminate_fidtrackerX( FidtrackerX *ft );
 typedef struct FiducialX{
 
     int id;                                /* can be INVALID_FIDUCIAL_ID */
-	char *tree;
     float x, y;
 	float raw_x, raw_y;
     float angle;
 	float raw_a;
 	Region *root;
-//  int node_count;
 }FiducialX;
 
 #ifndef NDEBUG
