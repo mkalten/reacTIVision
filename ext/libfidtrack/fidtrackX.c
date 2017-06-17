@@ -68,17 +68,12 @@ static double calculate_angle( double dx, double dy )
 static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height )
 {
     int i;
-	float leaf_size;
 
     double radius = .5 + r->depth;
     double n = radius * radius * M_PI;  // weight according to depth circle area
 	
     if( r->adjacent_region_count == 1 ) {
         float x, y;
-
-		leaf_size = ((r->bottom-r->top) + (r->right-r->left)) * .5f;
-		//printf("leaf: %f\n",leaf_size);
-		ft->total_leaf_size += leaf_size;
 		
         x = ((r->left + r->right) * .5f);
         y = ((r->top + r->bottom) * .5f);
@@ -107,10 +102,12 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 			ft->black_x_sum += x * n;
 			ft->black_y_sum += y * n;
 			ft->black_leaf_count += n;
+
 		}else{
 			ft->white_x_sum += x * n;
 			ft->white_y_sum += y * n;
 			ft->white_leaf_count += n;
+			
 		}
 		
 		ft->total_leaf_count +=n;
@@ -123,29 +120,6 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
         }
     }
 }
-
-/*
-static int check_leaf_variation( FidtrackerX *ft, Region *r, int width, int height )
-{
-	int i;
-	if (ft->average_leaf_size<=2.0f) return 1;
-
-    if( r->adjacent_region_count == 1 ){
-
-		if (abs(ft->average_leaf_size-((r->bottom-r->top)+(r->right-r->left)/2))>ft->average_leaf_size) return 0;
-		
-     } else{
-        for( i=0; i < r->adjacent_region_count; ++i ){
-            Region *adjacent = r->adjacent_regions[i];
-            if( adjacent->level == TRAVERSED
-                    && adjacent->descendent_count < r->descendent_count )
-                return check_leaf_variation( ft, adjacent, width, height );
-        }
-    }
-	
-	return 1;
-}
-*/
 
 // for bcb compatibility
 #ifndef _USERENTRY
@@ -268,14 +242,9 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     ft->white_leaf_count_warped = 0.;
 	
     ft->total_leaf_count = 0;
-    ft->total_leaf_size = 0.;	
-    ft->average_leaf_size = 0.;
-
-//    ft->min_leaf_width_or_height = 0x7FFFFFFF;
-
+	
     set_depth( r, 0 );
     sum_leaf_centers( ft, r, width, height );
-    ft->average_leaf_size = ft->total_leaf_size / (double)(ft->total_leaf_count);
 
 	all_x = (double)(ft->black_x_sum + ft->white_x_sum) / (double)(ft->black_leaf_count + ft->white_leaf_count);
 	all_y = (double)(ft->black_y_sum + ft->white_y_sum) / (double)(ft->black_leaf_count + ft->white_leaf_count);
@@ -346,7 +315,7 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     assert( r->descendent_count >= ft->min_target_root_descendent_count );
     assert( r->descendent_count <= ft->max_target_root_descendent_count );
 */
-
+	
 	if (r->flags & LOST_SYMBOL_FLAG) f->id = INVALID_FIDUCIAL_ID;
 	else {
         ft->next_depth_string = 0;
@@ -357,14 +326,7 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
         strcat( ft->temp_coloured_depth_string, depth_string );
 
 		f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
-		/*if (f->id != INVALID_FIDUCIAL_ID) {
-			if (!(check_leaf_variation(ft, r, width, height)))  {
-				f->id = INVALID_FIDUCIAL_ID;
-				printf("filtered %f\n",ft->average_leaf_size);
-			}
-		}*/
     }
-
 }
 
 /* -------------------------------------------------------------------------- */
@@ -649,18 +611,6 @@ int find_regionsX( RegionX *regions, int max_count,
 					regions[j].x = ft->pixelwarp[ pixel ].x;
 					regions[j].y = ft->pixelwarp[ pixel ].y;
 					if ((regions[j].x==0) && (regions[j].y==0)) continue;
-					
-					/*pixel = (int)(width * regions[j].top + regions[j].left);
-					if ((pixel<0) || (pixel>=width*height)) continue;
-					p = &ft->pixelwarp[ pixel ];
-					regions[j].left = p->x;
-					regions[j].top = p->y;
-
-					pixel = (int)(width * regions[j].bottom + regions[j].right);
-					if ((pixel<0) || (pixel>=width*height)) continue;
-					p = &ft->pixelwarp[ pixel ];
-					regions[j].right = p->x;
-					regions[j].bottom = p->y;*/
 				} 
 
 				j++;
