@@ -123,7 +123,7 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 	float hp  = bottom_left->distance(bottom_right);
 	angle = 2*M_PI-acosf(ak/hp);
 
-	if (hp<rawWidth) {
+	if (hp<rawHeight) {
 		rawWidth  = obBox[5].y;
 		rawHeight = obBox[5].x;
 		angle-=M_PI_2;
@@ -528,8 +528,8 @@ void BlobObject::computeOrientedBoundingBox() {
 	//float w = 1+sqrtf((obBox[0].x-obBox[1].x)*(obBox[0].x-obBox[1].x)+(obBox[0].y-obBox[1].y)*(obBox[0].y-obBox[1].y));
 	//float h = 1+sqrtf((obBox[1].x-obBox[2].x)*(obBox[1].x-obBox[2].x)+(obBox[1].y-obBox[2].y)*(obBox[1].y-obBox[2].y));
 	
-	double h = obBox[1].distance(&obBox[0]);
-	double w = obBox[1].distance(&obBox[2]);
+	double w = obBox[1].distance(&obBox[0]);
+	double h = obBox[1].distance(&obBox[2]);
 	obBox.push_back(BlobPoint(w,h));
 	
 	delete[]a;
