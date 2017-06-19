@@ -411,7 +411,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 #endif
 */
 
-	IntPoint point[4];
+	//IntPoint point[4];
 	unsigned int value = 0;
 	//unsigned int checksum = 0;
 	bool check[] = {false, false,false,false};
@@ -419,7 +419,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	double td,ta,tx,ty,cx,cy;
 	
 	double apos;
-	int pixel;
+	int pixel,px,py;
 	
 	for (int i=0;i<6;i++) {
 		
@@ -433,10 +433,10 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 			cy = ty-by;
 			td = sqrtf(cx*cx+cy*cy)*1.5f;
 			
-			point[p].x = (int)roundf(bx + cosf(apos)*td);
-			point[p].y = (int)roundf(by + sinf(apos)*td);
+			px = (int)roundf(bx + cosf(apos)*td);
+			py = (int)roundf(by + sinf(apos)*td);
 			
-			pixel = point[p].y*width+point[p].x;
+			pixel = py*width+px;
 			if ( (pixel<0) || (pixel>=width*height) ) {
 				yama->id = FUZZY_FIDUCIAL_ID;
 				return;
@@ -622,7 +622,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		if( reg_count >= MAX_FIDUCIAL_COUNT*4 ) continue;
 		// ignore isolated blobs without adjacent regions
 		if (r->adjacent_region_count==0) continue;
-
+		
 		r->width = r->right-r->left+1;
 		r->height = r->bottom-r->top+1;
 		
@@ -631,6 +631,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		r->raw_x = r->left+r->width/2.0f;
 		r->raw_y = r->top+r->height/2.0f;
+		
+		if ((r->colour==BLACK) && (!get_black_roots)) continue;
 		
 		if ((r->size>=min_region_size) && (r->size<=max_region_size)) {
 			
@@ -669,7 +671,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				else fiducials[fid_count].id = INVALID_FIDUCIAL_ID;
 			}
 			
-			if (fiducials[fid_count].id>max_fiducial_id)
+			if ((max_fiducial_id) && (fiducials[fid_count].id>max_fiducial_id))
 				fiducials[fid_count].id = FUZZY_FIDUCIAL_ID;
 			
 			if (fiducials[fid_count].id>=0) {
@@ -710,9 +712,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		if ((fiducialList.size()>0) && (reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
 			
-			if(regions[i]->colour==WHITE) {
-				if (!get_white_roots) continue;
-			} else if (!get_black_roots) continue;
+			if ((regions[i]->colour==WHITE) && (!get_white_roots)) continue;
 			
 			// ignore root blobs and adjacent regions of found fiducial roots
 			if (regions[i]->flags & ROOT_REGION_FLAG) {
