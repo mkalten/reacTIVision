@@ -84,16 +84,15 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 	computeOrientedBoundingBox();
 	if (obBox.size()==0) throw std::exception();
 	
-	/*
+/*
 	 #ifndef NDEBUG
 	 ui->setColor(0,255,0);
-	 
 	 for (int i=0;i<4;i++) {
 		int j = (i<3) ? i+1:0;
-		ui->drawLine(orientedBoundingBox[i].x,orientedBoundingBox[i].y,orientedBoundingBox[j].x, orientedBoundingBox[j].y);
+		ui->drawLine(obBox[i].x,obBox[i].y,obBox[j].x, obBox[j].y);
 	 }
 	 #endif
-	 */
+*/
 	
 	rawXpos = obBox[4].x;
 	rawYpos = obBox[4].y;
@@ -112,21 +111,38 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 	rawWidth  = obBox[5].x;
 	rawHeight = obBox[5].y;
 	
+	BlobPoint *bottom_left = &obBox[0];
+	BlobPoint *bottom_right = &obBox[0];
+	
+	for (int i=1;i<4;i++) {
+		if ((obBox[i].x<bottom_left->x) && (obBox[i].y<bottom_left->y)) bottom_left = &obBox[i];
+		if ((obBox[i].x>bottom_right->x) && (obBox[i].y<bottom_right->y)) bottom_right = &obBox[i];
+	}
+
+	float ak = bottom_right->x - bottom_left->x;
+	float hp  = bottom_left->distance(bottom_right);
+	angle = 2*M_PI-acosf(ak/hp);
+
+	if (hp<rawWidth) {
+		rawWidth  = obBox[5].y;
+		rawHeight = obBox[5].x;
+		angle-=M_PI_2;
+		if (angle<0) angle += 2*M_PI;
+	}
+	
 	width = rawWidth/screenWidth;
 	height = rawHeight/screenHeight;
-	
 	area = (float)region->area/(screenWidth*screenHeight);
+
+/*
+#ifndef NDEBUG
+	ui->setColor(0,255,0);
+	int px = (int)roundf(rawXpos + cosf(angle)*rawWidth/2.0f);
+	int py = (int)roundf(rawYpos + sinf(angle)*rawHeight/2.0f);
+	ui->drawLine(rawXpos,rawYpos,px,py);
+#endif
+*/
 	
-	float ak = obBox[1].x - obBox[0].x;
-	float hp  = obBox[1].distance(&obBox[0]);
-	angle = acosf(ak/hp);
-	if (height>width) {
-		width = rawHeight/screenWidth;
-		height = rawWidth/screenHeight;
-		angle+=3*M_PI/2.0f;
-	}
-	angle=2*M_PI-angle;
-	if (angle<0) angle = 0;	
 }
 
 void BlobObject::computeInnerSpanList() {
@@ -509,8 +525,11 @@ void BlobObject::computeOrientedBoundingBox() {
 	obBox.push_back(BlobPoint(1+ maxx - (maxx - minx)/2.0f,1+ maxy - (maxy - miny)/2.0f));
 	
 	// width & height
-	float w = 1+sqrtf((obBox[0].x-obBox[1].x)*(obBox[0].x-obBox[1].x)+(obBox[0].y-obBox[1].y)*(obBox[0].y-obBox[1].y));
-	float h = 1+sqrtf((obBox[1].x-obBox[2].x)*(obBox[1].x-obBox[2].x)+(obBox[1].y-obBox[2].y)*(obBox[1].y-obBox[2].y));
+	//float w = 1+sqrtf((obBox[0].x-obBox[1].x)*(obBox[0].x-obBox[1].x)+(obBox[0].y-obBox[1].y)*(obBox[0].y-obBox[1].y));
+	//float h = 1+sqrtf((obBox[1].x-obBox[2].x)*(obBox[1].x-obBox[2].x)+(obBox[1].y-obBox[2].y)*(obBox[1].y-obBox[2].y));
+	
+	double h = obBox[1].distance(&obBox[0]);
+	double w = obBox[1].distance(&obBox[2]);
 	obBox.push_back(BlobPoint(w,h));
 	
 	delete[]a;
