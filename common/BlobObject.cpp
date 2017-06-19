@@ -119,9 +119,9 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 		if ((obBox[i].x>bottom_right->x) && (obBox[i].y<bottom_right->y)) bottom_right = &obBox[i];
 	}
 
-	float ak = bottom_right->x - bottom_left->x;
-	float hp  = bottom_left->distance(bottom_right);
-	angle = 2*M_PI-acosf(ak/hp);
+	double ak = bottom_right->x - bottom_left->x;
+	double hp  = bottom_left->distance(bottom_right);
+	angle = 2*M_PI-acos(ak/hp);
 
 	if (hp<rawHeight) {
 		rawWidth  = obBox[5].y;

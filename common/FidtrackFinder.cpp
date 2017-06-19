@@ -411,7 +411,6 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 #endif
 */
 
-	//IntPoint point[4];
 	unsigned int value = 0;
 	//unsigned int checksum = 0;
 	bool check[] = {false, false,false,false};
@@ -426,15 +425,16 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		apos = angle - M_PI_2;
 		for (int p=0;p<4;p++) {
 			
+			// correct blob distortion
 			ta = ba-apos;
-			tx = bx + cosf(ta)*bw;
-			ty = by + sinf(ta)*bh;
+			tx = bx + cos(ta)*bw;
+			ty = by + sin(ta)*bh;
 			cx = tx-bx;
 			cy = ty-by;
-			td = sqrtf(cx*cx+cy*cy)*1.5f;
+			td = sqrt(cx*cx+cy*cy)*1.5f;
 			
-			px = (int)roundf(bx + cosf(apos)*td);
-			py = (int)roundf(by + sinf(apos)*td);
+			px = (int)round(bx + cos(apos)*td);
+			py = (int)round(by + sin(apos)*td);
 			
 			pixel = py*width+px;
 			if ( (pixel<0) || (pixel>=width*height) ) {
@@ -474,7 +474,6 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		
 		if (invert_yamaarashi) angle -= M_PI/12.0f;
 		else angle += M_PI/12.0f;
-		
 	}
 	
 	if (yama->id!=FUZZY_FIDUCIAL_ID) yama->id = value;
