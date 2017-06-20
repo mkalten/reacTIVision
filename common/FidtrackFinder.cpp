@@ -521,7 +521,8 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	double r = 2*M_PI-fblob->getAngle();
 	double Sr = sin(r);
 	double Cr = cos(r);
-	
+
+	//double multi = 3-finger_sensitivity;
 	double distance = 0.0f;
 	for (unsigned int i = 0; i < contourList.size(); i++) {
 
@@ -545,11 +546,16 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		double dx = pX-eX;
 		double dy = pY-eY;
 		
-		distance += dx*dx+dy*dy;
+		double pdist = dx*dx+dy*dy;
+		double cdist = pX*pX+pY*pY;
+		double edist = eX*eX+eY*eY;
+
+		if (cdist<=edist) distance += pdist;
+		else distance += (cdist/edist)*pdist;
 	}
 
 	//std::cout << finger_sensitivity << " " << (distance/contourList.size())/bw << std::endl;
-	return (distance/contourList.size())/bw;
+	return (distance/contourList.size())/bh;
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
@@ -1145,9 +1151,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			TuioCursor *add_cursor = tuioManager->addTuioCursor((*fblb)->getX(),(*fblb)->getY());
 			add_cursor->addPositionThreshold(position_threshold*2.0f); //1px
 			if (curFilter) add_cursor->addPositionFilter(5.0f,0.25f);
-			drawObject(FINGER_ID,add_cursor->getX(),add_cursor->getY(),0);
-			ui->setColor(0,255,0);
-			ui->drawEllipse((*fblb)->getX()*width,(*fblb)->getY()*height,(*fblb)->getWidth()*width,(*fblb)->getHeight()*height,(*fblb)->getAngle());
+			//drawObject(FINGER_ID,add_cursor->getX(),add_cursor->getY(),0);
+			//ui->setColor(0,255,0);
+			//ui->drawEllipse((*fblb)->getX()*width,(*fblb)->getY()*height,(*fblb)->getWidth()*width,(*fblb)->getHeight()*height,(*fblb)->getAngle());
 
 			if (send_finger_blobs) {
 				TuioBlob *cur_blob = tuioManager->addTuioBlob((*fblb)->getX(),(*fblb)->getY(),(*fblb)->getAngle(),(*fblb)->getWidth(),(*fblb)->getHeight(),(*fblb)->getArea());
