@@ -458,11 +458,11 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 				} else check[bitpos%4] = check[bitpos%4] ^ false;
 			} else {
 				bool cpix = false;
-				if (img[pixel]==255) {
-					//unsigned int mask = (unsigned int)pow(2,bitpos-20);
-					//checksum = checksum|mask;
-					cpix = true;
-				}
+				if (img[pixel]==255) cpix = true;
+				/*{
+					unsigned int mask = (unsigned int)pow(2,bitpos-20);
+					checksum = checksum|mask;
+				}*/
 				
 				if (cpix!=check[bitpos-20]) {
 					yama->id = FUZZY_FIDUCIAL_ID;
@@ -487,9 +487,6 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		yama->id = FUZZY_FIDUCIAL_ID;
 		//std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
 	}*/
-	
-	//yama->raw_x = (yama->raw_x + bx)/2.0f;
-	//yama->raw_y = (yama->raw_y + by)/2.0f;
 	
 	if(!empty_grid) {
 		int pixel = width*(int)floor(yama->raw_y+.5f) + (int)floor(yama->raw_x+.5f);
@@ -522,7 +519,6 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	double Sr = sin(r);
 	double Cr = cos(r);
 
-	//double multi = 3-finger_sensitivity;
 	double distance = 0.0f;
 	for (unsigned int i = 0; i < contourList.size(); i++) {
 
@@ -536,7 +532,6 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		//ui->drawPoint(bx+pX,by+pY);
 		
 		double aE = atan2(pY, pX);
-		
 		double eX = bw * cos(aE);
 		double eY = bh * sin(aE);
 		
@@ -549,7 +544,7 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		double pdist = dx*dx+dy*dy;
 		double cdist = pX*pX+pY*pY;
 		double edist = eX*eX+eY*eY;
-
+	
 		if (cdist<=edist) distance += pdist;
 		else distance += (cdist/edist)*pdist;
 	}
@@ -597,6 +592,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	
 	//std::cout << "fiducial size: " << min_fiducial_size << " " << max_fiducial_size << std::endl;
 	//std::cout << "finger size: " << min_finger_size << " " << max_finger_size << std::endl;
+	//std::cout << "blob size: " << min_blob_size << " " << max_blob_size << std::endl;
 	//std::cout << "region size: " << min_region_size << " " << max_region_size << std::endl;
 
 	// -----------------------------------------------------------------------------------------------
