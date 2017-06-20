@@ -324,17 +324,18 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	if (ft->black_leaf_nodes>0) black_average=ft->black_leaf_size/ft->black_leaf_nodes;
 	if (ft->white_leaf_nodes>0) white_average=ft->white_leaf_size/ft->white_leaf_nodes;
 	
-	double leaf_variation = 1.;
+	double leaf_variation = 10.;
 	if ((white_average>0) && (black_average>0)) {
 		if (black_average>white_average) leaf_variation = black_average/white_average-1;
 		else leaf_variation = white_average/black_average-1;
 	}
 	
-	//printf("variation %f\n",leaf_variation);
+	//printf("variation %f %f %f\n",leaf_variation,black_average,white_average);
 	
-	if ((leaf_variation>0.5) || (f->x<0) || (f->y<0)) {
+	if ((f->x<0) || (f->y<0)) f->id = INVALID_FIDUCIAL_ID;
+	else if (leaf_variation>1.0f) {
 		// eliminate noise
-		f->id = INVALID_FIDUCIAL_ID;
+		f->id = FUZZY_FIDUCIAL_ID;
 	} else {
 		ft->next_depth_string = 0;
 		depth_string = build_left_heavy_depth_string( ft, r );
