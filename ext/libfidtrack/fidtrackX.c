@@ -352,18 +352,17 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	}
 	
 	//printf("variation %f %f %f\n",leaf_variation,black_variation,white_variation);
-
-	if ((f->x<0) || (f->y<0)) f->id = INVALID_FIDUCIAL_ID; // this can happen
+	f->id = INVALID_FIDUCIAL_ID; // initialize
+	
+	if ((f->x<0) || (f->y<0)) return; // this can happen
 	else if (r->flags & FUZZY_SYMBOL_FLAG) {
 		// select fuzzy fiducials before decoding
 		if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
 			f->id = FUZZY_FIDUCIAL_ID;
-		else f->id = INVALID_FIDUCIAL_ID;
 	} else if ((leaf_variation>1.0f) && ((black_variation>1.0f) || (white_variation>1.0f))) {
 		// eliminate noise
 		if ((ft->white_leaf_nodes>ft->min_leafs) || (ft->black_leaf_nodes>ft->min_leafs)) {
 			f->id = FUZZY_FIDUCIAL_ID;
-		} else f->id = INVALID_FIDUCIAL_ID;
 	} else {
 		// decode valid fiducal candidates
 		ft->next_depth_string = 0;
