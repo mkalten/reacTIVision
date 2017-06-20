@@ -510,7 +510,6 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	float confidence = fblob->getArea()/blob_area;
 	
 	if (confidence<0.5 || confidence>1.5) {
-		std::cout << confidence << std::endl;
 		return 1000.0f;
 	}
 	
