@@ -106,7 +106,6 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 			ft->white_leaf_count += n;
 			
 			ft->white_leaf_nodes++;
-			leaf_size = ((r->right-r->left)+(r->bottom-r->top));
 			ft->white_leaf_size+=leaf_size;
 			if (leaf_size < ft->min_white) ft->min_white = leaf_size;
 			else if (leaf_size > ft->max_white) ft->max_white = leaf_size;
