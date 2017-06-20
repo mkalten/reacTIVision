@@ -60,6 +60,7 @@ typedef struct FidtrackerX{
 
 	int total_leaf_count;
     double white_leaf_size,black_leaf_size;
+	double min_white, max_white, min_black, max_black;
 	int white_leaf_nodes, black_leaf_nodes;
 
     TreeIdMap *treeidmap;

@@ -58,6 +58,7 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 {
     int i;
 
+	double leaf_size;
     double radius = .5 + r->depth;
     double n = radius * radius * M_PI;  // weight according to depth circle area
 
@@ -86,7 +87,9 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 					ft->white_leaf_count_warped += n;
 				}
 			}
-		} 
+		}
+		
+		leaf_size = ((r->right-r->left)+(r->bottom-r->top));
 		
 		if( r->colour == 0 ){
 			ft->black_x_sum += x * n;
@@ -94,14 +97,19 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 			ft->black_leaf_count += n;
 			
 			ft->black_leaf_nodes++;
-			ft->black_leaf_size+=((r->right-r->left)+(r->bottom-r->top));
+			ft->black_leaf_size+=leaf_size;
+			if (leaf_size < ft->min_black) ft->min_black = leaf_size;
+			else if (leaf_size > ft->max_black) ft->max_black = leaf_size;
 		}else{
 			ft->white_x_sum += x * n;
 			ft->white_y_sum += y * n;
 			ft->white_leaf_count += n;
 			
 			ft->white_leaf_nodes++;
-			ft->white_leaf_size+=((r->right-r->left)+(r->bottom-r->top));
+			leaf_size = ((r->right-r->left)+(r->bottom-r->top));
+			ft->white_leaf_size+=leaf_size;
+			if (leaf_size < ft->min_white) ft->min_white = leaf_size;
+			else if (leaf_size > ft->max_white) ft->max_white = leaf_size;
 		}
 		
 		ft->total_leaf_count +=n;
@@ -243,7 +251,12 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	ft->black_leaf_size = 0;
 	ft->white_leaf_nodes = 0;
 	ft->black_leaf_nodes = 0;
-
+	
+	ft->min_black = 0xFFFF;
+	ft->min_white = 0xFFFF;
+	ft->max_black = 0;
+	ft->max_white = 0;
+	
     set_depth( r, 0 );
     sum_leaf_centers( ft, r, width, height );
 
@@ -325,15 +338,28 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	if (ft->white_leaf_nodes>0) white_average=ft->white_leaf_size/ft->white_leaf_nodes;
 	
 	double leaf_variation = 10.;
+	double black_variation = 10.;
+	double white_variation = 10.;
+
 	if ((white_average>0) && (black_average>0)) {
 		if (black_average>white_average) leaf_variation = black_average/white_average-1;
 		else leaf_variation = white_average/black_average-1;
+		
+		if (ft->max_black>=ft->min_black) black_variation = (ft->max_black-ft->min_black)/black_average;
+		//else printf("black %f %f\n",ft->max_black,ft->min_black);
+		if (ft->max_white>=ft->min_white) white_variation = (ft->max_white-ft->min_white)/white_average;
+		//else printf("white %f %f\n",ft->max_white,ft->min_white);
 	}
 	
-	//printf("variation %f %f %f\n",leaf_variation,black_average,white_average);
+	//printf("variation %f %f %f\n",leaf_variation,black_variation,white_variation);
 	
-	if ((f->x<0) || (f->y<0)) f->id = INVALID_FIDUCIAL_ID;
-	else if (leaf_variation>1.0f) {
+	if ((f->x<0) || (f->y<0)) {
+		f->id = INVALID_FIDUCIAL_ID;
+	} else if (r->flags & FUZZY_SYMBOL_FLAG) {
+		if ((ft->white_leaf_nodes>=ft->min_leafs) && (ft->black_leaf_nodes>=ft->min_leafs))
+			f->id = FUZZY_FIDUCIAL_ID;
+		else f->id = INVALID_FIDUCIAL_ID;
+	} else if ((leaf_variation>1.0f) && ((black_variation>1.0f) || (white_variation>1.0f))) {
 		// eliminate noise
 		f->id = FUZZY_FIDUCIAL_ID;
 	} else {
@@ -344,17 +370,11 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		ft->temp_coloured_depth_string[1] = '\0';
 		strcat( ft->temp_coloured_depth_string, depth_string );
 		
-		if (r->flags & FUZZY_SYMBOL_FLAG) {
-			if ((ft->white_leaf_nodes>=ft->min_leafs) && (ft->black_leaf_nodes>=ft->min_leafs))
-				f->id = FUZZY_FIDUCIAL_ID;
-			else f->id = INVALID_FIDUCIAL_ID;
-		}else {
-			f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
-			if (f->id != INVALID_FIDUCIAL_ID)
-				r->flags |= ROOT_REGION_FLAG;
-			else if ((ft->white_leaf_nodes>=ft->min_leafs) && (ft->black_leaf_nodes>=ft->min_leafs))
-				f->id = FUZZY_FIDUCIAL_ID;
-		}
+		f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
+		if (f->id != INVALID_FIDUCIAL_ID)
+			r->flags |= ROOT_REGION_FLAG;
+		else if ((ft->white_leaf_nodes>=ft->min_leafs) && (ft->black_leaf_nodes>=ft->min_leafs))
+			f->id = FUZZY_FIDUCIAL_ID;
 		
 		//if (f->id != INVALID_FIDUCIAL_ID) printf("%d %s %f\n",f->id,ft->temp_coloured_depth_string,leaf_variation);
 	}
