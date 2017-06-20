@@ -356,12 +356,12 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	if ((f->x<0) || (f->y<0)) f->id = INVALID_FIDUCIAL_ID; // this can happen
 	else if (r->flags & FUZZY_SYMBOL_FLAG) {
 		// select fuzzy fiducials before decoding
-		if ((ft->white_leaf_nodes>=ft->min_leafs) && (ft->black_leaf_nodes>=ft->min_leafs))
+		if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
 			f->id = FUZZY_FIDUCIAL_ID;
 		else f->id = INVALID_FIDUCIAL_ID;
 	} else if ((leaf_variation>1.0f) && ((black_variation>1.0f) || (white_variation>1.0f))) {
 		// eliminate noise
-		if ((ft->white_leaf_nodes>ft->min_leafs) && (ft->black_leaf_nodes>ft->min_leafs)) {
+		if ((ft->white_leaf_nodes>ft->min_leafs) || (ft->black_leaf_nodes>ft->min_leafs)) {
 			f->id = FUZZY_FIDUCIAL_ID;
 		} else f->id = INVALID_FIDUCIAL_ID;
 	} else {
@@ -376,7 +376,7 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
 		if (f->id != INVALID_FIDUCIAL_ID)
 			r->flags |= ROOT_REGION_FLAG;
-		else if ((ft->white_leaf_nodes>=ft->min_leafs) && (ft->black_leaf_nodes>=ft->min_leafs))
+		else if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
 			f->id = FUZZY_FIDUCIAL_ID;
 		
 		//if (f->id != INVALID_FIDUCIAL_ID) printf("%d %s %f\n",f->id,ft->temp_coloured_depth_string,leaf_variation);
