@@ -415,7 +415,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	//unsigned int checksum = 0;
 	bool check[] = {false, false,false,false};
 	unsigned char bitpos = 0;
-	double td,ta,tx,ty,cx,cy;
+	double t,td,ta,tx,ty,cx,cy;
 	
 	double apos;
 	int pixel,px,py;
@@ -425,13 +425,16 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		apos = angle - M_PI_2;
 		for (int p=0;p<4;p++) {
 			
-			// correct blob distortion
-			ta = ba-apos;
-			tx = bx + cos(ta)*bw;
-			ty = by + sin(ta)*bh;
-			cx = tx-bx;
-			cy = ty-by;
-			td = sqrt(cx*cx+cy*cy)*1.5f;
+			t = bw/bh;
+			if (t>1.1) {
+				// correct elliptic blob distortion
+				ta = ba-apos;
+				tx = bx + cos(ta)*bw;
+				ty = by + sin(ta)*bh;
+				cx = tx-bx;
+				cy = ty-by;
+				td = sqrt(cx*cx+cy*cy)*1.5f;
+			} else td = bh*1.5f; // more or less round
 			
 			px = (int)round(bx + cos(apos)*td);
 			py = (int)round(by + sin(apos)*td);
@@ -444,7 +447,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 			
 #ifndef NDEBUG
 			ui->setColor(255, 0, 255);
-			ui->drawLine(yama->raw_x,yama->raw_y,point[p].x,point[p].y);
+			ui->drawLine(bx,by,px,py);
 #endif
 			
 			if (bitpos<20) {
