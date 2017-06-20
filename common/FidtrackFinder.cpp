@@ -531,16 +531,16 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 		double pX = px*Cr - py*Sr;
 		double pY = py*Cr + px*Sr;
 		
-		ui->setColor(0,0,255);
-		ui->drawPoint(bx+pX,by+pY);
+		//ui->setColor(0,0,255);
+		//ui->drawPoint(bx+pX,by+pY);
 		
 		double aE = atan2(pY, pX);
 		
 		double eX = bw * cos(aE);
 		double eY = bh * sin(aE);
 		
-		ui->setColor(0,255,0);
-		ui->drawPoint(bx+eX,by+eY);
+		//ui->setColor(0,255,0);
+		//ui->drawPoint(bx+eX,by+eY);
 		
 		double dx = pX-eX;
 		double dy = pY-eY;
