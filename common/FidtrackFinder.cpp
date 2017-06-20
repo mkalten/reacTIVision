@@ -505,50 +505,52 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 }
 
 float FidtrackFinder::checkFinger(BlobObject *fblob) {
+	
 	float blob_area = M_PI * fblob->getWidth()/2 * fblob->getHeight()/2;
 	float confidence = fblob->getArea()/blob_area;
-	if (confidence<0.6 || confidence>1.1) {
+	
+	if (confidence<0.5 || confidence>1.5) {
+		std::cout << confidence << std::endl;
 		return 1000.0f;
 	}
 	
 	std::vector<BlobPoint> contourList = fblob->getFullContour();
-	float bx = fblob->getRawX();
-	float by = fblob->getRawY();
-	float bw = fblob->getRawWidth()/2.0f;
-	float bh = fblob->getRawHeight()/2.0f;
-	float r = 2*M_PI-fblob->getAngle();
-	float Sr = sinf(r);
-	float Cr = cosf(r);
+	double bx = fblob->getRawX();
+	double by = fblob->getRawY();
+	double bw = fblob->getRawWidth()/2.0f;
+	double bh = fblob->getRawHeight()/2.0f;
+	double r = 2*M_PI-fblob->getAngle();
+	double Sr = sin(r);
+	double Cr = cos(r);
 	
-	float distance = 0.0f;
+	double distance = 0.0f;
 	for (unsigned int i = 0; i < contourList.size(); i++) {
-		BlobPoint pt = contourList[i];
-		float px = pt.x - bx;
-		float py = pt.y - by;
+
+		double px = contourList[i].x - bx + 1;
+		double py = contourList[i].y - by + 1;
 		
-		float pX = px*Cr - py*Sr;
-		float pY = py*Cr + px*Sr;
+		double pX = px*Cr - py*Sr;
+		double pY = py*Cr + px*Sr;
 		
-		//ui->setColor(255,0,255);
-		//ui->drawPoint(bx+pX,by+pY);
+		ui->setColor(0,0,255);
+		ui->drawPoint(bx+pX,by+pY);
 		
-		float aE = atan2f(pY, pX);
+		double aE = atan2(pY, pX);
 		
-		float eX = bw * cosf(aE);
-		float eY = bh * sinf(aE);
+		double eX = bw * cos(aE);
+		double eY = bh * sin(aE);
 		
-		//ui->setColor(0,255,0);
-		//ui->drawPoint(bx+eX,by+eY);
+		ui->setColor(0,255,0);
+		ui->drawPoint(bx+eX,by+eY);
 		
-		float dx = pX-eX;
-		float dy = pY-eY;
+		double dx = pX-eX;
+		double dy = pY-eY;
 		
 		distance += dx*dx+dy*dy;
 	}
 
-	float size = bw;
-	if (bh > bw) size = bh;
-	return (distance/contourList.size())/size;
+	//std::cout << finger_sensitivity << " " << (distance/contourList.size())/bw << std::endl;
+	return (distance/contourList.size())/bw;
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
@@ -588,7 +590,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 	int fid_count = 0;
 	int reg_count = 0;
 	
-	//std::cout << "fiducial size: " << min_fiducial_size << " " max_fiducial_size << std::endl;
+	//std::cout << "fiducial size: " << min_fiducial_size << " " << max_fiducial_size << std::endl;
 	//std::cout << "finger size: " << min_finger_size << " " << max_finger_size << std::endl;
 	//std::cout << "region size: " << min_region_size << " " << max_region_size << std::endl;
 
@@ -706,9 +708,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		int reg_size = regions[i]->size;
 		int reg_diff = abs(regions[i]->width - regions[i]->height);
-		int max_diff = regions[i]->width/2.0f;
-		if (regions[i]->height > regions[i]->width)
-			max_diff = regions[i]->height/2.0f;
+		int max_diff = regions[i]->width;
+		if (regions[i]->height < regions[i]->width)
+			max_diff = regions[i]->height;
 		
 		bool add_blob = true;
 		
@@ -740,8 +742,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 		} else if (detect_fingers && (regions[i]->colour==WHITE) && (reg_size>=min_finger_size) && (reg_size<=max_finger_size) && reg_diff < max_diff) {
 			
-			// ignore noisy blobs with too many adjacencies
-			if (regions[i]->adjacent_region_count-1 >= 2*finger_sensitivity) continue;
+			//ignore noisy blobs with too many adjacencies
+			//if (regions[i]->adjacent_region_count-1 >= 2*finger_sensitivity) continue;
 			
 			// ignore fingers that are nodes of current fiducials
 			for (int j=0;j<regions[i]->adjacent_region_count;j++) {
@@ -750,7 +752,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 					break;
 				} else if (regions[i]->adjacent_region_count == 1) {
 					for (int k=0;k<regions[i]->adjacent_regions[j]->adjacent_region_count;k++) {
-						if (regions[i]->adjacent_regions[j]->adjacent_regions[k]->flags & ROOT_REGION_FLAG) {
+						Region *test_region = regions[i]->adjacent_regions[j]->adjacent_regions[k];
+						if ((test_region->flags & ROOT_REGION_FLAG) && (test_region->size>regions[i]->adjacent_regions[j]->size)) {
 							add_blob = false;
 							break;
 						}
@@ -808,7 +811,6 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		TuioPoint fpos = existing_object->predictPosition();
 		//ui->setColor(255,0,0);
 		//ui->fillEllipse(fpos.getX()*width,fpos.getY()*height,10,10);
-		
 		
 		if (existing_object->getRootColour()==WHITE) get_white_roots = true;
 		else get_black_roots = true;
@@ -1113,7 +1115,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if ((*tcur)->getTuioState()==TUIO_ADDED) adaptive_sensitivity = adaptive_sensitivity/3.0f;
 			
 			if(finger_match<adaptive_sensitivity) {
-			
+
 				tuioManager->updateTuioCursor((*tcur),closest_fblob->getX(),closest_fblob->getY());
 				drawObject(FINGER_ID,(*tcur)->getX(),(*tcur)->getY(),0);
 				ui->setColor(0,255,0);

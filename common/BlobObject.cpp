@@ -64,6 +64,7 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 		for (unsigned int i=0; i<fullContour.size(); i++)
 			ui->drawPoint(fullContour[i].x, fullContour[i].y);
 #endif
+
 	} else {
 		
 #ifndef NDEBUG
@@ -137,8 +138,8 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 /*
 #ifndef NDEBUG
 	ui->setColor(0,255,0);
-	int px = (int)roundf(rawXpos + cosf(angle)*rawWidth/2.0f);
-	int py = (int)roundf(rawYpos + sinf(angle)*rawHeight/2.0f);
+	int px = (int)roundf(rawXpos + cos(angle)*rawWidth/2.0f);
+	int py = (int)roundf(rawYpos + sin(angle)*rawHeight/2.0f);
 	ui->drawLine(rawXpos,rawYpos,px,py);
 #endif
 */
