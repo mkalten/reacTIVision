@@ -436,8 +436,8 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 				td = sqrt(cx*cx+cy*cy)*1.5f;
 			} else td = bh*1.5f; // more or less round
 			
-			px = (int)round(bx + cos(apos)*td);
-			py = (int)round(by + sin(apos)*td);
+			px = (int)floor((bx + cos(apos)*td) + 0.5f);
+			py = (int)floor((by + sin(apos)*td) + 0.5f);
 			
 			pixel = py*width+px;
 			if ( (pixel<0) || (pixel>=width*height) ) {
