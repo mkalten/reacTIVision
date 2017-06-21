@@ -73,6 +73,10 @@ namespace TUIO {
 			return blobRegion->colour;
 		}
 		
+		Region* getRegion() {
+			return blobRegion;
+		}
+		
 		static void setDimensions(int w, int h) {
 			screenWidth = w;
 			screenHeight = h;

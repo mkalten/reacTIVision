@@ -715,16 +715,14 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 
 		bool add_blob = true;
 
-		if ((objectList.size()>0) && (reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
-
-			if ((regions[i]->colour==WHITE) && (!get_white_roots)) continue;
+		if ((objectList.size()>0) && (reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff) && (regions[i]->adjacent_region_count>0) && (((regions[i]->colour==WHITE) && (get_white_roots)) || (regions[i]->colour==BLACK))) {
 
 			// ignore root blobs and adjacent regions of found fiducial roots
-			if (regions[i]->flags & ROOT_REGION_FLAG) {
+			if (regions[i]->flags & (ROOT_REGION_FLAG | FUZZY_SYMBOL_FLAG)) {
 				add_blob = false;
 			} else {
 				for (int j=0;j<regions[i]->adjacent_region_count;j++) {
-					if (regions[i]->adjacent_regions[j]->flags & ROOT_REGION_FLAG) {
+					if (regions[i]->adjacent_regions[j]->flags & (ROOT_REGION_FLAG | FUZZY_SYMBOL_FLAG)) {
 						add_blob = false;
 						break;
 					}
@@ -744,7 +742,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		} else if (detect_fingers && (regions[i]->colour==WHITE) && (reg_size>=min_finger_size) && (reg_size<=max_finger_size) && reg_diff < max_diff) {
 			
 			//ignore noisy blobs with too many adjacencies
-			//if (regions[i]->adjacent_region_count-1 >= 2*finger_sensitivity) continue;
+			if (regions[i]->adjacent_region_count-1 >= 2*finger_sensitivity) continue;
 			
 			// ignore fingers that are nodes of current fiducials
 			for (int j=0;j<regions[i]->adjacent_region_count;j++) {
@@ -783,7 +781,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			}
 			
-		} else if (detect_blobs && (regions[i]->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size>=min_blob_size)) {
+		} else if (detect_blobs && (regions[i]->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size>=min_blob_size) && (reg_diff < max_diff))  {
+			
+			if (regions[i]->adjacent_region_count>3) continue;
 			
 			// add the remaining plain blob
 			BlobObject *plain_blob = NULL;
@@ -1172,7 +1172,17 @@ if (detect_blobs) {
 	
 	// copy remaing "root blobs" into plain blob list
 	for (std::list<BlobObject*>::iterator bobj = rootBlobs.begin(); bobj!=rootBlobs.end(); bobj++) {
-		if (((*bobj)->getColour()==WHITE) && ((*bobj)->getRawWidth()>=min_blob_size)  && ((*bobj)->getRawHeight()>=min_blob_size)&& ((*bobj)->getRawWidth()<=max_blob_size)  && ((*bobj)->getRawHeight()<=max_blob_size)) plainBlobs.push_back((*bobj));
+		
+		Region *blob_region = (*bobj)->getRegion();
+		int reg_size = blob_region->size;
+		int reg_diff = abs(blob_region->width - blob_region->height);
+		int max_diff = blob_region->width;
+		if (blob_region->height < blob_region->width)
+			max_diff = blob_region->height;
+		
+		if ((blob_region->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size<=max_blob_size) && (reg_diff<max_diff) && (blob_region->adjacent_region_count<=3)) {
+			plainBlobs.push_back((*bobj));
+		}
 		else delete (*bobj);
 	}
 	
