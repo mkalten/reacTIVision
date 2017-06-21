@@ -311,9 +311,9 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	float bx = yamaBlob->getRawX();
 	float by = yamaBlob->getRawY();
 	
-	float dx = (bx - yama->raw_x)/width;
-	float dy = (by - yama->raw_y)/height;
-	float dist = sqrtf(dx*dx + dy*dy);
+	//float dx = (bx - yama->raw_x)/width;
+	//float dy = (by - yama->raw_y)/height;
+	//float dist = sqrtf(dx*dx + dy*dy);
 	
 	float bw = yamaBlob->getRawWidth()/2.0f;
 	float bh = yamaBlob->getRawHeight()/2.0f;
@@ -322,16 +322,16 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	//ui->setColor(0, 255, 0);
 	//ui->drawEllipse(bx,by,yamaBlob->getRawWidth(),yamaBlob->getRawHeight(),ba);
 	
-	float blob_area = M_PI * yamaBlob->getWidth()/2 * yamaBlob->getHeight()/2;
-	float error = fabs(yamaBlob->getArea()/blob_area - 0.66f);
+	//float blob_area = M_PI * yamaBlob->getWidth()/2 * yamaBlob->getHeight()/2;
+	//float error = fabs(yamaBlob->getArea()/blob_area - 0.66f);
 
 	delete yamaBlob;
 
-	if ((error>0.1f) || (dist>0.01f)) {
-		//std::cout << "yama fp: " << error << " " << dist << std::endl;
+	/*if ((error>0.1f) || (dist>0.01f)) {
+		std::cout << "yama fp: " << error << " " << dist << std::endl;
 		yama->id = INVALID_FIDUCIAL_ID;
 		return;
-	}
+	}*/
 	
 	// get black and white leaf nodes
 	int ib = 0, iw = 0;
@@ -626,7 +626,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		
 		if( reg_count >= MAX_FIDUCIAL_COUNT*4 ) continue;
 		// ignore isolated blobs without adjacent regions
-		if (r->adjacent_region_count==0) continue;
+		//if (r->adjacent_region_count==0) continue;
 		
 		r->width = r->right-r->left+1;
 		r->height = r->bottom-r->top+1;
@@ -712,13 +712,13 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		int max_diff = regions[i]->width;
 		if (regions[i]->height < regions[i]->width)
 			max_diff = regions[i]->height;
-		
+
 		bool add_blob = true;
-		
-		if ((fiducialList.size()>0) && (reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
-			
+
+		if ((objectList.size()>0) && (reg_size>=min_object_size) && (reg_size<=max_object_size) && (reg_diff < max_diff)) {
+
 			if ((regions[i]->colour==WHITE) && (!get_white_roots)) continue;
-			
+
 			// ignore root blobs and adjacent regions of found fiducial roots
 			if (regions[i]->flags & ROOT_REGION_FLAG) {
 				add_blob = false;
@@ -958,7 +958,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			if (closest_rblob!=NULL) {
 				FloatPoint offset = existing_object->getRootOffset();
 				existing_object->setTrackingState(FIDUCIAL_ROOT);
-				
+
 				float distance = existing_object->getScreenDistance(closest_rblob->getX(), closest_rblob->getY(), width, height);
 				if (distance<2) {
 					tuioManager->updateTuioObject(existing_object,closest_rblob->getX(),closest_rblob->getY(),existing_object->getAngle());
