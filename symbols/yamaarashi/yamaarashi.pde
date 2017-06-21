@@ -14,7 +14,7 @@ int start_id = 0;
 int range = 300;
 int fiducial_size_mm = 46;
 
-String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2016 Martin Kaltenbrunner <martin@tuio.org>";
+String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2017 Martin Kaltenbrunner <martin@tuio.org>";
 int border = 22;
 int xpos = border;
 int ypos = border;
@@ -99,17 +99,16 @@ void render() {
     cur_page_id_count++;
 
     String id_bits = binary(id,20);
-    int checksum = id%13;
-    String check_bits = binary(checksum,4);
-  
+    Boolean check_bits[] = { false, false, false, false };
+
     for (int i=0;i<20;i++) {
-      if (id_bits.charAt(19-i) == '1')  bits[i].setVisible(false);
-      else bits[i].setVisible(true);
-    }
- 
-    for (int i=0;i<4;i++) {
-      if (check_bits.charAt(3-i) == '1')  check[i].setVisible(true);
-      else check[i].setVisible(false);
+      if (id_bits.charAt(19-i) == '1') bits[i].setVisible(false); // black
+      else bits[i].setVisible(true); // white
+      
+      int j = floor(i%4);
+      // XOR all five bits in each quadrant = 4bit checksum
+      check_bits[j] = check_bits[j] ^ bits[i].isVisible();
+      check[j].setVisible(!check_bits[j]);
     }
     
     pdf.shape(fiducial,xpos, ypos, fiducial_size,fiducial_size);
