@@ -240,6 +240,13 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	double black_y_warped = 0.;
     char *depth_string;
 
+	double black_average = 0.;
+	double white_average = 0.;
+
+	double leaf_variation = 10.;
+	double black_variation = 10.;
+	double white_variation = 10.;
+
     ft->black_x_sum = 0.;
     ft->black_y_sum = 0.;
     ft->black_leaf_count = 0.;
@@ -338,16 +345,10 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     assert( r->descendent_count >= ft->min_target_root_descendent_count );
     assert( r->descendent_count <= ft->max_target_root_descendent_count );
 */
-	
-	double black_average = 0.;
-	double white_average = 0.;
+
 	if (ft->black_leaf_nodes>0) black_average=ft->black_leaf_size/ft->black_leaf_nodes;
 	if (ft->white_leaf_nodes>0) white_average=ft->white_leaf_size/ft->white_leaf_nodes;
 	
-	double leaf_variation = 10.;
-	double black_variation = 10.;
-	double white_variation = 10.;
-
 	if ((white_average>0) && (black_average>0)) {
 		if (black_average>white_average) leaf_variation = black_average/white_average-1;
 		else leaf_variation = white_average/black_average-1;
