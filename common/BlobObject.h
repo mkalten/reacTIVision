@@ -26,6 +26,8 @@
 #include "floatpoint.h"
 #include "fidtrackX.h"
 #include <vector>
+#include <iostream>
+#include <algorithm>
 
 namespace TUIO {
 

@@ -187,7 +187,7 @@ void BlobObject::computeOuterContourList() {
 	}
 	
 	// Sort points lexicographically
-	sort(outerContour.begin(), outerContour.end());
+	std::sort(outerContour.begin(), outerContour.end());
 	//std::cout << "outer contour: " << outerContour.size() << std::endl;
 }
 
