@@ -106,13 +106,11 @@ namespace TUIO {
 		void computeInnerSpanList();
 		void computeOrientedBoundingBox();
 		void computeConvexHull();
-		
+
 		std::vector<BlobPoint> getInnerContourList();
 		//std::vector<BlobPoint> getFullContourList();
 		//std::vector<BlobPoint> getOuterContourList(std::vector<BlobPoint> fullList, std::vector<BlobPoint> innerList);
-		
-		double theta1(BlobPoint *p1, BlobPoint *p2);
-		
+				
 		static int screenWidth, screenHeight;
 		static UserInterface* ui;
 		

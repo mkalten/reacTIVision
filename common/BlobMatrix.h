@@ -39,6 +39,10 @@ public:
 	BlobPoint(): x(0.0),y(0.0) {};
 	~BlobPoint() {}
 	
+	bool operator <(const BlobPoint &p) const {
+		return x < p.x || (x == p.x && y < p.y);
+	}
+	
 	BlobPoint(double x, double y);
 	BlobPoint(BlobPoint *other);
 	BlobPoint* set(double x, double y);

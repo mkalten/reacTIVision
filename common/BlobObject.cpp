@@ -52,6 +52,7 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 	//if (outerContourList.size()==0) return NULL;
 	
 	computeConvexHull();
+	
 	if (convexHull.size()==0) throw std::exception();
 	
 	if (do_full_analyis) {
@@ -159,7 +160,7 @@ void BlobObject::computeInnerSpanList() {
 void BlobObject::computeOuterContourList() {
 	
 	//outerContour.clear();
-	std::vector<BlobPoint> reverseList;
+	//std::vector<BlobPoint> reverseList;
 	
 	Span *span = blobRegion->first_span;
 	while (span) {
@@ -182,20 +183,16 @@ void BlobObject::computeOuterContourList() {
 			}
 		}
 		
-		if(add_start) {
-			//BlobPoint startPoint(span->start%screenWidth, span->start/screenWidth);
-			outerContour.push_back(BlobPoint(span->start%screenWidth, span->start/screenWidth));
-		}
-		
-		if (add_end) {
-			//BlobPoint endPoint(span->end%screenWidth, span->end/screenWidth);
-			reverseList.insert(reverseList.begin(),BlobPoint(span->end%screenWidth, span->end/screenWidth));
-		}
-		
+		if(add_start) outerContour.push_back(BlobPoint(span->start%screenWidth, span->start/screenWidth));
+		if (add_end)  outerContour.push_back(BlobPoint(span->end%screenWidth, span->end/screenWidth));
+
 		span = span->next;
 	}
 	
-	outerContour.insert( outerContour.end(), reverseList.begin(), reverseList.end() );
+	//outerContour.insert( outerContour.end(), reverseList.begin(), reverseList.end() );
+	
+	// Sort points lexicographically
+	sort(outerContour.begin(), outerContour.end());
 	//std::cout << "outer contour: " << outerContour.size() << std::endl;
 }
 
@@ -396,15 +393,15 @@ void BlobObject::computeOrientedBoundingBox() {
 	
 	double *a = new double[convexHull.size()];
 	BlobPoint *m = new BlobPoint[convexHull.size()];
-	BlobPoint p1, p2, mid;
+	BlobPoint *p1, *p2, mid;
 	
 	double area = 0.0;
 	
 	for (unsigned int i = 0; i < convexHull.size(); i++) {
-		p1 = convexHull[i];
-		p2 = convexHull[(i+1)%convexHull.size()];
-		area += a[i] = p1.distance(&p2);
-		m[i] = BlobPoint(&p1).add(&p2)->scale(0.5);
+		p1 = &convexHull[i];
+		p2 = &convexHull[(i+1)%convexHull.size()];
+		area += a[i] = p1->distance(p2);
+		m[i] = BlobPoint(p1).add(p2)->scale(0.5);
 		mid.add( BlobPoint(&m[i]).scale(a[i]));
 	}
 	
@@ -419,9 +416,9 @@ void BlobObject::computeOrientedBoundingBox() {
 			sum = 0.0;
 			
 			for (unsigned int k = 0; k < convexHull.size(); k++) {
-				p1 = convexHull[k];
-				p2 = convexHull[(k+1)%convexHull.size()];
-				sum += a[k]*(2.0*m[k].get(i)*m[k].get(j) + p1.get(i)*p1.get(j) + p2.get(i)*p2.get(j));
+				p1 = &convexHull[k];
+				p2 = &convexHull[(k+1)%convexHull.size()];
+				sum += a[k]*(2.0*m[k].get(i)*m[k].get(j) + p1->get(i)*p1->get(j) + p2->get(i)*p2->get(j));
 			}
 			
 			sum *= area;
@@ -536,8 +533,8 @@ void BlobObject::computeOrientedBoundingBox() {
 	delete[]a;
 	delete[]m;
 }
-
-double BlobObject::theta1(BlobPoint *p1, BlobPoint *p2) {
+/*
+double theta1(BlobPoint *p1, BlobPoint *p2) {
 	double dx = p2->x - p1->x;
 	double ax = fabs(dx);
 	double dy = p2->y - p1->y;
@@ -592,5 +589,33 @@ void BlobObject::computeConvexHull() {
 	while(convexHull.size()>M+1) convexHull.pop_back();
 	//std::cout << "convex hull: " << convexHull.size() << std::endl;
 }
+*/
 
+double cross(const BlobPoint &O, const BlobPoint &A, const BlobPoint &B)
+{
+	return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
+}
+
+void BlobObject::computeConvexHull() {
+	//https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
+	
+	int n = outerContour.size(), k = 0;
+	if (n == 1) return;
+	convexHull.resize(2*n);
+	
+	// Build lower hull
+	for (int i = 0; i < n; ++i) {
+		while (k >= 2 && cross(convexHull[k-2], convexHull[k-1], outerContour[i]) <= 0) k--;
+		convexHull[k++] = outerContour[i];
+	}
+	
+	// Build upper hull
+	for (int i = n-2, t = k+1; i >= 0; i--) {
+		while (k >= t && cross(convexHull[k-2], convexHull[k-1], outerContour[i]) <= 0) k--;
+		convexHull[k++] = outerContour[i];
+	}
+	
+	convexHull.resize(k-1);
+	//std::cout << "convex hull: " << convexHull.size() << std::endl;
+}
 

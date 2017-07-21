@@ -68,7 +68,7 @@ BlobPoint* BlobPoint::sub(BlobPoint *other) {
 BlobPoint* BlobPoint::scale(double s) {
 	x *= s;
 	y *= s;
-	return  this;
+	return this;
 }
 
 double BlobPoint::length() {
