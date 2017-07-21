@@ -52,7 +52,6 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 	//if (outerContourList.size()==0) return NULL;
 	
 	computeConvexHull();
-	
 	if (convexHull.size()==0) throw std::exception();
 	
 	if (do_full_analyis) {
@@ -159,14 +158,12 @@ void BlobObject::computeInnerSpanList() {
 
 void BlobObject::computeOuterContourList() {
 	
-	//outerContour.clear();
-	//std::vector<BlobPoint> reverseList;
-	
 	Span *span = blobRegion->first_span;
 	while (span) {
 		
 		bool add_start = true;
 		bool add_end = true;
+		
 		for (int i=0;i<innerSpanList.size();i++) {
 			Span *inner = innerSpanList[i];
 			while (inner) {
@@ -183,13 +180,11 @@ void BlobObject::computeOuterContourList() {
 			}
 		}
 		
-		if(add_start) outerContour.push_back(BlobPoint(span->start%screenWidth, span->start/screenWidth));
-		if (add_end)  outerContour.push_back(BlobPoint(span->end%screenWidth, span->end/screenWidth));
+		if (add_start) outerContour.push_back(BlobPoint(span->start%screenWidth, span->start/screenWidth));
+		if (add_end)   outerContour.push_back(BlobPoint(span->end%screenWidth, span->end/screenWidth));
 
 		span = span->next;
 	}
-	
-	//outerContour.insert( outerContour.end(), reverseList.begin(), reverseList.end() );
 	
 	// Sort points lexicographically
 	sort(outerContour.begin(), outerContour.end());
@@ -197,8 +192,6 @@ void BlobObject::computeOuterContourList() {
 }
 
 void BlobObject::computeFullContourList() {
-	
-	//fullContour.clear();
 	
 	for (unsigned int row=0;row<spanList.size();row++) {
 		
@@ -391,18 +384,19 @@ std::vector<BlobPoint> BlobObject::getInnerContourList() {
 
 void BlobObject::computeOrientedBoundingBox() {
 	
-	double *a = new double[convexHull.size()];
-	BlobPoint *m = new BlobPoint[convexHull.size()];
+	unsigned int size = convexHull.size();
+	double *a = new double[size];
+	BlobPoint *m = new BlobPoint[size];
 	BlobPoint *p1, *p2, mid;
 	
 	double area = 0.0;
 	
-	for (unsigned int i = 0; i < convexHull.size(); i++) {
+	for (unsigned int i = 0; i < size; i++) {
 		p1 = &convexHull[i];
-		p2 = &convexHull[(i+1)%convexHull.size()];
+		p2 = &convexHull[(i+1)%size];
 		area += a[i] = p1->distance(p2);
 		m[i] = BlobPoint(p1).add(p2)->scale(0.5);
-		mid.add( BlobPoint(&m[i]).scale(a[i]));
+		mid.add(BlobPoint(&m[i]).scale(a[i]));
 	}
 	
 	mid.scale(1.0/area);
@@ -415,9 +409,9 @@ void BlobObject::computeOrientedBoundingBox() {
 		for (int j = 0; j < 2; j++) {
 			sum = 0.0;
 			
-			for (unsigned int k = 0; k < convexHull.size(); k++) {
+			for (unsigned int k = 0; k < size; k++) {
 				p1 = &convexHull[k];
-				p2 = &convexHull[(k+1)%convexHull.size()];
+				p2 = &convexHull[(k+1)%size];
 				sum += a[k]*(2.0*m[k].get(i)*m[k].get(j) + p1->get(i)*p1->get(j) + p2->get(i)*p2->get(j));
 			}
 			
@@ -464,7 +458,7 @@ void BlobObject::computeOrientedBoundingBox() {
 	float maxY = -minY;
 	
 	BlobPoint projected;
-	for (unsigned int i = 0; i < convexHull.size(); i++) {
+	for (unsigned int i = 0; i < size; i++) {
 		BC.multiply(&convexHull[i], &projected);
 		if (projected.x < minX) minX = projected.x;
 		if (projected.x > maxX) maxX = projected.x;
@@ -472,24 +466,20 @@ void BlobObject::computeOrientedBoundingBox() {
 		if (projected.y > maxY) maxY = projected.y;
 	}
 	
-	BC.transpose();
 	BlobPoint obb[4];
+	BC.transpose();
 	
-	BlobPoint bp0;
 	projected.x = minX; projected.y = minY;
-	obb[0] = BC.multiply(&projected,&bp0);
+	BC.multiply(&projected,&obb[0]);
 	
-	BlobPoint bp1;
 	projected.x = maxX; projected.y = minY;
-	obb[1] = BC.multiply(&projected, &bp1);
+	BC.multiply(&projected, &obb[1]);
 	
-	BlobPoint bp2;
 	projected.x = maxX; projected.y = maxY;
-	obb[2] = BC.multiply(&projected, &bp2);
+	BC.multiply(&projected, &obb[2]);
 	
-	BlobPoint bp3;
 	projected.x = minX; projected.y = maxY;
-	obb[3] = BC.multiply(&projected, &bp3);
+	BC.multiply(&projected, &obb[3]);
 	
 	float minx = screenWidth;	int minxi = 0;
 	float maxx = 0;				int maxxi = 0;
