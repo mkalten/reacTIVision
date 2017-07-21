@@ -49,7 +49,7 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 }
 
 
-int FidtrackFinder::check_finger(RegionX *finger, unsigned char *image, unsigned char *display) {
+int FidtrackFinder::check_finger(RegionX *finger, unsigned char *image) {
 
 	int buffer_size = width*height;
 	int mask_size = finger->width;
@@ -79,12 +79,8 @@ int FidtrackFinder::check_finger(RegionX *finger, unsigned char *image, unsigned
 			float dy = y-outer_radius+0.5f;
 			int dist = floor(sqrtf(dx*dx+dy*dy)+0.5f);
 
-			//if ((x==0) || (x==mask_size-1)) display[finger_pixel*3+1]=255; 
-			//if ((y==0) || (y==mask_size-1)) display[finger_pixel*3+1]=255; 
-			//if ((x==finger->width/2) && (y==finger->height/2)) display[finger_pixel*3+1]=255; 
-
-			if (( dist> rounded_outer_radius) && (image[finger_pixel]==255)) { outer_error++; } //display[finger_pixel*3+2]=255; }
-			else if (( dist< rounded_inner_radius) && (image[finger_pixel]==0)) { inner_error++; } //display[finger_pixel*3]=255; }
+			if (( dist> rounded_outer_radius) && (image[finger_pixel]==255)) { outer_error++; }
+			else if (( dist< rounded_inner_radius) && (image[finger_pixel]==0)) { inner_error++; }
 		}
 	}
 
@@ -523,7 +519,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest, SDL_Surfac
 
 			//check first if the finger is valid
 			//printf("candidate: %d %d\n", regions[j].width, regions[j].height);
-			int finger_match = check_finger(&regions[j],dest,(unsigned char*)(display->pixels));
+			int finger_match = check_finger(&regions[j],dest);
 			if(finger_match<0) continue;//goto plain_analysis;
 			//printf("finger: %d %d\n", regions[j].width, regions[j].height);
 

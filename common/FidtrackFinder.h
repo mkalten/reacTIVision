@@ -91,7 +91,7 @@ private:
 	void sendCursorMessages();
 	void printStatistics(long start_time);
 
-	int check_finger(RegionX *finger, unsigned char* image, unsigned char* display);
+	int check_finger(RegionX *finger, unsigned char* image);
 
 	bool detect_finger;
 	float average_fiducial_size;
