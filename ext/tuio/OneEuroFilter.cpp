@@ -18,13 +18,16 @@
  */
 
 #include "OneEuroFilter.h"
+#include <iostream>
 
 using namespace TUIO;
 
 double LowPassFilter::filter(double value, double alpha) {
 	
-	if (alpha<=0.0 || alpha>1.0)
-		throw std::range_error("alpha should be in (0.0., 1.0]");
+	if (alpha<=0.0 || alpha>1.0) {
+		std::cout << alpha << " alpha should be in (0.0., 1.0]" << std::endl;
+		return value;
+	}
 	
 	double result;
 	if (initialized)
@@ -47,17 +50,17 @@ double OneEuroFilter::alpha(double cutoff) {
 	return 1.0 / (1.0 + tau/te);
 }
 
-double OneEuroFilter::filter(double value, TimeStamp timestamp) {
+double OneEuroFilter::filter(double value, TimeStamp dt) {
 	// update the sampling frequency based on timestamps
-	if (lasttime!=UndefinedTime && timestamp!=UndefinedTime)
-		freq = 1.0 / (timestamp-lasttime);
-	lasttime = timestamp;
+	if (lasttime!=UndefinedTime && dt!=UndefinedTime && dt!=lasttime)
+		freq = 1.0 / dt;
+	lasttime = dt;
+	
 	// estimate the current variation per second
 	double dvalue = x->initialized ? (value - x->lastRawValue)*freq : value;
 	
 	double edvalue;
-	try { edvalue = dx->filter(dvalue, alpha(dcutoff));
-	} catch (std::range_error e) { return value; }
+	edvalue = dx->filter(dvalue, alpha(dcutoff));
 	// use it to update the cutoff frequency
 	double cutoff = mincutoff + beta*fabs(edvalue);
 	// filter the given value

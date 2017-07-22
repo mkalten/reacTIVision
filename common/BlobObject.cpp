@@ -186,7 +186,6 @@ void BlobObject::computeOuterContourList() {
 		span = span->next;
 	}
 	
-	// Sort points lexicographically
 	std::sort(outerContour.begin(), outerContour.end());
 	//std::cout << "outer contour: " << outerContour.size() << std::endl;
 }
@@ -470,7 +469,7 @@ void BlobObject::computeOrientedBoundingBox() {
 	BC.transpose();
 	
 	projected.x = minX; projected.y = minY;
-	BC.multiply(&projected,&obb[0]);
+	BC.multiply(&projected, &obb[0]);
 	
 	projected.x = maxX; projected.y = minY;
 	BC.multiply(&projected, &obb[1]);
@@ -589,18 +588,18 @@ double cross(const BlobPoint &O, const BlobPoint &A, const BlobPoint &B)
 void BlobObject::computeConvexHull() {
 	//https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
 	
-	int n = outerContour.size(), k = 0;
-	if (n == 1) return;
-	convexHull.resize(2*n);
+	int size = outerContour.size(), k = 0;
+	if (size == 1) return;
+	convexHull.resize(2*size);
 	
 	// Build lower hull
-	for (int i = 0; i < n; ++i) {
+	for (int i = 0; i < size; ++i) {
 		while (k >= 2 && cross(convexHull[k-2], convexHull[k-1], outerContour[i]) <= 0) k--;
 		convexHull[k++] = outerContour[i];
 	}
 	
 	// Build upper hull
-	for (int i = n-2, t = k+1; i >= 0; i--) {
+	for (int i = size-2, t = k+1; i >= 0; i--) {
 		while (k >= t && cross(convexHull[k-2], convexHull[k-1], outerContour[i]) <= 0) k--;
 		convexHull[k++] = outerContour[i];
 	}

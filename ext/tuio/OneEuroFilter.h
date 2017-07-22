@@ -81,7 +81,7 @@ namespace TUIO {
 			delete dx;
 		}
 		
-		double filter(double value, TimeStamp timestamp=UndefinedTime);
+		double filter(double value, TimeStamp dt=UndefinedTime);
 		
 	};
 	

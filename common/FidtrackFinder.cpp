@@ -1260,7 +1260,7 @@ if (detect_blobs) {
 			if (blbFilter) {
 				add_blob->addPositionFilter(2.0f,0.25f);
 				//add_blob->addAngleFilter(0.5f,10.0f);
-				add_blob->addSizeFilter(5.0f,0.1f);
+				//add_blob->addSizeFilter(5.0f,0.1f);
 			}
 			tuioManager->addExternalTuioBlob(add_blob);
 			drawObject(BLOB_ID,add_blob->getX(),add_blob->getY(),0);
