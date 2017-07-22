@@ -37,13 +37,17 @@ typedef int socklen_t;
 #include <list>
 #define MAX_TCP_SIZE 65536
 
+#if defined (WIN32) && !defined (_STDINT)
+        typedef DWORD int32_t;
+#endif
+
 namespace TUIO {
 	
 	/**
 	 * The TcpSender implements the TCP transport method for OSC
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 2.0.a0
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL TcpSender : public OscSender {
 				
