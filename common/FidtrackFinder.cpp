@@ -781,9 +781,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			}
 			
-		} else if (detect_blobs && (regions[i]->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size>=min_blob_size) && (reg_diff < max_diff))  {
+		} else if (detect_blobs && (regions[i]->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size<=max_blob_size) && (reg_diff < max_diff*2.0f)) {
 			
-			if (regions[i]->adjacent_region_count>3) continue;
+			if (regions[i]->adjacent_region_count>5) continue;
 			
 			// add the remaining plain blob
 			BlobObject *plain_blob = NULL;
