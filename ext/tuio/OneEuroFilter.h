@@ -20,6 +20,7 @@
 #ifndef ONEEUROFILTER
 #define ONEEUROFILTER
 
+#define _USE_MATH_DEFINES
 #include <stdexcept>
 #include <cmath>
 
