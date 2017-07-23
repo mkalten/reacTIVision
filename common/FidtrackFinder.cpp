@@ -1031,7 +1031,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 
 		if (objFilter) {
 			add_object->addPositionFilter(5.0f,0.25f);
-			//add_object->addAngleFilter(2.0f,0.25f);
+			add_object->addAngleFilter(2.0f,0.25f);
 		}
 		tuioManager->addExternalTuioObject(add_object);
 		drawObject(add_object->getSymbolID(),add_object->getX(),add_object->getY(),add_object->getTrackingState());
@@ -1052,7 +1052,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				
 				if (blbFilter) {
 					fid_blob->addPositionFilter(2.0f,0.25f);
-					//fid_blob->addAngleFilter(0.5f,1.0f);
+					fid_blob->addAngleFilter(2.0f,0.25f);
 					fid_blob->addSizeFilter(5.0f,0.1f);
 				}
 			} else delete fid_blob;
@@ -1157,7 +1157,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				
 				if (blbFilter) {
 					cur_blob->addPositionFilter(2.0f,0.25f);
-					//cur_blob->addAngleFilter(0.5f,1.0f);
+					cur_blob->addAngleFilter(2.0f,0.25f);
 					cur_blob->addSizeFilter(5.0f,0.1f);
 				}
 			}
@@ -1259,7 +1259,7 @@ if (detect_blobs) {
 			
 			if (blbFilter) {
 				add_blob->addPositionFilter(2.0f,0.25f);
-				//add_blob->addAngleFilter(0.5f,10.0f);
+				add_blob->addAngleFilter(2.0f,0.25f);
 				add_blob->addSizeFilter(5.0f,0.1f);
 			}
 			tuioManager->addExternalTuioBlob(add_blob);

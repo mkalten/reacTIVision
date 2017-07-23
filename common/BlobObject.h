@@ -67,7 +67,7 @@ namespace TUIO {
 			return fullContour;
 		}
 
-		std::vector<BlobSpan> getSpanList() {
+		std::vector<BlobSpan*> getSpanList() {
 			return spanList;
 		}
 		
@@ -94,17 +94,17 @@ namespace TUIO {
 		std::vector<BlobPoint> convexHull;
 		std::vector<BlobPoint> outerContour;
 		std::vector<BlobPoint> fullContour;
-		std::vector<BlobSpan> spanList;
+		std::vector<BlobSpan*> spanList;
 		
 		Region *blobRegion;
 		
 		std::vector<Span*> innerSpanList;
-		std::list<Span*> sortedSpanList;
-		std::list<BlobSpan> fullSpanList;
+		//std::list<Span*> sortedSpanList;
+		std::vector<BlobSpan> fullSpanList;
 		
 		void computeSpanList();
 		void computeFullContourList();
-		void computeOuterContourList();
+		void computeOuterContourList(bool do_full_analyis);
 		void computeInnerSpanList();
 		void computeOrientedBoundingBox();
 		void computeConvexHull();
