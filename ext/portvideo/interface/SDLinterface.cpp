@@ -823,8 +823,8 @@ SDLinterface::SDLinterface(const char* name, bool fullscreen)
 #ifndef NDEBUG
 	help_text.push_back("");
 	help_text.push_back("debug options:");
+	help_text.push_back("   l - save buffer as PGM image");
 	help_text.push_back("   m - save buffer as PGM sequence");
-	help_text.push_back("   n - save buffer as PGM image");
 #endif
 }
 
