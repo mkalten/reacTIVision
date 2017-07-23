@@ -37,7 +37,7 @@ typedef int socklen_t;
 #include <list>
 #define MAX_TCP_SIZE 65536
 
-#if defined (WIN32) && !defined (_STDINT)
+#if defined (WIN32) && not defined (_STDINT)
         typedef DWORD int32_t;
 #endif
 
