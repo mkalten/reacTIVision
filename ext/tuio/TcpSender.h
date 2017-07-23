@@ -24,6 +24,7 @@
 #ifdef WIN32
 #include <winsock.h>
 #include <io.h>
+#include <stdint.h>
 typedef int socklen_t;
 #else
 #include <sys/types.h>
@@ -36,10 +37,6 @@ typedef int socklen_t;
 
 #include <list>
 #define MAX_TCP_SIZE 65536
-
-#if defined (WIN32) && not defined (_STDINT)
-        typedef DWORD int32_t;
-#endif
 
 namespace TUIO {
 	
