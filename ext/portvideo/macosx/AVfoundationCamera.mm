@@ -121,7 +121,8 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 }
             }
         }
-        
+		
+		CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
         new_frame = true;
     }
 }
