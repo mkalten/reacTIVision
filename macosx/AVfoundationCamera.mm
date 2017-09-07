@@ -93,8 +93,9 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
                 *dest++ = *src++;
                 src++;
             }
-       }
-        
+		}
+		
+		CVPixelBufferUnlockBaseAddress(imageBuffer, 0);
         new_frame = true;
     }
 }
