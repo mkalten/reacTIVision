@@ -405,9 +405,45 @@ void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
 }
 
 void CameraEngine::grayw2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
+    unsigned short src_pixel;
+    unsigned char dest_pixel;
+    for(int i=width*height;i>0;i--) {
+        src_pixel = *src++ | (*src++ << 8);
+        dest_pixel = (unsigned char)(src_pixel/4);
+        *dest++ = dest_pixel;
+        *dest++ = dest_pixel;
+        *dest++ = dest_pixel;        
+    }
 }
 
-void CameraEngine::crop_grayw2rgb(int width, unsigned char *src, unsigned char *dest) {
+void CameraEngine::crop_grayw2rgb(int cam_w, unsigned char *src, unsigned char *dest) {
+
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
+
+    unsigned short src_pixel;
+    unsigned char dest_pixel;
+
+    src += 2*y_off*cam_w;
+    int x_end = cam_w-(frm_w+x_off);
+
+    for (int i=frm_h;i>0;i--) {
+
+        src += 2*x_off;
+        for (int j=frm_w;j>0;j--) {
+            src_pixel = *src++ | (*src++ << 8);
+            dest_pixel = (unsigned char)(src_pixel/4);
+
+            *dest++ = dest_pixel;
+            *dest++ = dest_pixel;
+            *dest++ = dest_pixel;
+        }
+        src +=  2*x_end;
+    }
+
 }
 
 void CameraEngine::grayw2gray(int width, int height, unsigned char *src, unsigned char *dest) {
@@ -419,7 +455,28 @@ void CameraEngine::grayw2gray(int width, int height, unsigned char *src, unsigne
     }
 }
 
-void CameraEngine::crop_grayw2gray(int width, unsigned char *src, unsigned char *dest) {
+void CameraEngine::crop_grayw2gray(int cam_w, unsigned char *src, unsigned char *dest) {
+
+    if(!cfg->frame) return;
+    int x_off = cfg->frame_xoff;
+    int y_off = cfg->frame_yoff;
+    int frm_w = cfg->frame_width;
+    int frm_h = cfg->frame_height;
+
+    unsigned short src_pixel;
+
+    src += 2*y_off*cam_w;
+    int x_end = cam_w-(frm_w+x_off);
+
+    for (int i=frm_h;i>0;i--) {
+
+        src += 2*x_off;
+        for (int j=frm_w;j>0;j--) {
+            src_pixel = *src++ | (*src++ << 8);
+            *dest++ = (unsigned char)(src_pixel/4);
+        }
+        src +=  2*x_end;
+    }
 }
 
 void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
