@@ -404,6 +404,24 @@ void CameraEngine::crop_gray2rgb(int cam_w, unsigned char *cam_buf, unsigned cha
     }
 }
 
+void CameraEngine::grayw2rgb(int width, int height, unsigned char *src, unsigned char *dest) {
+}
+
+void CameraEngine::crop_grayw2rgb(int width, unsigned char *src, unsigned char *dest) {
+}
+
+void CameraEngine::grayw2gray(int width, int height, unsigned char *src, unsigned char *dest) {
+
+    unsigned short value;
+    for(int i=width*height;i>0;i--) {
+        value = *src++ | (*src++ << 8);
+        *dest++ = (unsigned char)(value/4);
+    }
+}
+
+void CameraEngine::crop_grayw2gray(int width, unsigned char *src, unsigned char *dest) {
+}
+
 void CameraEngine::crop(int cam_w, int cam_h, unsigned char *cam_buf, unsigned char *frm_buf, int b) {
 
     if(!cfg->frame) return;

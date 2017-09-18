@@ -244,6 +244,11 @@ protected:
     void yuyv2rgb(int width, int height, unsigned char *src, unsigned char *dest);
     void crop_yuyv2rgb(int width, unsigned char *src, unsigned char *dest);
 
+    void grayw2rgb(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_grayw2rgb(int width, unsigned char *src, unsigned char *dest);
+    void grayw2gray(int width, int height, unsigned char *src, unsigned char *dest);
+    void crop_grayw2gray(int width, unsigned char *src, unsigned char *dest);
+
     void resetCameraSettings();
     void applyCameraSettings();
     void applyCameraSetting(int mode, int value);
@@ -265,7 +270,7 @@ protected:
     int default_white;
     int default_backlight;
 
-	int default_saturation;
+    int default_saturation;
     int default_hue;
     int default_red;
     int default_blue;
