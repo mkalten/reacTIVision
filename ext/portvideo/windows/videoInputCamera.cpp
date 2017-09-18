@@ -98,10 +98,10 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 	comInit();
 
 	HRESULT hr;
-	ICaptureGraphBuilder2 *lpCaptureGraphBuilder;
-	IGraphBuilder *lpGraphBuilder;
-	IBaseFilter *lpInputFilter;
-	IAMStreamConfig *lpStreamConfig;
+	ICaptureGraphBuilder2 *lpCaptureGraphBuilder = NULL;
+	IGraphBuilder *lpGraphBuilder = NULL;
+	IBaseFilter *lpInputFilter = NULL;
+	IAMStreamConfig *lpStreamConfig = NULL;
 
 	char 	nDeviceName[255];
 	WCHAR 	wDeviceName[255];
@@ -180,8 +180,8 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 				VIDEO_STREAM_CONFIG_CAPS scc;
 				AM_MEDIA_TYPE *pmtConfig;
 				hr =  lpStreamConfig->GetStreamCaps(iFormat, &pmtConfig, (BYTE*)&scc);
-				if (SUCCEEDED(hr)){
 
+				if (SUCCEEDED(hr)){
 					if ( pmtConfig->subtype != lastFormat) {
 
 						if (fmt_list.size()>0) {
@@ -511,7 +511,6 @@ HRESULT videoInputCamera::setupDevice() {
 		stopDevice();
 		return hr;
 	}
-
 
 	//EXP - lets try setting the sync source to null - and make it run as fast as possible
 	{
@@ -1230,7 +1229,6 @@ void videoInputCamera::makeGUID( GUID *guid, unsigned long Data1, unsigned short
 									guid->Data4[4] = b4; guid->Data4[5] = b5; guid->Data4[6] = b6; guid->Data4[7] = b7;
 }
 
-
 GUID videoInputCamera::getMediaSubtype(int type) {
 
 	int iCount = 0;
@@ -1268,9 +1266,11 @@ GUID videoInputCamera::getMediaSubtype(int type) {
 
 int videoInputCamera::getMediaSubtype(GUID type){
 
-	GUID MEDIASUBTYPE_Y800, MEDIASUBTYPE_Y8, MEDIASUBTYPE_GREY;
+	GUID MEDIASUBTYPE_Y800, MEDIASUBTYPE_Y8, MEDIASUBTYPE_Y160, MEDIASUBTYPE_Y16, MEDIASUBTYPE_GREY;
 	makeGUID( &MEDIASUBTYPE_Y800, 0x30303859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
 	makeGUID( &MEDIASUBTYPE_Y8, 0x20203859, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+	makeGUID( &MEDIASUBTYPE_Y16, 0x20363159, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
+	makeGUID( &MEDIASUBTYPE_Y160, 0x30363159, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
 	makeGUID( &MEDIASUBTYPE_GREY, 0x59455247, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 );
 
 	if ( type == MEDIASUBTYPE_RGB24) return FORMAT_RGB;
@@ -1291,9 +1291,14 @@ int videoInputCamera::getMediaSubtype(GUID type){
 	else if(type == MEDIASUBTYPE_Y800) return FORMAT_GRAY;
 	else if(type == MEDIASUBTYPE_Y8)   return FORMAT_GRAY;
 	else if(type == MEDIASUBTYPE_GREY) return FORMAT_GRAY;
+	else if(type == MEDIASUBTYPE_Y160) return FORMAT_GRAY16;
+	else if(type == MEDIASUBTYPE_Y16)  return FORMAT_GRAY16;
 	else if(type == MEDIASUBTYPE_MJPG) return FORMAT_MJPEG;
 	else if(type == MEDIASUBTYPE_H264) return FORMAT_H264;
-	else return 0;
+	else {
+		//std::cout << "fourcc: " << std::hex << type.Data1 << std::endl;
+		return 0;
+	}
 }
 
 void videoInputCamera::NukeDownstream(IBaseFilter *pBF){
