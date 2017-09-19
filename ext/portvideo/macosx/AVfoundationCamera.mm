@@ -165,16 +165,16 @@ AVfoundationCamera::AVfoundationCamera(CameraConfig *cam_cfg):CameraEngine(cam_c
 AVfoundationCamera::~AVfoundationCamera()
 {
     if (uvcController) [uvcController release];
-    if (videoDevice)   [videoDevice release];
+    //if (videoDevice)   [videoDevice release];
     if (videoOutput)   [videoOutput release];
     if (grabber)       [grabber release];
 }
 
 int AVfoundationCamera::getDeviceCount() {
 	
-	NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-	NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-	return [dev_list0 count] + [dev_list1 count];
+	NSInteger dev_count0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count;
+	NSInteger dev_count1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed].count;
+	return (dev_count0 + dev_count1);
 }
 
 std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
@@ -214,7 +214,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
 			if (codec == '420f') codec = '420v';
 			
 			cam_cfg.cam_format = FORMAT_UNKNOWN;
-			for (int i=FORMAT_MAX;i>0;i--) {
+			for (int i=FORMAT_MAX-1;i>0;i--) {
 				if (codec == codec_table[i]) {
 					cam_cfg.cam_format = i;
 					break;
@@ -242,7 +242,7 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
 		cfg_list.insert( cfg_list.end(), fmt_list.begin(), fmt_list.end() );
     }
 	
-	[captureDevices release];
+	//[captureDevices release];
 	return cfg_list;
 }
 
@@ -286,7 +286,7 @@ bool AVfoundationCamera::initCamera() {
 	
     videoDevice = [videoDevices objectAtIndex:cfg->device];
     if (videoDevice==NULL) return false;
-    else [videoDevices release];
+    //else [videoDevices release];
 	
     if ([videoDevice localizedName]!=NULL)
         sprintf(cfg->name,"%s",[[videoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
@@ -316,7 +316,7 @@ bool AVfoundationCamera::initCamera() {
         int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
 		if (codec == '420f') codec = '420v';
 
-		for (int i=FORMAT_MAX;i>0;i--) {
+		for (int i=FORMAT_MAX-1;i>0;i--) {
 
 			if ((codec == codec_table[i]) && (cfg->cam_format==i)) {
 				cam_format = i;
