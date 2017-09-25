@@ -20,6 +20,7 @@
 #ifndef ONEEUROFILTER
 #define ONEEUROFILTER
 
+#define _USE_MATH_DEFINES
 #include <stdexcept>
 #include <cmath>
 
@@ -81,7 +82,7 @@ namespace TUIO {
 			delete dx;
 		}
 		
-		double filter(double value, TimeStamp timestamp=UndefinedTime);
+		double filter(double value, TimeStamp dt=UndefinedTime);
 		
 	};
 	

@@ -42,8 +42,6 @@
 #include "RingBuffer.h"
 #include "UserInterface.h"
 
-void pv_sleep(int ms=1);
-
 class VisionEngine
 {
 

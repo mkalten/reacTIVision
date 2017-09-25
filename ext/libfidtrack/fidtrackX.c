@@ -57,17 +57,13 @@ static double calculate_angle( double dx, double dy )
 static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height )
 {
     int i;
-    //float leaf_size;
 
+	double leaf_size;
     double radius = .5 + r->depth;
     double n = radius * radius * M_PI;  // weight according to depth circle area
 
     if( r->adjacent_region_count == 1 ) {
         float x, y;
-
-		//leaf_size = ((r->bottom-r->top) + (r->right-r->left)) * .5f;
-		//printf("leaf: %f\n",leaf_size);
-		//ft->total_leaf_size += leaf_size;
 		
         x = ((r->left + r->right) * .5f);
         y = ((r->top + r->bottom) * .5f);
@@ -91,16 +87,28 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 					ft->white_leaf_count_warped += n;
 				}
 			}
-		} 
+		}
+		
+		leaf_size = ((r->right-r->left)+(r->bottom-r->top));
 		
 		if( r->colour == 0 ){
 			ft->black_x_sum += x * n;
 			ft->black_y_sum += y * n;
 			ft->black_leaf_count += n;
+			
+			ft->black_leaf_nodes++;
+			ft->black_leaf_size+=leaf_size;
+			if (leaf_size < ft->min_black) ft->min_black = leaf_size;
+			else if (leaf_size > ft->max_black) ft->max_black = leaf_size;
 		}else{
 			ft->white_x_sum += x * n;
 			ft->white_y_sum += y * n;
 			ft->white_leaf_count += n;
+			
+			ft->white_leaf_nodes++;
+			ft->white_leaf_size+=leaf_size;
+			if (leaf_size < ft->min_white) ft->min_white = leaf_size;
+			else if (leaf_size > ft->max_white) ft->max_white = leaf_size;
 		}
 		
 		ft->total_leaf_count +=n;
@@ -113,29 +121,6 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
         }
     }
 }
-
-/*
-static int check_leaf_variation( FidtrackerX *ft, Region *r, int width, int height )
-{
-	int i;
-	if (ft->average_leaf_size<=2.0f) return 1;
-
-    if( r->adjacent_region_count == 1 ){
-
-		if (abs(ft->average_leaf_size-((r->bottom-r->top)+(r->right-r->left)/2))>ft->average_leaf_size) return 0;
-		
-     } else{
-        for( i=0; i < r->adjacent_region_count; ++i ){
-            Region *adjacent = r->adjacent_regions[i];
-            if( adjacent->level == TRAVERSED
-                    && adjacent->descendent_count < r->descendent_count )
-                return check_leaf_variation( ft, adjacent, width, height );
-        }
-    }
-	
-	return 1;
-}
-*/
 
 // for bcb compatibility
 #ifndef _USERENTRY
@@ -245,6 +230,13 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	double black_y_warped = 0.;
     char *depth_string;
 
+	double black_average = 0.;
+	double white_average = 0.;
+
+	double leaf_variation = 10.;
+	double black_variation = 10.;
+	double white_variation = 10.;
+
     ft->black_x_sum = 0.;
     ft->black_y_sum = 0.;
     ft->black_leaf_count = 0.;
@@ -260,14 +252,19 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     ft->white_leaf_count_warped = 0.;
 	
     ft->total_leaf_count = 0;
-    //ft->total_leaf_size = 0.;
-	//ft->average_leaf_size = 0.;
-
-	//ft->min_leaf_width_or_height = 0x7FFFFFFF;
-
+	
+	ft->white_leaf_size = 0;
+	ft->black_leaf_size = 0;
+	ft->white_leaf_nodes = 0;
+	ft->black_leaf_nodes = 0;
+	
+	ft->min_black = 0xFFFF;
+	ft->min_white = 0xFFFF;
+	ft->max_black = 0;
+	ft->max_white = 0;
+	
     set_depth( r, 0 );
     sum_leaf_centers( ft, r, width, height );
-    //ft->average_leaf_size = ft->total_leaf_size / (double)(ft->total_leaf_count);
 
 	all_x = (double)(ft->black_x_sum + ft->white_x_sum) / (double)(ft->black_leaf_count + ft->white_leaf_count);
 	all_y = (double)(ft->black_y_sum + ft->white_y_sum) / (double)(ft->black_leaf_count + ft->white_leaf_count);
@@ -326,19 +323,7 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	}
 	
 	f->root = r;
-	  
-	//short vx = all_x-black_x;
-	//short vy = all_y-black_y;
-	//float vlength = sqrtf(vx*vx + vy*vy);
-	//f->leaf_size = (float)(ft->average_leaf_size);
-	f->root_size = r->right-r->left;
-	if ((r->bottom-r->top)>f->root_size) f->root_size = r->bottom-r->top;
-	// f->root_colour=r->colour;
-	// f->node_count=r->descendent_count;
-
-
-	//printf("%f %f\n",vlength,f->root_size);
-
+	
 /*	
 	print_unordered_depth_string( r );
     printf( "\n" );
@@ -352,27 +337,49 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
     assert( r->descendent_count >= ft->min_target_root_descendent_count );
     assert( r->descendent_count <= ft->max_target_root_descendent_count );
 */
-
-	if (r->flags & FUZZY_SYMBOL_FLAG) f->id = FUZZY_FIDUCIAL_ID;
-	else {
-        ft->next_depth_string = 0;
-        depth_string = build_left_heavy_depth_string( ft, r );
-			
-        ft->temp_coloured_depth_string[0] = (char)( r->colour ? 'w' : 'b' );
-        ft->temp_coloured_depth_string[1] = '\0';
-        strcat( ft->temp_coloured_depth_string, depth_string );
-
+	
+	if (ft->black_leaf_nodes>0) black_average=ft->black_leaf_size/ft->black_leaf_nodes;
+	if (ft->white_leaf_nodes>0) white_average=ft->white_leaf_size/ft->white_leaf_nodes;
+	
+	if ((white_average>0) && (black_average>0)) {
+		if (black_average>white_average) leaf_variation = black_average/white_average-1;
+		else leaf_variation = white_average/black_average-1;
+		
+		if (ft->max_black>=ft->min_black) black_variation = (ft->max_black-ft->min_black)/black_average;
+		//else printf("black %f %f\n",ft->max_black,ft->min_black);
+		if (ft->max_white>=ft->min_white) white_variation = (ft->max_white-ft->min_white)/white_average;
+		//else printf("white %f %f\n",ft->max_white,ft->min_white);
+	}
+	
+	//printf("variation %f %f %f\n",leaf_variation,black_variation,white_variation);
+	f->id = INVALID_FIDUCIAL_ID; // initialize
+	
+	if ((f->x<0) || (f->y<0)) return; // this can happen
+	else if (r->flags & FUZZY_SYMBOL_FLAG) {
+		// select fuzzy fiducials before decoding
+		if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
+			f->id = FUZZY_FIDUCIAL_ID;
+	} else if ((leaf_variation>1.0f) && ((black_variation>1.0f) || (white_variation>1.0f))) {
+		// eliminate noise
+		if ((ft->white_leaf_nodes>ft->min_leafs) || (ft->black_leaf_nodes>ft->min_leafs))
+			f->id = FUZZY_FIDUCIAL_ID;
+	} else {
+		// decode valid fiducal candidates
+		ft->next_depth_string = 0;
+		depth_string = build_left_heavy_depth_string( ft, r );
+				
+		ft->temp_coloured_depth_string[0] = (char)( r->colour ? 'w' : 'b' );
+		ft->temp_coloured_depth_string[1] = '\0';
+		strcat( ft->temp_coloured_depth_string, depth_string );
+		
 		f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
-		f->tree =  ft->temp_coloured_depth_string;
-		/*if (f->id != INVALID_FIDUCIAL_ID) {
-			if (!(check_leaf_variation(ft, r, width, height)))  {
-				f->id = INVALID_FIDUCIAL_ID;
-				printf("filtered %f\n",ft->average_leaf_size);
-			}
-		}*/
-    }
-
-	//if ((f->root_size/vlength)>5.0f) f->id = INVALID_FIDUCIAL_ID;
+		if (f->id != INVALID_FIDUCIAL_ID)
+			r->flags |= ROOT_REGION_FLAG;
+		else if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
+			f->id = FUZZY_FIDUCIAL_ID;
+		
+		//if (f->id != INVALID_FIDUCIAL_ID) printf("%d %s %f\n",f->id,ft->temp_coloured_depth_string,leaf_variation);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -457,9 +464,9 @@ void propagate_descendent_count_and_max_depth_upwards(
 
     r->level = TRAVERSED;
 
-    if( (r->descendent_count == ft->max_target_root_descendent_count || r->descendent_count == YAMA_COUNT)
+    if( (r->descendent_count == ft->max_target_root_descendent_count
+		|| (r->descendent_count==YAMA_COUNT && r->colour==WHITE && r->children_visited_count==3 && r->adjacent_region_count==4))
             && r->depth >= ft->min_depth && r->depth <= ft->max_depth ){
-
         // found fiducial candidate
         link_region( &ft->root_regions_head, r );
     }else{
@@ -570,6 +577,7 @@ void initialize_fidtrackerX( FidtrackerX *ft, TreeIdMap *treeidmap, ShortPoint *
     ft->max_target_root_descendent_range = ft->max_target_root_descendent_count + FUZZY_NODE_RANGE;
     ft->min_depth = treeidmap->min_depth;
     ft->max_depth = treeidmap->max_depth;
+	ft->min_leafs = treeidmap->min_deep_leafs-1;
 
     ft->depth_string_count = treeidmap->max_node_count;
     ft->depth_string_length = treeidmap->max_node_count + 1;

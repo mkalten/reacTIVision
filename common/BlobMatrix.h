@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -25,6 +25,10 @@
 typedef struct BlobSpan {
 	int start, end;
 	BlobSpan *next;
+	
+	bool operator <(const BlobSpan &s) const {
+		return start < s.start;
+	}
 } BlobSpan;
 
 // ---------------------------------------------------------------
@@ -38,6 +42,10 @@ public:
 	
 	BlobPoint(): x(0.0),y(0.0) {};
 	~BlobPoint() {}
+	
+	bool operator <(const BlobPoint &p) const {
+		return x < p.x || (x == p.x && y < p.y);
+	}
 	
 	BlobPoint(double x, double y);
 	BlobPoint(BlobPoint *other);

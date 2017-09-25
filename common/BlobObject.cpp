@@ -1,5 +1,5 @@
 /*	reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -23,37 +23,37 @@ int BlobObject::screenWidth = WIDTH;
 int BlobObject::screenHeight = HEIGHT;
 UserInterface* BlobObject::ui = NULL;
 
-BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool do_full_analyis):TuioBlob(ttime, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
-	
+BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do_full_analyis):TuioBlob(ttime, 0, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f) {
 	
 	if (region==NULL) throw std::exception();
 	blobRegion = region;
 	
-	/*#ifndef NDEBUG
-	 //fill the region candidate with yellow
-	 Span *span = region->span;
-	 iface->setColor(255, 255, 0);
-	 while (span) {
-		iface->drawLine(span->start%screenWidth,span->start/screenWidth,span->end%width,span->end/screenWidth);
+	/*
+	#ifndef NDEBUG
+	//fill the region candidate with yellow
+	Span *span = blobRegion->first_span;
+	ui->setColor(255, 255, 0);
+	while (span) {
+		ui->drawLine(span->start%screenWidth,span->start/screenWidth,span->end%screenWidth,span->end/screenWidth);
 		span = span->next;
-	 }
+	}
 	 
-	 //draw a blue rectangle around the region candidate
-	 iface->setColor(0,0,255);
-	 iface->drawRect(region->left,region->top,region->right-region->left,region->bottom-region->top);
-	 #endif*/
+	//draw a blue rectangle around the region candidate
+	ui->setColor(0,0,255);
+	ui->drawRect(region->left,region->top,region->right-region->left,region->bottom-region->top);
+	#endif
+	//*/
 	
-	computeOuterContourList();
+	computeOuterContourList(do_full_analyis);
 	if (outerContour.size()==0) throw std::exception();
 	
-	//std::vector<BlobPoint> innerContourList = getInnerContourList(region);
-	//if (outerContourList.size()==0) return NULL;
+	//std::vector<BlobPoint> innerContour = getInnerContourList(region);
+	//if (innerContour.size()==0) return NULL;
 	
 	computeConvexHull();
 	if (convexHull.size()==0) throw std::exception();
 	
 	if (do_full_analyis) {
-		computeSpanList();
 		computeFullContourList();
 		if (fullContour.size()==0) throw std::exception();
 		
@@ -62,6 +62,7 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool d
 		for (unsigned int i=0; i<fullContour.size(); i++)
 			ui->drawPoint(fullContour[i].x, fullContour[i].y);
 #endif
+
 	} else {
 		
 #ifndef NDEBUG
@@ -82,16 +83,15 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool d
 	computeOrientedBoundingBox();
 	if (obBox.size()==0) throw std::exception();
 	
-	/*
+/*
 	 #ifndef NDEBUG
 	 ui->setColor(0,255,0);
-	 
 	 for (int i=0;i<4;i++) {
 		int j = (i<3) ? i+1:0;
-		ui->drawLine(orientedBoundingBox[i].x,orientedBoundingBox[i].y,orientedBoundingBox[j].x, orientedBoundingBox[j].y);
+		ui->drawLine(obBox[i].x,obBox[i].y,obBox[j].x, obBox[j].y);
 	 }
 	 #endif
-	 */
+*/
 	
 	rawXpos = obBox[4].x;
 	rawYpos = obBox[4].y;
@@ -107,129 +107,109 @@ BlobObject::BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool d
 		ypos = rawYpos/screenHeight;
 	}
 	
-	rawWidth = obBox[5].x;
+	rawWidth  = obBox[5].x;
 	rawHeight = obBox[5].y;
+	
+	BlobPoint *bottom_left = &obBox[0];
+	BlobPoint *bottom_right = &obBox[0];
+	
+	for (int i=1;i<4;i++) {
+		if ((obBox[i].x<bottom_left->x) && (obBox[i].y<bottom_left->y)) bottom_left = &obBox[i];
+		if ((obBox[i].x>bottom_right->x) && (obBox[i].y<bottom_right->y)) bottom_right = &obBox[i];
+	}
+
+	double ak = bottom_right->x - bottom_left->x;
+	double hp  = bottom_left->distance(bottom_right);
+	angle = 2*M_PI-acos(ak/hp);
+
+	if (hp<rawHeight) {
+		rawWidth  = obBox[5].y;
+		rawHeight = obBox[5].x;
+		angle-=M_PI_2;
+		if (angle<0) angle += 2*M_PI;
+	}
 	
 	width = rawWidth/screenWidth;
 	height = rawHeight/screenHeight;
-	
 	area = (float)region->area/(screenWidth*screenHeight);
-	
-	float ak = obBox[1].x - obBox[0].x;
-	float hp  = obBox[1].distance(&obBox[0]);
-	angle = acosf(ak/hp);
-	if (height>width) {
-		width = rawHeight/screenWidth;
-		height = rawWidth/screenHeight;
-		angle+=3*M_PI/2.0f;
-	}
-	angle=2*M_PI-angle;
-	if (angle<0) angle = 0;	
-}
 
 /*
- std::vector<BlobPoint> BlobObject::getOuterContourList(RegionX *region) {
- 
-	std::vector<BlobPoint> pointList;
-	Span *span = region->span;
-	fullSpanList.clear();
-	while (span) {
- 
- bool add_start = true;
- bool add_end = true;
- for (int i=0;i<region->inner_span_count;i++) {
- Span *inner = region->inner_spans[i];
- while (inner) {
- if (span->end+1==inner->start) {
- add_end=false;
- if(!add_start) i=region->inner_span_count;
- break;
- } else if (span->start-1==inner->end) {
- add_start=false;
- if(!add_end) i=region->inner_span_count;
- break;
- }
- inner = inner->next;
- }
- }
- 
- if(add_start) {
- BlobPoint startPoint(span->start%screenWidth, span->start/screenWidth);
- pointList.push_back(startPoint);
- }
- 
- if (add_end) {
- BlobPoint endPoint(span->end%screenWidth, span->end/screenWidth);
- pointList.push_back(endPoint);
- }
- 
- span = span->next;
+#ifndef NDEBUG
+	ui->setColor(0,255,0);
+	int px = (int)roundf(rawXpos + cos(angle)*rawWidth/2.0f);
+	int py = (int)roundf(rawYpos + sin(angle)*rawHeight/2.0f);
+	ui->drawLine(rawXpos,rawYpos,px,py);
+#endif
+*/
+	
+}
+
+void BlobObject::computeInnerSpanList() {
+	for (int s=0; s<blobRegion->adjacent_region_count;s++) {
+		if ((blobRegion->adjacent_regions[s]->right-blobRegion->adjacent_regions[s]->left)<blobRegion->width) {
+			innerSpanList.push_back(blobRegion->adjacent_regions[s]->first_span);
+		}
 	}
-	return pointList;
- }
- */
-
-
-
-void BlobObject::computeOuterContourList() {
 	
-	outerContour.clear();
-	std::vector<BlobPoint> reverseList;
+	//std::cout << "inner spans: " << innerSpanList.size() << std::endl;
+}
+
+void BlobObject::computeOuterContourList(bool do_full_analyis) {
 	
-	Span *span = blobRegion->span;
-	fullSpanList.clear();
+	computeInnerSpanList();
+	
+	Span *span = blobRegion->first_span;
 	while (span) {
 		
 		bool add_start = true;
 		bool add_end = true;
-		for (int i=0;i<blobRegion->inner_span_count;i++) {
-			Span *inner = blobRegion->inner_spans[i];
+		
+		for (int i=0;i<innerSpanList.size();i++) {
+			Span *inner = innerSpanList[i];
 			while (inner) {
 				if (span->end+1==inner->start) {
 					add_end=false;
-					if(!add_start) i=blobRegion->inner_span_count;
+					if(!add_start) i=innerSpanList.size();
 					break;
 				} else if (span->start-1==inner->end) {
 					add_start=false;
-					if(!add_end) i=blobRegion->inner_span_count;
+					if(!add_end) i=innerSpanList.size();
 					break;
 				}
 				inner = inner->next;
 			}
 		}
 		
-		if(add_start) {
-			BlobPoint startPoint(span->start%screenWidth, span->start/screenWidth);
-			outerContour.push_back(startPoint);
-		}
+		if (add_start) outerContour.push_back(BlobPoint(span->start%screenWidth, span->start/screenWidth));
+		if (add_end)   outerContour.push_back(BlobPoint(span->end%screenWidth, span->end/screenWidth));
 		
-		if (add_end) {
-			BlobPoint endPoint(span->end%screenWidth, span->end/screenWidth);
-			reverseList.insert(reverseList.begin(),endPoint);
+		if (do_full_analyis) {
+			BlobSpan bs = { span->start, span->end, NULL };
+			fullSpanList.push_back(bs);
 		}
-		
+
 		span = span->next;
 	}
 	
-	outerContour.insert( outerContour.end(), reverseList.begin(), reverseList.end() );
+	std::sort(outerContour.begin(), outerContour.end());
+	//std::cout << "outer contour: " << outerContour.size() << std::endl;
 }
 
 void BlobObject::computeFullContourList() {
 	
-	fullContour.clear();
+	computeSpanList();
 	
 	for (unsigned int row=0;row<spanList.size();row++) {
 		
-		BlobSpan *row_span = &spanList[row];
-		
+		BlobSpan *row_span = spanList[row];
 		
 		if ((row==0) || (row==spanList.size()-1)) {
 			
 			while (row_span) {
 				
 				for (int i=row_span->start;i<=row_span->end;i++) {
-					BlobPoint spanPoint(i%screenWidth, i/screenWidth);
-					fullContour.push_back(spanPoint);
+					//BlobPoint spanPoint(i%screenWidth, i/screenWidth);
+					fullContour.push_back(BlobPoint(i%screenWidth, i/screenWidth));
 					
 					//ui->setColor(255,0,0);
 					//ui->drawPoint(spanPoint.x,spanPoint.y);
@@ -249,7 +229,7 @@ void BlobObject::computeFullContourList() {
 				//ui->setColor(0,0,255);
 				//ui->drawPoint(startPoint.x,startPoint.y);
 				
-				BlobSpan *upper_span = &spanList[row-1];
+				BlobSpan *upper_span = spanList[row-1];
 				int start = row_span->start+1;
 				
 				while (upper_span) {
@@ -287,7 +267,7 @@ void BlobObject::computeFullContourList() {
 				
 				
 				
-				BlobSpan *lower_span = &spanList[row+1];
+				BlobSpan *lower_span = spanList[row+1];
 				
 				
 				start = row_span->start+1;
@@ -336,115 +316,18 @@ void BlobObject::computeFullContourList() {
 			
 		}
 		
-		
 	}
-	
-	/*std::list<Span*> currentSpans;
-	 std::list<Span*> upperSpans;
-	 int last_y = (*spanList.begin())->start/screenWidth;
-	 
-	 std::vector<BlobPoint> pointList;
-	 for (std::list<Span*>::iterator span = spanList.begin(); span != spanList.end(); span++) {
-		
-		BlobSpan nspan = { (*span)->start, (*span)->end };
-		fullSpanList.push_back(nspan);
-		
-		BlobPoint startPoint;
-		startPoint.x = (*span)->start%screenWidth;
-		startPoint.y = (*span)->start/screenWidth;
-		pointList.push_back(startPoint);
-		
-		ui->setColor(0,0,255);
-		ui->drawPoint(startPoint.x,startPoint.y);
-		
-		BlobPoint endPoint;
-		endPoint.x = (*span)->end%screenWidth;
-		endPoint.y = (*span)->end/screenWidth;
-		
-		if (startPoint.y>last_y) {
-	 
-	 //upperSpans.clear();
-	 //for (std::list<Span*>::iterator cspan = currentSpans.begin(); cspan != currentSpans.end(); cspan++) {
-	 //	upperSpans.push_back(*cspan);
-	 //}
-	 //currentSpans.clear();
-	 upperSpans = currentSpans;
-	 currentSpans.clear();
-	 last_y = startPoint.y;
-	 
-	 //printf("spans: %ld\n",upperSpans.size());
-		}
-		
-		currentSpans.push_back((*span));
-	 
-		
-		if (upperSpans.size()>0) {
-	 
-	 int start = (*span)->start+1;
-	 for (std::list<Span*>::iterator uspan = upperSpans.begin(); uspan != upperSpans.end(); uspan++) {
-	 
-	 int end = (*uspan)->start+screenWidth;
-	 
-	 for (int pos=start;pos<end;pos++) {
-	 BlobPoint fillPoint;
-	 fillPoint.x = pos%screenWidth;
-	 if ((fillPoint.x>startPoint.x) && (fillPoint.x<endPoint.x)) {
-	 fillPoint.y = pos/screenWidth;
-	 pointList.push_back(fillPoint);
-	 
-	 ui->setColor(255,0,0);
-	 ui->drawPoint(fillPoint.x,fillPoint.y);
-	 }
-	 }
-	 
-	 start = (*uspan)->end+screenWidth+1;
-	 }
-	 
-	 int end = (*span)->end;
-	 for (int pos=start;pos<end;pos++) {
-	 BlobPoint fillPoint;
-	 fillPoint.x = pos%screenWidth;
-	 if ((fillPoint.x>startPoint.x) && (fillPoint.x<endPoint.x)) {
-	 fillPoint.y = pos/screenWidth;
-	 pointList.push_back(fillPoint);
-	 
-	 ui->setColor(255,0,0);
-	 ui->drawPoint(fillPoint.x,fillPoint.y);
-	 }
-	 }
-	 
-		} else {
-	 
-	 int start = (*span)->start+1;
-	 int end = (*span)->end;
-	 
-	 for (int pos=start;pos<end;pos++) {
-	 BlobPoint fillPoint;
-	 fillPoint.x = pos%screenWidth;
-	 fillPoint.y = pos/screenWidth;
-	 pointList.push_back(fillPoint);
-	 
-	 ui->setColor(255,0,0);
-	 ui->drawPoint(fillPoint.x,fillPoint.y);
-	 }
-		}
-		
-	 
-		pointList.push_back(endPoint);
-		
-		ui->setColor(0,0,255);
-		ui->drawPoint(endPoint.x,endPoint.y);
-	 }*/
 	
 }
 
 void BlobObject::computeSpanList() {
 	
-	spanList.clear();
-	fullSpanList.clear();
-	sortedSpanList.clear();
-	
-	Span *span = blobRegion->span;
+	//spanList.clear();
+	//fullSpanList.clear();
+	//sortedSpanList.clear();
+
+/*
+	Span *span = blobRegion->first_span;
 	sortedSpanList.push_back(span);
 	span = span->next;
 	while (span) {
@@ -483,65 +366,73 @@ void BlobObject::computeSpanList() {
 			pspan->next = &fullSpanList.back();
 		}
 	}
+*/ 
+
+	/*
+	Span *span = blobRegion->first_span;
+	while (span) {
+		BlobSpan bs = { span->start, span->end };
+		fullSpanList.push_back(bs);
+		span = span->next;
+	}
+	*/
+	
+	std::sort(fullSpanList.begin(), fullSpanList.end());
+
+	int i=-1;
+	int last_y = -1;
+	for (std::vector<BlobSpan>::iterator span = fullSpanList.begin(); span != fullSpanList.end(); span++) {
+		
+		int row_y = (*span).start/screenWidth;
+		
+		if (row_y>last_y) {
+			spanList.push_back(&(*span));
+			last_y = row_y;
+			i++;
+		} else {
+			BlobSpan *pspan = spanList[i];
+			while (pspan->next!=NULL) pspan=pspan->next;
+			pspan->next = &(*span);
+		}
+	}
+	
 }
 
-
-std::vector<BlobPoint> BlobObject::getInnerContourList(RegionX *region) {
+std::vector<BlobPoint> BlobObject::getInnerContourList() {
 	std::vector<BlobPoint> pointList;
 	
-	for (int i=0;i<region->inner_span_count;i++) {
-		Span *span = region->inner_spans[i];
-		//std::vector<Span*> spanList;
+	for (int i=0;i<innerSpanList.size();i++) {
+		Span *span = innerSpanList[i];
 		while (span) {
-			BlobPoint startPoint;
-			startPoint.x = span->start%screenWidth;
-			startPoint.y = span->start/screenWidth;
-			pointList.push_back(startPoint);
+			//BlobPoint startPoint(span->start%screenWidth,span->start/screenWidth);
+			pointList.push_back(BlobPoint(span->start%screenWidth,span->start/screenWidth));
 			
-			BlobPoint endPoint;
-			endPoint.x = span->end%screenWidth;
-			endPoint.y = span->end/screenWidth;
-			pointList.push_back(endPoint);
+			//BlobPoint endPoint(span->end%screenWidth,span->end/screenWidth);
+			pointList.push_back(BlobPoint(span->end%screenWidth,span->end/screenWidth));
 			
 			span = span->next;
 		}
-		BlobPoint emptyPoint;
-		emptyPoint.x = -1;
-		emptyPoint.y = -1;
-		pointList.push_back(emptyPoint);
+		//BlobPoint emptyPoint(-1,-1);
+		pointList.push_back(BlobPoint(-1,-1));
 	}
 	return pointList;
 }
 
-/*
- std::vector<BlobPoint> BlobObject::getOuterContourList(std::vector<BlobPoint> fullList, std::vector<BlobPoint> innerList) {
- 
-	std::vector<BlobPoint> pointList;
-	for (std::vector<BlobPoint>::iterator full = fullList.begin(); full != fullList.end(); full++) {
- std::vector<BlobPoint>::iterator inner;
- for (inner = innerList.begin(); inner != innerList.end(); inner++) {
- if (((full->x==inner->x-1) || (full->x==inner->x+1)) && (full->y==inner->y))  break;
- }
- if (inner==innerList.end()) pointList.push_back(*full);
-	}
-	return pointList;
- }
- */
-
 void BlobObject::computeOrientedBoundingBox() {
 	
-	double *a = new double[convexHull.size()];
-	BlobPoint *m = new BlobPoint[convexHull.size()];
-	BlobPoint p1, p2, mid;
+	unsigned int size = convexHull.size();
+	double *a = new double[size];
+	BlobPoint *m = new BlobPoint[size];
+	BlobPoint *p1, *p2, mid;
 	
 	double area = 0.0;
 	
-	for (unsigned int i = 0; i < convexHull.size(); i++) {
-		p1 = convexHull[i];
-		p2 = convexHull[(i+1)%convexHull.size()];
-		area += a[i] = p1.distance(&p2);
-		m[i] = BlobPoint(&p1).add(&p2)->scale(0.5);
-		mid.add( BlobPoint(&m[i]).scale(a[i]));
+	for (unsigned int i = 0; i < size; i++) {
+		p1 = &convexHull[i];
+		p2 = &convexHull[(i+1)%size];
+		area += a[i] = p1->distance(p2);
+		m[i] = BlobPoint(p1).add(p2)->scale(0.5);
+		mid.add(BlobPoint(&m[i]).scale(a[i]));
 	}
 	
 	mid.scale(1.0/area);
@@ -554,10 +445,10 @@ void BlobObject::computeOrientedBoundingBox() {
 		for (int j = 0; j < 2; j++) {
 			sum = 0.0;
 			
-			for (unsigned int k = 0; k < convexHull.size(); k++) {
-				p1 = convexHull[k];
-				p2 = convexHull[(k+1)%convexHull.size()];
-				sum += a[k]*(2.0*m[k].get(i)*m[k].get(j) + p1.get(i)*p1.get(j) + p2.get(i)*p2.get(j));
+			for (unsigned int k = 0; k < size; k++) {
+				p1 = &convexHull[k];
+				p2 = &convexHull[(k+1)%size];
+				sum += a[k]*(2.0*m[k].get(i)*m[k].get(j) + p1->get(i)*p1->get(j) + p2->get(i)*p2->get(j));
 			}
 			
 			sum *= area;
@@ -597,13 +488,13 @@ void BlobObject::computeOrientedBoundingBox() {
 	BC.setRow(0, s1);
 	BC.setRow(1, s2);
 	
-	double minX = screenWidth*screenHeight;
-	double maxX = -minX;
-	double minY = screenWidth*screenHeight;
-	double maxY = -minY;
+	float minX = screenWidth*screenHeight;
+	float maxX = -minX;
+	float minY = screenWidth*screenHeight;
+	float maxY = -minY;
 	
 	BlobPoint projected;
-	for (unsigned int i = 0; i < convexHull.size(); i++) {
+	for (unsigned int i = 0; i < size; i++) {
 		BC.multiply(&convexHull[i], &projected);
 		if (projected.x < minX) minX = projected.x;
 		if (projected.x > maxX) maxX = projected.x;
@@ -611,29 +502,25 @@ void BlobObject::computeOrientedBoundingBox() {
 		if (projected.y > maxY) maxY = projected.y;
 	}
 	
-	BC.transpose();
 	BlobPoint obb[4];
+	BC.transpose();
 	
-	BlobPoint bp0;
 	projected.x = minX; projected.y = minY;
-	obb[0] = BC.multiply(&projected,&bp0);
+	BC.multiply(&projected, &obb[0]);
 	
-	BlobPoint bp1;
 	projected.x = maxX; projected.y = minY;
-	obb[1] = BC.multiply(&projected, &bp1);
+	BC.multiply(&projected, &obb[1]);
 	
-	BlobPoint bp2;
 	projected.x = maxX; projected.y = maxY;
-	obb[2] = BC.multiply(&projected, &bp2);
+	BC.multiply(&projected, &obb[2]);
 	
-	BlobPoint bp3;
 	projected.x = minX; projected.y = maxY;
-	obb[3] = BC.multiply(&projected, &bp3);
+	BC.multiply(&projected, &obb[3]);
 	
-	double minx = screenWidth;  int minxi = 0;
-	double maxx = 0;			int maxxi = 0;
-	double miny = screenHeight; int minyi = 0;
-	double maxy = 0;			int maxyi = 0;
+	float minx = screenWidth;	int minxi = 0;
+	float maxx = 0;				int maxxi = 0;
+	float miny = screenHeight;	int minyi = 0;
+	float maxy = 0;				int maxyi = 0;
 	
 	for (int i=0;i<4;i++) {
 		if (obb[i].x < minx) { minx = obb[i].x; minxi = i; }
@@ -662,16 +549,18 @@ void BlobObject::computeOrientedBoundingBox() {
 	obBox.push_back(BlobPoint(1+ maxx - (maxx - minx)/2.0f,1+ maxy - (maxy - miny)/2.0f));
 	
 	// width & height
-	double w = 1+sqrt((obBox[0].x-obBox[1].x)*(obBox[0].x-obBox[1].x)+(obBox[0].y-obBox[1].y)*(obBox[0].y-obBox[1].y));
-	double h = 1+sqrt((obBox[1].x-obBox[2].x)*(obBox[1].x-obBox[2].x)+(obBox[1].y-obBox[2].y)*(obBox[1].y-obBox[2].y));
+	//float w = 1+sqrtf((obBox[0].x-obBox[1].x)*(obBox[0].x-obBox[1].x)+(obBox[0].y-obBox[1].y)*(obBox[0].y-obBox[1].y));
+	//float h = 1+sqrtf((obBox[1].x-obBox[2].x)*(obBox[1].x-obBox[2].x)+(obBox[1].y-obBox[2].y)*(obBox[1].y-obBox[2].y));
+	
+	double w = obBox[1].distance(&obBox[0]);
+	double h = obBox[1].distance(&obBox[2]);
 	obBox.push_back(BlobPoint(w,h));
 	
 	delete[]a;
 	delete[]m;
 }
-
-
-double BlobObject::theta1(BlobPoint *p1, BlobPoint *p2) {
+/*
+double theta1(BlobPoint *p1, BlobPoint *p2) {
 	double dx = p2->x - p1->x;
 	double ax = fabs(dx);
 	double dy = p2->y - p1->y;
@@ -724,6 +613,35 @@ void BlobObject::computeConvexHull() {
 	}
 	
 	while(convexHull.size()>M+1) convexHull.pop_back();
+	//std::cout << "convex hull: " << convexHull.size() << std::endl;
+}
+*/
+
+double cross(const BlobPoint &O, const BlobPoint &A, const BlobPoint &B)
+{
+	return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
 }
 
+void BlobObject::computeConvexHull() {
+	//https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
+	
+	int size = outerContour.size(), k = 0;
+	if (size == 1) return;
+	convexHull.resize(2*size);
+	
+	// Build lower hull
+	for (int i = 0; i < size; ++i) {
+		while (k >= 2 && cross(convexHull[k-2], convexHull[k-1], outerContour[i]) <= 0) k--;
+		convexHull[k++] = outerContour[i];
+	}
+	
+	// Build upper hull
+	for (int i = size-2, t = k+1; i >= 0; i--) {
+		while (k >= t && cross(convexHull[k-2], convexHull[k-1], outerContour[i]) <= 0) k--;
+		convexHull[k++] = outerContour[i];
+	}
+	
+	convexHull.resize(k-1);
+	//std::cout << "convex hull: " << convexHull.size() << std::endl;
+}
 

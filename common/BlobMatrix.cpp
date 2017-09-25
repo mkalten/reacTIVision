@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ BlobPoint* BlobPoint::sub(BlobPoint *other) {
 BlobPoint* BlobPoint::scale(double s) {
 	x *= s;
 	y *= s;
-	return  this;
+	return this;
 }
 
 double BlobPoint::length() {

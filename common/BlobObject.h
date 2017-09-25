@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 #include "floatpoint.h"
 #include "fidtrackX.h"
 #include <vector>
+#include <iostream>
+#include <algorithm>
 
 namespace TUIO {
 
@@ -39,7 +41,7 @@ namespace TUIO {
 
 	public:
 		
-		BlobObject(TuioTime ttime, RegionX *region, ShortPoint *dmap, bool do_full_analysis=false);
+		BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do_full_analysis=false);
 		
 		//void setX(float xp) { xpos = xp; }
 		//void setY(float yp) { ypos = yp; }
@@ -65,12 +67,16 @@ namespace TUIO {
 			return fullContour;
 		}
 
-		std::vector<BlobSpan> getSpanList() {
+		std::vector<BlobSpan*> getSpanList() {
 			return spanList;
 		}
 		
 		int getColour() {
 			return blobRegion->colour;
+		}
+		
+		Region* getRegion() {
+			return blobRegion;
 		}
 		
 		static void setDimensions(int w, int h) {
@@ -88,25 +94,25 @@ namespace TUIO {
 		std::vector<BlobPoint> convexHull;
 		std::vector<BlobPoint> outerContour;
 		std::vector<BlobPoint> fullContour;
-		std::vector<BlobSpan> spanList;
+		std::vector<BlobSpan*> spanList;
 		
-		RegionX *blobRegion;
+		Region *blobRegion;
 		
-		std::list<Span*> sortedSpanList;
-		std::list<BlobSpan> fullSpanList;
+		std::vector<Span*> innerSpanList;
+		//std::list<Span*> sortedSpanList;
+		std::vector<BlobSpan> fullSpanList;
 		
 		void computeSpanList();
 		void computeFullContourList();
-		void computeOuterContourList();
+		void computeOuterContourList(bool do_full_analyis);
+		void computeInnerSpanList();
 		void computeOrientedBoundingBox();
 		void computeConvexHull();
-		
-		std::vector<BlobPoint> getInnerContourList(RegionX *region);
-		std::vector<BlobPoint> getFullContourList(RegionX *region);
+
+		std::vector<BlobPoint> getInnerContourList();
+		//std::vector<BlobPoint> getFullContourList();
 		//std::vector<BlobPoint> getOuterContourList(std::vector<BlobPoint> fullList, std::vector<BlobPoint> innerList);
-		
-		double theta1(BlobPoint *p1, BlobPoint *p2);
-		
+				
 		static int screenWidth, screenHeight;
 		static UserInterface* ui;
 		

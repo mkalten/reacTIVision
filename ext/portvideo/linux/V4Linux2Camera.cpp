@@ -20,7 +20,7 @@
 #include "V4Linux2Camera.h"
 #include "CameraTool.h"
 
-unsigned int codec_table[] =  { 0, V4L2_PIX_FMT_GREY, 0,  V4L2_PIX_FMT_RGB24, 0, 0, 0, 0, 0, 0, V4L2_PIX_FMT_YUYV,
+unsigned int codec_table[] =  { 0, V4L2_PIX_FMT_GREY, V4L2_PIX_FMT_Y16,  V4L2_PIX_FMT_RGB24, 0, 0, 0, 0, 0, 0, V4L2_PIX_FMT_YUYV,
 V4L2_PIX_FMT_UYVY, 0, V4L2_PIX_FMT_YUV444, V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YUV410, V4L2_PIX_FMT_YVYU, 0, 0, 0, V4L2_PIX_FMT_JPEG,
 V4L2_PIX_FMT_MJPEG, V4L2_PIX_FMT_MPEG1, V4L2_PIX_FMT_MPEG2, V4L2_PIX_FMT_MPEG4, V4L2_PIX_FMT_H263, V4L2_PIX_FMT_H264, 0, 0, 0,  V4L2_PIX_FMT_DV, 0 };
 
@@ -412,10 +412,12 @@ unsigned char* V4Linux2Camera::getFrame()  {
             crop_yuyv2rgb(cfg->cam_width,raw_buffer,frm_buffer);
          else if (pixelformat==V4L2_PIX_FMT_UYVY)
             crop_uyvy2rgb(cfg->cam_width,raw_buffer,frm_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_YUV420) { //TODO
-         } else if (pixelformat==V4L2_PIX_FMT_YUV410) { //TODO
-         } else if (pixelformat==V4L2_PIX_FMT_GREY)
-            crop_gray2rgb(cfg->cam_width,raw_buffer, frm_buffer);
+         else if (pixelformat==V4L2_PIX_FMT_YUV420) {} //TODO
+         else if (pixelformat==V4L2_PIX_FMT_YUV410) {} //TODO
+         else if (pixelformat==V4L2_PIX_FMT_GREY)
+            crop_gray2rgb(cfg->cam_width,raw_buffer,frm_buffer);
+         else if (pixelformat==V4L2_PIX_FMT_Y16)
+            crop_grayw2rgb(cfg->cam_width,raw_buffer,frm_buffer);
          else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
@@ -428,10 +430,12 @@ unsigned char* V4Linux2Camera::getFrame()  {
             yuyv2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
          else if (pixelformat==V4L2_PIX_FMT_UYVY)
             uyvy2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_YUV420) { //TODO
-         } else if (pixelformat==V4L2_PIX_FMT_YUV410) { //TODO
-         } else if (pixelformat==V4L2_PIX_FMT_GREY)
+         else if (pixelformat==V4L2_PIX_FMT_YUV420) {} //TODO
+         else if (pixelformat==V4L2_PIX_FMT_YUV410) {} //TODO
+         else if (pixelformat==V4L2_PIX_FMT_GREY)
             gray2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+         else if (pixelformat==V4L2_PIX_FMT_Y16)
+            grayw2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
          else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
@@ -452,6 +456,8 @@ unsigned char* V4Linux2Camera::getFrame()  {
                 crop(cfg->cam_width, cfg->cam_height,raw_buffer,frm_buffer,1);
             else if (pixelformat==V4L2_PIX_FMT_GREY)
                 crop(cfg->cam_width, cfg->cam_height,raw_buffer,frm_buffer,1);
+            else if (pixelformat==V4L2_PIX_FMT_Y16)
+                crop_grayw2gray(cfg->cam_width,raw_buffer,frm_buffer);
             else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
 
                 int jpegSubsamp;
@@ -460,11 +466,12 @@ unsigned char* V4Linux2Camera::getFrame()  {
                 crop(cfg->cam_width, cfg->cam_height,cam_buffer,frm_buffer,1);
             }
         } else {
-            if (pixelformat==V4L2_PIX_FMT_YUYV) yuyv2gray(cfg->cam_width, cfg->cam_height, raw_buffer, cam_buffer);
-            else if (pixelformat==V4L2_PIX_FMT_UYVY) uyvy2gray(cfg->cam_width, cfg->cam_height, raw_buffer, cam_buffer);
+            if (pixelformat==V4L2_PIX_FMT_YUYV) yuyv2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            else if (pixelformat==V4L2_PIX_FMT_UYVY) uyvy2gray(cfg->cam_width, cfg->cam_height,raw_buffer,cam_buffer);
             else if (pixelformat==V4L2_PIX_FMT_YUV420) memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
             else if (pixelformat==V4L2_PIX_FMT_YUV410) memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
             //else if (pixelformat==V4L2_PIX_FMT_GREY) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
+            else if (pixelformat==V4L2_PIX_FMT_Y16) grayw2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
             else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
 
                 int jpegSubsamp;

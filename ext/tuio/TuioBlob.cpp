@@ -17,6 +17,7 @@
 */
 
 #include "TuioBlob.h"
+
 using namespace TUIO;
 
 TuioBlob::TuioBlob (TuioTime ttime, long si, int bi, float xp, float yp, float a, float w, float h, float f):TuioContainer(ttime, si, xp, yp) {

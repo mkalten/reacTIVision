@@ -43,7 +43,7 @@ typedef struct FidtrackerX{
     int max_target_root_descendent_count;
     int min_target_root_descendent_range;
     int max_target_root_descendent_range;
-    int min_depth, max_depth;
+    int min_depth, max_depth, min_leafs;
 
     struct Region root_regions_head;
 
@@ -58,10 +58,10 @@ typedef struct FidtrackerX{
 	double black_x_sum_warped, black_y_sum_warped, black_leaf_count_warped;
     double white_x_sum_warped, white_y_sum_warped, white_leaf_count_warped;
 
-	//int min_leaf_width_or_height;
 	int total_leaf_count;
-    //double total_leaf_size;
-    //double average_leaf_size;
+    double white_leaf_size,black_leaf_size;
+	double min_white, max_white, min_black, max_black;
+	int white_leaf_nodes, black_leaf_nodes;
 
     TreeIdMap *treeidmap;
     ShortPoint *pixelwarp;
@@ -76,42 +76,17 @@ void terminate_fidtrackerX( FidtrackerX *ft );
 #define INVALID_FIDUCIAL_ID  INVALID_TREE_ID
 #define FUZZY_FIDUCIAL_ID (-2)
 #define FUZZY_NODE_RANGE (2)
-
-	
-typedef struct RegionX{
-	
-	Region *region;
-	float x, y;
-	float raw_x, raw_y;
-	short width,height;
-	int area;
-	struct Span *span;
-	struct Span *inner_spans[ 16 ];
-	short inner_span_count;
-	unsigned char colour;
-		
-} RegionX;
 	
 typedef struct FiducialX{
 
     int id;                                /* can be INVALID_FIDUCIAL_ID */
-	char *tree;
     float x, y;
 	float raw_x, raw_y;
     float angle;
 	float raw_a;
 	Region *root;
-	RegionX *rootx;
-	float root_size;
-//	float vlength;
-//	float leaf_size;
-//  int root_colour;
-//  int node_count;
 }FiducialX;
 
-
-
-	
 #ifndef NDEBUG
 	void sanity_check_region_initial_values( Segmenter *s );
 #endif

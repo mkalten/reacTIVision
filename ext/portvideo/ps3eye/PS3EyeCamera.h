@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  PS3EyeCamera initially contributed 2014 by Sebestyén Gábor
  
  This library is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@
 #ifndef PS3EYECAMERA_H
 #define PS3EYECAMERA_H
 
+#include "CameraTool.h"
 #include "CameraEngine.h"
 #include "ps3eye.h"
 
@@ -57,6 +58,7 @@ public:
 
 private:
     ps3eye::PS3EYECam::PS3EYERef eye;
+	uint8_t* raw_buffer;
 };
 
 #endif

@@ -1,5 +1,5 @@
 /*  portVideo, a cross platform camera framework
- Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+ Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  PS3EyeCamera initially contributed 2014 by Sebestyén Gábor
  
  This library is free software; you can redistribute it and/or
@@ -18,19 +18,18 @@
  */
 
 #include "PS3EyeCamera.h"
-#include "CameraTool.h"
-#include "ps3eye.h"
-
 
 PS3EyeCamera::PS3EyeCamera(CameraConfig* cam_cfg):CameraEngine(cam_cfg) {
 	cam_buffer = NULL;
 	cam_cfg->driver = DRIVER_PS3EYE;
+	raw_buffer = NULL;
 }
 
 PS3EyeCamera::~PS3EyeCamera() {
 	updateSettings();
 	CameraTool::saveSettings();
 	if (cam_buffer!=NULL) delete []cam_buffer;
+	if(raw_buffer != NULL) delete[] raw_buffer;
 	eye.reset();
 }
 
@@ -42,7 +41,7 @@ int PS3EyeCamera::getDeviceCount() {
 std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
     
     std::vector<CameraConfig> cfg_list;
-	
+
     int dev_count = getDeviceCount();
     if(dev_count==0) return cfg_list;
     
@@ -56,35 +55,42 @@ std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
             sprintf(cam_cfg.name, "PS3Eye");
             cam_cfg.driver = DRIVER_PS3EYE;
             cam_cfg.device = i;
-            cam_cfg.cam_format = FORMAT_YUYV;
-            
-            cam_cfg.cam_width =  320;
-            cam_cfg.cam_height = 240;
-			
+
+			cam_cfg.cam_format = FORMAT_RGB;
+
+			cam_cfg.cam_width = 320;
+			cam_cfg.cam_height = 240;
+
 			cam_cfg.cam_fps = 187;
 			cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 150;
-            cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 150;
+			cfg_list.push_back(cam_cfg);
 			cam_cfg.cam_fps = 137;
 			cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 125;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 100;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 75;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 60;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 50;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 40;
-            cfg_list.push_back(cam_cfg);
-            cam_cfg.cam_fps = 30;
-            cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 125;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 100;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 75;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 60;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 50;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 40;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 30;
+			cfg_list.push_back(cam_cfg);
+			cam_cfg.cam_fps = 15;
+			cfg_list.push_back(cam_cfg);
 			
-			cam_cfg.cam_width  = 640;
+			cam_cfg.cam_width = 640;
 			cam_cfg.cam_height = 480;
-			
+
+#ifndef WIN32
+			cam_cfg.cam_fps = 75;
+			cfg_list.push_back(cam_cfg);
+#endif
 			cam_cfg.cam_fps = 60;
 			cfg_list.push_back(cam_cfg);
 			cam_cfg.cam_fps = 50;
@@ -151,25 +157,34 @@ bool PS3EyeCamera::initCamera() {
         cfg->cam_height = 240;
         
         if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps = 187;
-        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 30;
-        else if (cfg->cam_fps<30) cfg->cam_fps = 30;
+        else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps = 15;
+        else if (cfg->cam_fps<15) cfg->cam_fps = 15;
         else if (cfg->cam_fps>187) cfg->cam_fps = 187;
         
     } else if ((cfg->cam_width == SETTING_MAX || cfg->cam_width == 640) && (cfg->cam_height == SETTING_MAX || cfg->cam_height == 480 )) {
         
         cfg->cam_width =  640;
         cfg->cam_height = 480;
-        
-        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps  = 60;
+
+#ifdef WIN32
+		int max_fps=60;
+#else
+		int max_fps=75;
+#endif
+
+        if (cfg->cam_fps==SETTING_MAX) cfg->cam_fps  = max_fps;
         else if (cfg->cam_fps==SETTING_MIN) cfg->cam_fps  = 15;
         else if (cfg->cam_fps<15) cfg->cam_fps = 15;
-        else if (cfg->cam_fps>60) cfg->cam_fps = 60;
+        else if (cfg->cam_fps>max_fps) cfg->cam_fps = max_fps;
         
 	} else return false;
 	
-    // init camera
-    eye->init( cfg->cam_width, cfg->cam_height, cfg->cam_fps );
-    
+	PS3EYECam::EOutputFormat eye_fmt = PS3EYECam::EOutputFormat::Gray;
+	if(cfg->color) eye_fmt = PS3EYECam::EOutputFormat::RGB;
+    eye->init( cfg->cam_width, cfg->cam_height, cfg->cam_fps, eye_fmt);
+
+	raw_buffer = new uint8_t[eye->getWidth() * eye->getHeight() * eye->getOutputBytesPerPixel()];
+
     cfg->cam_width = eye->getWidth();
     cfg->cam_height = eye->getHeight();
     cfg->cam_fps = eye->getFrameRate();
@@ -190,6 +205,8 @@ bool PS3EyeCamera::startCamera() {
 
 bool PS3EyeCamera::stopCamera() {
 	running = false;
+	
+	pv_sleep(100);
     eye->stop();
     return true;
 }
@@ -207,30 +224,17 @@ bool PS3EyeCamera::closeCamera() {
     return true;
 }
 
-unsigned char* PS3EyeCamera::getFrame() {
-	
-    while (!eye->isNewFrame()) {
-        PS3EYECam::updateDevices();
-		if(!running) return NULL;
-    }
-	
-	unsigned char *eye_buffer = (unsigned char *) eye->getLastFramePointer();
-	
-    if (cfg->color) {
-        if (cfg->frame)
-            crop_yuyv2rgb(cfg->cam_width, eye_buffer, cam_buffer);
-        else
-            yuyv2rgb(cfg->cam_width, cfg->cam_height, eye_buffer, cam_buffer);
-            
-    } else {
-        
-         if (cfg->frame)
-             crop_yuyv2gray(cfg->cam_width, eye_buffer, cam_buffer);
-         else
-             yuyv2gray(cfg->cam_width, cfg->cam_height, eye_buffer, cam_buffer);
-    }
-    
-    return cam_buffer;
+unsigned char*  PS3EyeCamera::getFrame() {
+
+	if (!eye->isStreaming()) return NULL;
+	eye->getFrame(raw_buffer);
+	if (!eye->isStreaming()) return NULL;
+
+	if(cfg->frame) {
+		crop(cfg->cam_width, cfg->cam_height, (unsigned char *)raw_buffer, cam_buffer, cfg->buf_format);
+		return cam_buffer;
+	} else return raw_buffer;
+
 }
 
 int PS3EyeCamera::getCameraSettingStep(int mode) {
@@ -241,6 +245,7 @@ bool PS3EyeCamera::hasCameraSettingAuto(int mode) {
     
     switch (mode) {
         case GAIN:
+		case EXPOSURE:
         case WHITE:
             return true;
     }

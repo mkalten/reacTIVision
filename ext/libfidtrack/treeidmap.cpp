@@ -41,6 +41,19 @@ static int find_maximum_tree_depth( const std::string& s )
     return result;
 }
 
+static int count_deep_tree_leafs( const std::string& s , int depth)
+{
+	int result = 0;
+	for( int i=1; i < (int)s.size(); ++i ){ // skip first character which is the black/white flag
+		
+		int d = s[i] - '0';
+		if( d == depth )
+			result++;
+	}
+	
+	return result;
+}
+
 /*
 static int find_maximum_descendent_count( const std::string& s )
 {
@@ -101,7 +114,8 @@ public:
 		int minDepth = 0x7FFF;
 		int maxDepth = 0;
 		int maxAdjacencies = 0;
-		
+		int minDeepLeafs = 0x7FFF;
+
 		const char* file_buffer[1024];
 		const char** tree_buffer;
 		int tree_length = 0;
@@ -157,12 +171,14 @@ public:
 					maxNodeCount = depthSequenceLength;
 				
 				int maxTreeDepth = find_maximum_tree_depth( s );
-				
+				int treeDeepLeafs = count_deep_tree_leafs(s, maxTreeDepth);
+
 				if( maxTreeDepth < minDepth )
 					minDepth = maxTreeDepth;
 				if( maxTreeDepth > maxDepth )
 					maxDepth = maxTreeDepth;
-				
+				if( treeDeepLeafs < minDeepLeafs )
+					minDeepLeafs = treeDeepLeafs;
 				/*
 				 int maxNodeAdjacencies = find_maximum_descendent_count( s ) + 1;
 				 if( maxNodeAdjacencies > maxAdjacencies )
@@ -180,6 +196,7 @@ public:
 		owner_->min_depth = minDepth;
 		owner_->max_depth = maxDepth;
 		owner_->max_adjacencies = maxAdjacencies;
+		owner_->min_deep_leafs = minDeepLeafs;
 	}
 
 

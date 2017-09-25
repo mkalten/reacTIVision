@@ -66,6 +66,12 @@
     <ClCompile Include="..\interface\SDLinterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\ps3eye\ps3eye.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ps3eye\PS3EyeCamera.cpp">
+      <Filter>Source Files\portvideo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\sdldemo\Main.h">
@@ -112,6 +118,12 @@
     </ClInclude>
     <ClInclude Include="..\common\ConsoleInterface.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ps3eye\ps3eye.h">
+      <Filter>Header Files\portvideo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ps3eye\PS3EyeCamera.h">
+      <Filter>Header Files\portvideo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

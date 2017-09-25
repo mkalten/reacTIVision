@@ -77,6 +77,13 @@ namespace TUIO {
 		std::list<TuioObject*> getTuioObjects();
 
 		/**
+		* Returns the number of all currently active TuioObjects
+		*
+		* @return  the of all currently active TuioObjects
+		*/
+		int getTuioObjectCount();
+
+		/**
 		 * Returns a List with a copy of currently active TuioObjects
 		 *
 		 * @return  a List with a copy of all currently active TuioObjects
@@ -91,6 +98,13 @@ namespace TUIO {
 		std::list<TuioCursor*> getTuioCursors();
 
 		/**
+		* Returns the number of all currently active TuioCursors
+		*
+		* @return  the of all currently active TuioCursors
+		*/
+		int getTuioCursorCount();
+
+		/**
 		 * Returns a List with a copy of currently active TuioCursors
 		 *
 		 * @return  a List with a copy of all currently active TuioCursors
@@ -103,6 +117,13 @@ namespace TUIO {
 		 * @return  a List of all currently active TuioBlobs
 		 */
 		std::list<TuioBlob*> getTuioBlobs();
+
+		/**
+		* Returns the number of all currently active TuioBlobs
+		*
+		* @return  the of all currently active TuioBlobs
+		*/
+		int getTuioBlobCount();
 
 		/**
 		 * Returns a List with a copy of currently active TuioBlobs

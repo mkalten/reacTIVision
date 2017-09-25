@@ -20,15 +20,6 @@
 #include "VisionEngine.h"
 #include "ConsoleInterface.h"
 
-void pv_sleep(int ms) {
-#ifndef WIN32
-	usleep(ms*1000);
-#else
-	Sleep(ms);
-#endif
-}
-
-
 // the thread function which constantly retrieves the latest frame
 #ifndef WIN32
 static void* getFrameFromCamera( void* obj )
@@ -290,7 +281,7 @@ void VisionEngine::event(int key)
 #ifndef NDEBUG
     else if( key == KEY_M ){
         recording_ = !recording_;
-    } else if( key == KEY_N ){
+    } else if( key == KEY_L ){
 		if (interface_->getDisplayMode()==SOURCE_DISPLAY)
 			saveBuffer(sourceBuffer_,format_);
 		else saveBuffer(destBuffer_,format_);

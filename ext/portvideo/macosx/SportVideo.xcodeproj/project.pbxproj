@@ -20,8 +20,6 @@
 		B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B239D6A30CC51682009708F3 /* DC1394Camera.cpp */; };
 		B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B244E81519C6D4DC008ADD32 /* libusb.a */; };
 		B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B24EA4F20015EB5000096D13 /* Cocoa.framework */; };
-		B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */; };
-		B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B260A1F01B0A624E0053F53D /* ps3eye.cpp */; };
 		B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B26725ED0C5E3FD100D7FD74 /* IOKit.framework */; };
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */; };
@@ -41,6 +39,8 @@
 		B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */; };
 		B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */; };
 		B2F024E10975394D00538C36 /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DD0975394D00538C36 /* Resources.c */; };
+		B2F8A8961EF2DFF100D4E04F /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F8A8921EF2DFF100D4E04F /* ps3eye.cpp */; };
+		B2F8A8971EF2DFF100D4E04F /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F8A8941EF2DFF100D4E04F /* PS3EyeCamera.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -85,10 +85,6 @@
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
 		B24EA4F20015EB5000096D13 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		B260492208E9BF4B0095D4C8 /* SportVideo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SportVideo.icns; sourceTree = SOURCE_ROOT; };
-		B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = PS3EyeCamera.cpp; sourceTree = "<group>"; };
-		B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PS3EyeCamera.h; sourceTree = "<group>"; };
-		B260A1F01B0A624E0053F53D /* ps3eye.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ps3eye.cpp; path = ps3eye/ps3eye.cpp; sourceTree = "<group>"; };
-		B260A1F11B0A624E0053F53D /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ps3eye/ps3eye.h; sourceTree = "<group>"; };
 		B26725ED0C5E3FD100D7FD74 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVfoundationCamera.h; sourceTree = "<group>"; };
@@ -111,6 +107,10 @@
 		B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../interface/Resources.c; sourceTree = SOURCE_ROOT; };
 		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../interface/Resources.h; sourceTree = SOURCE_ROOT; };
+		B2F8A8921EF2DFF100D4E04F /* ps3eye.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ps3eye.cpp; path = ../ps3eye/ps3eye.cpp; sourceTree = "<group>"; };
+		B2F8A8931EF2DFF100D4E04F /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ../ps3eye/ps3eye.h; sourceTree = "<group>"; };
+		B2F8A8941EF2DFF100D4E04F /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = PS3EyeCamera.cpp; path = ../ps3eye/PS3EyeCamera.cpp; sourceTree = "<group>"; };
+		B2F8A8951EF2DFF100D4E04F /* PS3EyeCamera.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = PS3EyeCamera.h; path = ../ps3eye/PS3EyeCamera.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -260,12 +260,12 @@
 			children = (
 				B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */,
 				B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */,
+				B2F8A8941EF2DFF100D4E04F /* PS3EyeCamera.cpp */,
+				B2F8A8951EF2DFF100D4E04F /* PS3EyeCamera.h */,
+				B2F8A8921EF2DFF100D4E04F /* ps3eye.cpp */,
+				B2F8A8931EF2DFF100D4E04F /* ps3eye.h */,
 				B239D6A30CC51682009708F3 /* DC1394Camera.cpp */,
 				B239D6A40CC51682009708F3 /* DC1394Camera.h */,
-				B260A1ED1B0A62310053F53D /* PS3EyeCamera.cpp */,
-				B260A1EE1B0A62310053F53D /* PS3EyeCamera.h */,
-				B260A1F01B0A624E0053F53D /* ps3eye.cpp */,
-				B260A1F11B0A624E0053F53D /* ps3eye.h */,
 				B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */,
 				B2E644150D6C39EC0000ABD0 /* FolderCamera.h */,
 				B21D89E30CE7A0FE003B810C /* FileCamera.cpp */,
@@ -345,13 +345,13 @@
 				B200D55D1B0E52BB00249D8B /* tinyxml2.cpp in Sources */,
 				B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */,
 				B297D3C0097536E2004AB0FE /* SDLinterface.cpp in Sources */,
+				B2F8A8971EF2DFF100D4E04F /* PS3EyeCamera.cpp in Sources */,
 				B297D3C1097536E2004AB0FE /* RingBuffer.cpp in Sources */,
+				B2F8A8961EF2DFF100D4E04F /* ps3eye.cpp in Sources */,
 				B297D3E2097536E2004AB0FE /* Main.cpp in Sources */,
 				B2F024E10975394D00538C36 /* Resources.c in Sources */,
 				B2985D1D1B1E301600A3172B /* ConsoleInterface.cpp in Sources */,
-				B260A1F21B0A624E0053F53D /* ps3eye.cpp in Sources */,
 				B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */,
-				B260A1EF1B0A62310053F53D /* PS3EyeCamera.cpp in Sources */,
 				B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */,
 				B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */,
 				B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */,
@@ -497,7 +497,8 @@
 		B2BCA3A40859B28700B9378C /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -511,7 +512,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -522,7 +523,8 @@
 		B2BCA3A50859B28700B9378C /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_CW_ASM_SYNTAX = NO;
@@ -535,7 +537,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_LDFLAGS = "";
@@ -548,7 +550,8 @@
 		B2BCA3A60859B28700B9378C /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				DEAD_CODE_STRIPPING = YES;
 				GCC_CW_ASM_SYNTAX = NO;
@@ -560,7 +563,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				STRIP_STYLE = debugging;

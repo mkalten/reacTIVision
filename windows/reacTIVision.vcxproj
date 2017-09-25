@@ -98,7 +98,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\ps3eye;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -109,7 +109,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;libusb-1.0.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -125,7 +125,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\ps3eye;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_CONSOLE;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -137,7 +137,7 @@
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;libusb-1.0.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>..\ext\portvideo\windows\sdl\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -157,7 +157,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\ps3eye;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -172,7 +172,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;libusb-1.0.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <Version>1.6</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -196,7 +196,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\portvideo\interface;..\ext\portvideo\windows;..\ext\portvideo\common;..\ext\portvideo\windows\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tuio;..\ext\portvideo\tinyxml;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;..\ext\oscpack;..\ext\portvideo\common;..\ext\portvideo\interface;..\ext\portvideo\ps3eye;..\ext\portvideo\windows\sdl\include;..\ext\portvideo\windows;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -212,7 +212,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;ws2_32.lib;winmm.lib;strmiids.lib;libusb-1.0.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
       <Version>1.6</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -241,6 +241,8 @@
     <ClCompile Include="..\common\FrameThresholder.cpp" />
     <ClCompile Include="..\common\Main.cpp" />
     <ClCompile Include="..\ext\portvideo\common\ConsoleInterface.cpp" />
+    <ClCompile Include="..\ext\portvideo\ps3eye\ps3eye.cpp" />
+    <ClCompile Include="..\ext\portvideo\ps3eye\PS3EyeCamera.cpp" />
     <ClCompile Include="..\ext\portvideo\windows\videoInputCamera.cpp" />
     <ClCompile Include="..\ext\portvideo\interface\Resources.c" />
     <ClCompile Include="..\ext\portvideo\interface\SDLinterface.cpp" />
@@ -290,6 +292,8 @@
     <ClInclude Include="..\common\FrameThresholder.h" />
     <ClInclude Include="..\common\Main.h" />
     <ClInclude Include="..\ext\portvideo\common\ConsoleInterface.h" />
+    <ClInclude Include="..\ext\portvideo\ps3eye\ps3eye.h" />
+    <ClInclude Include="..\ext\portvideo\ps3eye\PS3EyeCamera.h" />
     <ClInclude Include="..\ext\portvideo\windows\videoInputCamera.h" />
     <ClInclude Include="..\ext\portvideo\interface\SDLinterface.h" />
     <ClInclude Include="..\ext\portvideo\interface\Resources.h" />

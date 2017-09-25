@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-	Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -107,7 +107,8 @@ public:
 	bool getFingerBlob() { return send_finger_blobs; };
 	bool getFiducialBlob() { return send_fiducial_blobs; };
 	bool getYamaarashi() { return detect_yamaarashi; };
-	
+	bool getYamaFlip() { return invert_yamaarashi; };
+
 	void reset();
 	
 private:
@@ -115,7 +116,7 @@ private:
 	char tree_config[255];
 	
 	FiducialX fiducials[ MAX_FIDUCIAL_COUNT ];
-	RegionX regions[ MAX_FIDUCIAL_COUNT*4 ];
+	Region* regions[ MAX_FIDUCIAL_COUNT*4 ];
 	TreeIdMap treeidmap;
 	FidtrackerX fidtrackerx;
 	
@@ -134,9 +135,13 @@ private:
 	int max_blob_size;
 	int min_blob_size;
 	
+	bool get_black_roots;
+	bool get_white_roots;
+
 	float position_threshold;
 	float rotation_threshold;
 	
+	bool setYamarashi, setYamaFlip;
 	bool setFingerSize, setFingerSensitivity;
 	bool setBlobSize, setObjectBlob, setFingerBlob;
 	bool objFilter, curFilter, blbFilter;

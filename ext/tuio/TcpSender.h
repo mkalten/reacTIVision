@@ -24,6 +24,7 @@
 #ifdef WIN32
 #include <winsock.h>
 #include <io.h>
+#include <stdint.h>
 typedef int socklen_t;
 #else
 #include <sys/types.h>
@@ -43,7 +44,7 @@ namespace TUIO {
 	 * The TcpSender implements the TCP transport method for OSC
 	 *
 	 * @author Martin Kaltenbrunner
-	 * @version 2.0.a0
+	 * @version 1.1.6
 	 */ 
 	class LIBDECL TcpSender : public OscSender {
 				

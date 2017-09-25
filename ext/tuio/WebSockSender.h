@@ -73,8 +73,8 @@ namespace TUIO {
 	 * The WebSockSender implements the WebSocket transport method for OSC
 	 *
 	 * @author Florian Echtler
-	 * @version 2.0.a0
-	 */ 
+	 * @version 1.1.6
+	 */
 	class LIBDECL WebSockSender : public TcpSender {
 				
 	public:

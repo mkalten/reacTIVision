@@ -21,6 +21,14 @@
 #include <pwd.h>
 #endif
 
+void pv_sleep(int ms) {
+#ifndef WIN32
+	usleep(ms*1000);
+#else
+	Sleep(ms);
+#endif
+}
+
 CameraConfig CameraTool::cam_cfg = {};
 
 void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
@@ -74,34 +82,29 @@ void CameraTool::printConfig(std::vector<CameraConfig> cfg_list) {
 
 std::vector<CameraConfig> CameraTool::findDevices() {
 
-#ifdef WIN32
-	std::vector<CameraConfig> dev_list = videoInputCamera::getCameraConfigs();
-#endif
-	
-#ifdef __APPLE__
-	
-#ifdef __x86_64__
-	std::vector<CameraConfig> dev_list = AVfoundationCamera::getCameraConfigs();
-#else
-	std::vector<CameraConfig> dev_list = QTKitCamera::getCameraConfigs();
-#endif
-	
-	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
-	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
-	
-	std::vector<CameraConfig> ps3eye_list = PS3EyeCamera::getCameraConfigs();
-	dev_list.insert( dev_list.end(), ps3eye_list.begin(), ps3eye_list.end() );
+	std::vector<CameraConfig> dev_list;
 
+#ifdef __APPLE__
+	std::vector<CameraConfig> sys_list = AVfoundationCamera::getCameraConfigs();
+	dev_list.insert(dev_list.end(), sys_list.begin(), sys_list.end());
 #endif
 	
 #ifdef LINUX
-	
-	std::vector<CameraConfig> dev_list = V4Linux2Camera::getCameraConfigs();
-	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
-	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
-	
+	std::vector<CameraConfig> sys_list = V4Linux2Camera::getCameraConfigs();
+		dev_list.insert(dev_list.end(), sys_list.begin(), sys_list.end());
+#else // ps3eye for WIN32 and MACOS
+	std::vector<CameraConfig> ps3eye_list = PS3EyeCamera::getCameraConfigs();
+	dev_list.insert(dev_list.end(), ps3eye_list.begin(), ps3eye_list.end());
 #endif
 	
+#ifdef WIN32
+	std::vector<CameraConfig> sys_list = videoInputCamera::getCameraConfigs();
+	dev_list.insert(dev_list.end(), sys_list.begin(), sys_list.end());
+#else // dc1394 for LINUX and MACOS
+	std::vector<CameraConfig> dc1394_list = DC1394Camera::getCameraConfigs();
+	dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
+#endif
+
 	return dev_list;
 	
 }
@@ -110,6 +113,35 @@ std::vector<CameraConfig> CameraTool::findDevices() {
 void CameraTool::listDevices() {
 	
 	int dev_count;
+	
+#ifdef __APPLE__
+	dev_count = AVfoundationCamera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else {
+		if (dev_count==1) printf("1 system camera found:\n");
+		else  printf("%d system cameras found:\n",dev_count);
+		printConfig(AVfoundationCamera::getCameraConfigs());
+	}
+#endif
+	
+#ifdef LINUX
+	dev_count = V4Linux2Camera::getDeviceCount();
+	if (dev_count==0) printf("no system camera found\n");
+	else {
+		if (dev_count==1) printf("1 system camera found:\n");
+		else  printf("%d system cameras found:\n",dev_count);
+		printConfig(V4Linux2Camera::getCameraConfigs());
+	}
+#else // ps3eye for WIN32 and MACOS
+	dev_count = PS3EyeCamera::getDeviceCount();
+	if(dev_count == 0) printf("no PS3Eye camera found\n");
+	else {
+		if(dev_count == 1) printf("1 PS3Eye camera found:\n");
+		else  printf("%d PS3Eye cameras found:\n", dev_count);
+		printConfig(PS3EyeCamera::getCameraConfigs());
+	}
+#endif
+	
 #ifdef WIN32
 	dev_count = videoInputCamera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
@@ -118,9 +150,7 @@ void CameraTool::listDevices() {
 		else  printf("%d system cameras found:\n",dev_count);
 		printConfig(videoInputCamera::getCameraConfigs());
 	}
-#endif
-	
-#ifdef __APPLE__
+#else // dc1394 for LINUX and MACOS
 	dev_count = DC1394Camera::getDeviceCount();
 	if (dev_count==0) printf("no DC1394 camera found\n");
 	else {
@@ -128,52 +158,8 @@ void CameraTool::listDevices() {
 		else  printf("%d DC1394 cameras found:\n",dev_count);
 		printConfig(DC1394Camera::getCameraConfigs());
 	}
-	
-	dev_count = PS3EyeCamera::getDeviceCount();
-	if (dev_count==0) printf("no PS3Eye camera found\n");
-	else {
-		if (dev_count==1) printf("1 PS3Eye camera found:\n");
-		else  printf("%d PS3Eye cameras found:\n",dev_count);
-		printConfig(PS3EyeCamera::getCameraConfigs());
-	}
-	
-#ifdef __x86_64__
-	dev_count = AVfoundationCamera::getDeviceCount();
-	if (dev_count==0) printf("no system camera found\n");
-	else {
-		if (dev_count==1) printf("1 system camera found:\n");
-		else  printf("%d system cameras found:\n",dev_count);
-		printConfig(AVfoundationCamera::getCameraConfigs());
-	}
-#else
-	dev_count = QTKitCamera::getDeviceCount();
-	if (dev_count==0) printf("no system camera found\n");
-	else {
-		if (dev_count==1) printf("1 system camera found:\n");
-		else  printf("%d system cameras found:\n",dev_count);
-		printConfig(QTKitCamera::getCameraConfigs());
-	}
-#endif
 #endif
 	
-#ifdef LINUX
-	dev_count = DC1394Camera::getDeviceCount();
-	if (dev_count==0) printf("no DC1394 camera found\n");
-	else {
-		if (dev_count==1) printf("1 DC1394 camera found:\n");
-		else  printf("%d DC1394 cameras found:\n",dev_count);
-		printConfig(DC1394Camera::getCameraConfigs());
-	}
-
-	dev_count = V4Linux2Camera::getDeviceCount();
-	if (dev_count==0) printf("no system camera found\n");
-	else {
-		if (dev_count==1) printf("1 system camera found:\n");
-		else  printf("%d system cameras found:\n",dev_count);
-		printConfig(V4Linux2Camera::getCameraConfigs());
-	}
-#endif
-
 }
 
 CameraEngine* CameraTool::getDefaultCamera() {
@@ -185,11 +171,7 @@ CameraEngine* CameraTool::getDefaultCamera() {
 #endif
 	
 #ifdef __APPLE__
-#ifdef __x86_64__
 	return AVfoundationCamera::getCamera(&cam_cfg);
-#else
-	return QTKitCamera::getCamera(&cam_cfg);
-#endif
 #endif
 	
 #ifdef LINUX
@@ -205,7 +187,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 	int dev_count;
 	
 #ifndef NDEBUG
-	
 	if (cam_cfg->driver==DRIVER_FILE) {
 		camera = FileCamera::getCamera(cam_cfg);
 		if (camera) return camera;
@@ -215,36 +196,33 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 		camera = FolderCamera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
+#endif
 
+#ifndef LINUX
+	if(cam_cfg->driver == DRIVER_PS3EYE) {
+		dev_count = PS3EyeCamera::getDeviceCount();
+		if(dev_count == 0) printf("no PS3Eye camera found\n");
+		else camera = PS3EyeCamera::getCamera(cam_cfg);
+		if(camera) return camera;
+	}
 #endif
 
 #ifdef WIN32
-
 	dev_count = videoInputCamera::getDeviceCount();
 	if (dev_count==0) printf("no system camera found\n");
 	else camera = videoInputCamera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-
-#endif
-
-#ifdef __APPLE__
-
+#else
 	if (cam_cfg->driver==DRIVER_DC1394) {
 		dev_count = DC1394Camera::getDeviceCount();
 		if (dev_count==0) printf("no DC1394 camera found\n");
 		else camera = DC1394Camera::getCamera(cam_cfg);
 		if (camera) return camera;
 	}
+#endif
 
-	if (cam_cfg->driver==DRIVER_PS3EYE) {
-		dev_count = PS3EyeCamera::getDeviceCount();
-		if (dev_count==0) printf("no PS3Eye camera found\n");
-		else camera = PS3EyeCamera::getCamera(cam_cfg);
-		if (camera) return camera;
-	}
-
-#ifdef __x86_64__
+#ifdef __APPLE__
 	// default driver
 	dev_count = AVfoundationCamera::getDeviceCount();
 	if (dev_count==0) {
@@ -253,27 +231,9 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 	} else camera = AVfoundationCamera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-#else
-	// default driver
-	dev_count = QTKitCamera::getDeviceCount();
-	if (dev_count==0) {
-		printf("no system camera found\n");
-		return NULL;
-	} else camera = QTKitCamera::getCamera(cam_cfg);
-	if (camera) return camera;
-	else return getDefaultCamera();
-#endif
 #endif
 
 #ifdef LINUX
-
-	if (cam_cfg->driver==DRIVER_DC1394) {
-		dev_count = DC1394Camera::getDeviceCount();
-		if (dev_count==0) printf("no DC1394 camera found\n");
-		else camera = DC1394Camera::getCamera(cam_cfg);
-		if (camera) return camera;
-	}
-
 	// default driver
 	dev_count = V4Linux2Camera::getDeviceCount();
 	if (dev_count==0) {
@@ -282,7 +242,6 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 	} else camera = V4Linux2Camera::getCamera(cam_cfg);
 	if (camera) return camera;
 	else return getDefaultCamera();
-
 #endif
 
 	return NULL;

@@ -260,8 +260,8 @@ TuioPoint TuioContainer::predictPosition() {
 	float tx = x_speed * dt;
 	float ty = y_speed * dt;
 	
-	float nx = xpos+tx-tx*x_accel*dt;
-	float ny = ypos+ty-ty*y_accel*dt;
+	float nx = xpos+tx;//-tx*x_accel*dt;
+	float ny = ypos+ty;//-ty*y_accel*dt;
 	
 	//if (xposFilter && yposFilter) {
 	//	nx = xposFilter->filter(nx,dt);

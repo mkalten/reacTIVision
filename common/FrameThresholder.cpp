@@ -1,5 +1,5 @@
 /*  reacTIVision tangible interaction framework
-Copyright (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -193,7 +193,7 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 
 #ifdef WIN32
 		DWORD threadId;
-		tdata[i].ghWriteEvent = CreateEvent(NULL, FALSE, FALSE, TEXT("ProcessEvent"+i));
+		tdata[i].ghWriteEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 		tthreads[i] = CreateThread( 0, 0, threshold_thread_function, &tdata[i], 0, &threadId );
 #else
 		tdata[i].cond = (pthread_cond_t)PTHREAD_COND_INITIALIZER;
