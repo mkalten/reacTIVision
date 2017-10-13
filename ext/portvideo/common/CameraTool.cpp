@@ -460,6 +460,7 @@ void CameraTool::whereIsConfig(const char* const cfgfilename, char* cfgfile) {
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 
 	initCameraConfig(&cam_cfg);
+	
 	if (strcmp(cfgfile, "default") == 0) {
         whereIsConfig("camera.xml", cam_cfg.path);
     } else {
