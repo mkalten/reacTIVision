@@ -766,11 +766,12 @@ void CameraTool::saveSettings() {
 
 	tinyxml2::XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
 	if (frame_element!=NULL) {
-		if (cam_cfg.frame_mode>=0) {
-			saveAttribute(frame_element, "mode", cam_cfg.frame_mode);
-		} else {
-			frame_element->DeleteAttribute("mode");
-		}
+		// save frame attribute every time
+		saveAttribute(frame_element, "width", cam_cfg.frame_width);
+		saveAttribute(frame_element, "height", cam_cfg.frame_height);
+		saveAttribute(frame_element, "xoff", cam_cfg.frame_xoff);
+		saveAttribute(frame_element, "yoff", cam_cfg.frame_yoff);
+		saveAttribute(frame_element, "mode", cam_cfg.frame_mode);
 	}
 
 	xml_settings.SaveFile(cam_cfg.path);
