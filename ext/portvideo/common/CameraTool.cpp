@@ -344,6 +344,8 @@ void CameraTool::initCameraConfig(CameraConfig *cfg) {
 	cfg->cam_fps = SETTING_MAX;
 
 	cfg->frame = false;
+	cfg->frame_x = 0;
+	cfg->frame_y = 0;
 	cfg->frame_width = SETTING_MAX;
 	cfg->frame_height = SETTING_MAX;
 	cfg->frame_xoff = 0;
@@ -394,6 +396,8 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 		cam_cfg.green = SETTING_DEFAULT;
 	}
 
+	strncpy(cam_cfg.name, cfg->name, 256);
+
 	cam_cfg.driver = cfg->driver;
 	cam_cfg.device = cfg->device;
 	cam_cfg.cam_format = cfg->cam_format;
@@ -402,14 +406,22 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 	cam_cfg.cam_height = cfg->cam_height;
 	cam_cfg.cam_fps = cfg->cam_fps;
 
+	cam_cfg.force = cfg->force;
+	// cam_cfg.flip_h = cfg->flip_h;
+	// cam_cfg.flip_v = cfg->flip_v;
+
 	cam_cfg.frame = cfg->frame;
-	cam_cfg.frame_width = SETTING_MAX;
-	cam_cfg.frame_height = SETTING_MAX;
-	cam_cfg.frame_xoff = 0;
-	cam_cfg.frame_yoff = 0;
+	cam_cfg.frame_x = cfg->frame_x;
+	cam_cfg.frame_y = cfg->frame_y;
+	cam_cfg.frame_width = cfg->frame_width;
+    cam_cfg.frame_height = cfg->frame_height;
+    cam_cfg.frame_xoff = cfg->frame_xoff;
+    cam_cfg.frame_yoff = cfg->frame_yoff;
 	cam_cfg.frame_mode = cfg->frame_mode;
 
-	cam_cfg.force = cfg->force;
+	// strncpy(cam_cfg.calib_grid_path, cfg->calib_grid_path, 1024);
+
+    // cam_cfg.childs = cfg->childs;
 }
 
 CameraConfig* CameraTool::readSettings(const char* cfgfile) {
@@ -441,6 +453,11 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	} else {
 		sprintf(cam_cfg.path,"%s",cfgfile);
 	}
+
+	#ifdef DEBUG
+		std::cout << "camera configuration file: '" <<
+		cam_cfg.path << "'" << std::endl;
+	#endif
 
 	tinyxml2::XMLDocument xml_settings;
 	xml_settings.LoadFile(cam_cfg.path);
@@ -544,6 +561,14 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	tinyxml2::XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
 	if (frame_element!=NULL) {
 		cam_cfg.frame = true;
+
+		if (frame_element->Attribute("x")!=NULL) {
+			cam_cfg.frame_x = atoi(frame_element->Attribute("x"));
+		}
+
+		if (frame_element->Attribute("y")!=NULL) {
+			cam_cfg.frame_y = atoi(frame_element->Attribute("y"));
+		}
 
 		if (frame_element->Attribute("width")!=NULL) {
 			if (strcmp( frame_element->Attribute("width"), "max" ) == 0) {
@@ -766,7 +791,9 @@ void CameraTool::saveSettings() {
 
 	tinyxml2::XMLElement* frame_element = camera.FirstChildElement("frame").ToElement();
 	if (frame_element!=NULL) {
-		// save frame attribute every time
+		// force save of frame attributes
+		saveAttribute(frame_element, "x", cam_cfg.frame_x);
+		saveAttribute(frame_element, "y", cam_cfg.frame_y);
 		saveAttribute(frame_element, "width", cam_cfg.frame_width);
 		saveAttribute(frame_element, "height", cam_cfg.frame_height);
 		saveAttribute(frame_element, "xoff", cam_cfg.frame_xoff);

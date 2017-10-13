@@ -118,6 +118,8 @@ struct CameraConfig {
     int cam_height;
     float cam_fps;
 
+    int frame_x;
+    int frame_y;
     int frame_width;
     int frame_height;
     int frame_xoff;
@@ -142,7 +144,7 @@ struct CameraConfig {
     int red;
     int blue;
     int green;
-	
+
 	bool force;
 
     bool operator < (const CameraConfig& c) const {
