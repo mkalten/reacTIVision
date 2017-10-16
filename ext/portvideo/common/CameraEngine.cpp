@@ -19,9 +19,58 @@
 #include "CameraEngine.h"
 #include "CameraTool.h"
 
-const char* dstr[] = { "default","dc1394","ps3eye","raspi","uvccam","","","","","","file","folder"};
+const char* dstr[] = {
+	"default",
+	"dc1394",
+	"ps3eye",
+	"raspi",
+	"uvccam",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"file",
+	"folder"
+};
 
-const char* fstr[] =  { "unknown", "mono8",  "mono16", "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "rgba", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p",  "yvyu", "yuv211", "", "", "jpeg", "mjpeg", "mpeg", "mpeg2", "mpeg4", "h263", "h264", "", "", "", "dvpal", "dvntsc" };
+const char* fstr[] =  {
+	"unknown",
+	"mono8",
+	"mono16",
+	"rgb8",
+	"rgb16",
+	"mono16s",
+	"rgb16s",
+	"raw8",
+	"raw16",
+	"rgba",
+
+	"yuyv",
+	"uyvy",
+	"yuv411",
+	"yuv444",
+	"yuv420p",
+	"yuv410p",
+	"yvyu",
+	"yuv211",
+	"",
+	"",
+
+	"jpeg",
+	"mjpeg",
+	"mpeg",
+	"mpeg2",
+	"mpeg4",
+	"h263",
+	"h264",
+	"",
+	"",
+	"",
+	
+	"dvpal",
+	"dvntsc"
+};
 
 
 void CameraEngine::printInfo() {

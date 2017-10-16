@@ -47,7 +47,10 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define SETTING_MAX     -400000
 #define SETTING_OFF     -500000
 
+// ------------------------------------------
+// FORMAT defines
 #define FORMAT_UNSUPPORTED  -1
+
 #define FORMAT_UNKNOWN  0
 #define FORMAT_GRAY     1
 #define FORMAT_GRAY16   2
@@ -58,6 +61,7 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_RAW8		7
 #define FORMAT_RAW16    8
 #define FORMAT_RGBA		9
+
 #define FORMAT_YUYV    10
 #define FORMAT_UYVY    11
 #define FORMAT_YUV411  12
@@ -66,6 +70,7 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_410P    15
 #define FORMAT_YVYU    16
 #define FORMAT_YUV211  17
+
 #define FORMAT_JPEG    20
 #define FORMAT_MJPEG   21
 #define FORMAT_MPEG    22
@@ -73,9 +78,11 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_MPEG4   24
 #define FORMAT_H263    25
 #define FORMAT_H264    26
+
 #define FORMAT_DVPAL   30
 #define FORMAT_DVNTSC  31
 #define FORMAT_MAX     31
+// ------------------------------------------
 
 extern const char* fstr[];
 extern const char* dstr[];
