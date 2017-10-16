@@ -461,8 +461,7 @@ unsigned char* V4Linux2Camera::getFrame()  {
     if(cfg->color) {
         if (cfg->frame) {
             if (pixelformat==V4L2_PIX_FMT_RGB24) {
-                //TODO UNTESTED
-                crop(cfg->cam_width, cfg->cam_height, cam_buffer, frm_buffer, 3);
+                crop(cfg->cam_width, cfg->cam_height, raw_buffer, frm_buffer, 3);
             } else if (pixelformat==V4L2_PIX_FMT_YUYV) {
                 crop_yuyv2rgb(cfg->cam_width,raw_buffer,frm_buffer);
             } else if (pixelformat==V4L2_PIX_FMT_UYVY) {
@@ -505,7 +504,6 @@ unsigned char* V4Linux2Camera::getFrame()  {
     } else {
         if (cfg->frame) {
             if (pixelformat==V4L2_PIX_FMT_RGB24) {
-                //TODO UNTESTED
                 crop_rgb2gray(cfg->cam_width,raw_buffer,frm_buffer);
             } else if (pixelformat==V4L2_PIX_FMT_YUYV) {
                 crop_yuyv2gray(cfg->cam_width,raw_buffer,frm_buffer);
@@ -527,7 +525,6 @@ unsigned char* V4Linux2Camera::getFrame()  {
             }
         } else {
             if (pixelformat==V4L2_PIX_FMT_RGB24) {
-                //TODO UNTESTED
                 rgb2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
             } else if (pixelformat==V4L2_PIX_FMT_YUYV) {
                 yuyv2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
