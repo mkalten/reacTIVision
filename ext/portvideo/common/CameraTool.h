@@ -63,18 +63,39 @@ public:
 	static void printConfig(std::vector<CameraConfig>);
 
     static CameraConfig* readSettings(const char* cfgfile);
+    static void readSettings(tinyxml2::XMLElement* camera_element, CameraConfig& cam_cfg);
     static void saveSettings();
+    static void saveSettings(CameraConfig& cam_cfg, tinyxml2::XMLElement* camera_element);
 
     static void initCameraConfig(CameraConfig *cfg);
 	static void setCameraConfig(CameraConfig *cfg);
 
     static void whereIsConfig(const char* const cfgfilename, char* cfgfile);
+    static int mapCameraDriver(const char* const driver);
 
 private:
 
     static CameraConfig cam_cfg;
+
     static int readAttribute(tinyxml2::XMLElement* settings,const char *attribute);
+
+    static int readAttributeHandleInt(
+    	tinyxml2::XMLElement* settings_element, const char *attribute, int max, int min
+    );
+    static bool readAttributeHandleBool(
+    	tinyxml2::XMLElement* settings_element, const char *attribute
+    );
+
+
     static void saveAttribute(tinyxml2::XMLElement* settings,const char *attribute,int config);
+
+    static void saveAttributeHandleInt(
+    	tinyxml2::XMLElement* settings_element, const char *attribute, int config_value
+    );
+    static void saveAttributeHandleBool(
+    	tinyxml2::XMLElement* settings_element, const char *attribute, int config_value
+    );
+
 };
 
 #endif
