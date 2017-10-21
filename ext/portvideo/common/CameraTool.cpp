@@ -220,24 +220,35 @@ CameraEngine* CameraTool::getDefaultCamera() {
 }
 
 CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
+	return CameraTool::getCamera(cam_cfg, true);
+}
+
+CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg, bool fallback) {
 
 	CameraEngine* camera = NULL;
 	int dev_count;
 
+	if (cam_cfg->driver==DRIVER_MUTLICAM) {
+		camera = MultiCamera::getCamera(cam_cfg);
+		if (camera) {
+			return camera;
+		} else {
+			#ifdef DEBUG
+				std::cout << "MultiCamera::getCamera failed" << std::endl;
+			#endif
+		}
+	}
+
 	#ifndef NDEBUG
 		if (cam_cfg->driver==DRIVER_FILE) {
-
 			camera = FileCamera::getCamera(cam_cfg);
-
 			if (camera) {
 				return camera;
 			}
 		}
 
 		if (cam_cfg->driver==DRIVER_FOLDER) {
-
 			camera = FolderCamera::getCamera(cam_cfg);
-
 			if (camera) {
 				return camera;
 			}
@@ -271,7 +282,8 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 
 		if (camera) {
 			return camera;
-		} else {
+		} else if (fallback) {
+			std::cout << "fallback to default Camera" << std::endl;
 			return getDefaultCamera();
 		}
 	#else
@@ -303,7 +315,8 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 
 		if (camera) {
 			return camera;
-		} else {
+		} else if (fallback) {
+			std::cout << "fallback to default Camera" << std::endl;
 			return getDefaultCamera();
 		}
 	#endif
@@ -321,7 +334,8 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 
 		if (camera) {
 			return camera;
-		} else {
+		} else if (fallback) {
+			std::cout << "fallback to default Camera" << std::endl;
 			return getDefaultCamera();
 		}
 	#endif

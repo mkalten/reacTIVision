@@ -19,6 +19,8 @@
 #ifndef CAMERATOOL_H
 #define CAMERATOOL_H
 
+#include "MultiCamera.h"
+
 #ifdef WIN32
 #include <windows.h>
 #include "videoInputCamera.h"
@@ -56,6 +58,7 @@ class CameraTool
 public:
 
     static CameraEngine* getCamera(CameraConfig* cfg);
+    static CameraEngine* getCamera(CameraConfig* cfg, bool fallback);
     static CameraEngine* getDefaultCamera();
 
     static std::vector<CameraConfig> findDevices();

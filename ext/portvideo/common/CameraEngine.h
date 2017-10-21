@@ -94,13 +94,36 @@ extern const char* dstr[];
 #define DRIVER_UVCCAM   4
 #define DRIVER_FILE    10
 #define DRIVER_FOLDER  11
+#define DRIVER_MUTLICAM 12
 
 #define VALUE_INCREASE   79
 #define VALUE_DECREASE   80
 #define SETTING_NEXT     81
 #define SETTING_PREVIOUS 82
 
-enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, SATURATION, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
+enum CameraSetting {
+    BRIGHTNESS,
+    CONTRAST,
+    SHARPNESS,
+    AUTO_GAIN,
+    GAIN,
+    AUTO_EXPOSURE,
+    EXPOSURE,
+    SHUTTER,
+    AUTO_FOCUS,
+    FOCUS,
+    AUTO_WHITE,
+    WHITE,
+    GAMMA,
+    POWERLINE,
+    BACKLIGHT,
+    SATURATION,
+    AUTO_HUE,
+    COLOR_HUE,
+    COLOR_RED,
+    COLOR_GREEN,
+    COLOR_BLUE
+};
 #define MODE_MIN BRIGHTNESS
 #define MODE_MAX COLOR_BLUE
 
@@ -124,6 +147,9 @@ struct CameraConfig {
     int cam_width;
     int cam_height;
     float cam_fps;
+
+    // bool flip_h;
+    // bool flip_v;
 
     int frame_x;
     int frame_y;
@@ -154,17 +180,26 @@ struct CameraConfig {
 
 	bool force;
 
+    // char calib_grid_path[1024];
+
+    std::vector<CameraConfig> childs;
+
     bool operator < (const CameraConfig& c) const {
+        //if (device < c.device) return true;
+        //if (cam_format < c.cam_format) return true;
 
-       //if (device < c.device) return true;
-       //if (cam_format < c.cam_format) return true;
+        if (
+            cam_width > c.cam_width ||
+            (cam_width == c.cam_width && cam_height < c.cam_height)
+        ) {
+            return true;
+        }
 
-       if (cam_width > c.cam_width || (cam_width == c.cam_width && cam_height < c.cam_height))
-                return true;
-
-       if (cam_width == c.cam_width && cam_height == c.cam_height) {
-                return (cam_fps > c.cam_fps);
-       } else return false;
+        if (cam_width == c.cam_width && cam_height == c.cam_height) {
+            return (cam_fps > c.cam_fps);
+        } else {
+            return false;
+        }
 
     }
 };
@@ -214,6 +249,8 @@ public:
     int getFps() { return (int)floor(cfg->cam_fps+0.5f); }
     int getWidth() { return cfg->frame_width; }
     int getHeight() { return cfg->frame_height; }
+    int getFrameX() { return cfg->frame_x; }
+    int getFrameY() { return cfg->frame_y; }
     int getFormat() { return cfg->buf_format; }
     char* getName() { return cfg->name; }
 
