@@ -435,7 +435,7 @@ void CameraTool::setCameraConfig(CameraConfig *cfg) {
 
 	// strncpy(cam_cfg.calib_grid_path, cfg->calib_grid_path, 1024);
 
-    // cam_cfg.childs = cfg->childs;
+    cam_cfg.childs = cfg->childs;
 }
 
 
@@ -476,7 +476,6 @@ int CameraTool::mapCameraDriver(const char* const driver) {
 
     if(driver == NULL) return DRIVER_DEFAULT;
 
-
     if(strcmp(driver, "dc1394" ) == 0) {
 		return DRIVER_DC1394;
     } else if(strcmp(driver, "ps3eye" ) == 0) {
@@ -485,8 +484,8 @@ int CameraTool::mapCameraDriver(const char* const driver) {
 		return DRIVER_FILE;
     } else if(strcmp(driver, "folder" ) == 0) {
 		return DRIVER_FOLDER;
-    // } else if(strcmp(driver, "multicam") == 0) {
-	// 	return DRIVER_MUTLICAM;
+    } else if(strcmp(driver, "multicam") == 0) {
+		return DRIVER_MUTLICAM;
     } else {
 		return DRIVER_DEFAULT;
 	}
@@ -530,7 +529,9 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
     return &cam_cfg;
 }
 
-void CameraTool::readSettings(tinyxml2::XMLElement* camera_element, CameraConfig& cam_cfg) {
+void CameraTool::readSettings(
+	tinyxml2::XMLElement* camera_element, CameraConfig& cam_cfg
+) {
 
 	if (camera_element==NULL) {
 		std::cout << "Error loading camera configuration from camera_element: '" <<
@@ -679,18 +680,18 @@ void CameraTool::readSettings(tinyxml2::XMLElement* camera_element, CameraConfig
 	// 	}
 	// }
 
-	// // check for childcam configurations
-	// // clear childs
-    // cam_cfg.childs.clear();
-	// // read childs
-	// tinyxml2::XMLElement* child_cam = camera_element->FirstChildElement("child");
-	// while (child_cam != NULL) {
-	// 	CameraConfig child_cfg;
-	// 	initCameraConfig(&child_cfg);
-	// 	readSettings(child_cam, child_cfg);
-	// 	cam_cfg.childs.push_back(child_cfg);
-	// 	child_cam = child_cam->NextSiblingElement("child");
-	// }
+	// check for childcam configurations
+	// clear childs
+    cam_cfg.childs.clear();
+	// read childs
+	tinyxml2::XMLElement* child_cam = camera_element->FirstChildElement("childcamera");
+	while (child_cam != NULL) {
+		CameraConfig child_cfg;
+		initCameraConfig(&child_cfg);
+		readSettings(child_cam, child_cfg);
+		cam_cfg.childs.push_back(child_cfg);
+		child_cam = child_cam->NextSiblingElement("childcamera");
+	}
 
 }
 
@@ -826,6 +827,7 @@ void CameraTool::saveSettings(CameraConfig& cam_cfg, tinyxml2::XMLElement* camer
 	// 	saveAttribute(calibration_element, "file", cam_cfg.calib_grid_path);
 	// }
 
+	// this overwrittes all other things
 	// std::vector<CameraConfig>::iterator iter;
 	// tinyxml2::XMLDocument* doc = camera_element->GetDocument();
     // for(iter = cam_cfg.childs.begin(); iter != cam_cfg.childs.end(); iter++) {
@@ -833,6 +835,21 @@ void CameraTool::saveSettings(CameraConfig& cam_cfg, tinyxml2::XMLElement* camer
     //     saveSettings(*iter, child_cam_element);
     //     camera_element->LinkEndChild(child_cam_element);
     // }
+
+	// with this we try to not overwritte but chagne.
+	tinyxml2::XMLElement* child_cam_element = camera_element->FirstChildElement("childcamera")->ToElement();
+	std::vector<CameraConfig>::iterator iter;
+	for(iter = cam_cfg.childs.begin(); iter != cam_cfg.childs.end(); iter++) {
+		if (child_cam_element == NULL) {
+			tinyxml2::XMLDocument* doc = camera_element->GetDocument();
+			tinyxml2::XMLElement* child_cam_element = doc->NewElement("childcamera");
+			saveSettings(*iter, child_cam_element);
+	        camera_element->LinkEndChild(child_cam_element);
+		} else {
+			saveSettings(*iter, child_cam_element);
+			child_cam_element = child_cam_element->NextSiblingElement("childcamera")->ToElement();
+		}
+	}
 
 }
 

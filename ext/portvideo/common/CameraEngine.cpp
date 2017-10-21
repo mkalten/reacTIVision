@@ -32,6 +32,7 @@ const char* dstr[] = {
 	"",
 	"file",
 	"folder"
+	"multicam"
 };
 
 const char* fstr[] =  {
@@ -67,7 +68,7 @@ const char* fstr[] =  {
 	"",
 	"",
 	"",
-	
+
 	"dvpal",
 	"dvntsc"
 };
