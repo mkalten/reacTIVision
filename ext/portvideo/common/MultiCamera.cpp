@@ -112,8 +112,14 @@ MultiCamera::MultiCamera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg) {
         }
     }
 
+    // show MultiCamera and child count as name
+    int cams_cnt = (cam_cfg->childs).size();
+    sprintf(cfg->name, "MultiCamera: %i childs", cams_cnt);
+
 	frm_buffer = NULL;
 	cam_buffer = NULL;
+
+    cam_cfg->driver = DRIVER_MUTLICAM;
 }
 
 MultiCamera::~MultiCamera() {
@@ -142,7 +148,7 @@ void MultiCamera::printInfo() {
 bool MultiCamera::initCamera() {
 
     #ifdef DEBUG
-        printf("initCamera\n");
+        printf("MultiCamera::initCamera\n");
     #endif
 
     if (cfg == NULL || cfg->childs.size() <= 0) {
@@ -192,6 +198,10 @@ bool MultiCamera::initCamera() {
         memset(cam_buffer, 0, buffer_size);
     }
 
+    #ifdef DEBUG
+        printf("MultiCamera::initCamera done\n\n");
+    #endif
+
 	return true;
 }
 
@@ -229,6 +239,11 @@ bool MultiCamera::startCamera() {
 
 	running = result;
 
+    #ifdef DEBUG
+        std::cout << "MultiCamera::startCamera '" <<
+        running << "'" << std::endl;
+    #endif
+
 	return result;
 }
 
@@ -257,94 +272,106 @@ bool MultiCamera::resetCamera() {
 }
 
 unsigned char* MultiCamera::getFrame() {
-	std::vector<CameraEngine*>::iterator iter;
+    // #ifdef DEBUG
+    //     std::cout << "MultiCamera::getFrame" << std::endl;
+    // #endif
 
     // cam_buffer points to a buffer the size of the main image frame.
     // cfg->frame_height * cfg->frame_width * cfg->buf_format
 	// unsigned char* childcam_buffer_start = cam_buffer;
 
+    // clear cavas buffer
+    // const int buffer_size = cfg->frame_height * cfg->frame_width * cfg->buf_format;
+    // memset(cam_buffer, 10, buffer_size);
+
     // int cam_buffer_line_size = cfg->frame_width * cfg->buf_format;
 
     // for every child cam
+    std::vector<CameraEngine*>::iterator iter;
 	for (iter = cameras_.begin(); iter != cameras_.end(); iter++) {
         // get current child cam
 		CameraEngine* cam = *iter;
 
+        // get child frame
         unsigned char* child_frame = cam->getFrame();
 		if (child_frame == NULL) {
 			this->running = false;
 			return NULL;
 		}
 
-        // const int xoff = cam->cfg->frame_x;
-        // const int yoff = cam->cfg->frame_y;
-        const int xoff = cam->getFrameX();
-        const int yoff = cam->getFrameY();
-
-        // const int xoff_b = xoff * cfg->buf_format;
-
-        // int child_x_start = 0;
-        // // check and restrict left bound of canvas
-        // if (xoff < 0) {
-        //     child_x_start = xoff * -1;
+        // // const int xoff = cam->cfg->frame_x;
+        // // const int yoff = cam->cfg->frame_y;
+        // const int xoff = cam->getFrameX();
+        // const int yoff = cam->getFrameY();
+        //
+        // // const int xoff_b = xoff * cfg->buf_format;
+        //
+        // // int child_x_start = 0;
+        // // // check and restrict left bound of canvas
+        // // if (xoff < 0) {
+        // //     child_x_start = xoff * -1;
+        // // }
+        //
+        // int child_y_start = 0;
+        // // check and restrict top bound of canvas
+        // if (yoff < 0) {
+        //     child_y_start = yoff * -1;
+        // }
+        //
+        // const int child_line_size = cam->getWidth() * cam->getFormat();
+        // int copy_size = child_line_size;
+        // // check and restrict right bound of canvas
+        // if ((xoff + cam->getWidth()) > cfg->frame_width) {
+        //     // image of child cam overflows right border of canvas
+        //     // so we restrict to canvas area
+        //     copy_size = (cfg->frame_width - xoff) * cam->getFormat();
+        // }
+        //
+        // // check and restrict bottom bound of canvas
+        // int child_line_end = cam->getHeight();
+        // if (yoff + cam->getHeight() > cfg->frame_height) {
+        //     child_line_end = cfg->frame_height - yoff;
         // }
 
-        int child_y_start = 0;
-        // check and restrict top bound of canvas
-        if (yoff < 0) {
-            child_y_start = yoff * -1;
-        }
-
-        const int child_line_size = cam->getWidth() * cam->getFormat();
-        int copy_size = child_line_size;
-        // check and restrict right bound of canvas
-        if ((xoff + cam->getWidth()) > cfg->frame_width) {
-            // image of child cam overflows right border of canvas
-            // so we restrict to canvas area
-            copy_size = (cfg->frame_width - xoff) * cam->getFormat();
-        }
-
-        // check and restrict bottom bound of canvas
-        int child_line_end = cam->getHeight();
-        if (yoff + cam->getHeight() > cfg->frame_height) {
-            child_line_end = cfg->frame_height - yoff;
-        }
 
 
-
-        // for every line of the cam height
-		for (int line_index = child_y_start; line_index < child_line_end; line_index++) {
-            // find start position on canvas
-            unsigned char* buffer_write_start = (
-                cam_buffer +
-                (
-                    (xoff + ( (yoff + line_index) * cfg->frame_width ))
-                    * cfg->buf_format
-                )
-            );
-
-            // find start position in child
-            // unsigned char* child_start = (
-            //     child_frame +
-            //     (
-            //         (child_x_start + ((child_y_start + line_index) * cam->getWidth() ))
-            //         * cam->getFormat()
-            //     )
-            // );
-            unsigned char* child_start = (
-                child_frame +
-                (
-                    ((line_index) * cam->getWidth() )
-                    * cam->getFormat()
-                )
-            );
-
-            // copy line
-			memcpy(buffer_write_start, child_start, copy_size);
-
-		}
+        // // for every line of the cam height
+		// for (int line_index = child_y_start; line_index < child_line_end; line_index++) {
+        //     // find start position on canvas
+        //     unsigned char* buffer_write_start = (
+        //         cam_buffer +
+        //         (
+        //             (xoff + ( (yoff + line_index) * cfg->frame_width ))
+        //             * cfg->buf_format
+        //         )
+        //     );
+        //
+        //     // find start position in child
+        //     // unsigned char* child_start = (
+        //     //     child_frame +
+        //     //     (
+        //     //         (child_x_start + ((child_y_start + line_index) * cam->getWidth() ))
+        //     //         * cam->getFormat()
+        //     //     )
+        //     // );
+        //     unsigned char* child_start = (
+        //         child_frame +
+        //         (
+        //             ((line_index) * cam->getWidth() )
+        //             * cam->getFormat()
+        //         )
+        //     );
+        //
+        //     // copy line
+		// 	memcpy(buffer_write_start, child_start, copy_size);
+        //
+		// }
 
 	}
+
+    // #ifdef DEBUG
+    //     std::cout << "MultiCamera::getFrame done " << std::endl;
+    // #endif
 
 	return cam_buffer;
 }
