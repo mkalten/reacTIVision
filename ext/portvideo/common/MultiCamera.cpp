@@ -25,67 +25,67 @@ std::vector<CameraConfig> MultiCamera::getCameraConfigs(std::vector<CameraConfig
     //there should be only equal, desired cams connected
     std::vector<CameraConfig> cfg_list;
 
-    if (child_cams.size() <= 1)
-        return cfg_list;
-
-    std::vector<std::vector<CameraConfig>>::iterator iter_grp;
-    std::vector<CameraConfig>::iterator iter;
-    std::vector<std::vector<CameraConfig>> grp_cams;
-
-    //Group compatible cams
-    for (iter = child_cams.begin(); iter != child_cams.end(); iter++) {
-        CameraConfig cam_cfg = *iter;
-
-        bool grp_found = false;
-        for (iter_grp = grp_cams.begin(); iter_grp != grp_cams.end(); iter_grp++) {
-            CameraConfig first_cam_in_grp = *(*iter_grp).begin();
-
-            if (
-                first_cam_in_grp.cam_width == cam_cfg.cam_width &&
-                first_cam_in_grp.cam_height == cam_cfg.cam_height &&
-                first_cam_in_grp.cam_fps == cam_cfg.cam_fps &&
-                first_cam_in_grp.cam_format == cam_cfg.cam_format &&
-                first_cam_in_grp.driver == cam_cfg.driver
-            ) {
-                (*iter_grp).push_back(cam_cfg);
-                grp_found = true;
-            }
-        }
-
-        if (!grp_found) {
-            std::vector<CameraConfig> grp;
-            grp.push_back(cam_cfg);
-            grp_cams.push_back(grp);
-        }
-    }
-
-    //Create some example multicam configurations
-    for (iter_grp = grp_cams.begin(); iter_grp != grp_cams.end(); iter_grp++) {
-        int cams_cnt = (*iter_grp).size();
-        CameraConfig first_child_in_grp = *(*iter_grp).begin();
-
-        CameraConfig cfg;
-        CameraTool::initCameraConfig(&cfg);
-        cfg.driver = DRIVER_MUTLICAM;
-        sprintf(
-            cfg.name,
-            "MultiCam (%ix%i)",
-            first_child_in_grp.cam_width,
-            first_child_in_grp.cam_height
-        );
-        cfg.cam_width = first_child_in_grp.cam_width * cams_cnt;
-        cfg.cam_height = first_child_in_grp.cam_height;
-        cfg.cam_fps = first_child_in_grp.cam_fps;
-        cfg.cam_format = first_child_in_grp.cam_format;
-
-        // TODO: creeate child configuration with correct x offset
-        cfg.childs.insert(
-            cfg.childs.end(),
-            (*iter_grp).begin(),
-            (*iter_grp).end()
-        );
-        cfg_list.push_back(cfg);
-    }
+    // if (child_cams.size() <= 1)
+    //     return cfg_list;
+    //
+    // std::vector<std::vector<CameraConfig>>::iterator iter_grp;
+    // std::vector<CameraConfig>::iterator iter;
+    // std::vector<std::vector<CameraConfig>> grp_cams;
+    //
+    // //Group compatible cams
+    // for (iter = child_cams.begin(); iter != child_cams.end(); iter++) {
+    //     CameraConfig cam_cfg = *iter;
+    //
+    //     bool grp_found = false;
+    //     for (iter_grp = grp_cams.begin(); iter_grp != grp_cams.end(); iter_grp++) {
+    //         CameraConfig first_cam_in_grp = *(*iter_grp).begin();
+    //
+    //         if (
+    //             first_cam_in_grp.cam_width == cam_cfg.cam_width &&
+    //             first_cam_in_grp.cam_height == cam_cfg.cam_height &&
+    //             first_cam_in_grp.cam_fps == cam_cfg.cam_fps &&
+    //             first_cam_in_grp.cam_format == cam_cfg.cam_format &&
+    //             first_cam_in_grp.driver == cam_cfg.driver
+    //         ) {
+    //             (*iter_grp).push_back(cam_cfg);
+    //             grp_found = true;
+    //         }
+    //     }
+    //
+    //     if (!grp_found) {
+    //         std::vector<CameraConfig> grp;
+    //         grp.push_back(cam_cfg);
+    //         grp_cams.push_back(grp);
+    //     }
+    // }
+    //
+    // //Create some example multicam configurations
+    // for (iter_grp = grp_cams.begin(); iter_grp != grp_cams.end(); iter_grp++) {
+    //     int cams_cnt = (*iter_grp).size();
+    //     CameraConfig first_child_in_grp = *(*iter_grp).begin();
+    //
+    //     CameraConfig cfg;
+    //     CameraTool::initCameraConfig(&cfg);
+    //     cfg.driver = DRIVER_MUTLICAM;
+    //     sprintf(
+    //         cfg.name,
+    //         "MultiCam (%ix%i)",
+    //         first_child_in_grp.cam_width,
+    //         first_child_in_grp.cam_height
+    //     );
+    //     cfg.cam_width = first_child_in_grp.cam_width * cams_cnt;
+    //     cfg.cam_height = first_child_in_grp.cam_height;
+    //     cfg.cam_fps = first_child_in_grp.cam_fps;
+    //     cfg.cam_format = first_child_in_grp.cam_format;
+    //
+    //     // TODO: creeate child configuration with correct x offset
+    //     cfg.childs.insert(
+    //         cfg.childs.end(),
+    //         (*iter_grp).begin(),
+    //         (*iter_grp).end()
+    //     );
+    //     cfg_list.push_back(cfg);
+    // }
 
     return cfg_list;
 }
