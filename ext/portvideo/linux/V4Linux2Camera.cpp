@@ -296,6 +296,10 @@ bool V4Linux2Camera::initCamera() {
     char v4l2_device[128];
     sprintf(v4l2_device,"/dev/video%d",cfg->device);
 
+    #ifdef DEBUG
+        printf("cfg->device: %d\n", cfg->device);
+    #endif
+
     dev_handle = open(v4l2_device, O_RDWR);
     if (dev_handle < 0) return false;
 
@@ -373,7 +377,9 @@ bool V4Linux2Camera::initCamera() {
         printf("error setting pixel format: %s\n" , strerror(errno));
         return false;
     } else {
-        printf("setting pixelformat (%d) successful.\n" , pixelformat);
+        #ifdef DEBUG
+            printf("setting pixelformat (%d) successful.\n" , pixelformat);
+        #endif
     }
 
     // try to set the desired fps
