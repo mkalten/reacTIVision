@@ -845,18 +845,22 @@ void CameraTool::saveSettings(CameraConfig& cam_cfg, tinyxml2::XMLElement* camer
     //     camera_element->LinkEndChild(child_cam_element);
     // }
 
-	// with this we try to not overwritte but chagne.
-	tinyxml2::XMLElement* child_cam_element = camera_element->FirstChildElement("childcamera")->ToElement();
-	std::vector<CameraConfig>::iterator iter;
-	for(iter = cam_cfg.childs.begin(); iter != cam_cfg.childs.end(); iter++) {
-		if (child_cam_element == NULL) {
-			tinyxml2::XMLDocument* doc = camera_element->GetDocument();
-			tinyxml2::XMLElement* child_cam_element = doc->NewElement("childcamera");
-			saveSettings(*iter, child_cam_element);
-	        camera_element->LinkEndChild(child_cam_element);
-		} else {
-			saveSettings(*iter, child_cam_element);
-			child_cam_element = child_cam_element->NextSiblingElement("childcamera")->ToElement();
+	// check if we have childs.
+	// if (cam_cfg.driver == DRIVER_MUTLICAM) {
+	if (cam_cfg.childs.size() > 0) {
+		// with this we try to not overwritte but chagne.
+		tinyxml2::XMLElement* child_cam_element = camera_element->FirstChildElement("childcamera")->ToElement();
+		std::vector<CameraConfig>::iterator iter;
+		for(iter = cam_cfg.childs.begin(); iter != cam_cfg.childs.end(); iter++) {
+			if (child_cam_element == NULL) {
+				tinyxml2::XMLDocument* doc = camera_element->GetDocument();
+				tinyxml2::XMLElement* child_cam_element = doc->NewElement("childcamera");
+				saveSettings(*iter, child_cam_element);
+		        camera_element->LinkEndChild(child_cam_element);
+			} else {
+				saveSettings(*iter, child_cam_element);
+				child_cam_element = child_cam_element->NextSiblingElement("childcamera")->ToElement();
+			}
 		}
 	}
 

@@ -31,7 +31,7 @@ const char* dstr[] = {
 	"",
 	"",
 	"file",
-	"folder"
+	"folder",
 	"multicam"
 };
 
