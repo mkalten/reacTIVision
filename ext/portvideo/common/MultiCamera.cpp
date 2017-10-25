@@ -67,12 +67,23 @@ std::vector<CameraConfig> MultiCamera::getCameraConfigs(std::vector<CameraConfig
         CameraConfig cfg;
         CameraTool::initCameraConfig(&cfg);
         cfg.driver = DRIVER_MUTLICAM;
-        sprintf(
-            cfg.name,
-            "MultiCam (%ix%i)",
-            first_child_in_grp.cam_width,
-            first_child_in_grp.cam_height
-        );
+
+        // create name
+        sprintf(cfg.name, "MultiCam (");
+        // list all used camera device ids
+        std::vector<CameraConfig>::iterator iter_grp_cam;
+        for (iter_grp_cam = (*iter_grp).begin(); iter_grp_cam != (*iter_grp).end(); iter_grp_cam++) {
+            sprintf(
+                cfg.name + strlen(cfg.name),
+                "%i",
+                (* iter_grp_cam).device
+            );
+            if (iter_grp_cam != (*iter_grp).end()) {
+                sprintf(cfg.name + strlen(cfg.name), ", ");
+            }
+        }
+        sprintf(cfg.name + strlen(cfg.name), ")");
+
         cfg.cam_width = first_child_in_grp.cam_width * cams_cnt;
         cfg.cam_height = first_child_in_grp.cam_height;
         cfg.cam_fps = first_child_in_grp.cam_fps;
