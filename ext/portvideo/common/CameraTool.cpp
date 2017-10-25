@@ -123,14 +123,14 @@ std::vector<CameraConfig> CameraTool::findDevices() {
 		dev_list.insert( dev_list.end(), dc1394_list.begin(), dc1394_list.end() );
 	#endif
 
-	// if(dev_list.size() > 1) {
-	// 	std::vector<CameraConfig> multicam_list = MultiCamera::getCameraConfigs(dev_list);
-	// 	dev_list.insert(
-	// 		dev_list.end(),
-	// 		multicam_list.begin(),
-	// 		multicam_list.end()
-	// 	);
-	// }
+	if(dev_list.size() > 1) {
+		std::vector<CameraConfig> multicam_list = MultiCamera::getCameraConfigs(dev_list);
+		dev_list.insert(
+			dev_list.end(),
+			multicam_list.begin(),
+			multicam_list.end()
+		);
+	}
 
 	return dev_list;
 
