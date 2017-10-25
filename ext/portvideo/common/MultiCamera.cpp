@@ -286,6 +286,15 @@ unsigned char* MultiCamera::getFrame() {
 
     // int cam_buffer_line_size = cfg->frame_width * cfg->buf_format;
 
+    const int canvas_width = cfg->frame_width;
+    const int canvas_height = cfg->frame_height;
+    const int canvas_format = cfg->buf_format;
+
+    // clear cavas buffer
+    // const int canvas_buffer_size = canvas_width * canvas_height * canvas_format;
+    // memset(cam_buffer, 10, canvas_buffer_size);
+
+
     // for every child cam
     std::vector<CameraEngine*>::iterator iter;
 	for (iter = cameras_.begin(); iter != cameras_.end(); iter++) {
@@ -299,73 +308,104 @@ unsigned char* MultiCamera::getFrame() {
 			return NULL;
 		}
 
-        // // const int xoff = cam->cfg->frame_x;
-        // // const int yoff = cam->cfg->frame_y;
-        // const int xoff = cam->getFrameX();
-        // const int yoff = cam->getFrameY();
-        //
-        // // const int xoff_b = xoff * cfg->buf_format;
-        //
-        // // int child_x_start = 0;
-        // // // check and restrict left bound of canvas
-        // // if (xoff < 0) {
-        // //     child_x_start = xoff * -1;
-        // // }
-        //
-        // int child_y_start = 0;
-        // // check and restrict top bound of canvas
-        // if (yoff < 0) {
-        //     child_y_start = yoff * -1;
-        // }
-        //
-        // const int child_line_size = cam->getWidth() * cam->getFormat();
-        // int copy_size = child_line_size;
-        // // check and restrict right bound of canvas
-        // if ((xoff + cam->getWidth()) > cfg->frame_width) {
+        const int child_width = cam->getWidth();
+        const int child_height = cam->getHeight();
+        const int child_format = cam->getFormat();
+
+
+        int child_x_start = cam->getFrameX();
+        // check and restrict left bound of canvas
+        if (child_x_start < 0) {
+            child_x_start = 0;
+        }
+
+        // check and restrict top bound of canvas
+        int child_y_start = cam->getFrameY();
+        if (child_y_start < 0) {
+            child_y_start = 0;
+        }
+
+        // check and restrict right bound of canvas
+        // int child_x_end = child_x_start + child_width;
+        // if (child_x_end > canvas_width) {
         //     // image of child cam overflows right border of canvas
         //     // so we restrict to canvas area
-        //     copy_size = (cfg->frame_width - xoff) * cam->getFormat();
+        //     child_x_end = canvas_width;
         // }
-        //
-        // // check and restrict bottom bound of canvas
-        // int child_line_end = cam->getHeight();
-        // if (yoff + cam->getHeight() > cfg->frame_height) {
-        //     child_line_end = cfg->frame_height - yoff;
-        // }
+        // int copy_size = child_x_end * child_format;
+        int child_x_end = child_x_start + child_width;
+        int copy_size = child_width * child_format;
+        if (child_x_end > canvas_width) {
+            // image of child cam overflows right border of canvas
+            // so we restrict to canvas area
+            child_x_end = canvas_width;
+            // recalculate child_width
+            int child_width_cropped = child_x_end - child_x_start;
+            copy_size = child_width_cropped * child_format;
+        }
+
+        // check and restrict bottom bound of canvas
+        int child_y_end = child_y_start + child_height;
+        int child_height_fenced = child_height;
+        if (child_y_end > canvas_height) {
+            child_y_end = canvas_height;
+            // recalculate child_height_fenced
+            child_height_fenced = child_y_end - child_y_start;
+        }
 
 
 
-        // // for every line of the cam height
-		// for (int line_index = child_y_start; line_index < child_line_end; line_index++) {
-        //     // find start position on canvas
-        //     unsigned char* buffer_write_start = (
-        //         cam_buffer +
-        //         (
-        //             (xoff + ( (yoff + line_index) * cfg->frame_width ))
-        //             * cfg->buf_format
-        //         )
-        //     );
-        //
-        //     // find start position in child
-        //     // unsigned char* child_start = (
-        //     //     child_frame +
-        //     //     (
-        //     //         (child_x_start + ((child_y_start + line_index) * cam->getWidth() ))
-        //     //         * cam->getFormat()
-        //     //     )
-        //     // );
-        //     unsigned char* child_start = (
-        //         child_frame +
-        //         (
-        //             ((line_index) * cam->getWidth() )
-        //             * cam->getFormat()
-        //         )
-        //     );
-        //
-        //     // copy line
-		// 	memcpy(buffer_write_start, child_start, copy_size);
-        //
-		// }
+        // for every line of the child height
+		for (
+            // int child_line_index = child_y_start;
+            int child_line_index = 0;
+            // child_line_index < child_y_end;
+            child_line_index < child_height_fenced;
+            child_line_index++
+        ) {
+            // find start position on canvas
+            unsigned char* buffer_write_start = (
+                cam_buffer +
+                (
+                    (
+                        (
+                            (child_line_index + child_y_start)
+                            * canvas_width
+                        )
+                        + child_x_start
+                     )
+                    * canvas_format
+                )
+            );
+
+            // find start position in child
+            // unsigned char* child_start = (
+            //     child_frame +
+            //     (
+            //
+            //         (
+            //             ((child_y_start + child_line_index) * child_width )
+            //             + child_x_start
+            //         )
+            //         * child_format
+            //     )
+            // );
+
+            unsigned char* child_start = (
+                child_frame +
+                (
+                    ((child_line_index) * child_width )
+                    * child_format
+                )
+            );
+
+            // copy line
+			memcpy(buffer_write_start, child_start, copy_size);
+            // if (child_line_index == child_height) {
+            //     memset(buffer_write_start, 255, copy_size);
+            // }
+
+		}
 
 	}
 
