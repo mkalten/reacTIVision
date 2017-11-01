@@ -279,9 +279,9 @@ void readSettings(application_settings *config) {
 	if( calibration_element!=NULL )
 	{
 		if(calibration_element->Attribute("invert")!=NULL)  {
-			if (strstr(calibration_element->Attribute("invert"),"x")>0) config->invert_x = true;
-			if (strstr(calibration_element->Attribute("invert"),"y")>0) config->invert_y = true;
-			if (strstr(calibration_element->Attribute("invert"),"a")>0) config->invert_a = true;
+			if (strstr(calibration_element->Attribute("invert"),"x")!=NULL) config->invert_x = true;
+			if (strstr(calibration_element->Attribute("invert"),"y")!=NULL) config->invert_y = true;
+			if (strstr(calibration_element->Attribute("invert"),"a")!=NULL) config->invert_a = true;
 		}
 		if(calibration_element->Attribute("grid")!=NULL) sprintf(config->grid_config,"%s",calibration_element->Attribute("grid"));
 	}
