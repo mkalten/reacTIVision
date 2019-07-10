@@ -30,8 +30,8 @@ extern "C" {
 extern unsigned char camera_img[3910];
 extern unsigned char font_img[13654];
 
-extern SDL_Surface *getCamera();
-extern SDL_Surface *getFont();
+extern SDL_Surface *getCamera(void);
+extern SDL_Surface *getFont(void);
 #ifdef __cplusplus
 }
 #endif
