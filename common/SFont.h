@@ -57,8 +57,8 @@ typedef struct {
 
 // 10.01.2006 Martin Kaltenbrunner <martin@tuio.org>
 // added binary default font and methods to load the default font
-SDL_Surface* SFont_FontSurface ();
-SFont_Font* SFont_InitDefaultFont ();
+SDL_Surface* SFont_FontSurface (void);
+SFont_Font* SFont_InitDefaultFont (void);
 
 // Initializes the font
 // Font: this contains the surface with the font.

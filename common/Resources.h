@@ -30,9 +30,9 @@ extern "C" {
 extern unsigned char icon[3126];
 extern unsigned char mask[1024];
 extern unsigned char camera[3910];
-extern Uint8 *getMask();
-extern SDL_Surface *getIcon();
-extern SDL_Surface *getCamera();
+extern Uint8 *getMask(void);
+extern SDL_Surface *getIcon(void);
+extern SDL_Surface *getCamera(void);
 extern SDL_Rect camera_rect;
 #ifdef __cplusplus
 }

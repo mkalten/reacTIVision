@@ -22,7 +22,7 @@
 #include <sstream>
 
 FiducialObject::FiducialObject (int s_id, int f_id, int width, int height, int colour, int nodes) {
-	this->session_id    = s_id,
+	this->session_id    = s_id;
 	this->fiducial_id   = f_id;
 	this->width     = (float)width;
 	this->height    = (float)height;
@@ -53,7 +53,7 @@ FiducialObject::FiducialObject (int s_id, int f_id, int width, int height, int c
 
 FiducialObject::FiducialObject (int s_id, int f_id, int width, int height) {
 
-	this->session_id    = s_id,
+	this->session_id    = s_id;
 	this->fiducial_id   = f_id;
 	this->width     = (float)width;
 	this->height    = (float)height;
