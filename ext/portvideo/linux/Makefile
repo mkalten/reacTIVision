@@ -8,15 +8,18 @@ SDL_CFLAGS  := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 
 INCLUDES = -I../common -I../sdldemo -I../interface -I../tinyxml -I.
-COPTS  = -Ofast -w
-CDEBUG = -Wall -g
-#CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
-CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX
-CXXFLAGS = $(CFLAGS)
+CFLAGS_REL = -Ofast -w $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DNDEBUG
+CFLAGS_DBG = -Wall -g $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DDEBUG
+all: CFLAGS = $(CFLAGS_REL)
+all: CXXFLAGS = $(CFLAGS_REL)
+debug: CFLAGS = $(CFLAGS_DBG)
+debug: CXXFLAGS = $(CFLAGS_DBG)
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
 
-all:	$(TARGET)
+all: $(TARGET)
+
+debug: $(TARGET)
 
 %.o: %.cpp
 	@echo [CXX] $@

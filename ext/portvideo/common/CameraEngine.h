@@ -47,7 +47,10 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define SETTING_MAX     -400000
 #define SETTING_OFF     -500000
 
+// ------------------------------------------
+// FORMAT defines
 #define FORMAT_UNSUPPORTED  -1
+
 #define FORMAT_UNKNOWN  0
 #define FORMAT_GRAY     1
 #define FORMAT_GRAY16   2
@@ -58,6 +61,7 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_RAW8		7
 #define FORMAT_RAW16    8
 #define FORMAT_RGBA		9
+
 #define FORMAT_YUYV    10
 #define FORMAT_UYVY    11
 #define FORMAT_YUV411  12
@@ -66,6 +70,7 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_410P    15
 #define FORMAT_YVYU    16
 #define FORMAT_YUV211  17
+
 #define FORMAT_JPEG    20
 #define FORMAT_MJPEG   21
 #define FORMAT_MPEG    22
@@ -73,9 +78,11 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_MPEG4   24
 #define FORMAT_H263    25
 #define FORMAT_H264    26
+
 #define FORMAT_DVPAL   30
 #define FORMAT_DVNTSC  31
 #define FORMAT_MAX     31
+// ------------------------------------------
 
 extern const char* fstr[];
 extern const char* dstr[];
@@ -87,13 +94,36 @@ extern const char* dstr[];
 #define DRIVER_UVCCAM   4
 #define DRIVER_FILE    10
 #define DRIVER_FOLDER  11
+#define DRIVER_MUTLICAM 12
 
 #define VALUE_INCREASE   79
 #define VALUE_DECREASE   80
 #define SETTING_NEXT     81
 #define SETTING_PREVIOUS 82
 
-enum CameraSetting { BRIGHTNESS, CONTRAST, SHARPNESS, AUTO_GAIN, GAIN, AUTO_EXPOSURE, EXPOSURE, SHUTTER, AUTO_FOCUS, FOCUS, AUTO_WHITE, WHITE, GAMMA, POWERLINE, BACKLIGHT, SATURATION, AUTO_HUE, COLOR_HUE, COLOR_RED, COLOR_GREEN, COLOR_BLUE };
+enum CameraSetting {
+    BRIGHTNESS,
+    CONTRAST,
+    SHARPNESS,
+    AUTO_GAIN,
+    GAIN,
+    AUTO_EXPOSURE,
+    EXPOSURE,
+    SHUTTER,
+    AUTO_FOCUS,
+    FOCUS,
+    AUTO_WHITE,
+    WHITE,
+    GAMMA,
+    POWERLINE,
+    BACKLIGHT,
+    SATURATION,
+    AUTO_HUE,
+    COLOR_HUE,
+    COLOR_RED,
+    COLOR_GREEN,
+    COLOR_BLUE
+};
 #define MODE_MIN BRIGHTNESS
 #define MODE_MAX COLOR_BLUE
 
@@ -118,6 +148,11 @@ struct CameraConfig {
     int cam_height;
     float cam_fps;
 
+    // bool flip_h;
+    // bool flip_v;
+
+    int frame_x;
+    int frame_y;
     int frame_width;
     int frame_height;
     int frame_xoff;
@@ -142,20 +177,29 @@ struct CameraConfig {
     int red;
     int blue;
     int green;
-	
+
 	bool force;
 
+    // char calib_grid_path[1024];
+
+    std::vector<CameraConfig> childs;
+
     bool operator < (const CameraConfig& c) const {
+        //if (device < c.device) return true;
+        //if (cam_format < c.cam_format) return true;
 
-       //if (device < c.device) return true;
-       //if (cam_format < c.cam_format) return true;
+        if (
+            cam_width > c.cam_width ||
+            (cam_width == c.cam_width && cam_height < c.cam_height)
+        ) {
+            return true;
+        }
 
-       if (cam_width > c.cam_width || (cam_width == c.cam_width && cam_height < c.cam_height))
-                return true;
-
-       if (cam_width == c.cam_width && cam_height == c.cam_height) {
-                return (cam_fps > c.cam_fps);
-       } else return false;
+        if (cam_width == c.cam_width && cam_height == c.cam_height) {
+            return (cam_fps > c.cam_fps);
+        } else {
+            return false;
+        }
 
     }
 };
@@ -205,6 +249,8 @@ public:
     int getFps() { return (int)floor(cfg->cam_fps+0.5f); }
     int getWidth() { return cfg->frame_width; }
     int getHeight() { return cfg->frame_height; }
+    int getFrameX() { return cfg->frame_x; }
+    int getFrameY() { return cfg->frame_y; }
     int getFormat() { return cfg->buf_format; }
     char* getName() { return cfg->name; }
 

@@ -10,15 +10,18 @@ SDL_CFLAGS  := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 
 INCLUDES = -I../ext/oscpack -I../ext/libfidtrack -I../ext/portvideo/linux -I../ext/portvideo/common -I../ext/portvideo/interface -I../ext/portvideo/tinyxml -I../common -I../ext/tuio
-COPTS  = -Ofast -w
-CDEBUG = -Wall -g
-CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG
-#CFLAGS = $(CDEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN
-CXXFLAGS = $(CFLAGS)
+CFLAGS_REL = -Ofast -w $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG
+CFLAGS_DBG = -Wall -g $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DDEBUG
 
 LIBS = $(SDL_LDFLAGS) -ldc1394 -lpthread -lturbojpeg
 
+all:	CFLAGS = $(CFLAGS_REL)
+all:	CXXFLAGS = $(CFLAGS_REL)
 all:	$(TARGET)
+
+debug:	CFLAGS = $(CFLAGS_DBG)
+debug:	CXXFLAGS = $(CFLAGS_DBG)
+debug:	$(TARGET)
 
 %.o: %.cpp
 	@echo [CXX] $@

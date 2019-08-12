@@ -28,7 +28,7 @@ use default locations or specify an absolute path -->
     <filter fiducial="false" finger="false" blob="true"/>
     <!-- the default display options at startup: dest, source, none
  ... also allows to enable the frame equalizer at startup -->
-    <image display="none" fullscreen="false" equalize="false"/>
+    <image display="dest" fullscreen="false" equalize="false"/>
     <!-- the threshold gradient and tile size ... maximum threads for multithreading -->
     <threshold gradient="32" tile="10" threads="max"/>
     <!-- the calibration file ... X,Y and angle inversion -->

@@ -20,9 +20,44 @@
 #include "V4Linux2Camera.h"
 #include "CameraTool.h"
 
-unsigned int codec_table[] =  { 0, V4L2_PIX_FMT_GREY, V4L2_PIX_FMT_Y16,  V4L2_PIX_FMT_RGB24, 0, 0, 0, 0, 0, 0, V4L2_PIX_FMT_YUYV,
-V4L2_PIX_FMT_UYVY, 0, V4L2_PIX_FMT_YUV444, V4L2_PIX_FMT_YUV420, V4L2_PIX_FMT_YUV410, V4L2_PIX_FMT_YVYU, 0, 0, 0, V4L2_PIX_FMT_JPEG,
-V4L2_PIX_FMT_MJPEG, V4L2_PIX_FMT_MPEG1, V4L2_PIX_FMT_MPEG2, V4L2_PIX_FMT_MPEG4, V4L2_PIX_FMT_H263, V4L2_PIX_FMT_H264, 0, 0, 0,  V4L2_PIX_FMT_DV, 0 };
+unsigned int codec_table[] =  {
+
+    0,                      // FORMAT_UNKNOWN
+    V4L2_PIX_FMT_GREY,      // FORMAT_GRAY
+    V4L2_PIX_FMT_Y16,       // FORMAT_GRAY16
+    V4L2_PIX_FMT_RGB24,     // FORMAT_RGB
+    0,                      // FORMAT_RGB16
+    0,                      // FORMAT_GRAY16S
+    0,                      // FORMAT_RGB16S
+    0,                      // FORMAT_RAW8
+    0,                      // FORMAT_RAW16
+    0,                      // FORMAT_RGBA
+
+    V4L2_PIX_FMT_YUYV,      // FORMAT_YUYV
+    V4L2_PIX_FMT_UYVY,      // FORMAT_UYVY
+    0,                      // FORMAT_YUV411
+    V4L2_PIX_FMT_YUV444,    // FORMAT_YUV444
+    V4L2_PIX_FMT_YUV420,    // FORMAT_420P
+    V4L2_PIX_FMT_YUV410,    // FORMAT_410P
+    V4L2_PIX_FMT_YVYU,      // FORMAT_YVYU
+    0,                      // FORMAT_YUV211
+    0,                      // - not used
+    0,                      // - not used
+
+    V4L2_PIX_FMT_JPEG,      // FORMAT_JPEG
+    V4L2_PIX_FMT_MJPEG,     // FORMAT_MJPEG
+    V4L2_PIX_FMT_MPEG1,     // FORMAT_MPEG
+    V4L2_PIX_FMT_MPEG2,     // FORMAT_MPEG2
+    V4L2_PIX_FMT_MPEG4,     // FORMAT_MPEG4
+    V4L2_PIX_FMT_H263,      // FORMAT_H263
+    V4L2_PIX_FMT_H264,      // FORMAT_H264
+    0,                      // - not used
+    0,                      // - not used
+    0,                      // - not used
+
+    V4L2_PIX_FMT_DV,        // FORMAT_DVPAL
+    0                       // FORMAT_DVNTSC
+};
 
 V4Linux2Camera::V4Linux2Camera(CameraConfig *cam_cfg) : CameraEngine(cam_cfg)
 {
@@ -261,6 +296,10 @@ bool V4Linux2Camera::initCamera() {
     char v4l2_device[128];
     sprintf(v4l2_device,"/dev/video%d",cfg->device);
 
+    #ifdef DEBUG
+        printf("cfg->device: %d\n", cfg->device);
+    #endif
+
     dev_handle = open(v4l2_device, O_RDWR);
     if (dev_handle < 0) return false;
 
@@ -307,7 +346,10 @@ bool V4Linux2Camera::initCamera() {
     }
 
     if (!pixelformat) {
-        printf("%s does not support any valid pixel format\n",v4l2_device);
+        printf("%s does not support any valid pixel format\n", v4l2_device);
+        #ifdef DEBUG
+            printf("pixel format: %d\n", pixelformat);
+        #endif
         close(dev_handle);
         return false;
     }
@@ -320,6 +362,10 @@ bool V4Linux2Camera::initCamera() {
         }
     }
 
+    #ifdef DEBUG
+        printf("cfg->cam_format: %d\n", cfg->cam_format);
+    #endif
+
     // try to set the desired format
     memset(&v4l2_form, 0, sizeof(v4l2_format));
     v4l2_form.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -330,6 +376,10 @@ bool V4Linux2Camera::initCamera() {
     if (-1 == ioctl (dev_handle, VIDIOC_S_FMT, &v4l2_form)) {
         printf("error setting pixel format: %s\n" , strerror(errno));
         return false;
+    } else {
+        #ifdef DEBUG
+            printf("setting pixelformat (%d) successful.\n" , pixelformat);
+        #endif
     }
 
     // try to set the desired fps
@@ -348,7 +398,13 @@ bool V4Linux2Camera::initCamera() {
     cfg->cam_height = v4l2_form.fmt.pix.height;
     cfg->cam_fps = roundf((v4l2_parm.parm.capture.timeperframe.denominator/(float)v4l2_parm.parm.capture.timeperframe.numerator)*10)/10.0f;
 
-    if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) _jpegDecompressor = tjInitDecompress();
+    #ifdef DEBUG
+        printf("v4l2 pixelformat: %d\n", pixelformat);
+    #endif
+
+    if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
+        _jpegDecompressor = tjInitDecompress();
+    }
 
     if (!requestBuffers()) {
         printf("Error requesting buffers.\n");
@@ -361,7 +417,9 @@ bool V4Linux2Camera::initCamera() {
     }
 
     setupFrame();
-    if (cfg->frame) frm_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->buf_format];
+    if (cfg->frame) {
+        frm_buffer = new unsigned char[cfg->frame_width*cfg->frame_height*cfg->buf_format];
+    }
     cam_buffer = new unsigned char[cfg->cam_width*cfg->cam_height*cfg->buf_format];
     buffers_initialized = true;
     return true;
@@ -408,72 +466,85 @@ unsigned char* V4Linux2Camera::getFrame()  {
 
     if(cfg->color) {
         if (cfg->frame) {
-         if (pixelformat==V4L2_PIX_FMT_YUYV)
-            crop_yuyv2rgb(cfg->cam_width,raw_buffer,frm_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_UYVY)
-            crop_uyvy2rgb(cfg->cam_width,raw_buffer,frm_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_YUV420) {} //TODO
-         else if (pixelformat==V4L2_PIX_FMT_YUV410) {} //TODO
-         else if (pixelformat==V4L2_PIX_FMT_GREY)
-            crop_gray2rgb(cfg->cam_width,raw_buffer,frm_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_Y16)
-            crop_grayw2rgb(cfg->cam_width,raw_buffer,frm_buffer);
-         else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
+            if (pixelformat==V4L2_PIX_FMT_RGB24) {
+                crop(cfg->cam_width, cfg->cam_height, raw_buffer, frm_buffer, 3);
+            } else if (pixelformat==V4L2_PIX_FMT_YUYV) {
+                crop_yuyv2rgb(cfg->cam_width,raw_buffer,frm_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_UYVY) {
+                crop_uyvy2rgb(cfg->cam_width,raw_buffer,frm_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_YUV420) {
+                //TODO
+            } else if (pixelformat==V4L2_PIX_FMT_YUV410) {
+                //TODO
+            } else if (pixelformat==V4L2_PIX_FMT_GREY) {
+                crop_gray2rgb(cfg->cam_width,raw_buffer,frm_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_Y16) {
+                crop_grayw2rgb(cfg->cam_width,raw_buffer,frm_buffer);
+            } else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
                 tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
                 crop(cfg->cam_width, cfg->cam_height,cam_buffer,frm_buffer,3);
-         }
-
+            }
         } else {
-         if (pixelformat==V4L2_PIX_FMT_YUYV)
-            yuyv2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_UYVY)
-            uyvy2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_YUV420) {} //TODO
-         else if (pixelformat==V4L2_PIX_FMT_YUV410) {} //TODO
-         else if (pixelformat==V4L2_PIX_FMT_GREY)
-            gray2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
-         else if (pixelformat==V4L2_PIX_FMT_Y16)
-            grayw2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
-         else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
+            if (pixelformat==V4L2_PIX_FMT_RGB24) {
+                memcpy(cam_buffer, raw_buffer, (cfg->cam_width*cfg->cam_height)*3);
+            } else if (pixelformat==V4L2_PIX_FMT_YUYV) {
+                yuyv2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_UYVY) {
+                uyvy2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_YUV420) {
+                //TODO
+            } else if (pixelformat==V4L2_PIX_FMT_YUV410) {
+                //TODO
+            } else if (pixelformat==V4L2_PIX_FMT_GREY) {
+                gray2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_Y16) {
+                grayw2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            } else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
                 tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
-         }
-
+            }
         }
-
     } else {
         if (cfg->frame) {
-            if (pixelformat==V4L2_PIX_FMT_YUYV)
+            if (pixelformat==V4L2_PIX_FMT_RGB24) {
+                crop_rgb2gray(cfg->cam_width,raw_buffer,frm_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_YUYV) {
                 crop_yuyv2gray(cfg->cam_width,raw_buffer,frm_buffer);
-            else if (pixelformat==V4L2_PIX_FMT_UYVY)
+            } else if (pixelformat==V4L2_PIX_FMT_UYVY) {
                 crop_uyvy2gray(cfg->cam_width,raw_buffer,frm_buffer);
-            else if (pixelformat==V4L2_PIX_FMT_YUV420)
+            } else if (pixelformat==V4L2_PIX_FMT_YUV420) {
                 crop(cfg->cam_width, cfg->cam_height,raw_buffer,frm_buffer,1);
-            else if (pixelformat==V4L2_PIX_FMT_YUV410)
+            } else if (pixelformat==V4L2_PIX_FMT_YUV410) {
                 crop(cfg->cam_width, cfg->cam_height,raw_buffer,frm_buffer,1);
-            else if (pixelformat==V4L2_PIX_FMT_GREY)
+            } else if (pixelformat==V4L2_PIX_FMT_GREY) {
                 crop(cfg->cam_width, cfg->cam_height,raw_buffer,frm_buffer,1);
-            else if (pixelformat==V4L2_PIX_FMT_Y16)
+            } else if (pixelformat==V4L2_PIX_FMT_Y16) {
                 crop_grayw2gray(cfg->cam_width,raw_buffer,frm_buffer);
-            else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
-
+            } else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
                 tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
                 crop(cfg->cam_width, cfg->cam_height,cam_buffer,frm_buffer,1);
             }
         } else {
-            if (pixelformat==V4L2_PIX_FMT_YUYV) yuyv2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
-            else if (pixelformat==V4L2_PIX_FMT_UYVY) uyvy2gray(cfg->cam_width, cfg->cam_height,raw_buffer,cam_buffer);
-            else if (pixelformat==V4L2_PIX_FMT_YUV420) memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
-            else if (pixelformat==V4L2_PIX_FMT_YUV410) memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
-            //else if (pixelformat==V4L2_PIX_FMT_GREY) memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
-            else if (pixelformat==V4L2_PIX_FMT_Y16) grayw2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
-            else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
-
+            if (pixelformat==V4L2_PIX_FMT_RGB24) {
+                rgb2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_YUYV) {
+                yuyv2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_UYVY) {
+                uyvy2gray(cfg->cam_width, cfg->cam_height,raw_buffer,cam_buffer);
+            } else if (pixelformat==V4L2_PIX_FMT_YUV420) {
+                memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
+            } else if (pixelformat==V4L2_PIX_FMT_YUV410) {
+                memcpy(cam_buffer,raw_buffer,cfg->cam_width*cfg->cam_height);
+            // } else if (pixelformat==V4L2_PIX_FMT_GREY) {
+            //     memcpy(cam_buffer,raw_buffer,cam_width*cam_height);
+            } else if (pixelformat==V4L2_PIX_FMT_Y16) {
+                grayw2gray(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
+            } else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
                 tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
                 tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
@@ -961,4 +1032,3 @@ int V4Linux2Camera::getCameraSettingStep(int mode) {
 
     return 0;
 }
-
