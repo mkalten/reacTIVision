@@ -358,11 +358,11 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		if (ft->max_white>=ft->min_white) white_variation = (ft->max_white-ft->min_white)/white_average;
 		//else printf("white %f %f\n",ft->max_white,ft->min_white);
 	}
-	
-	if (((leaf_variation>1.0f) && ((black_variation>1.0f)
-				|| (white_variation>1.0f))) || (f->x<0) || (f->y<0)
-				|| (r->flags & LOST_SYMBOL_FLAG)) f->id = INVALID_FIDUCIAL_ID;
+    
+	if ((leaf_variation>1.0f) || (black_variation>1.0f) || (white_variation>1.0f)
+        || (f->x<0) || (f->y<0) || (r->flags & LOST_SYMBOL_FLAG)) f->id = INVALID_FIDUCIAL_ID;
 	else {
+        
         ft->next_depth_string = 0;
         depth_string = build_left_heavy_depth_string( ft, r );
 			
