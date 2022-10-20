@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -101,6 +101,7 @@
 		B200D5541B0E4E1300249D8B /* tinyxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml2.cpp; sourceTree = "<group>"; };
 		B200D5551B0E4E1300249D8B /* tinyxml2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml2.h; sourceTree = "<group>"; };
 		B2023CCE1C137745002D4291 /* BlobObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobObject.h; path = ../common/BlobObject.h; sourceTree = "<group>"; };
+		B208146B29015EF900EBB5AF /* reacTIVision.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = reacTIVision.entitlements; sourceTree = "<group>"; };
 		B214E6660959DA6F00A347C1 /* FidtrackFinder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; lineEnding = 0; name = FidtrackFinder.cpp; path = ../common/FidtrackFinder.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B214E6670959DA6F00A347C1 /* FidtrackFinder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = FidtrackFinder.h; path = ../common/FidtrackFinder.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; lineEnding = 0; name = FrameThresholder.cpp; path = ../common/FrameThresholder.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -320,6 +321,7 @@
 				B297D3EC097536E3004AB0FE /* Info.plist */,
 				B2CAC0B119CC3E94003AC356 /* reacTIVision.png */,
 				B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */,
+				B208146B29015EF900EBB5AF /* reacTIVision.entitlements */,
 				B282A34C0CD756B500657CDA /* camera.xml */,
 				B260492208E9BF4B0095D4C8 /* reacTIVision.icns */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -493,8 +495,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsInParallel = NO;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1400;
 				TargetAttributes = {
 					B297D37B097536E2004AB0FE = {
 						DevelopmentTeam = CDB4DSECA2;
@@ -503,7 +504,7 @@
 				};
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -612,11 +613,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
+				CURRENT_PROJECT_VERSION = 2210;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = CDB4DSECA2;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -640,8 +643,11 @@
 					../ext/portvideo/common,
 				);
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MARKETING_VERSION = 1.6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -665,9 +671,12 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = ssse3;
+				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2210;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -688,8 +697,11 @@
 					../ext/portvideo/common,
 				);
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MARKETING_VERSION = 1.6.0;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
@@ -713,8 +725,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				CURRENT_PROJECT_VERSION = 2210;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
 					"$(LOCAL_LIBRARY_DIR)/Frameworks",
@@ -734,8 +749,11 @@
 					../ext/portvideo/common,
 				);
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MARKETING_VERSION = 1.6.0;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
@@ -757,6 +775,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -771,6 +790,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -809,6 +829,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -823,6 +844,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -862,6 +884,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -876,6 +899,7 @@
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
