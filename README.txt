@@ -1,6 +1,6 @@
-﻿reacTIVision 1.5.2
+reacTIVision 1.5.2
 ------------------
-(c) 2005-2017 by Martin Kaltenbrunner <martin@tuio.org>
+(c) 2005-2022 by Martin Kaltenbrunner <martin@tuio.org>
 https://github.com/mkalten/reacTIVision
 
 reacTIVision is an open source, cross-platform computer vision
@@ -18,7 +18,7 @@ Control (OSC) messages via a UDP network socket to any connected
 client application. It implements the TUIO protocol, which has been
 specially designed for transmitting the state of tangible objects
 and multi-touch events from a tabletop surface. As an alternative 
-to TUIO, the application is also capabable of sending MIDI messages.
+to TUIO, the application is also capable of sending MIDI messages.
 
 The TUIO framework includes a set of example client projects
 for various programming languages, which serve as a base for
@@ -30,7 +30,7 @@ The reacTIVision application currently runs under the
 following operating systems: Windows, Mac OS X and Linux
 Under Windows it supports any camera with a proper WDM driver,
 such as most USB, FireWire and DV cameras. Under Mac OS X most
-UVC campliant USB as well as Firewire cameras should work.
+UVC compliant USB as well as Firewire cameras should work.
 Under Linux FireWire cameras are as well supported as many 
 Video4Linux2 compliant USB cameras.
 
@@ -122,10 +122,10 @@ and fiducial tracking. Within the running application you can toggle
 this with the 'E' key or recalculate the background subtraction 
 by hitting the SPACE bar.
 
-The overall camera and imageesettings can be configured within the
+The overall camera and image settings can be configured within the
 "camera.xml" configuration file. On Mac OS X this file is as well 
 located in the Resources folder within the application bundle.
-You can select the camera ID and specify its dimension and framerate,
+You can select the camera ID and specify its dimension and frame rate,
 as well as the most relevant image adjustments. Optionally you can also
 crop the raw camera frames to reduce the final image size. 
 Please see the example options in the file for further information. 
