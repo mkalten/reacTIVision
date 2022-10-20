@@ -1,6 +1,6 @@
 # reacTIVision 1.6
 
-© 2005-2017 by Martin Kaltenbrunner <martin@tuio.org>
+© 2005-2022 by Martin Kaltenbrunner <martin@tuio.org>
 [https://github.com/mkalten/reacTIVision](https://github.com/mkalten/reacTIVision)
 
 **reacTIVision** is an open source, cross-platform computer vision framework for the fast and robust tracking of fiducial markers attached onto physical objects, as well as for multi-touch finger tracking. It was mainly designed as a toolkit for the rapid development of table-based tangible user interfaces (TUI) and multi-touch interactive surfaces. This framework has been developed by Martin Kaltenbrunner and Ross Bencina as part of the [Reactable project](http://www.reactable.com/), a tangible modular synthesizer.
@@ -135,7 +135,7 @@ The source distribution includes projects for all three supported platforms and 
 A *Visual Studio 2012* project as well as the necessary `SDL2` libraries and headers are included. The project should build right away for 32bit and 64bit targets without any additional configuration.
 
 ##### Mac OS X:
-An *Xcode* project for *Xcode* version 3.2 or later is included. The build will require the `SDL2` and `VVUVCKit` frameworks, in order to compile properly, just unzip the provided `./ext/portvideo/macosx/Frameworks.zip` into the directory `./ext/portvideo/macosx/`
+An *Xcode* project for *Xcode* version 9.3 or later is included. The build will require the `SDL2` and `VVUVCKit` frameworks, in order to compile properly, just unzip the provided `./ext/portvideo/macosx/Frameworks.zip` into the directory `./ext/portvideo/macosx/`
 
 ##### Linux:
 Call make to build the application, the distribution also includes configurations for the creation of RPM packages, as well as a project file for the *Codeblocks IDE*. Make sure you have the `libSDL-2.0` and `libdc1394-2.0` (or later) as well as `libjpeg-turbo` libraries and headers installed. 
