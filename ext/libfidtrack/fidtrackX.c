@@ -359,8 +359,8 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		// select fuzzy fiducials before decoding
 		if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
 			f->id = FUZZY_FIDUCIAL_ID;
-	} else if ((leaf_variation>1.0f) && ((black_variation>1.0f) || (white_variation>1.0f))) {
-		// eliminate noise
+	} else if ((leaf_variation>1.0f) || (black_variation>1.0f) || (white_variation>1.0f)) {
+		// eliminate false positives
 		if ((ft->white_leaf_nodes>ft->min_leafs) || (ft->black_leaf_nodes>ft->min_leafs))
 			f->id = FUZZY_FIDUCIAL_ID;
 	} else {
