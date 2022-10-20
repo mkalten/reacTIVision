@@ -47,7 +47,8 @@ PmDeviceID Pm_GetDefaultInputDeviceID()
     return pm_default_input_device_id;
 }
 
-PmDeviceID Pm_GetDefaultOutputDeviceID() {
+PmDeviceID Pm_GetDefaultOutputDeviceID()
+{
     Pm_Initialize();
     return pm_default_output_device_id;
 }

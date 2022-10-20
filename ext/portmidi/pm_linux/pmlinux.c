@@ -14,6 +14,7 @@
 #include "portmidi.h"
 #include "pmutil.h"
 #include "pminternal.h"
+#include "finddefault.h"
 
 #ifdef PMALSA
   #include "pmlinuxalsa.h"
@@ -21,6 +22,10 @@
 
 #ifdef PMNULL
   #include "pmlinuxnull.h"
+#endif
+
+#if !(defined(PMALSA) || defined(PMNULL))
+#error One of PMALSA or PMNULL must be defined
 #endif
 
 PmDeviceID pm_default_input_device_id = -1;
@@ -33,12 +38,12 @@ void pm_init()
      * are working properly other than by looking at the list of available
      * devices.
      */
-    #ifdef PMALSA
-	pm_linuxalsa_init();
-    #endif
-    #ifdef PMNULL
+#ifdef PMALSA
+    pm_linuxalsa_init();
+#endif
+#ifdef PMNULL
         pm_linuxnull_init();
-    #endif
+#endif
     // this is set when we return to Pm_Initialize, but we need it
     // now in order to (successfully) call Pm_CountDevices()
     pm_initialized = TRUE;      
@@ -54,6 +59,9 @@ void pm_term(void)
 {
     #ifdef PMALSA
         pm_linuxalsa_term();
+    #endif
+    #ifdef PMNULL
+        pm_linuxnull_term();
     #endif
 }
 

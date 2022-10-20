@@ -28,23 +28,21 @@
  */
 static void pm_exit(void) {
     pm_term();
-#ifdef DEBUG
-#define STRING_MAX 80
-    {
-        char line[STRING_MAX];
-        printf("Type ENTER...\n");
-        /* note, w/o this prompting, client console application can not see one
-           of its errors before closing. */
-        fgets(line, STRING_MAX, stdin);
-    }
-#endif
 }
 
+
+static BOOL WINAPI ctrl_c_handler(DWORD fdwCtrlType)
+{
+    exit(1);  /* invokes pm_exit() */
+    ExitProcess(1);  /* probably never called */
+    return TRUE;
+}
 
 /* pm_init is the windows-dependent initialization.*/
 void pm_init(void)
 {
     atexit(pm_exit);
+    SetConsoleCtrlHandler(ctrl_c_handler, TRUE);
 #ifdef DEBUG
     printf("registered pm_exit with atexit()\n");
 #endif
@@ -68,8 +66,8 @@ static PmDeviceID pm_get_default_device_id(int is_input, char *key) {
     PmDeviceID id = pmNoDevice;
     int i, j;
     Pm_Initialize(); /* make sure descriptors exist! */
-    for (i = 0; i < pm_descriptor_index; i++) {
-        if (descriptors[i].pub.input == is_input) {
+    for (i = 0; i < pm_descriptor_len; i++) {
+        if (pm_descriptors[i].pub.input == is_input) {
             id = i;
             break;
         }
