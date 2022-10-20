@@ -1,7 +1,7 @@
 /*
   Fiducial tracking library.
   Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-  Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+  Maintainer (C) 2005-2022 Martin Kaltenbrunner <martin@tuio.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -468,10 +468,9 @@ static void build_regions( Segmenter *s, const unsigned char *source )
                 }else{
                     current_row[x] = new_region( s, x, y, source[i] );
                     make_adjacent( s, current_row[x]->region, previous_row[x]->region );
-                    /* disable diagonal links //mk
-					 if( current_row[x-1]->region != previous_row[x]->region )
-					 make_adjacent( s, current_row[x]->region, current_row[x-1]->region );
-					 */
+                    //mk disable diagonal links
+					 /*if( current_row[x-1]->region != previous_row[x]->region )
+					 make_adjacent( s, current_row[x]->region, current_row[x-1]->region );*/
                 }
             }
         }

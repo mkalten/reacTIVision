@@ -1,7 +1,7 @@
 /*
   Fiducial tracking library.
   Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-  Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+  Maintainer (C) 2005-2022 Martin Kaltenbrunner <martin@tuio.org>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -359,10 +359,11 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		//else printf("white %f %f\n",ft->max_white,ft->min_white);
 	}
     
-	if ((leaf_variation>1.0f) || (black_variation>1.0f) || (white_variation>1.0f)
-        || (f->x<0) || (f->y<0) || (r->flags & LOST_SYMBOL_FLAG)) f->id = INVALID_FIDUCIAL_ID;
+	if ((leaf_variation>1.0f) || (black_variation>1.0f) || (white_variation>1.0f) || (f->x<0) || (f->y<0)
+        || (r->flags & LOST_SYMBOL_FLAG)) f->id = INVALID_FIDUCIAL_ID;
 	else {
         
+        printf("var: %f %f %f\n",leaf_variation,black_variation,white_variation);
         ft->next_depth_string = 0;
         depth_string = build_left_heavy_depth_string( ft, r );
 			

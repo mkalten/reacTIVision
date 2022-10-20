@@ -1,6 +1,6 @@
 reacTIVision 1.5.2
 —————————————————-
-* reduced false positives (assuming uniform leaf node size)
+* reduced fiducial false positives (assuming uniform leaf node size)
 * native PS3Eye camera support on Windows
 * add TUIO source name configuration option
 * allow .reacTIVision config in home directory on Linux
