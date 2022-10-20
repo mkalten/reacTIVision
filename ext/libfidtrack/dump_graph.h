@@ -39,8 +39,11 @@ each node is labeled with its address and the following qualifiers:
     _AR_ -- adjacent to root
 */
 
-void dump_graph( const char *fileName, Segmenter *s );
+#ifndef NDEBUG
+void sanity_check_region_initial_values( Segmenter *s );
+#endif
 
+void dump_graph( const char *fileName, Segmenter *s );
 
 #ifdef __cplusplus
 }
