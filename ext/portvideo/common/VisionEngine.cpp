@@ -387,6 +387,7 @@ void VisionEngine::teardownCamera()
 {
     if (camera_!=NULL) {
 		pause_ = true;
+        CameraTool::saveSettings();
         camera_->stopCamera();
         camera_->closeCamera();
         delete camera_;
