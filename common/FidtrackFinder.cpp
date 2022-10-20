@@ -490,9 +490,9 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	
 	if(!empty_grid) {
 		int pixel = width*(int)floor(yama->raw_y+.5f) + (int)floor(yama->raw_x+.5f);
-		if ((pixel>=0) || (pixel<width*height)) {
-			yama->x = dmap[ pixel ].x/width;
-			yama->y = dmap[ pixel ].y/height;
+		if ((pixel>=0) && (pixel<width*height)) {
+			yama->x = dmap[ pixel ].x/(float)width;
+			yama->y = dmap[ pixel ].y/(float)height;
 		}
 	} else {
 		yama->x = yama->raw_x/width;
@@ -643,7 +643,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			if(!empty_grid) {
 				int pixel = width*(int)floor(r->y+.5f) + (int)floor(r->x+.5f);
-				if ((pixel>=0) || (pixel<width*height)) {
+				if ((pixel>=0) && (pixel<width*height)) {
 					r->x = dmap[ pixel ].x;
 					r->y = dmap[ pixel ].y;
 				}
