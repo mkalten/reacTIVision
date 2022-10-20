@@ -1,6 +1,6 @@
 /*	Fiducial tracking library.
 	Copyright (C) 2004 Ross Bencina <rossb@audiomulch.com>
-	Maintainer (C) 2005-2016 Martin Kaltenbrunner <martin@tuio.org>
+	Maintainer (C) 2005-2022 Martin Kaltenbrunner <martin@tuio.org>
  
 	This library is free software; you can redistribute it and/or
 	modify it under the terms of the GNU Lesser General Public
@@ -31,11 +31,11 @@ typedef struct FloatPoint{
 }FloatPoint;
 
 typedef struct DoublePoint{
-    short x, y;
+    double x, y;
 }DoublePoint;
 
 typedef struct IntPoint{
-    short x, y;
+    int x, y;
 }IntPoint;
 
 typedef struct ShortPoint{
