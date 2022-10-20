@@ -34,7 +34,7 @@ Under **Windows** it supports any camera with a proper `WDM driver`, such as mos
 
 ## Fiducial Symbols
 
-This application was designed to track specially designed fiducial markers. You will find the default *amoeba* set of 216 fiducials in the document `./symbols/default.pdf`. Print this document and attach the labels to any object you want to track.
+This application was designed to track specially designed fiducial markers. You will find the default *amoeba* set of 216 fiducials in the document `./symbols/default.pdf`. Print this document and attach the labels to any object you want to track. This version also adds the new *yamaarashi* fiducials (currently in beta), which allow the detection of more than one million different symbols within a smaller and more uniform footprint.
 
 **reacTIVision** detects the ID, position and rotation angle of fiducial markers in the realtime video and transmits these values to the client application via the [TUIO](http://www.tuio.org/) protocol. [TUIO](http://www.tuio.org/) also assigns a session ID to each object in the scene and transmits this session ID along with the actual fiducial ID. This allows the identification and tracking of several objects with the same marker ID.
 
@@ -73,7 +73,7 @@ The **reacTIVision** application usually sends `TUIO/UDP` messages to port `3333
 
 You can change this setting by editing or adding the XML tag `<tuio type="udp" host="127.0.0.1" port="3333">` to the configuration. Multiple (up to 32) simultaneous TUIO transport options are allowed, the according type options are: udp, tcp, web and flc.
 
-The `<fiducial amoeba="default" yamaarashi="false" />` XML tag lets you select the default or alternative (small,tiny) *amoeba* fiducial set, or you can point to an alternative `amoeba.trees` file if available. You can also additionally enable the new *Yamaarashi* fiducal symbols.
+The `<fiducial amoeba="default" yamaarashi="false" />` XML tag lets you select the default or alternative (small,tiny) *amoeba* fiducial set, or you can point to an alternative `amoeba.trees` file if available. You can also additionally enable the new (beta) *Yamaarashi* fiducal symbols for testing.
 
 The **display attribute** defines the default screen upon startup. The `<image display="dest" equalize="false" gradient="32" tile="10"/>` lets you adjust the default gradient gate value and tile size. **reacTIVision** comes with an image equalization module,  which in some cases can increase the recognition performance of both the finger and fiducial tracking. Within the running application you can toggle this with the `E` key or reset the equalizer by hitting the `SPACE` bar.
 

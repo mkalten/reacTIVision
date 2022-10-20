@@ -14,7 +14,7 @@ int start_id = 0;
 int range = 300;
 int fiducial_size_mm = 46;
 
-String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2017 Martin Kaltenbrunner <martin@tuio.org>";
+String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2022 Martin Kaltenbrunner <martin@tuio.org>";
 int border = 22;
 int xpos = border;
 int ypos = border;
