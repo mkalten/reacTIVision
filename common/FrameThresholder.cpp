@@ -142,6 +142,7 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 	tile_index=-1;
 	tile_count=0;
 	for (int i=1;i<dw_count;i++) {
+        if (tw_div[i]<4) continue;
 		for (int j=1;j<dh_count;j++) {
 			if (tw_div[i]==th_div[j]) {
 				tile_sizes[tile_count] = tw_div[i];
@@ -166,9 +167,9 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 		//tile_size = tile_sizes[tile_index];
 	}
 
-	/*printf("%d common dividers %d %d: ",tile_count,tw,th);
+	printf("%d common dividers %d %d: ",tile_count,tw,th);
 	for (int i=0;i<tile_count;i++) printf("%d ",tile_sizes[i]);
-	printf("\n");*/
+	printf("\n");
 
 	thresholder = new TiledBernsenThresholder*[thread_count];
 	for(int i=0;i<thread_count;i++) {
