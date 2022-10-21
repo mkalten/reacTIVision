@@ -397,7 +397,7 @@ void SDLinterface::processEvents()
 					if (select_)
 					{
 						selector_--;
-						if (selector_<0) selector_=dev_list.size()-1;
+						if (selector_<0) selector_= (int)dev_list.size()-1;
 					}
 				}
 				else if( event.key.keysym.sym == SDLK_DOWN )

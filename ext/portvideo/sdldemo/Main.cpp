@@ -17,12 +17,12 @@
  */
 
 
-#include <Main.h>
+#include "Main.h"
 #include <string.h>
-#include <SDLinterface.h>
-#include <ConsoleInterface.h>
-#include <VisionEngine.h>
-#include <FrameInverter.h>
+#include "SDLinterface.h"
+#include "ConsoleInterface.h"
+#include "VisionEngine.h"
+#include "FrameInverter.h"
 
 #ifdef LINUX
 #include <signal.h>

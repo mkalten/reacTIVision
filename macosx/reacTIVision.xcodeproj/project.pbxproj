@@ -75,6 +75,7 @@
 		B2F024E10975394D00538C36 /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DD0975394D00538C36 /* Resources.c */; };
 		B2F8A8901EF2C7DD00D4E04F /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F8A88C1EF2C7DD00D4E04F /* ps3eye.cpp */; };
 		B2F8A8911EF2C7DD00D4E04F /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F8A88E1EF2C7DD00D4E04F /* PS3EyeCamera.cpp */; };
+		B2FEA4EE2902EDCD00A55969 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2FEA4ED2902EDCD00A55969 /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -225,6 +226,7 @@
 		B2F8A88D1EF2C7DD00D4E04F /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ../ext/portvideo/ps3eye/ps3eye.h; sourceTree = "<group>"; };
 		B2F8A88E1EF2C7DD00D4E04F /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = PS3EyeCamera.cpp; path = ../ext/portvideo/ps3eye/PS3EyeCamera.cpp; sourceTree = "<group>"; };
 		B2F8A88F1EF2C7DD00D4E04F /* PS3EyeCamera.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = PS3EyeCamera.h; path = ../ext/portvideo/ps3eye/PS3EyeCamera.h; sourceTree = "<group>"; };
+		B2FEA4ED2902EDCD00A55969 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +244,7 @@
 				B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */,
 				B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */,
 				B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */,
+				B2FEA4EE2902EDCD00A55969 /* Security.framework in Frameworks */,
 				B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,6 +294,7 @@
 				B200D54A1B0E45D500249D8B /* CoreMedia.framework */,
 				B26725ED0C5E3FD100D7FD74 /* IOKit.framework */,
 				B24EA4F20015EB5000096D13 /* Cocoa.framework */,
+				B2FEA4ED2902EDCD00A55969 /* Security.framework */,
 				B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */,
 			);
 			name = "Linked Frameworks";
@@ -612,6 +616,7 @@
 		B297D3E9097536E2004AB0FE /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -669,6 +674,7 @@
 		B297D3EA097536E2004AB0FE /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = avx;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
@@ -724,6 +730,7 @@
 		B297D3EB097536E2004AB0FE /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -775,7 +782,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -829,7 +836,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -884,7 +891,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;

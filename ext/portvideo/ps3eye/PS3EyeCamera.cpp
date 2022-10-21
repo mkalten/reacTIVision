@@ -123,7 +123,7 @@ CameraEngine* PS3EyeCamera::getCamera(CameraConfig *cam_cfg) {
 	
 	if (cam_cfg->force) return new PS3EyeCamera(cam_cfg);
 
-	int count = cfg_list.size();
+	int count = (int)cfg_list.size();
 	if (count > 0) {
 		for (int i=0;i<count;i++) {
 			

@@ -174,7 +174,7 @@ int AVfoundationCamera::getDeviceCount() {
 	
 	NSInteger dev_count0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count;
 	NSInteger dev_count1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed].count;
-	return (dev_count0 + dev_count1);
+	return ((int)(dev_count0 + dev_count1));
 }
 
 std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
@@ -587,18 +587,18 @@ int AVfoundationCamera::getCameraSetting(int mode) {
     //if (getCameraSettingAuto(mode)) return 0;
     
     switch (mode) {
-        case BRIGHTNESS:	return [uvcController bright];
-        case CONTRAST:		return [uvcController contrast];
-        case SHARPNESS:		return [uvcController sharpness];
-        case GAIN:			return [uvcController gain];
-		case GAMMA:			return [uvcController gamma];
-        case EXPOSURE:		return [uvcController exposureTime];
-        case FOCUS:			return [uvcController focus];
-        case WHITE:			return [uvcController whiteBalance];
-        case BACKLIGHT:		return [uvcController backlight];
-		case SATURATION:	return [uvcController saturation];
-        case COLOR_HUE:		return [uvcController hue];
-		case POWERLINE:		return [uvcController powerLine];
+        case BRIGHTNESS:	return (int)[uvcController bright];
+        case CONTRAST:		return (int)[uvcController contrast];
+        case SHARPNESS:		return (int)[uvcController sharpness];
+        case GAIN:			return (int)[uvcController gain];
+		case GAMMA:			return (int)[uvcController gamma];
+        case EXPOSURE:		return (int)[uvcController exposureTime];
+        case FOCUS:			return (int)[uvcController focus];
+        case WHITE:			return (int)[uvcController whiteBalance];
+        case BACKLIGHT:		return (int)[uvcController backlight];
+		case SATURATION:	return (int)[uvcController saturation];
+        case COLOR_HUE:		return (int)[uvcController hue];
+		case POWERLINE:		return (int)[uvcController powerLine];
     }
 	
     return 0;
@@ -611,18 +611,18 @@ int AVfoundationCamera::getMaxCameraSetting(int mode) {
     //if (getCameraSettingAuto(mode)) return 0;
     
     switch (mode) {
-        case BRIGHTNESS:    return [uvcController maxBright];
-        case CONTRAST:      return [uvcController maxContrast];
-        case SHARPNESS:     return [uvcController maxSharpness];
-        case GAIN:          return [uvcController maxGain];
-		case GAMMA:         return [uvcController maxGamma];
-        case EXPOSURE:      return [uvcController maxExposureTime];
-        case FOCUS:         return [uvcController maxFocus];
-        case WHITE:         return [uvcController maxWhiteBalance];
-        case BACKLIGHT:     return [uvcController maxBacklight];
-		case SATURATION:	return [uvcController maxSaturation];
-        case COLOR_HUE:     return [uvcController maxHue];
-		case POWERLINE:		return [uvcController maxPowerLine];
+        case BRIGHTNESS:    return (int)[uvcController maxBright];
+        case CONTRAST:      return (int)[uvcController maxContrast];
+        case SHARPNESS:     return (int)[uvcController maxSharpness];
+        case GAIN:          return (int)[uvcController maxGain];
+		case GAMMA:         return (int)[uvcController maxGamma];
+        case EXPOSURE:      return (int)[uvcController maxExposureTime];
+        case FOCUS:         return (int)[uvcController maxFocus];
+        case WHITE:         return (int)[uvcController maxWhiteBalance];
+        case BACKLIGHT:     return (int)[uvcController maxBacklight];
+		case SATURATION:	return (int)[uvcController maxSaturation];
+        case COLOR_HUE:     return (int)[uvcController maxHue];
+		case POWERLINE:		return (int)[uvcController maxPowerLine];
     }
     
     return 0;
@@ -635,18 +635,18 @@ int AVfoundationCamera::getMinCameraSetting(int mode) {
     //if (getCameraSettingAuto(mode)) return 0;
     
     switch (mode) {
-        case BRIGHTNESS:    return [uvcController minBright];
-        case CONTRAST:      return [uvcController minContrast];
-        case GAIN:          return [uvcController minGain];
-		case GAMMA:         return [uvcController minGamma];
-        case EXPOSURE:      return [uvcController minExposureTime];
-        case SHARPNESS:     return [uvcController minSharpness];
-        case FOCUS:         return [uvcController minFocus];
-        case WHITE:         return [uvcController minWhiteBalance];
-        case BACKLIGHT:     return [uvcController minBacklight];
-		case SATURATION:	return [uvcController minSaturation];
-		case COLOR_HUE:     return [uvcController minHue];
-		case POWERLINE:		return [uvcController minPowerLine];
+        case BRIGHTNESS:    return (int)[uvcController minBright];
+        case CONTRAST:      return (int)[uvcController minContrast];
+        case GAIN:          return (int)[uvcController minGain];
+		case GAMMA:         return (int)[uvcController minGamma];
+        case EXPOSURE:      return (int)[uvcController minExposureTime];
+        case SHARPNESS:     return (int)[uvcController minSharpness];
+        case FOCUS:         return (int)[uvcController minFocus];
+        case WHITE:         return (int)[uvcController minWhiteBalance];
+        case BACKLIGHT:     return (int)[uvcController minBacklight];
+		case SATURATION:	return (int)[uvcController minSaturation];
+		case COLOR_HUE:     return (int)[uvcController minHue];
+		case POWERLINE:		return (int)[uvcController minPowerLine];
     }
     
     return 0;
@@ -661,51 +661,51 @@ bool AVfoundationCamera::setDefaultCameraSetting(int mode) {
     switch (mode) {
         case BRIGHTNESS:
             [uvcController resetBright];
-            default_brightness = [uvcController bright];
+            default_brightness = (int)[uvcController bright];
             break;
         case CONTRAST:
             [uvcController resetContrast];
-            default_contrast = [uvcController contrast];
+            default_contrast = (int)[uvcController contrast];
             break;
         case SHARPNESS:
             [uvcController resetSharpness];
-            default_sharpness = [uvcController sharpness];
+            default_sharpness = (int)[uvcController sharpness];
             break;
         case GAIN:
             [uvcController resetGain];
-            default_gain = [uvcController gain];
+            default_gain = (int)[uvcController gain];
             break;
 		case GAMMA:
 			[uvcController resetGamma];
-			default_gamma = [uvcController gamma];
+			default_gamma = (int)[uvcController gamma];
 			break;
         case EXPOSURE:
             [uvcController resetExposureTime];
-            default_exposure = [uvcController exposureTime];
+            default_exposure = (int)[uvcController exposureTime];
             break;
         case FOCUS:
             [uvcController resetFocus];
-            default_focus = [uvcController focus];
+            default_focus = (int)[uvcController focus];
             break;
         case WHITE:
             [uvcController resetWhiteBalance];
-            default_white = [uvcController whiteBalance];
+            default_white = (int)[uvcController whiteBalance];
             break;
         case BACKLIGHT:
             [uvcController resetBacklight];
-            default_backlight = [uvcController backlight];
+            default_backlight = (int)[uvcController backlight];
             break;
 		case SATURATION:
 			[uvcController resetSaturation];
-			default_saturation = [uvcController saturation];
+			default_saturation = (int)[uvcController saturation];
 			break;
 		case COLOR_HUE:
             [uvcController resetHue];
-            default_hue = [uvcController hue];
+            default_hue = (int)[uvcController hue];
             break;
 		case POWERLINE:
 			[uvcController resetPowerLine];
-			default_powerline = [uvcController powerLine];
+			default_powerline = (int)[uvcController powerLine];
 			break;
     }
 	
