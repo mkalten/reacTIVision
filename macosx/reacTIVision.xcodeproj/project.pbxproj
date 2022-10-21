@@ -109,8 +109,8 @@
 		B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FrameThresholder.cpp; path = ../common/FrameThresholder.cpp; sourceTree = SOURCE_ROOT; };
 		B214E66D0959DA6F00A347C1 /* FrameThresholder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameThresholder.h; path = ../common/FrameThresholder.h; sourceTree = SOURCE_ROOT; };
 		B214E66E0959DA6F00A347C1 /* Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = Main.cpp; path = ../common/Main.cpp; sourceTree = SOURCE_ROOT; };
-		B21683D119F3962500F07F0D /* USBBusProber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = USBBusProber.framework; path = Frameworks/USBBusProber.framework; sourceTree = "<group>"; };
-		B21683D219F3962500F07F0D /* VVUVCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VVUVCKit.framework; path = Frameworks/VVUVCKit.framework; sourceTree = "<group>"; };
+		B21683D119F3962500F07F0D /* USBBusProber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = USBBusProber.framework; path = Frameworks/USBBusProber.framework; sourceTree = SOURCE_ROOT; };
+		B21683D219F3962500F07F0D /* VVUVCKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VVUVCKit.framework; path = Frameworks/VVUVCKit.framework; sourceTree = SOURCE_ROOT; };
 		B21D89E30CE7A0FE003B810C /* FileCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileCamera.cpp; path = ../common/FileCamera.cpp; sourceTree = SOURCE_ROOT; };
 		B21D89E40CE7A0FE003B810C /* FileCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCamera.h; path = ../common/FileCamera.h; sourceTree = SOURCE_ROOT; };
 		B21D8A0C0CE7A34A003B810C /* CameraEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = CameraEngine.cpp; path = ../common/CameraEngine.cpp; sourceTree = SOURCE_ROOT; };
@@ -203,7 +203,7 @@
 		B2CAC0B119CC3E94003AC356 /* reacTIVision.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = reacTIVision.png; path = ../linux/reacTIVision.png; sourceTree = "<group>"; };
 		B2CB96BF0A33064800CF3287 /* FrameEqualizer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FrameEqualizer.cpp; path = ../common/FrameEqualizer.cpp; sourceTree = SOURCE_ROOT; };
 		B2CB96C00A33064800CF3287 /* FrameEqualizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FrameEqualizer.h; path = ../common/FrameEqualizer.h; sourceTree = SOURCE_ROOT; };
-		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = SOURCE_ROOT; };
 		B2E6096C08EAE57D00136A11 /* FiducialObject.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FiducialObject.cpp; path = ../common/FiducialObject.cpp; sourceTree = SOURCE_ROOT; };
 		B2E6096D08EAE57D00136A11 /* FiducialObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FiducialObject.h; path = ../common/FiducialObject.h; sourceTree = SOURCE_ROOT; };
 		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
@@ -320,8 +320,8 @@
 				B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */,
 			);
 			name = "Linked Frameworks";
-			path = "/Volumes/Documents/Work/reacTIVision/reacTIVision-1.5/macosx";
-			sourceTree = "<absolute>";
+			path = Frameworks;
+			sourceTree = SOURCE_ROOT;
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
@@ -624,7 +624,7 @@
 		B297D3E9097536E2004AB0FE /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -681,7 +681,7 @@
 		B297D3EA097536E2004AB0FE /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -736,7 +736,7 @@
 		B297D3EB097536E2004AB0FE /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -787,7 +787,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -842,7 +842,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -899,7 +899,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
