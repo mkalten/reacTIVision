@@ -22,6 +22,8 @@
 	<string>2210</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.9</string>
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) only works with access to a camera.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

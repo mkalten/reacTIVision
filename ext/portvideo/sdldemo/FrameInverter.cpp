@@ -20,7 +20,7 @@
 #include "FrameInverter.h"
 
 void FrameInverter::process(unsigned char *src, unsigned char *dest) {
-	
+
 	if (src_format==FORMAT_GRAY) {
 		for (int i=width*height;i>0;i--) {
 			*dest++ = 255 - *src++;
@@ -31,9 +31,10 @@ void FrameInverter::process(unsigned char *src, unsigned char *dest) {
 			*dest++ = (invert_green) ? (255 - *src++):*src++;
 			*dest++ = (invert_blue)  ? (255 - *src++):*src++;
 		}
-		
-		if (show_settings) displayControl();
+        if (show_settings) displayControl();
 	}
+    
+   
 }
 
 bool FrameInverter::toggleFlag(unsigned char flag, bool lock) {

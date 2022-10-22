@@ -11,6 +11,6 @@ please note that active tags need to be placed outside of this commented area!
  <image display="dest" fullscreen="true" />
  -->
 
- <image display="src" fullscreen="false" />
+ <image display="dest" fullscreen="false" />
 
 </portvideo>
