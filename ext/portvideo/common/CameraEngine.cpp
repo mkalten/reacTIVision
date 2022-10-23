@@ -19,20 +19,98 @@
 #include "CameraEngine.h"
 #include "CameraTool.h"
 
-const char* dstr[] = { "default","dc1394","ps3eye","raspi","uvccam","","","","","","file","folder"};
+const char* dstr[] = {
+	"default",
+	"dc1394",
+	"ps3eye",
+	"raspi",
+	"uvccam",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"file",
+	"folder",
+	"multicam"
+};
 
-const char* fstr[] =  { "unknown", "mono8",  "mono16", "rgb8", "rgb16", "mono16s", "rgb16s", "raw8", "raw16", "rgba", "yuyv", "uyvy", "yuv411", "yuv444", "yuv420p", "yuv410p",  "yvyu", "yuv211", "", "", "jpeg", "mjpeg", "mpeg", "mpeg2", "mpeg4", "h263", "h264", "", "", "", "dvpal", "dvntsc" };
+const char* fstr[] =  {
+	"unknown",
+	"mono8",
+	"mono16",
+	"rgb8",
+	"rgb16",
+	"mono16s",
+	"rgb16s",
+	"raw8",
+	"raw16",
+	"rgba",
+
+	"yuyv",
+	"uyvy",
+	"yuv411",
+	"yuv444",
+	"yuv420p",
+	"yuv410p",
+	"yvyu",
+	"yuv211",
+	"",
+	"",
+
+	"jpeg",
+	"mjpeg",
+	"mpeg",
+	"mpeg2",
+	"mpeg4",
+	"h263",
+	"h264",
+	"",
+	"",
+	"",
+
+	"dvpal",
+	"dvntsc"
+};
 
 
 void CameraEngine::printInfo() {
-	printf("camera: %s\n",cfg->name);
-	printf("driver: %s\n",dstr[cfg->driver]);
-	printf("codec:  %s\n",fstr[cfg->cam_format]);
+	printf("camera: %s\n", cfg->name);
+	printf("driver: %s\n", dstr[cfg->driver]);
+	printf("codec:  %s\n", fstr[cfg->cam_format]);
 	if (cfg->frame_mode<0) {
-		if (cfg->cam_fps==(int)cfg->cam_fps) printf("format: %dx%d, %dfps\n",cfg->frame_width,cfg->frame_height,(int)cfg->cam_fps);
-		else printf("format: %dx%d, %.1ffps\n",cfg->frame_width,cfg->frame_height,cfg->cam_fps);
+		// print fps as int or float
+		if (cfg->cam_fps==(int)cfg->cam_fps) {
+			printf(
+				"format: %dx%d, %dfps\n",
+				cfg->frame_width,
+				cfg->frame_height,
+				(int)cfg->cam_fps
+			);
+		} else {
+			printf(
+				"format: %dx%d, %.1ffps\n",
+				cfg->frame_width,
+				cfg->frame_height,
+				cfg->cam_fps
+			);
+		}
+	} else {
+		printf(
+			"format7_%d: %dx%d\n",
+			cfg->frame_mode,
+			cfg->frame_width,
+			cfg->frame_height
+		);
 	}
-	else printf("format7_%d: %dx%d\n",cfg->frame_mode,cfg->frame_width,cfg->frame_height);
+	// if frame_x or frame_y != 0 print this information
+	if ((cfg->frame_x != 0) || cfg->frame_y != 0) {
+		printf(
+			"x: %d y:%d\n",
+			cfg->frame_x,
+			cfg->frame_y
+		);
+	}
 }
 
 void CameraEngine::setMinMaxConfig(CameraConfig *cam_cfg, std::vector<CameraConfig> cfg_list) {
@@ -150,7 +228,7 @@ void CameraEngine::showInterface(UserInterface *uiface) {
     //int settingValue = getCameraSetting(currentCameraSetting);
     //int maxValue =  getMaxCameraSetting(currentCameraSetting);
     //int minValue =  getMinCameraSetting(currentCameraSetting);
-	
+
     const char *settingText = NULL;
     switch (currentCameraSetting) {
         case BRIGHTNESS:	settingText = "Brightness"; break;
@@ -415,7 +493,7 @@ void CameraEngine::grayw2rgb(int width, int height, unsigned char *src, unsigned
         dest_pixel = (unsigned char)(src_pixel/4);
         *dest++ = dest_pixel;
         *dest++ = dest_pixel;
-        *dest++ = dest_pixel;        
+        *dest++ = dest_pixel;
     }
 }
 
