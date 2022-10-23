@@ -3,12 +3,12 @@ Control (OSC) messages via a UDP network socket to any connected
 client application. It implements the TUIO protocol, which has been
 specially designed for transmitting the state of tangible objects
 and multi-touch events from a tabletop surface. As an alternative 
-to TUIO, the application is also capabable of sending MIDI messages.
+to TUIO, the application is also capable of sending MIDI messages.
 http://www.tuio.org/
 
 Alternatively it can also send MIDI messages, which are configurable
 via an XML configuration file. Keep in mind though that MIDI has less
-bandwidth and data resolution compared to Open Sound Contol, so the
+bandwidth and data resolution compared to Open Sound Control, so the
 MIDI feature is meant as an convenient alternative in some cases,
 but TUIO still will be the primary messaging layer.
 
