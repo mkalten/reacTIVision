@@ -363,7 +363,7 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
         || (r->flags & LOST_SYMBOL_FLAG)) f->id = INVALID_FIDUCIAL_ID;
 	else {
         
-        printf("var: %f %f %f\n",leaf_variation,black_variation,white_variation);
+        //printf("var: %f %f %f\n",leaf_variation,black_variation,white_variation);
         ft->next_depth_string = 0;
         depth_string = build_left_heavy_depth_string( ft, r );
 			
