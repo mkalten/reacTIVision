@@ -23,14 +23,14 @@
 	<key>CFBundleSignature</key>
 	<string>TUIO</string>
 	<key>CFBundleVersion</key>
-	<string>2210</string>
+	<string>2211</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.9</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) only works with access to a camera.</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
 </dict>
 </plist>

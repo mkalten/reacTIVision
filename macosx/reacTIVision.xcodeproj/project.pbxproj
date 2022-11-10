@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B200D5491B0E25EA00249D8B /* VisionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D5471B0E25EA00249D8B /* VisionEngine.cpp */; };
-		B200D54B1B0E45D500249D8B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B200D54A1B0E45D500249D8B /* CoreMedia.framework */; };
 		B200D5571B0E4E1300249D8B /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D5541B0E4E1300249D8B /* tinyxml2.cpp */; };
 		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D219F3962500F07F0D /* VVUVCKit.framework */; };
@@ -19,13 +18,10 @@
 		B225847D1C6CC2920030E390 /* OneEuroFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B225847B1C6CC2920030E390 /* OneEuroFilter.cpp */; };
 		B239D6A50CC51682009708F3 /* DC1394Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B239D6A30CC51682009708F3 /* DC1394Camera.cpp */; };
 		B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B244E81519C6D4DC008ADD32 /* libusb.a */; };
-		B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B24EA4F20015EB5000096D13 /* Cocoa.framework */; };
 		B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2505B710ACC635B007C21BB /* CalibrationEngine.cpp */; };
-		B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B26725ED0C5E3FD100D7FD74 /* IOKit.framework */; };
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */; };
 		B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */; };
-		B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B29545ED19E2FF80001111A6 /* AVFoundation.framework */; };
 		B297D3B7097536E2004AB0FE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		B297D3B8097536E2004AB0FE /* reacTIVision.icns in Resources */ = {isa = PBXBuildFile; fileRef = B260492208E9BF4B0095D4C8 /* reacTIVision.icns */; };
 		B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208511078AFC0A0047913B /* CameraTool.cpp */; };
@@ -65,17 +61,21 @@
 		B29CCC0F1B17685700C106A6 /* UdpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBFF1B17685700C106A6 /* UdpSender.cpp */; };
 		B29CCC101B17685700C106A6 /* WebSockSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCC011B17685700C106A6 /* WebSockSender.cpp */; };
 		B2AEE8EC0DE5D15C00D51856 /* reacTIVision.xml in Resources */ = {isa = PBXBuildFile; fileRef = B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */; };
-		B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */; };
+		B2CA5D43291D455E0051EC1B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D42291D455E0051EC1B /* AVFoundation.framework */; };
+		B2CA5D45291D456B0051EC1B /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D44291D456B0051EC1B /* CoreFoundation.framework */; };
+		B2CA5D47291D45750051EC1B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D46291D45750051EC1B /* CoreMedia.framework */; };
+		B2CA5D49291D457F0051EC1B /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D48291D457F0051EC1B /* IOKit.framework */; };
+		B2CA5D4B291D45890051EC1B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D4A291D45890051EC1B /* Cocoa.framework */; };
+		B2CA5D4D291D45920051EC1B /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D4C291D45920051EC1B /* Security.framework */; };
+		B2CA5D4F291D459F0051EC1B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D4E291D459F0051EC1B /* QuartzCore.framework */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
 		B2CAC0B219CC3E94003AC356 /* reacTIVision.png in Resources */ = {isa = PBXBuildFile; fileRef = B2CAC0B119CC3E94003AC356 /* reacTIVision.png */; };
 		B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; };
 		B2DEC9DA19F65370006CAD09 /* SDL2.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */; };
-		B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */; };
 		B2F024E10975394D00538C36 /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = B2F024DD0975394D00538C36 /* Resources.c */; };
 		B2F8A8901EF2C7DD00D4E04F /* ps3eye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F8A88C1EF2C7DD00D4E04F /* ps3eye.cpp */; };
 		B2F8A8911EF2C7DD00D4E04F /* PS3EyeCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2F8A88E1EF2C7DD00D4E04F /* PS3EyeCamera.cpp */; };
-		B2FEA4EE2902EDCD00A55969 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2FEA4ED2902EDCD00A55969 /* Security.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -98,7 +98,6 @@
 		B200D5461B0E25EA00249D8B /* UserInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserInterface.h; path = ../ext/portvideo/common/UserInterface.h; sourceTree = "<group>"; };
 		B200D5471B0E25EA00249D8B /* VisionEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = VisionEngine.cpp; path = ../ext/portvideo/common/VisionEngine.cpp; sourceTree = "<group>"; };
 		B200D5481B0E25EA00249D8B /* VisionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisionEngine.h; path = ../ext/portvideo/common/VisionEngine.h; sourceTree = "<group>"; };
-		B200D54A1B0E45D500249D8B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = ../../../../../../System/Library/Frameworks/CoreMedia.framework; sourceTree = "<group>"; };
 		B200D5541B0E4E1300249D8B /* tinyxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxml2.cpp; sourceTree = "<group>"; };
 		B200D5551B0E4E1300249D8B /* tinyxml2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tinyxml2.h; sourceTree = "<group>"; };
 		B2023CCE1C137745002D4291 /* BlobObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobObject.h; path = ../common/BlobObject.h; sourceTree = "<group>"; };
@@ -127,7 +126,6 @@
 		B239D6A30CC51682009708F3 /* DC1394Camera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = DC1394Camera.cpp; path = ../ext/portvideo/linux/DC1394Camera.cpp; sourceTree = SOURCE_ROOT; };
 		B239D6A40CC51682009708F3 /* DC1394Camera.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DC1394Camera.h; path = ../ext/portvideo/linux/DC1394Camera.h; sourceTree = SOURCE_ROOT; };
 		B244E81519C6D4DC008ADD32 /* libusb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libusb.a; path = ../ext/portvideo/macosx/dc1394/libusb.a; sourceTree = SOURCE_ROOT; };
-		B24EA4F20015EB5000096D13 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		B2505B710ACC635B007C21BB /* CalibrationEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = CalibrationEngine.cpp; path = ../common/CalibrationEngine.cpp; sourceTree = SOURCE_ROOT; };
 		B2505B720ACC635B007C21BB /* CalibrationEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CalibrationEngine.h; path = ../common/CalibrationEngine.h; sourceTree = SOURCE_ROOT; };
 		B260492208E9BF4B0095D4C8 /* reacTIVision.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = reacTIVision.icns; sourceTree = SOURCE_ROOT; };
@@ -164,14 +162,12 @@
 		B260496008E9BFC00095D4C8 /* OscReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = OscReceivedElements.h; path = ../ext/oscpack/osc/OscReceivedElements.h; sourceTree = SOURCE_ROOT; };
 		B260496508E9BFC00095D4C8 /* OscTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = OscTypes.cpp; path = ../ext/oscpack/osc/OscTypes.cpp; sourceTree = SOURCE_ROOT; };
 		B260496608E9BFC00095D4C8 /* OscTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = OscTypes.h; path = ../ext/oscpack/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
-		B26725ED0C5E3FD100D7FD74 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = SOURCE_ROOT; };
 		B2718AC22297CAAB00EA2892 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CalibrationGrid.cpp; path = ../common/CalibrationGrid.cpp; sourceTree = SOURCE_ROOT; };
 		B2884A780A2CF0E800AFF79A /* CalibrationGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CalibrationGrid.h; path = ../common/CalibrationGrid.h; sourceTree = SOURCE_ROOT; };
 		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AVfoundationCamera.h; path = ../ext/portvideo/macosx/AVfoundationCamera.h; sourceTree = "<group>"; };
 		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AVfoundationCamera.mm; path = ../ext/portvideo/macosx/AVfoundationCamera.mm; sourceTree = "<group>"; };
-		B29545ED19E2FF80001111A6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = /System/Library/Frameworks/AVFoundation.framework; sourceTree = "<absolute>"; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B297D3ED097536E3004AB0FE /* reacTIVision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reacTIVision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2985D241B1ED49700A3172B /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = ../ext/portvideo/common/ConsoleInterface.cpp; sourceTree = "<group>"; };
@@ -211,14 +207,19 @@
 		B29CCC131B1796B000C106A6 /* FiducialObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FiducialObject.h; path = ../common/FiducialObject.h; sourceTree = "<group>"; };
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../common/Main.h; sourceTree = "<group>"; };
 		B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = reacTIVision.xml; sourceTree = SOURCE_ROOT; };
-		B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B2CA5D42291D455E0051EC1B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B2CA5D44291D456B0051EC1B /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		B2CA5D46291D45750051EC1B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		B2CA5D48291D457F0051EC1B /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		B2CA5D4A291D45890051EC1B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		B2CA5D4C291D45920051EC1B /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		B2CA5D4E291D459F0051EC1B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B2CA60030CD623FA00B46958 /* libdc1394.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdc1394.a; path = ../ext/portvideo/macosx/dc1394/libdc1394.a; sourceTree = SOURCE_ROOT; };
 		B2CAC0B119CC3E94003AC356 /* reacTIVision.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = reacTIVision.png; path = ../linux/reacTIVision.png; sourceTree = "<group>"; };
 		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../ext/portvideo/macosx/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../ext/portvideo/common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
 		B2E644140D6C39EC0000ABD0 /* FolderCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FolderCamera.cpp; path = ../ext/portvideo/common/FolderCamera.cpp; sourceTree = SOURCE_ROOT; };
 		B2E644150D6C39EC0000ABD0 /* FolderCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FolderCamera.h; path = ../ext/portvideo/common/FolderCamera.h; sourceTree = SOURCE_ROOT; };
-		B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		B2F024DD0975394D00538C36 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = ../ext/portvideo/interface/Resources.c; sourceTree = SOURCE_ROOT; };
 		B2F024DE0975394D00538C36 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../ext/portvideo/interface/Resources.h; sourceTree = SOURCE_ROOT; };
 		B2F3467B095B506D00D300A5 /* default_trees.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = default_trees.h; path = ../ext/libfidtrack/default_trees.h; sourceTree = SOURCE_ROOT; };
@@ -226,7 +227,6 @@
 		B2F8A88D1EF2C7DD00D4E04F /* ps3eye.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ps3eye.h; path = ../ext/portvideo/ps3eye/ps3eye.h; sourceTree = "<group>"; };
 		B2F8A88E1EF2C7DD00D4E04F /* PS3EyeCamera.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = PS3EyeCamera.cpp; path = ../ext/portvideo/ps3eye/PS3EyeCamera.cpp; sourceTree = "<group>"; };
 		B2F8A88F1EF2C7DD00D4E04F /* PS3EyeCamera.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = PS3EyeCamera.h; path = ../ext/portvideo/ps3eye/PS3EyeCamera.h; sourceTree = "<group>"; };
-		B2FEA4ED2902EDCD00A55969 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,18 +234,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2CA5D4F291D459F0051EC1B /* QuartzCore.framework in Frameworks */,
+				B2CA5D4D291D45920051EC1B /* Security.framework in Frameworks */,
+				B2CA5D4B291D45890051EC1B /* Cocoa.framework in Frameworks */,
+				B2CA5D49291D457F0051EC1B /* IOKit.framework in Frameworks */,
+				B2CA5D47291D45750051EC1B /* CoreMedia.framework in Frameworks */,
+				B2CA5D45291D456B0051EC1B /* CoreFoundation.framework in Frameworks */,
+				B2CA5D43291D455E0051EC1B /* AVFoundation.framework in Frameworks */,
 				B244E81619C6D4DC008ADD32 /* libusb.a in Frameworks */,
 				B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */,
 				B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */,
 				B21683D419F3962500F07F0D /* VVUVCKit.framework in Frameworks */,
 				B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */,
-				B200D54B1B0E45D500249D8B /* CoreMedia.framework in Frameworks */,
-				B29545EE19E2FF80001111A6 /* AVFoundation.framework in Frameworks */,
-				B24EA4F30015EB5000096D13 /* Cocoa.framework in Frameworks */,
-				B26725EE0C5E3FD100D7FD74 /* IOKit.framework in Frameworks */,
-				B2E6C87A0C9AE9BB0018A29E /* CoreFoundation.framework in Frameworks */,
-				B2FEA4EE2902EDCD00A55969 /* Security.framework in Frameworks */,
-				B2B6BEA919C45AB1005B7174 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,13 +289,6 @@
 				B2DEC9D819F65354006CAD09 /* SDL2.framework */,
 				B21683D219F3962500F07F0D /* VVUVCKit.framework */,
 				B21683D119F3962500F07F0D /* USBBusProber.framework */,
-				B29545ED19E2FF80001111A6 /* AVFoundation.framework */,
-				B2E6C8790C9AE9BB0018A29E /* CoreFoundation.framework */,
-				B200D54A1B0E45D500249D8B /* CoreMedia.framework */,
-				B26725ED0C5E3FD100D7FD74 /* IOKit.framework */,
-				B24EA4F20015EB5000096D13 /* Cocoa.framework */,
-				B2FEA4ED2902EDCD00A55969 /* Security.framework */,
-				B2B6BEA819C45AB1005B7174 /* QuartzCore.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -314,6 +307,7 @@
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
 			name = reacTIVision;
@@ -336,7 +330,13 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+				B2CA5D4E291D459F0051EC1B /* QuartzCore.framework */,
+				B2CA5D4C291D45920051EC1B /* Security.framework */,
+				B2CA5D4A291D45890051EC1B /* Cocoa.framework */,
+				B2CA5D48291D457F0051EC1B /* IOKit.framework */,
+				B2CA5D46291D45750051EC1B /* CoreMedia.framework */,
+				B2CA5D44291D456B0051EC1B /* CoreFoundation.framework */,
+				B2CA5D42291D455E0051EC1B /* AVFoundation.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -621,7 +621,7 @@
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2210;
+				CURRENT_PROJECT_VERSION = 2211;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -680,7 +680,7 @@
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2210;
+				CURRENT_PROJECT_VERSION = 2211;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -734,7 +734,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CURRENT_PROJECT_VERSION = 2210;
+				CURRENT_PROJECT_VERSION = 2211;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
