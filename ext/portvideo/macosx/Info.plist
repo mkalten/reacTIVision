@@ -19,7 +19,7 @@
 	<key>CFBundleSignature</key>
 	<string>TUIO</string>
 	<key>CFBundleVersion</key>
-	<string>2210</string>
+	<string>2211</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.9</string>
 	<key>NSCameraUsageDescription</key>
