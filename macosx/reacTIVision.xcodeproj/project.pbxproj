@@ -328,6 +328,7 @@
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
 			name = reacTIVision;
@@ -359,7 +360,6 @@
 				B25026C4291BFC1800B6EECC /* CoreMedia.framework */,
 				B25026C2291BFC0800B6EECC /* CoreMIDI.framework */,
 				B25026C0291BFBFD00B6EECC /* QuartzCore.framework */,
-				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

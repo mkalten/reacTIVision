@@ -29,3 +29,5 @@ macosx/reacTIVision.xcodeproj/project.xcworkspace
 *.o
 
 linux/reacTIVision
+
+macosx/DerivedData
