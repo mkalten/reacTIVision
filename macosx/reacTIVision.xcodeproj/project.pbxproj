@@ -47,7 +47,6 @@
 		B2985D261B1ED49700A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D241B1ED49700A3172B /* ConsoleInterface.cpp */; };
 		B29CCBE01B17680400C106A6 /* BlobObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBD51B17680400C106A6 /* BlobObject.cpp */; };
 		B29CCBE11B17680400C106A6 /* BlobMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBD71B17680400C106A6 /* BlobMatrix.cpp */; };
-		B29CCC031B17685700C106A6 /* FlashSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBE51B17685700C106A6 /* FlashSender.cpp */; };
 		B29CCC051B17685700C106A6 /* TcpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEA1B17685700C106A6 /* TcpSender.cpp */; };
 		B29CCC061B17685700C106A6 /* TuioBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEC1B17685700C106A6 /* TuioBlob.cpp */; };
 		B29CCC071B17685700C106A6 /* TuioContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBEE1B17685700C106A6 /* TuioContainer.cpp */; };
@@ -175,8 +174,6 @@
 		B29CCBD51B17680400C106A6 /* BlobObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobObject.cpp; path = ../common/BlobObject.cpp; sourceTree = "<group>"; };
 		B29CCBD71B17680400C106A6 /* BlobMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobMatrix.cpp; path = ../common/BlobMatrix.cpp; sourceTree = "<group>"; };
 		B29CCBD81B17680400C106A6 /* BlobMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobMatrix.h; path = ../common/BlobMatrix.h; sourceTree = "<group>"; };
-		B29CCBE51B17685700C106A6 /* FlashSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlashSender.cpp; path = ../ext/tuio/FlashSender.cpp; sourceTree = "<group>"; };
-		B29CCBE61B17685700C106A6 /* FlashSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlashSender.h; path = ../ext/tuio/FlashSender.h; sourceTree = "<group>"; };
 		B29CCBE71B17685700C106A6 /* LibExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibExport.h; path = ../ext/tuio/LibExport.h; sourceTree = "<group>"; };
 		B29CCBE91B17685700C106A6 /* OscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OscSender.h; path = ../ext/tuio/OscSender.h; sourceTree = "<group>"; };
 		B29CCBEA1B17685700C106A6 /* TcpSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TcpSender.cpp; path = ../ext/tuio/TcpSender.cpp; sourceTree = "<group>"; };
@@ -430,8 +427,6 @@
 				B29CCBEB1B17685700C106A6 /* TcpSender.h */,
 				B29CCC011B17685700C106A6 /* WebSockSender.cpp */,
 				B29CCC021B17685700C106A6 /* WebSockSender.h */,
-				B29CCBE51B17685700C106A6 /* FlashSender.cpp */,
-				B29CCBE61B17685700C106A6 /* FlashSender.h */,
 				B29CCBE71B17685700C106A6 /* LibExport.h */,
 			);
 			name = tuio;
@@ -586,7 +581,6 @@
 				B29CCC051B17685700C106A6 /* TcpSender.cpp in Sources */,
 				B29CCBE11B17680400C106A6 /* BlobMatrix.cpp in Sources */,
 				B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */,
-				B29CCC031B17685700C106A6 /* FlashSender.cpp in Sources */,
 				B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */,
 				B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */,
 				B29CCC071B17685700C106A6 /* TuioContainer.cpp in Sources */,
@@ -621,7 +615,7 @@
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2606;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -651,9 +645,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.6.0;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
@@ -680,7 +674,7 @@
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2606;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -706,9 +700,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.6.0;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
@@ -734,7 +728,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2606;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -759,8 +753,9 @@
 				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ../ext/portvideo/macosx/dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.6.0;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
@@ -782,7 +777,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -824,7 +819,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -836,7 +831,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -877,7 +872,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_LDFLAGS = "";
@@ -891,7 +886,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD)";
+				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -931,7 +926,7 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				STRIP_STYLE = debugging;
