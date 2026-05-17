@@ -304,10 +304,10 @@
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "SportVideo" */;
 			compatibilityVersion = "Xcode 12.0";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
+				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* SportVideo */;
 			projectDirPath = "";

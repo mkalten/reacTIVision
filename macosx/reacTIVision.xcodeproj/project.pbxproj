@@ -507,7 +507,6 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				Base,
 				en,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* reacTIVision */;
