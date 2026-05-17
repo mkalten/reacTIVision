@@ -343,13 +343,13 @@ void FrameThresholder::displayControl() {
 
 		settingValue = gradient;
 		maxValue = 64;
-		sprintf(displayText,"gradient gate %d",settingValue);
+		snprintf(displayText,64,"gradient gate %d",settingValue);
 	} else if (setTilesize) {
 
 		settingValue = tile_size;
 		maxValue = tile_sizes[tile_count-1];
 		if (tile_size>maxValue) maxValue=tile_size;
-		sprintf(displayText,"tile size %d",settingValue);
+		snprintf(displayText,64,"tile size %d",settingValue);
 	}
 
 	ui->drawText(17,14,"G          - exit threshold configuration");

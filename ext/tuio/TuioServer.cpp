@@ -136,7 +136,7 @@ void TuioServer::deliverOscPacket(osc::OutboundPacketStream  *packet) {
 
 void TuioServer::setSourceName(const char *name, const char *ip) {
 	if (!source_name) source_name = new char[256];
-	sprintf(source_name,"%s@%s",name,ip);
+	snprintf(source_name,256,"%s@%s",name,ip);
 }
 
 
@@ -145,7 +145,7 @@ void TuioServer::setSourceName(const char *src) {
 	if (!source_name) source_name = new char[256];
 
 	/*if (senderList[0]->isLocal()) {
-		sprintf(source_name,"%s",src);
+		snprintf(source_name,256,"%s",src);
 	} else {*/
 		char hostname[64];
 		char *source_addr = NULL;
@@ -156,7 +156,7 @@ void TuioServer::setSourceName(const char *src) {
 		hp = gethostbyname(hostname);
 		
 		if (hp==NULL) {
-			sprintf(hostname, "%s.local", hostname);
+			snprintf(hostname,64,"%s.local", hostname);
 			hp = gethostbyname(hostname);
 		}
 		
@@ -173,7 +173,7 @@ void TuioServer::setSourceName(const char *src) {
 			addr = (struct in_addr*)&r;
 			source_addr = inet_ntoa(*addr);
 		}
-		sprintf(source_name,"%s@%s",src,source_addr);
+		snprintf(source_name,256,"%s@%s",src,source_addr);
 	//}
 	
 	std::cout << "tuio/src " << source_name << std::endl;

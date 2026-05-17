@@ -231,24 +231,24 @@ void FidtrackFinder::displayControl() {
 			ui->drawEllipse(width/2, height/2, average_finger_size,average_finger_size);
 		}
 		
-		sprintf(displayText,"finger size %d",average_finger_size);
+		snprintf(displayText,64,"finger size %d",average_finger_size);
 		settingValue = average_finger_size;
 		maxValue = 64;
 	} else if (setFingerSensitivity) {
 		ui->drawText(17,14,"F          - exit finger configuration");
-		sprintf(displayText,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
+		snprintf(displayText,64,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
 		settingValue = (int)floor(finger_sensitivity*100+0.5f);
 		maxValue = 200;
 	} else if (setYamarashi) {
 		
 		ui->drawText(17,14,"Y          - exit yamaarashi configuration");
-		sprintf(displayText,"enable yamaarashi %d",detect_yamaarashi);
+		snprintf(displayText,64,"enable yamaarashi %d",detect_yamaarashi);
 		settingValue = detect_yamaarashi;
 		maxValue = 1;
 	} else if (setYamaFlip) {
 		
 		ui->drawText(17,14,"Y          - exit yamaarashi configuration");
-		sprintf(displayText,"invert yamaarashi %d",invert_yamaarashi);
+		snprintf(displayText,64,"invert yamaarashi %d",invert_yamaarashi);
 		settingValue = invert_yamaarashi;
 		maxValue = 1;
 	} else if (setBlobSize) {
@@ -260,17 +260,17 @@ void FidtrackFinder::displayControl() {
 			ui->drawEllipse(width/2, height/2, max_blob_size,max_blob_size);
 		}
 			
-		sprintf(displayText,"blob size %d",(int)max_blob_size);
+		snprintf(displayText,64,"blob size %d",(int)max_blob_size);
 		settingValue = max_blob_size;
 		maxValue = height;
 	} else if (setObjectBlob) {
 		ui->drawText(17,14,"B          - exit blob configuration");
-		sprintf(displayText,"fiducial blobs %d",send_fiducial_blobs);
+		snprintf(displayText,64,"fiducial blobs %d",send_fiducial_blobs);
 		settingValue = send_fiducial_blobs;
 		maxValue = 1;
 	} else if (setFingerBlob) {
 		ui->drawText(17,14,"B          - exit blob configuration");
-		sprintf(displayText,"finger blobs %d",send_finger_blobs);
+		snprintf(displayText,64,"finger blobs %d",send_finger_blobs);
 		settingValue = send_finger_blobs;
 		maxValue = 1;
 	} else return;

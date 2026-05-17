@@ -46,10 +46,10 @@ public:
 			CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);
 			CFRelease( mainBundleURL);
 			CFRelease( cfStringRef);
-			sprintf(tree_config,"%s/Contents/Resources/%s",app_path,config->tree_config);
-		} else sprintf(tree_config,"%s",config->tree_config);
+			snprintf(tree_config,256,"%s/Contents/Resources/%s",app_path,config->tree_config);
+		} else snprintf(tree_config,256,"%s",config->tree_config);
 #else
-		sprintf(tree_config,"%s",config->tree_config);
+		snprintf(tree_config,256,"%s",config->tree_config);
 #endif
 		
 		position_threshold = 0.0f;

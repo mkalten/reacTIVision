@@ -38,7 +38,7 @@ CalibrationEngine::CalibrationEngine(const char* out) {
 		CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
 		CFRelease( mainBundleURL);
 		CFRelease( cfStringRef);
-		sprintf(full_path,"%s/Contents/Resources/calibration.grid",path);
+		snprintf(full_path,1024,"%s/Contents/Resources/calibration.grid",path);
 		calib_out = full_path;
 #else
 		calib_out = "./calibration.grid";
@@ -98,7 +98,7 @@ bool CalibrationEngine::init(int w, int h, int sb, int db) {
 	
 	if (file_exists) {
 		grid->Load(calib_out);
-		sprintf(calib_bak,"%s.bak",calib_out);
+		snprintf(calib_bak,1024,"%s.bak",calib_out);
 		grid->Store(calib_bak);
 	}
 	

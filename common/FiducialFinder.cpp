@@ -161,17 +161,17 @@ void FiducialFinder::displayControl() {
 	switch (currentSetting) {
 		case INV_NONE: return;
 		case INV_XPOS: {
-			sprintf(displayText,"invert X-axis %d",tuioManager->getInvertXpos());
+			snprintf(displayText,64,"invert X-axis %d",tuioManager->getInvertXpos());
 			settingValue = tuioManager->getInvertXpos();
 			break;
 		}
 		case INV_YPOS: {
-			sprintf(displayText,"invert Y-axis %d",tuioManager->getInvertYpos());
+			snprintf(displayText,64,"invert Y-axis %d",tuioManager->getInvertYpos());
 			settingValue = tuioManager->getInvertYpos();
 			break;
 		}
 		case INV_ANGLE: {
-			sprintf(displayText,"invert angle %d",tuioManager->getInvertAngle());
+			snprintf(displayText,64,"invert angle %d",tuioManager->getInvertAngle());
 			settingValue = tuioManager->getInvertAngle();
 			break;
 		}
@@ -187,9 +187,9 @@ void FiducialFinder::drawObject(int id, float xpos, float ypos, int state)
 	if (ui->getDisplayMode()==NO_DISPLAY) return;
 	
 	char id_str[8];
-	if(id>=0) sprintf(id_str,"%d",id);
-	else if (id==FINGER_ID)sprintf(id_str,"F");
-	else if (id==BLOB_ID)sprintf(id_str,"B");
+	if(id>=0) snprintf(id_str,8,"%d",id);
+	else if (id==FINGER_ID)snprintf(id_str,8,"F");
+	else if (id==BLOB_ID)snprintf(id_str,8,"B");
 	
 	switch (state) {
 		case FIDUCIAL_FOUND:

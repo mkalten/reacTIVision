@@ -60,7 +60,7 @@ void readSettings(application_settings *config) {
 	config->tuio_type[0] = TUIO_UDP;
 	config->tuio_port[0] = 3333;
 	config->tuio_host[0] = "localhost";
-	sprintf(config->tuio_source,"rtv");
+	snprintf(config->tuio_source,1024,"%s","rtv");
 
 	for (int i=1;i<32;i++) {
 		config->tuio_type[i] = -1;
@@ -68,9 +68,9 @@ void readSettings(application_settings *config) {
 		config->tuio_host[i] = "";
 	}
 
-	sprintf(config->tree_config,"default");
-	sprintf(config->grid_config,"none");
-	sprintf(config->camera_config,"default");
+	snprintf(config->tree_config,1024,"%s","default");
+	snprintf(config->grid_config,1024,"%s","none");
+	snprintf(config->camera_config,1024,"%s","default");
 	config->invert_x = false;
 	config->invert_y = false;
 	config->invert_a = false;
@@ -103,14 +103,14 @@ void readSettings(application_settings *config) {
 		CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);
 		CFRelease( mainBundleURL);
 		CFRelease( cfStringRef);
-		sprintf(config->file,"%s/Contents/Resources/reacTIVision.xml",app_path);
+		snprintf(config->file,1024,"%s/Contents/Resources/reacTIVision.xml",app_path);
 #elif !defined WIN32
-		if (access ("./reacTIVision.xml", F_OK )==0) sprintf(config->file,"./reacTIVision.xml");
-		else if (access ("/usr/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/usr/share/reacTIVision/reacTIVision.xml");
-		else if (access ("/usr/local/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/usr/local/share/reacTIVision/reacTIVision.xml");
-		else if (access ("/opt/share/reacTIVision/reacTIVision.xml", F_OK )==0) sprintf(config->file,"/opt/share/reacTIVision/reacTIVision.xml");
+		if (access ("./reacTIVision.xml", F_OK )==0) snprintf(config->file,1024,"%s","./reacTIVision.xml");
+		else if (access ("/usr/share/reacTIVision/reacTIVision.xml", F_OK )==0) snprintf(config->file,1024,"%s","/usr/share/reacTIVision/reacTIVision.xml");
+		else if (access ("/usr/local/share/reacTIVision/reacTIVision.xml", F_OK )==0) snprintf(config->file,1024,"%s","/usr/local/share/reacTIVision/reacTIVision.xml");
+		else if (access ("/opt/share/reacTIVision/reacTIVision.xml", F_OK )==0) snprintf(config->file,1024,"%s","/opt/share/reacTIVision/reacTIVision.xml");
 #else
-		sprintf(config->file,"./reacTIVision.xml");
+		snprintf(config->file,1024,"%s","./reacTIVision.xml");
 #endif
 	}
 	
@@ -142,7 +142,7 @@ void readSettings(application_settings *config) {
 			if(tuio_element->Attribute("port")!=NULL) config->tuio_port[tcount] = atoi(tuio_element->Attribute("port"));
 			tcount++;
 		} else if(tuio_element->Attribute("source")!=NULL) {
-			sprintf(config->tuio_source,"%s",tuio_element->Attribute("source"));
+			snprintf(config->tuio_source,1024,"%s",tuio_element->Attribute("source"));
 		}
 
 		tuio_element = tuio_element->NextSiblingElement("tuio");
@@ -162,7 +162,7 @@ void readSettings(application_settings *config) {
 				tcount++;
 				if (tcount==32) break;
 			} else if(tuio_element->Attribute("source")!=NULL) {
-				sprintf(config->tuio_source,"%s",tuio_element->Attribute("source"));
+				snprintf(config->tuio_source,1024,"%s",tuio_element->Attribute("source"));
 			}
 
 			tuio_element = tuio_element->NextSiblingElement("tuio");
@@ -173,7 +173,7 @@ void readSettings(application_settings *config) {
 	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if( camera_element!=NULL )
 	{
-		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
+		if(camera_element->Attribute("config")!=NULL) snprintf(config->camera_config,1024,"%s",camera_element->Attribute("config"));
 	}
 
 	tinyxml2::XMLElement* finger_element = config_root.FirstChildElement("finger").ToElement();
@@ -241,7 +241,7 @@ void readSettings(application_settings *config) {
 
 		if(fiducial_element->Attribute("max_fid")!=NULL) config->max_fid = atoi(fiducial_element->Attribute("max_fid"));
 
-		if(fiducial_element->Attribute("amoeba")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("amoeba"));
+		if(fiducial_element->Attribute("amoeba")!=NULL) snprintf(config->tree_config,1024,"%s",fiducial_element->Attribute("amoeba"));
 	}
 	
 	tinyxml2::XMLElement* filter_element = config_root.FirstChildElement("filter").ToElement();
@@ -283,7 +283,7 @@ void readSettings(application_settings *config) {
 			if (strstr(calibration_element->Attribute("invert"),"y")!=NULL) config->invert_y = true;
 			if (strstr(calibration_element->Attribute("invert"),"a")!=NULL) config->invert_a = true;
 		}
-		if(calibration_element->Attribute("grid")!=NULL) sprintf(config->grid_config,"%s",calibration_element->Attribute("grid"));
+		if(calibration_element->Attribute("grid")!=NULL) snprintf(config->grid_config,1024,"%s",calibration_element->Attribute("grid"));
 	}
 	
 }
@@ -309,7 +309,7 @@ void writeSettings(application_settings *config) {
 	{
 		if(tuio_element->Attribute("host")!=NULL) tuio_element->SetAttribute("host",config->tuio_host);
 		if(tuio_element->Attribute("port")!=NULL) {
-			sprintf(config_value,"%d",config->tuio_port);
+			snprintf(config_value,64,"%d",config->tuio_port);
 			tuio_element->SetAttribute("port",config_value);
 		}
 	}*/
@@ -324,11 +324,11 @@ void writeSettings(application_settings *config) {
 	if( finger_element!=NULL )
 	{
 		if(finger_element->Attribute("size")!=NULL) {
-			sprintf(config_value,"%d",config->finger_size);
+			snprintf(config_value,64,"%d",config->finger_size);
 			finger_element->SetAttribute("size",config_value);
 		}
 		if(finger_element->Attribute("sensitivity")!=NULL) {
-			sprintf(config_value,"%d",config->finger_sensitivity);
+			snprintf(config_value,64,"%d",config->finger_sensitivity);
 			finger_element->SetAttribute("sensitivity",config_value);
 		}
 	}
@@ -337,7 +337,7 @@ void writeSettings(application_settings *config) {
 	if( blob_element!=NULL )
 	{
 		if(blob_element->Attribute("max_size")!=NULL) {
-			sprintf(config_value,"%d",config->max_blob_size);
+			snprintf(config_value,64,"%d",config->max_blob_size);
 			blob_element->SetAttribute("max_size",config_value);
 		}
 		
@@ -375,11 +375,11 @@ void writeSettings(application_settings *config) {
 	if( threshold_element!=NULL )
 	{
 		if(threshold_element->Attribute("gradient")!=NULL) {
-			sprintf(config_value,"%d",config->gradient_gate);
+			snprintf(config_value,64,"%d",config->gradient_gate);
 			threshold_element->SetAttribute("gradient",config_value);
 		}
 		if(threshold_element->Attribute("tile")!=NULL) {
-			sprintf(config_value,"%d",config->tile_size);
+			snprintf(config_value,64,"%d",config->tile_size);
 			threshold_element->SetAttribute("tile",config_value);
 		}
 	}
@@ -401,7 +401,7 @@ void writeSettings(application_settings *config) {
 	tinyxml2::XMLElement* calibration_element = config_root.FirstChildElement("calibration").ToElement();
 	if( calibration_element!=NULL )
 	{
-		sprintf(config_value," ");
+		snprintf(config_value,64,"%s"," ");
 		if(calibration_element->Attribute("invert")!=NULL)  {
 			if (config->invert_x) strcat(config_value,"x");
 			if (config->invert_y) strcat(config_value,"y");
@@ -419,7 +419,7 @@ void writeSettings(application_settings *config) {
 int main(int argc, char* argv[]) {
 
 	application_settings config;
-	sprintf(config.file,"none");
+	snprintf(config.file,1024,"%s","none");
 
 	const char *app_name = "reacTIVision";
 	const char *version_no = "1.6";
@@ -433,7 +433,7 @@ int main(int argc, char* argv[]) {
 			printUsage(app_name);
 			return 0;
 		} else if( strcmp( argv[1], "-c" ) == 0 ) {
-			if (argc==3) sprintf(config.file,"%s",argv[2]);
+			if (argc==3) snprintf(config.file,1024,"%s",argv[2]);
 			else {
 				printUsage(app_name);
 				return 0;
