@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -22,7 +22,6 @@
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */; };
 		B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */; };
-		B297D3B7097536E2004AB0FE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		B297D3B8097536E2004AB0FE /* reacTIVision.icns in Resources */ = {isa = PBXBuildFile; fileRef = B260492208E9BF4B0095D4C8 /* reacTIVision.icns */; };
 		B297D3BE097536E2004AB0FE /* CameraTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208511078AFC0A0047913B /* CameraTool.cpp */; };
 		B297D3BF097536E2004AB0FE /* FiducialFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2208519078AFC3D0047913B /* FiducialFinder.cpp */; };
@@ -60,6 +59,7 @@
 		B29CCC0F1B17685700C106A6 /* UdpSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCBFF1B17685700C106A6 /* UdpSender.cpp */; };
 		B29CCC101B17685700C106A6 /* WebSockSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCC011B17685700C106A6 /* WebSockSender.cpp */; };
 		B2AEE8EC0DE5D15C00D51856 /* reacTIVision.xml in Resources */ = {isa = PBXBuildFile; fileRef = B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */; };
+		B2B391302FBA5F1B0041C7C5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B2B3912F2FBA5F1B0041C7C5 /* InfoPlist.xcstrings */; };
 		B2CA5D43291D455E0051EC1B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D42291D455E0051EC1B /* AVFoundation.framework */; };
 		B2CA5D45291D456B0051EC1B /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D44291D456B0051EC1B /* CoreFoundation.framework */; };
 		B2CA5D47291D45750051EC1B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D46291D45750051EC1B /* CoreMedia.framework */; };
@@ -161,7 +161,6 @@
 		B260496008E9BFC00095D4C8 /* OscReceivedElements.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = OscReceivedElements.h; path = ../ext/oscpack/osc/OscReceivedElements.h; sourceTree = SOURCE_ROOT; };
 		B260496508E9BFC00095D4C8 /* OscTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = OscTypes.cpp; path = ../ext/oscpack/osc/OscTypes.cpp; sourceTree = SOURCE_ROOT; };
 		B260496608E9BFC00095D4C8 /* OscTypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = OscTypes.h; path = ../ext/oscpack/osc/OscTypes.h; sourceTree = SOURCE_ROOT; };
-		B2718AC22297CAAB00EA2892 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CalibrationGrid.cpp; path = ../common/CalibrationGrid.cpp; sourceTree = SOURCE_ROOT; };
 		B2884A780A2CF0E800AFF79A /* CalibrationGrid.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CalibrationGrid.h; path = ../common/CalibrationGrid.h; sourceTree = SOURCE_ROOT; };
@@ -204,6 +203,7 @@
 		B29CCC131B1796B000C106A6 /* FiducialObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FiducialObject.h; path = ../common/FiducialObject.h; sourceTree = "<group>"; };
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../common/Main.h; sourceTree = "<group>"; };
 		B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = reacTIVision.xml; sourceTree = SOURCE_ROOT; };
+		B2B3912F2FBA5F1B0041C7C5 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		B2CA5D42291D455E0051EC1B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B2CA5D44291D456B0051EC1B /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		B2CA5D46291D45750051EC1B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -319,7 +319,7 @@
 				B208146B29015EF900EBB5AF /* reacTIVision.entitlements */,
 				B282A34C0CD756B500657CDA /* camera.xml */,
 				B260492208E9BF4B0095D4C8 /* reacTIVision.icns */,
-				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				B2B3912F2FBA5F1B0041C7C5 /* InfoPlist.xcstrings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -503,15 +503,12 @@
 				};
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
-				de,
 				en,
-				ja,
-				fr,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* reacTIVision */;
 			projectDirPath = "";
@@ -527,7 +524,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B297D3B7097536E2004AB0FE /* InfoPlist.strings in Resources */,
+				B2B391302FBA5F1B0041C7C5 /* InfoPlist.xcstrings in Resources */,
 				B2CAC0B219CC3E94003AC356 /* reacTIVision.png in Resources */,
 				B297D3B8097536E2004AB0FE /* reacTIVision.icns in Resources */,
 				B282A34D0CD756B500657CDA /* camera.xml in Resources */,
@@ -594,17 +591,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B2718AC22297CAAB00EA2892 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		B297D3E9097536E2004AB0FE /* Development */ = {
@@ -819,11 +805,13 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Development;
 		};
@@ -872,12 +860,14 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				STRIP_STYLE = all;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Deployment;
@@ -926,10 +916,12 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				STRIP_STYLE = debugging;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Default;
 		};
