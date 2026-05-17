@@ -164,14 +164,14 @@ void SDLinterface::updateDisplay()
 		
 		CameraConfig *cfg = &dev_list[selector_];
 		char camera_str[256];
-		sprintf(camera_str,"%s_%d: %s",dstr[cfg->driver],cfg->device,cfg->name);
+		snprintf(camera_str,256,"%s_%d: %s",dstr[cfg->driver],cfg->device,cfg->name);
 		drawText((width_- textWidth(camera_str))/2,height_/2-textHeight(),camera_str);
 		
 		char format_str[256];
 		if (cfg->frame_mode>=0) {
-			sprintf(format_str,"format7_%d %dx%d (%s)",cfg->frame_mode, cfg->cam_width,cfg->cam_height,fstr[cfg->cam_format]);
-		} else if (cfg->cam_fps==(int)cfg->cam_fps) sprintf(format_str,"%dx%d@%d (%s)",cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
-		else sprintf(format_str,"%dx%d@%.1f (%s)",cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
+			snprintf(format_str,256,"format7_%d %dx%d (%s)",cfg->frame_mode, cfg->cam_width,cfg->cam_height,fstr[cfg->cam_format]);
+		} else if (cfg->cam_fps==(int)cfg->cam_fps) snprintf(format_str,256,"%dx%d@%d (%s)",cfg->cam_width,cfg->cam_height,(int)cfg->cam_fps,fstr[cfg->cam_format]);
+		else snprintf(format_str,256,"%dx%d@%.1f (%s)",cfg->cam_width,cfg->cam_height,cfg->cam_fps,fstr[cfg->cam_format]);
 		drawText((width_- textWidth(format_str))/2,height_/2,format_str);
 		SDL_RenderCopy(renderer_, display_, NULL, NULL);
 		SDL_RenderPresent(renderer_);
@@ -369,7 +369,7 @@ void SDLinterface::processEvents()
 					{
 						engine_->pause(pause_=false);
 						char caption[24] = "";
-						sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
+						snprintf(caption,24,"%s - %d FPS",app_name_.c_str(),current_fps_);
 						SDL_SetWindowTitle( window_, caption);
 					}
 					else
@@ -425,14 +425,14 @@ void SDLinterface::processEvents()
 					{
 						recording_ = false;
 						char caption[24] = "";
-						sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
+						snprintf(caption,24,"%s - %d FPS",app_name_.c_str(),current_fps_);
 						SDL_SetWindowTitle( window_, caption);
 					}
 					else
 					{
 						recording_ = true;
 						char caption[24] = "";
-						sprintf(caption,"recording - %d FPS",current_fps_);
+						snprintf(caption,24,"recording - %d FPS",current_fps_);
 						SDL_SetWindowTitle( window_, caption);
 					}
 				}
@@ -515,7 +515,7 @@ void SDLinterface::showFrameRate()
 	if (fullscreen_)
 	{
 		char caption[24] = "";
-		sprintf(caption,"%d FPS",current_fps_);
+		snprintf(caption,24,"%d FPS",current_fps_);
 		drawText(width_-(textWidth(caption)+textHeight()),textHeight(),caption);
 	}
 	
@@ -524,9 +524,9 @@ void SDLinterface::showFrameRate()
 		current_fps_ = (int)floor( (frames_ / diffTime) + 0.5 );
 		
 		char caption[24] = "";
-		sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps_);
+		snprintf(caption,24,"%s - %d FPS",app_name_.c_str(),current_fps_);
 #ifndef NDEBUG
-		if (recording_) sprintf(caption,"recording - %d FPS",current_fps_);
+		if (recording_) snprintf(caption,24,"recording - %d FPS",current_fps_);
 #endif
 		SDL_SetWindowTitle( window_, caption);
 		

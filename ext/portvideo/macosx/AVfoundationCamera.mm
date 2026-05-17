@@ -172,9 +172,20 @@ AVfoundationCamera::~AVfoundationCamera()
 
 int AVfoundationCamera::getDeviceCount() {
 	
-	NSInteger dev_count0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo].count;
-	NSInteger dev_count1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed].count;
-	return ((int)(dev_count0 + dev_count1));
+    NSArray *deviceTypes = @[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera, // Built-in FaceTime Cameras
+        AVCaptureDeviceTypeExternalUnknown         // USB webcams & third-party hardware
+    ];
+
+    // Create the Discovery Session
+    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeVideo
+        position:AVCaptureDevicePositionUnspecified];
+
+    // Safely pull the count
+    NSInteger dev_count0 = discoverySession.devices.count;
+	return (int)(dev_count0);
 }
 
 std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
@@ -183,11 +194,30 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
     int dev_count = getDeviceCount();
     if (dev_count==0) return cfg_list;
 	
-    NSMutableArray *captureDevices = [NSMutableArray arrayWithCapacity:dev_count];
-	NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-	for (AVCaptureDevice* device in dev_list0) [captureDevices addObject:device];
-	NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-    for (AVCaptureDevice* device in dev_list1)[captureDevices addObject:device];
+    // 1. Target the only valid video/muxed device types on macOS 11
+    NSArray *deviceTypes = @[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera, // Built-in FaceTime Cameras
+        AVCaptureDeviceTypeExternalUnknown         // External USB webcams & third-party cards
+    ];
+
+    // 2. Initialize a mutable array to collect the devices
+    NSMutableArray *captureDevices = [NSMutableArray array];
+
+    // 3. Discover Video Media Type Devices
+    AVCaptureDeviceDiscoverySession *videoSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeVideo
+        position:AVCaptureDevicePositionUnspecified];
+
+    [captureDevices addObjectsFromArray:videoSession.devices];
+
+    // 4. Discover Muxed Media Type Devices (e.g., Camcorders / FireWire interfaces)
+    AVCaptureDeviceDiscoverySession *muxedSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeMuxed
+        position:AVCaptureDevicePositionUnspecified];
+
+    [captureDevices addObjectsFromArray:muxedSession.devices];
     
     int cam_id = -1;
     for (AVCaptureDevice* device in captureDevices) {
@@ -201,8 +231,8 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
         cam_cfg.device = cam_id;
 
         if ([device localizedName]!=NULL)
-            sprintf(cam_cfg.name,"%s",[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        else sprintf(cam_cfg.name,"unknown device");
+            snprintf(cam_cfg.name,256,"%s",[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
+        else snprintf(cam_cfg.name,256,"%s","unknown device");
 		
 		std::vector<CameraConfig> fmt_list;
 		int last_format = FORMAT_UNKNOWN;
@@ -278,19 +308,38 @@ bool AVfoundationCamera::initCamera() {
     int dev_count = getDeviceCount();
     if ((dev_count==0) || (cfg->device < 0) || (cfg->device>=dev_count)) return false;
 	
-    NSMutableArray *videoDevices = [NSMutableArray arrayWithCapacity:dev_count];
-	NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    for (AVCaptureDevice* dev in dev_list0) [videoDevices addObject:dev];
-	NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-    for (AVCaptureDevice* dev in dev_list1) [videoDevices addObject:dev];
+    // 1. Define device types valid for macOS 11 (FaceTime cameras + external USB webcams)
+    NSArray *deviceTypes = @[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera,
+        AVCaptureDeviceTypeExternalUnknown
+    ];
+
+    // 2. Initialize the array (replaces capacity count safely)
+    NSMutableArray *videoDevices = [NSMutableArray array];
+
+    // 3. Query and add Video devices
+    AVCaptureDeviceDiscoverySession *videoSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeVideo
+        position:AVCaptureDevicePositionUnspecified];
+
+    [videoDevices addObjectsFromArray:videoSession.devices];
+
+    // 4. Query and add Muxed devices (Legacy DV cams, FireWire links, etc.)
+    AVCaptureDeviceDiscoverySession *muxedSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeMuxed
+        position:AVCaptureDevicePositionUnspecified];
+
+    [videoDevices addObjectsFromArray:muxedSession.devices];
 	
     videoDevice = [videoDevices objectAtIndex:cfg->device];
     if (videoDevice==NULL) return false;
     //else [videoDevices release];
 	
     if ([videoDevice localizedName]!=NULL)
-        sprintf(cfg->name,"%s",[[videoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-    else sprintf(cfg->name,"unknown");
+        snprintf(cfg->name,256,"%s",[[videoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
+    else snprintf(cfg->name,256,"%s","unknown");
     
     session = [[AVCaptureSession alloc] init];
     if (session==NULL) return false;

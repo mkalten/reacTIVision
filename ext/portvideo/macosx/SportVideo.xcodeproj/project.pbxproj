@@ -34,7 +34,6 @@
 		B2985D1D1B1E301600A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D1B1B1E301600A3172B /* ConsoleInterface.cpp */; };
 		B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29AE05A1B0A95050046E462 /* FrameInverter.cpp */; };
 		B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */ = {isa = PBXBuildFile; fileRef = B29AE05D1B0A999C0046E462 /* portvideo.xml */; };
-		B2B3912A2FBA5B780041C7C5 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B2B391292FBA5B780041C7C5 /* Info.plist */; };
 		B2B3912E2FBA5BD00041C7C5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B2B3912D2FBA5BD00041C7C5 /* InfoPlist.xcstrings */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
 		B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; };
@@ -300,7 +299,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1400;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2650;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "SportVideo" */;
 			compatibilityVersion = "Xcode 12.0";
@@ -324,7 +324,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B2B3912E2FBA5BD00041C7C5 /* InfoPlist.xcstrings in Resources */,
-				B2B3912A2FBA5B780041C7C5 /* Info.plist in Resources */,
 				B297D3B8097536E2004AB0FE /* SportVideo.icns in Resources */,
 				B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */,
 				B282A34D0CD756B500657CDA /* camera.xml in Resources */,
@@ -381,7 +380,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
@@ -433,7 +432,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_STRICT_ALIASING = YES;
 				GCC_VERSION = "";
@@ -484,7 +483,7 @@
 					"$(PROJECT_DIR)/Frameworks",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
@@ -564,6 +563,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -620,6 +620,7 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				STRIP_STYLE = all;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -673,6 +674,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				STRIP_STYLE = debugging;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};

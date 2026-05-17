@@ -1125,13 +1125,13 @@ unsigned char camera_img[3910] =
   0x00,0x00,0x00,0x00,0x00,0x00,
 };
 
-SDL_Surface *getCamera() {
+SDL_Surface *getCamera(void) {
 
   SDL_RWops *src = SDL_RWFromMem(&camera_img, 3910);
   return SDL_LoadBMP_RW(src, 1);
 }
 
-SDL_Surface *getFont() {
+SDL_Surface *getFont(void) {
 
   SDL_RWops *src = SDL_RWFromMem(&font_img, 13654);
   return SDL_LoadBMP_RW(src, 1);

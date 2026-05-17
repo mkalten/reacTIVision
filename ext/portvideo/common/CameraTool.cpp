@@ -249,7 +249,7 @@ CameraEngine* CameraTool::getCamera(CameraConfig *cam_cfg) {
 
 void CameraTool::initCameraConfig(CameraConfig *cfg) {
 	
-	sprintf(cfg->src,"none");
+	snprintf(cfg->src,256,"%s","none");
 	
 	cfg->driver = DRIVER_DEFAULT;
 	cfg->device = 0;
@@ -342,21 +342,21 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
 		CFRelease( mainBundleURL);
 		CFRelease( cfStringRef);
-		sprintf(cam_cfg.path,"%s/Contents/Resources/camera.xml",path);
+		snprintf(cam_cfg.path,256,"%s/Contents/Resources/camera.xml",path);
 #elif defined LINUX
 		struct passwd *pw = getpwuid(getuid());
-		sprintf(path,"%s/.portvideo/camera.xml",pw->pw_dir);
+		snprintf(path,255,"%s/.portvideo/camera.xml",pw->pw_dir);
 
-		sprintf(cam_cfg.path,"./camera.xml");
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"%s",path);
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/share/portvideo/camera.xml");
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/usr/local/share/portvideo/camera.xml");
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/share/portvideo/camera.xml");
-		if (access (cam_cfg.path, F_OK )!=0) sprintf(cam_cfg.path,"/opt/local/share/portvideo/camera.xml");
+		snprintf(cam_cfg.path,"./camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s",path);
+		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/usr/share/portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/usr/local/share/portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/opt/share/portvideo/camera.xml");
+		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/opt/local/share/portvideo/camera.xml");
 #else
-		sprintf(cam_cfg.path,"./camera.xml");
+		snprintf(cam_cfg.path,255,"%s","./camera.xml");
 #endif
-	} else sprintf(cam_cfg.path,"%s",cfgfile);
+	} else snprintf(cam_cfg.path,256,"%s",cfgfile);
 	
 	tinyxml2::XMLDocument xml_settings;
 	xml_settings.LoadFile(cam_cfg.path);
@@ -390,9 +390,9 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 	
 	if(camera_element->Attribute("src")!=NULL) {
 #ifdef __APPLE__
-		sprintf(cam_cfg.src,"%s/../%s",path,camera_element->Attribute("src"));
+		snprintf(cam_cfg.src,256,"%s/../%s",path,camera_element->Attribute("src"));
 #else
-		sprintf(cam_cfg.src,"%s",camera_element->Attribute("src"));
+		snprintf(cam_cfg.src,256,"%s",camera_element->Attribute("src"));
 #endif
 	}
 	
@@ -596,7 +596,7 @@ void CameraTool::saveAttribute(tinyxml2::XMLElement* settings,const char *attrib
 	else if (config==SETTING_DEFAULT) settings->SetAttribute(attribute,"default");
 	else {
 		char value[64];
-		sprintf(value,"%d",config);
+		snprintf(value,64,"%d",config);
 		settings->SetAttribute(attribute,value);
 	}
 }

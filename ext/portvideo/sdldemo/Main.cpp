@@ -46,7 +46,7 @@ void printUsage(const char *app_name) {
 
 void readSettings(application_settings *config) {
 
-	sprintf(config->camera_config,"default");
+	snprintf(config->camera_config,1024,"%s","default");
 	config->background = false;
 	config->fullscreen = false;
 	config->headless = false;
@@ -61,14 +61,14 @@ void readSettings(application_settings *config) {
 	CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);	
 	CFRelease( mainBundleURL);
 	CFRelease( cfStringRef);
-	sprintf(config->file,"%s/Contents/Resources/portvideo.xml",app_path);
+	snprintf(config->file,1024,"%s/Contents/Resources/portvideo.xml",app_path);
 #elif !defined WIN32
-        if (access ("./portvideo.xml", F_OK )==0) sprintf(config->file,"./portvideo.xml");
-        else if (access ("/usr/share/portvideo/portvideo.xml", F_OK )==0) sprintf(config->file,"/usr/share/portvideo/portvideo.xml");
-        else if (access ("/usr/local/share/portvideo/portvideo.xml", F_OK )==0) sprintf(config->file,"/usr/local/share/portvideo/portvideo.xml");
-        else if (access ("/opt/share/portvideo/portvideo.xml", F_OK )==0) sprintf(config->file,"/opt/share/portvideo/portvideo.xml");
+        if (access ("./portvideo.xml", F_OK )==0) snprintf(config->file,1024,"%s","./portvideo.xml");
+        else if (access ("/usr/share/portvideo/portvideo.xml", F_OK )==0) snprintf(config->file,1024,"%s","/usr/share/portvideo/portvideo.xml");
+        else if (access ("/usr/local/share/portvideo/portvideo.xml", F_OK )==0) snprintf(config->file,1024,"%s","/usr/local/share/portvideo/portvideo.xml");
+        else if (access ("/opt/share/portvideo/portvideo.xml", F_OK )==0) snprintf(config->file,1024,"%s","/opt/share/portvideo/portvideo.xml");
 #else
-        sprintf(config->file,"./portvideo.xml");
+        snprintf(config->file,1024,"%s","./portvideo.xml");
 #endif
 	}
 
@@ -84,7 +84,7 @@ void readSettings(application_settings *config) {
 
 	tinyxml2::XMLElement* camera_element = config_root.FirstChildElement("camera").ToElement();
 	if(camera_element!=NULL) {
-		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
+		if(camera_element->Attribute("config")!=NULL) snprintf(config->camera_config,1024,"%s",camera_element->Attribute("config"));
 	}
 
 	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
@@ -148,7 +148,7 @@ void writeSettings(application_settings *config) {
 int main(int argc, char* argv[]) {
 
 	application_settings config;
-	sprintf(config.file,"none");
+	snprintf(config.file,1024,"%s","none");
 
 	const char *app_name = "SportVideo";
 	const char *version_no = "0.6";
@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
 			printUsage(app_name);
 			return 0;
 		} else if( strcmp( argv[1], "-c" ) == 0 ) {
-			if (argc==3) sprintf(config.file,"%s",argv[2]);
+			if (argc==3) snprintf(config.file,1024,"%s",argv[2]);
 			else {
 				printUsage(app_name);
 				return 0;

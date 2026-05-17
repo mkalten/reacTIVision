@@ -85,17 +85,17 @@ void FrameInverter::displayControl() {
 	switch (currentSetting) {
 		case INV_NONE: return;
 		case INV_RED: {
-			sprintf(displayText,"invert RED channel %d",(int)invert_red);
+			snprintf(displayText,64,"invert RED channel %d",(int)invert_red);
 			settingValue = (int)invert_red;
 			break;
 		}
 		case INV_GREEN: {
-			sprintf(displayText,"invert GREEN channel %d",(int)invert_green);
+			snprintf(displayText,64,"invert GREEN channel %d",(int)invert_green);
 			settingValue = (int)invert_green;
 			break;
 		}
 		case INV_BLUE: {
-			sprintf(displayText,"invert BLUE channel %d",(int)invert_blue);
+			snprintf(displayText,64,"invert BLUE channel %d",(int)invert_blue);
 			settingValue = (int)invert_blue;
 			break;
 		}

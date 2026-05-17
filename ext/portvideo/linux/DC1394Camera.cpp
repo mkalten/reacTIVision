@@ -88,7 +88,7 @@ std::vector<CameraConfig> DC1394Camera::getCameraConfigs(int dev_id) {
 		
 		cam_cfg.driver = DRIVER_DC1394;
 		cam_cfg.device = i;
-		sprintf(cam_cfg.name,"%s",camera->model);
+		snprintf(cam_cfg.name,256,"%s",camera->model);
 		
 		dc1394video_modes_t video_modes;
 		
@@ -214,7 +214,7 @@ bool DC1394Camera::initCamera() {
 	}
 	dc1394_camera_free_list (list);
 
-	sprintf(cfg->name,"%s", camera->model);
+	snprintf(cfg->name,256,"%s", camera->model);
 	
 	std::vector<CameraConfig> cfg_list = getCameraConfigs(cfg->device);
 	if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;

@@ -27,7 +27,7 @@ FolderCamera::FolderCamera(CameraConfig *cam_cfg): CameraEngine(cam_cfg)
 {
 	cam_buffer = NULL;
 	file_buffer = NULL;
-	sprintf(cfg->name,"FolderCamera");
+	snprintf(cfg->name,256,"%s","FolderCamera");
 	running=false;
 }
 
@@ -54,11 +54,11 @@ bool FolderCamera::initCamera() {
 #ifdef WIN32
 	WIN32_FIND_DATA results;
 	char buf[255];
-	sprintf(buf, "%s\\*", cfg->src);
+	snprintf(buf,255,"%s\\*", cfg->src);
 	HANDLE list = FindFirstFile(buf, &results);
 	while (FindNextFile(list, &results)) {
 		if ((strstr(results.cFileName,".pgm")!=NULL) || (strstr(results.cFileName,".ppm")!=NULL)) {
-			sprintf(file_name,"%s\\%s",cfg->src,results.cFileName);
+			snprintf(file_name,255,"%s\\%s",cfg->src,results.cFileName);
 			image_list.push_back(file_name);
 		}
 	}
@@ -70,7 +70,7 @@ bool FolderCamera::initCamera() {
 	if (dp != NULL) {
 		while ((ep = readdir (dp))) {
 			if ((strstr(ep->d_name,".pgm")!=NULL) || (strstr(ep->d_name,".ppm")!=NULL)) {
-				sprintf(file_name,"%s/%s",cfg->src,ep->d_name);
+				snprintf(file_name,256,"%s/%s",cfg->src,ep->d_name);
 				image_list.push_back(file_name);
 			}
 		}

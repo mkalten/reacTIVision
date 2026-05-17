@@ -177,7 +177,7 @@ void CameraEngine::showInterface(UserInterface *uiface) {
     }
 
     char displayText[256];
-    sprintf(displayText,"%s %d",settingText,ctrl_val);
+    snprintf(displayText,256,"%s %d",settingText,ctrl_val);
 
 	uiface->drawText(17,14,"O          - exit camera configuration");
     uiface->drawText(17,56,"D          - reset to default values");

@@ -80,7 +80,7 @@ void VisionEngine::saveBuffer(unsigned char* buffer, int bytes) {
     CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
     CFRelease( mainBundleURL);
     CFRelease( cfStringRef);
-    sprintf(full_path,"%s/../recording",path);
+    snprintf(full_path,1024,"%s/../recording",path);
     if (stat(full_path,&info)!=0) mkdir(full_path,0777);
 #else
     if (stat("./recording",&info)!=0) mkdir("./recording",0777);
@@ -94,11 +94,11 @@ void VisionEngine::saveBuffer(unsigned char* buffer, int bytes) {
     
     char fileName[256];
 #ifdef WIN32
-    sprintf(fileName,".\\recording\\%s%ld.%s",zero,framenumber_,file_ext);
+    snprintf(fileName,256,".\\recording\\%s%ld.%s",zero,framenumber_,file_ext);
 #elif defined __APPLE__
-    sprintf(fileName,"%s/../recording/%s%ld.%s",path,zero,framenumber_,file_ext);
+    snprintf(fileName,256,"%s/../recording/%s%ld.%s",path,zero,framenumber_,file_ext);
 #else
-    sprintf(fileName,"./recording/%s%ld.%s",zero,framenumber_,file_ext);
+    snprintf(fileName,256,"./recording/%s%ld.%s",zero,framenumber_,file_ext);
 #endif
 
     FILE*  imagefile=fopen(fileName, "w");

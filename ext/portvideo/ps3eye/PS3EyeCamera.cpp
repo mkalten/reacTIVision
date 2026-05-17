@@ -52,7 +52,7 @@ std::vector<CameraConfig> PS3EyeCamera::getCameraConfigs() {
             CameraConfig cam_cfg;
             CameraTool::initCameraConfig(&cam_cfg);
             
-            sprintf(cam_cfg.name, "PS3Eye");
+            snprintf(cam_cfg.name,256,"%s","PS3Eye");
             cam_cfg.driver = DRIVER_PS3EYE;
             cam_cfg.device = i;
 
@@ -148,7 +148,7 @@ bool PS3EyeCamera::initCamera() {
 	if ((cfg->device<0) || (cfg->device>=dev_count)) return false;
 	
 	eye = devices.at(cfg->device);
-	sprintf(cfg->name, "PS3Eye");
+	snprintf(cfg->name,256,"%s","PS3Eye");
 	
     // check config parameters
     if ((cfg->cam_width == SETTING_MIN || cfg->cam_width == 320) && (cfg->cam_height == SETTING_MIN || cfg->cam_height == 240)) {
