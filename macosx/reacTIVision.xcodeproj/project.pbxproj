@@ -494,7 +494,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1400;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					B297D37B097536E2004AB0FE = {
 						DevelopmentTeam = CDB4DSECA2;
@@ -762,7 +763,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -808,6 +808,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -818,7 +819,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -865,6 +865,7 @@
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				STRIP_STYLE = all;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				USER_HEADER_SEARCH_PATHS = "";
@@ -875,7 +876,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = x86_64;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -919,6 +919,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				STRIP_STYLE = debugging;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
