@@ -23,7 +23,6 @@
 #include "UdpSender.h"
 #include "TcpSender.h"
 #include "WebSockSender.h"
-#include "FlashSender.h"
 #include <iostream>
 #include <vector>
 #include <stdio.h>

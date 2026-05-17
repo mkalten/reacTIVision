@@ -484,7 +484,6 @@ int main(int argc, char* argv[]) {
 			case TUIO_TCP_CLIENT: sender = new TcpSender(config.tuio_host[i].c_str(),config.tuio_port[i]); break;
 			case TUIO_TCP_HOST: sender = new TcpSender(config.tuio_port[i]); break;
 			case TUIO_WEB: sender = new WebSockSender(config.tuio_port[i]); break;
-			case TUIO_FLASH: sender = new FlashSender(); break;
 			default: continue;
 		} } catch (std::exception e) {}
 
