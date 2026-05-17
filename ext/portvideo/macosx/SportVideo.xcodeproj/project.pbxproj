@@ -3,11 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B200D5381B0CAEC400249D8B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B200D5361B0CAEC400249D8B /* InfoPlist.strings */; };
 		B200D5431B0D153F00249D8B /* VisionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D5421B0D153F00249D8B /* VisionEngine.cpp */; };
 		B200D55D1B0E52BB00249D8B /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B200D55A1B0E52BB00249D8B /* tinyxml2.cpp */; };
 		B21683D319F3962500F07F0D /* USBBusProber.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B21683D119F3962500F07F0D /* USBBusProber.framework */; };
@@ -35,6 +34,8 @@
 		B2985D1D1B1E301600A3172B /* ConsoleInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2985D1B1B1E301600A3172B /* ConsoleInterface.cpp */; };
 		B29AE05C1B0A95050046E462 /* FrameInverter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29AE05A1B0A95050046E462 /* FrameInverter.cpp */; };
 		B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */ = {isa = PBXBuildFile; fileRef = B29AE05D1B0A999C0046E462 /* portvideo.xml */; };
+		B2B3912A2FBA5B780041C7C5 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B2B391292FBA5B780041C7C5 /* Info.plist */; };
+		B2B3912E2FBA5BD00041C7C5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B2B3912D2FBA5BD00041C7C5 /* InfoPlist.xcstrings */; };
 		B2CA60040CD623FA00B46958 /* libdc1394.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA60030CD623FA00B46958 /* libdc1394.a */; };
 		B2DEC9D919F65354006CAD09 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; };
 		B2DEC9DA19F65370006CAD09 /* SDL2.framework in Copy Frameworks Into .app Bundle */ = {isa = PBXBuildFile; fileRef = B2DEC9D819F65354006CAD09 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -61,7 +62,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		B200D5371B0CAEC400249D8B /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = InfoPlist.strings; sourceTree = "<group>"; };
 		B200D5421B0D153F00249D8B /* VisionEngine.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = VisionEngine.cpp; path = ../common/VisionEngine.cpp; sourceTree = "<group>"; };
 		B200D5441B0D154B00249D8B /* VisionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VisionEngine.h; path = ../common/VisionEngine.h; sourceTree = "<group>"; };
 		B200D5451B0E12BA00249D8B /* UserInterface.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = UserInterface.h; path = ../common/UserInterface.h; sourceTree = "<group>"; };
@@ -94,7 +94,6 @@
 		B282A34C0CD756B500657CDA /* camera.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = camera.xml; sourceTree = SOURCE_ROOT; };
 		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVfoundationCamera.h; sourceTree = "<group>"; };
 		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVfoundationCamera.mm; sourceTree = "<group>"; };
-		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B297D3ED097536E3004AB0FE /* SportVideo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SportVideo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B2985D1B1B1E301600A3172B /* ConsoleInterface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = ConsoleInterface.cpp; path = ../common/ConsoleInterface.cpp; sourceTree = "<group>"; };
 		B2985D1C1B1E301600A3172B /* ConsoleInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleInterface.h; path = ../common/ConsoleInterface.h; sourceTree = "<group>"; };
@@ -102,6 +101,8 @@
 		B29AE05B1B0A95050046E462 /* FrameInverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameInverter.h; path = ../sdldemo/FrameInverter.h; sourceTree = "<group>"; };
 		B29AE05D1B0A999C0046E462 /* portvideo.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = portvideo.xml; sourceTree = "<group>"; };
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../sdldemo/Main.h; sourceTree = "<group>"; };
+		B2B391292FBA5B780041C7C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B2B3912D2FBA5BD00041C7C5 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		B2CA60030CD623FA00B46958 /* libdc1394.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdc1394.a; path = dc1394/libdc1394.a; sourceTree = SOURCE_ROOT; };
 		B2DEC9D819F65354006CAD09 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		B2E6097008EAE59400136A11 /* CameraEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CameraEngine.h; path = ../common/CameraEngine.h; sourceTree = SOURCE_ROOT; };
@@ -189,9 +190,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B200D5351B0CAEC400249D8B /* English.lproj */,
+				B2B3912D2FBA5BD00041C7C5 /* InfoPlist.xcstrings */,
 				B29AE05D1B0A999C0046E462 /* portvideo.xml */,
-				B297D3EC097536E3004AB0FE /* Info.plist */,
+				B2B391292FBA5B780041C7C5 /* Info.plist */,
 				B282A34C0CD756B500657CDA /* camera.xml */,
 				B2FEA4EF2902EEE300A55969 /* SportVideo.entitlements */,
 				B260492208E9BF4B0095D4C8 /* SportVideo.icns */,
@@ -211,14 +212,6 @@
 				B23C97172922DAB600347E81 /* Security.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		B200D5351B0CAEC400249D8B /* English.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				B200D5361B0CAEC400249D8B /* InfoPlist.strings */,
-			);
-			path = English.lproj;
 			sourceTree = "<group>";
 		};
 		B200D5581B0E52BB00249D8B /* tinyxml */ = {
@@ -310,14 +303,11 @@
 				LastUpgradeCheck = 1400;
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "SportVideo" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
-				Japanese,
-				French,
-				German,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* SportVideo */;
 			projectDirPath = "";
@@ -333,8 +323,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B2B3912E2FBA5BD00041C7C5 /* InfoPlist.xcstrings in Resources */,
+				B2B3912A2FBA5B780041C7C5 /* Info.plist in Resources */,
 				B297D3B8097536E2004AB0FE /* SportVideo.icns in Resources */,
-				B200D5381B0CAEC400249D8B /* InfoPlist.strings in Resources */,
 				B29AE05E1B0A999C0046E462 /* portvideo.xml in Resources */,
 				B282A34D0CD756B500657CDA /* camera.xml in Resources */,
 			);
@@ -368,17 +359,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		B200D5361B0CAEC400249D8B /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B200D5371B0CAEC400249D8B /* English */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		B297D3E9097536E2004AB0FE /* Development */ = {
 			isa = XCBuildConfiguration;
@@ -389,7 +369,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2606;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -415,13 +395,12 @@
 				INFOPLIST_KEY_CFBundleDisplayName = SportVideo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ./dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 0.6;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.portvideo.SportVideo;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "";
 				PRODUCT_NAME = SportVideo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -445,7 +424,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2606;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -467,14 +446,13 @@
 				INFOPLIST_KEY_CFBundleDisplayName = SportVideo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ./dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 0.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.portvideo.SportVideo;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "";
 				PRODUCT_NAME = SportVideo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -497,7 +475,7 @@
 				CODE_SIGN_ENTITLEMENTS = SportVideo.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2606;
 				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -518,12 +496,11 @@
 				INFOPLIST_KEY_CFBundleDisplayName = SportVideo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ./dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 0.6;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.portvideo.SportVideo;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=macosx*]" = "";
 				PRODUCT_NAME = SportVideo;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
@@ -583,11 +560,13 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Development;
 		};
@@ -635,12 +614,14 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-DNDEBUG";
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				STRIP_STYLE = all;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Deployment;
@@ -688,10 +669,12 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 				STRIP_STYLE = debugging;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Default;
 		};
