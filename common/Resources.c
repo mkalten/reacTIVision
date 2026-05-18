@@ -540,7 +540,7 @@ unsigned char camera[3910] =
 
 
 SDL_Rect camera_rect;
-SDL_Surface *getCamera() {
+SDL_Surface *getCamera(void) {
   SDL_RWops *src = NULL;
   SDL_Surface *surface = NULL;
 
@@ -556,7 +556,7 @@ SDL_Surface *getCamera() {
   return surface;
 }
 
-SDL_Surface *getIcon()
+SDL_Surface *getIcon(void)
 {
   SDL_RWops *src = NULL;
   SDL_Surface *surface = NULL;
@@ -569,7 +569,7 @@ SDL_Surface *getIcon()
 }
 
 Uint8 m[1024*8];
-Uint8 *getMask() {
+Uint8 *getMask(void) {
 
 	int i;
 	for (i=0; i<1024; ) {
