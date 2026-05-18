@@ -142,32 +142,32 @@ void AVfoundationCamera::listDevices() {
     AVCaptureSession *captureSession = [[AVCaptureSession alloc] init];
     if (captureSession==NULL) return;
     
-    NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-    
-    int capacity = [dev_list0 count] + [dev_list1 count];
-    if (capacity==0)  {
-        std::cout << "no AVFoundation cameras found" << std::endl;
-        return;
-    } else if (capacity==1) std::cout << "1 AVFoundation camera found:" << std::endl;
-    else std::cout << capacity << " AVFoundation cameras found:" << std::endl;
-    
-    NSMutableArray *captureDevices = [NSMutableArray arrayWithCapacity:capacity];
+    // 1. Target the only valid video/muxed device types on macOS 11
+    NSArray *deviceTypes = @[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera, // Built-in FaceTime Cameras
+        AVCaptureDeviceTypeExternalUnknown         // External USB webcams & third-party cards
+    ];
+
+    // 2. Initialize a mutable array to collect the devices
+    NSMutableArray *captureDevices = [NSMutableArray array];
+
+    // 3. Discover Video Media Type Devices
+    AVCaptureDeviceDiscoverySession *videoSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeVideo
+        position:AVCaptureDevicePositionUnspecified];
+
+    [captureDevices addObjectsFromArray:videoSession.devices];
+
+    // 4. Discover Muxed Media Type Devices (e.g., Camcorders / FireWire interfaces)
+    AVCaptureDeviceDiscoverySession *muxedSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeMuxed
+        position:AVCaptureDevicePositionUnspecified];
+
+    [captureDevices addObjectsFromArray:muxedSession.devices];
     
     unsigned int camID = 0;
-    for (AVCaptureDevice* device in dev_list0) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        [captureDevices addObject:device];
-        camID++;
-    }
-    
-    for (AVCaptureDevice* device in dev_list1) {
-        //printf("camera #%d: %s\n",camID,[[dev localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-        [captureDevices addObject:device];
-        camID++;
-    }
-    
-    camID = 0;
     for (AVCaptureDevice* device in captureDevices) {
         if ([device localizedName]!=NULL)
             printf("\t%d: %s\n",camID,[[device localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
@@ -210,11 +210,33 @@ bool AVfoundationCamera::findCamera() {
     
     session = [[AVCaptureSession alloc] init];
     if (session==NULL) return false;
+
+    // 1. Target the only valid video/muxed device types on macOS 11
+    NSArray *deviceTypes = @[
+        AVCaptureDeviceTypeBuiltInWideAngleCamera, // Built-in FaceTime Cameras
+        AVCaptureDeviceTypeExternalUnknown         // External USB webcams & third-party cards
+    ];
+
+    // 2. Initialize a mutable array to collect the devices
+    NSMutableArray *captureDevices = [NSMutableArray array];
+
+    // 3. Discover Video Media Type Devices
+    AVCaptureDeviceDiscoverySession *videoSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeVideo
+        position:AVCaptureDevicePositionUnspecified];
+
+    [captureDevices addObjectsFromArray:videoSession.devices];
+
+    // 4. Discover Muxed Media Type Devices (e.g., Camcorders / FireWire interfaces)
+    AVCaptureDeviceDiscoverySession *muxedSession = [AVCaptureDeviceDiscoverySession
+        discoverySessionWithDeviceTypes:deviceTypes
+        mediaType:AVMediaTypeMuxed
+        position:AVCaptureDevicePositionUnspecified];
+
+    [captureDevices addObjectsFromArray:muxedSession.devices];
     
-    NSArray *dev_list0 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    NSArray *dev_list1 = [AVCaptureDevice devicesWithMediaType:AVMediaTypeMuxed];
-    
-    int capacity = [dev_list0 count] + [dev_list1 count];
+    int capacity = [captureDevices count];
     if (capacity==0)  {
         std::cout << "no AVFoundation cameras found" << std::endl;
         cameraID = -1;
@@ -224,8 +246,7 @@ bool AVfoundationCamera::findCamera() {
     else std::cout << capacity << " AVFoundation cameras found" << std::endl;
     
     videoDevices = [NSMutableArray arrayWithCapacity:capacity];
-    for (AVCaptureDevice* dev in dev_list0) [videoDevices addObject:dev];
-    for (AVCaptureDevice* dev in dev_list1) [videoDevices addObject:dev];
+    for (AVCaptureDevice* dev in captureDevices) [videoDevices addObject:dev];
     
     readSettings();
     cameraID = config.device;
@@ -240,8 +261,8 @@ bool AVfoundationCamera::findCamera() {
     }
     
     if ([selectedVideoDevice localizedName]!=NULL)
-        sprintf(cameraName,"%s",[[selectedVideoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
-    else sprintf(cameraName,"unknown");
+        snprintf(cameraName,256,"%s",[[selectedVideoDevice localizedName] cStringUsingEncoding:NSUTF8StringEncoding]);
+    else snprintf(cameraName,256,"unknown");
 
     return true;
 }
