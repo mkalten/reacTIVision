@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -36,8 +36,6 @@
 		B282A34D0CD756B500657CDA /* camera.xml in Resources */ = {isa = PBXBuildFile; fileRef = B282A34C0CD756B500657CDA /* camera.xml */; };
 		B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A770A2CF0E800AFF79A /* CalibrationGrid.cpp */; };
 		B2884A7E0A2CF0FC00AFF79A /* FingerObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2884A7B0A2CF0FC00AFF79A /* FingerObject.cpp */; };
-		B29302D619C5001300CA07E1 /* finddefault.c in Sources */ = {isa = PBXBuildFile; fileRef = B29302D519C5001300CA07E1 /* finddefault.c */; };
-		B29302E219C5003F00CA07E1 /* readbinaryplist.c in Sources */ = {isa = PBXBuildFile; fileRef = B29302E019C5003F00CA07E1 /* readbinaryplist.c */; };
 		B29545EC19E2FD74001111A6 /* AVfoundationCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */; };
 		B297D3B7097536E2004AB0FE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		B297D3B8097536E2004AB0FE /* reacTIVision.icns in Resources */ = {isa = PBXBuildFile; fileRef = B260492208E9BF4B0095D4C8 /* reacTIVision.icns */; };
@@ -193,9 +191,6 @@
 		B2884A7B0A2CF0FC00AFF79A /* FingerObject.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = FingerObject.cpp; path = ../common/FingerObject.cpp; sourceTree = SOURCE_ROOT; };
 		B2884A7C0A2CF0FC00AFF79A /* FingerObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = FingerObject.h; path = ../common/FingerObject.h; sourceTree = SOURCE_ROOT; };
 		B2884A7D0A2CF0FC00AFF79A /* MessageServer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MessageServer.h; path = ../common/MessageServer.h; sourceTree = SOURCE_ROOT; };
-		B29302D519C5001300CA07E1 /* finddefault.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = finddefault.c; path = ../ext/portmidi/pm_mac/finddefault.c; sourceTree = SOURCE_ROOT; };
-		B29302E019C5003F00CA07E1 /* readbinaryplist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readbinaryplist.c; path = ../ext/portmidi/pm_mac/readbinaryplist.c; sourceTree = SOURCE_ROOT; };
-		B29302E119C5003F00CA07E1 /* readbinaryplist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = readbinaryplist.h; path = ../ext/portmidi/pm_mac/readbinaryplist.h; sourceTree = SOURCE_ROOT; };
 		B29545EA19E2FD74001111A6 /* AVfoundationCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVfoundationCamera.h; sourceTree = "<group>"; };
 		B29545EB19E2FD74001111A6 /* AVfoundationCamera.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVfoundationCamera.mm; sourceTree = "<group>"; };
 		B297D3EC097536E3004AB0FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -220,7 +215,6 @@
 		B2E9BB1009D0D136005DF348 /* portmidi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = portmidi.c; path = ../ext/portmidi/pm_common/portmidi.c; sourceTree = SOURCE_ROOT; };
 		B2E9BB1109D0D136005DF348 /* portmidi.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = portmidi.h; path = ../ext/portmidi/pm_common/portmidi.h; sourceTree = SOURCE_ROOT; };
 		B2E9BB1709D0D14E005DF348 /* pmmac.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = pmmac.c; path = ../ext/portmidi/pm_mac/pmmac.c; sourceTree = SOURCE_ROOT; };
-		B2E9BB1809D0D14E005DF348 /* pmmac.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pmmac.h; path = ../ext/portmidi/pm_mac/pmmac.h; sourceTree = SOURCE_ROOT; };
 		B2E9BB1909D0D14E005DF348 /* pmmacosxcm.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = pmmacosxcm.c; path = ../ext/portmidi/pm_mac/pmmacosxcm.c; sourceTree = SOURCE_ROOT; };
 		B2E9BB1A09D0D14E005DF348 /* pmmacosxcm.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pmmacosxcm.h; path = ../ext/portmidi/pm_mac/pmmacosxcm.h; sourceTree = SOURCE_ROOT; };
 		B2E9BB1F09D0D18E005DF348 /* porttime.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = porttime.c; path = ../ext/portmidi/porttime/porttime.c; sourceTree = SOURCE_ROOT; };
@@ -432,14 +426,10 @@
 		B2E9BB0C09D0D0FE005DF348 /* portmidi */ = {
 			isa = PBXGroup;
 			children = (
-				B29302E019C5003F00CA07E1 /* readbinaryplist.c */,
-				B29302E119C5003F00CA07E1 /* readbinaryplist.h */,
-				B29302D519C5001300CA07E1 /* finddefault.c */,
 				B2E9BB1F09D0D18E005DF348 /* porttime.c */,
 				B2E9BB2009D0D18E005DF348 /* porttime.h */,
 				B2E9BB2209D0D18E005DF348 /* ptmacosx_mach.c */,
 				B2E9BB1709D0D14E005DF348 /* pmmac.c */,
-				B2E9BB1809D0D14E005DF348 /* pmmac.h */,
 				B2E9BB1909D0D14E005DF348 /* pmmacosxcm.c */,
 				B2E9BB1A09D0D14E005DF348 /* pmmacosxcm.h */,
 				B2E9BB0D09D0D136005DF348 /* pminternal.h */,
@@ -508,7 +498,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1400;
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					B297D37B097536E2004AB0FE = {
 						DevelopmentTeam = CDB4DSECA2;
@@ -517,7 +508,7 @@
 				};
 			};
 			buildConfigurationList = B2BCA3A30859B28700B9378C /* Build configuration list for PBXProject "reacTIVision" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -601,8 +592,6 @@
 				B21D89E50CE7A0FE003B810C /* FileCamera.cpp in Sources */,
 				B21D8A0D0CE7A34A003B810C /* CameraEngine.cpp in Sources */,
 				B2E644160D6C39EC0000ABD0 /* FolderCamera.cpp in Sources */,
-				B29302D619C5001300CA07E1 /* finddefault.c in Sources */,
-				B29302E219C5003F00CA07E1 /* readbinaryplist.c in Sources */,
 				B269752819DFEC2200B46119 /* threshold.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -631,9 +620,8 @@
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2211;
+				CURRENT_PROJECT_VERSION = 2606;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -644,7 +632,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
@@ -658,8 +646,9 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ./dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.5.2;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -668,7 +657,6 @@
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
-				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -685,12 +673,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_X86_VECTOR_INSTRUCTIONS = avx;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2211;
-				DEVELOPMENT_TEAM = CDB4DSECA2;
+				CURRENT_PROJECT_VERSION = 2606;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -699,7 +686,7 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_STRICT_ALIASING = YES;
 				GCC_VERSION = "";
@@ -712,18 +699,21 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ./dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.5.2;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-ffast-math",
+				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
-				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -742,8 +732,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CURRENT_PROJECT_VERSION = 2211;
-				DEVELOPMENT_TEAM = CDB4DSECA2;
+				CURRENT_PROJECT_VERSION = 2606;
 				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					/Library/Frameworks,
@@ -752,7 +741,7 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
@@ -764,8 +753,9 @@
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = reacTIVision;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				LIBRARY_SEARCH_PATHS = ./dc1394;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.5.2;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -773,7 +763,6 @@
 				PRODUCT_NAME = reacTIVision;
 				SDKROOT = macosx;
 				SECTORDER_FLAGS = "";
-				STRIP_INSTALLED_PRODUCT = NO;
 				WARNING_CFLAGS = (
 					"-Wmost",
 					"-Wno-four-char-constants",
@@ -812,8 +801,10 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -830,11 +821,10 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
-				STRIP_INSTALLED_PRODUCT = NO;
-				STRIP_STYLE = "non-global";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Development;
 		};
@@ -867,12 +857,14 @@
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_STRICT_ALIASING = YES;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
@@ -885,12 +877,15 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-ffast-math",
+				);
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
-				STRIP_STYLE = all;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Deployment;
@@ -923,7 +918,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = CDB4DSECA2;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -940,10 +937,10 @@
 				HEADER_SEARCH_PATHS = "";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
-				STRIP_STYLE = debugging;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 			};
 			name = Default;
 		};
