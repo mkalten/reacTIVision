@@ -98,7 +98,7 @@
 		int y_offset=frame_height-100;
 
 		char displayText[256];
-		sprintf(displayText,"%s %d",settingText,settingValue);
+		snprintf(displayText,256,"%s %d",settingText,settingValue);
 		FontTool::drawText(x_offset+128-(FontTool::getTextWidth(displayText)/2),y_offset-FontTool::getFontHeight(),displayText,display);
 
 		// draw the border
@@ -138,8 +138,8 @@
 		config.frame_yoff = 0;
         config.frame_width = SETTING_MAX;
         config.frame_height = SETTING_MAX;
-		sprintf(config.file,"none");
-		sprintf(config.folder,"none");
+		snprintf(config.file,1024,"none");
+		snprintf(config.folder,1024,"none");
 		config.brightness = SETTING_DEFAULT;
 		config.contrast = SETTING_DEFAULT;
 		config.gain = SETTING_DEFAULT;
@@ -166,21 +166,21 @@
 			CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);
 			CFRelease( mainBundleURL);
 			CFRelease( cfStringRef);
-			sprintf(full_path,"%s/Contents/Resources/camera.xml",path);
+			snprintf(full_path,1024,"%s/Contents/Resources/camera.xml",path);
 #elif defined LINUX
 			struct passwd *pw = getpwuid(getuid());
-			sprintf(path,"%s/.reacTIVision/camera.xml",pw->pw_dir);
+			snprintf(path,1024,"%s/.reacTIVision/camera.xml",pw->pw_dir);
 
 			if (access ("./camera.xml", F_OK )==0) sprintf(full_path,"./camera.xml");
 			else if (access (path, F_OK )==0) sprintf(full_path,"%s",path);
-			else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/share/reacTIVision/camera.xml");
-			else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/usr/local/share/camera.xml");
-			else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/opt/share/reacTIVision/camera.xml");
-			else if (access ("/opt/local/share/reacTIVision/camera.xml", F_OK )==0) sprintf(full_path,"/opt/local/share/reacTIVision/camera.xml");
+			else if (access ("/usr/share/reacTIVision/camera.xml", F_OK )==0) snprintf(full_path,1024,"/usr/share/reacTIVision/camera.xml");
+			else if (access ("/usr/local/share/reacTIVision/camera.xml", F_OK )==0) snprintf(full_path,1024,"/usr/local/share/camera.xml");
+			else if (access ("/opt/share/reacTIVision/camera.xml", F_OK )==0) snprintf(full_path,1024,"/opt/share/reacTIVision/camera.xml");
+			else if (access ("/opt/local/share/reacTIVision/camera.xml", F_OK )==0) snprintf(full_path,1024,"/opt/local/share/reacTIVision/camera.xml");
 #else
-			sprintf(full_path,"./camera.xml");
+			snprintf(full_path,1024,"./camera.xml");
 #endif
-		} else sprintf(full_path,"%s",config_file);
+		} else snprintf(full_path,1024,"%s",config_file);
 
 		TiXmlDocument xml_settings( full_path );
 		xml_settings.LoadFile();
@@ -208,16 +208,16 @@
 
 		if(camera_element->Attribute("file")!=NULL) {
 #ifdef __APPLE__
-			sprintf(config.file,"%s/../%s",path,camera_element->Attribute("file"));
+			snprintf(config.file,1024,"%s/../%s",path,camera_element->Attribute("file"));
 #else
-			sprintf(config.file,"%s",camera_element->Attribute("file"));
+			snprintf(config.file,1024,"%s",camera_element->Attribute("file"));
 #endif
 		}
 		if(camera_element->Attribute("folder")!=NULL) {
 #ifdef __APPLE__
-			sprintf(config.folder,"%s/../%s",path,camera_element->Attribute("folder"));
+			snprintf(config.folder,1024,"%s/../%s",path,camera_element->Attribute("folder"));
 #else
-			sprintf(config.folder,"%s",camera_element->Attribute("folder"));
+			snprintf(config.folder,1024,"%s",camera_element->Attribute("folder"));
 #endif
 		}
 
@@ -364,7 +364,7 @@ void CameraEngine::saveSettings() {
 			else if (config.brightness==SETTING_AUTO) settings_element->SetAttribute("brightness","auto");
 			else if (config.brightness==SETTING_DEFAULT) settings_element->SetAttribute("brightness","default");
 			else {
-				sprintf(config_value,"%d",config.brightness);
+				snprintf(config_value,64,"%d",config.brightness);
 				settings_element->SetAttribute("brightness",config_value);
 			}
 		}
@@ -374,7 +374,7 @@ void CameraEngine::saveSettings() {
 			else if (config.contrast==SETTING_AUTO) settings_element->SetAttribute("contrast","auto");
 			else if (config.contrast==SETTING_DEFAULT) settings_element->SetAttribute("contrast","default");
 			else {
-				sprintf(config_value,"%d",config.contrast);
+				snprintf(config_value,64,"%d",config.contrast);
 				settings_element->SetAttribute("contrast",config_value);
 			}
 		}
@@ -384,7 +384,7 @@ void CameraEngine::saveSettings() {
 			else if (config.gain==SETTING_AUTO) settings_element->SetAttribute("gain","auto");
 			else if (config.gain==SETTING_DEFAULT) settings_element->SetAttribute("gain","default");
 			else {
-				sprintf(config_value,"%d",config.gain);
+				snprintf(config_value,64,"%d",config.gain);
 				settings_element->SetAttribute("gain",config_value);
 			}
 		}
@@ -394,7 +394,7 @@ void CameraEngine::saveSettings() {
 			else if (config.gamma==SETTING_AUTO) settings_element->SetAttribute("gamma","auto");
 			else if (config.gamma==SETTING_DEFAULT) settings_element->SetAttribute("gamma","default");
 			else {
-				sprintf(config_value,"%d",config.gamma);
+				snprintf(config_value,64,"%d",config.gamma);
 				settings_element->SetAttribute("gamma",config_value);
 			}
 		}
@@ -404,7 +404,7 @@ void CameraEngine::saveSettings() {
 			else if (config.shutter==SETTING_AUTO) settings_element->SetAttribute("shutter","auto");
 			else if (config.shutter==SETTING_DEFAULT) settings_element->SetAttribute("shutter","default");
 			else {
-				sprintf(config_value,"%d",config.shutter);
+				snprintf(config_value,64,"%d",config.shutter);
 				settings_element->SetAttribute("shutter",config_value);
 			}
 		}
@@ -414,7 +414,7 @@ void CameraEngine::saveSettings() {
 			else if (config.exposure==SETTING_AUTO) settings_element->SetAttribute("exposure","auto");
 			else if (config.exposure==SETTING_DEFAULT) settings_element->SetAttribute("exposure","default");
 			else {
-				sprintf(config_value,"%d",config.exposure);
+				snprintf(config_value,64,"%d",config.exposure);
 				settings_element->SetAttribute("exposure",config_value);
 			}
 		}
@@ -424,7 +424,7 @@ void CameraEngine::saveSettings() {
 			else if (config.sharpness==SETTING_AUTO) settings_element->SetAttribute("sharpness","auto");
 			else if (config.sharpness==SETTING_DEFAULT) settings_element->SetAttribute("sharpness","default");
 			else {
-				sprintf(config_value,"%d",config.sharpness);
+				snprintf(config_value,64,"%d",config.sharpness);
 				settings_element->SetAttribute("sharpness",config_value);
 			}
 		}
@@ -434,7 +434,7 @@ void CameraEngine::saveSettings() {
 			else if (config.focus==SETTING_AUTO) settings_element->SetAttribute("focus","auto");
 			else if (config.focus==SETTING_DEFAULT) settings_element->SetAttribute("focus","default");
 			else {
-				sprintf(config_value,"%d",config.focus);
+				snprintf(config_value,64,"%d",config.focus);
 				settings_element->SetAttribute("focus",config_value);
 			}
 		}

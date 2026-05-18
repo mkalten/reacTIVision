@@ -1632,7 +1632,7 @@ static Uint32 GetPixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
    return -1;
 }
 
-SDL_Surface* SFont_FontSurface()
+SDL_Surface* SFont_FontSurface(void)
 {
   SDL_RWops *src = NULL;
   SDL_Surface *s = NULL;
@@ -1644,7 +1644,7 @@ SDL_Surface* SFont_FontSurface()
   return s;
 }
 
-SFont_Font* SFont_InitDefaultFont()
+SFont_Font* SFont_InitDefaultFont(void)
 {
 	return SFont_InitFont(SFont_FontSurface());
 }

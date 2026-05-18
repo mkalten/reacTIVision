@@ -154,7 +154,7 @@ bool DC1394Camera::initCamera() {
 	}
 	dc1394_camera_free_list (list);
 		
-	sprintf(cameraName,"%s", camera->model);
+	snprintf(cameraName,256,"%s", camera->model);
 
 	dc1394framerates_t framerates;
 	dc1394video_modes_t video_modes;

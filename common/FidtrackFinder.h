@@ -42,7 +42,7 @@ public:
 			CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);	
 			CFRelease( mainBundleURL);
 			CFRelease( cfStringRef);
-			sprintf(mac_config,"%s/Contents/Resources/%s",app_path,tree_cfg);
+			snprintf(mac_config,1024,"%s/Contents/Resources/%s",app_path,tree_cfg);
 			tree_config = mac_config;
 		} else tree_config = tree_cfg;
 #else

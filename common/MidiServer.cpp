@@ -81,8 +81,8 @@ void MidiServer::readConfig(const char* cfg) {
 
 #ifdef __APPLE__
 	char cfg_path[1024];
-	if (cfg[0]=='/') sprintf(cfg_path,"%s",cfg);
-	else {	
+	if (cfg[0]=='/') snprintf(cfg_path,1024,"%s",cfg);
+	else {
 		char app_path[1024];
 		CFBundleRef mainBundle = CFBundleGetMainBundle();
 		CFURLRef mainBundleURL = CFBundleCopyBundleURL( mainBundle);
@@ -90,8 +90,8 @@ void MidiServer::readConfig(const char* cfg) {
 		CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);	
 		CFRelease( mainBundleURL);
 		CFRelease( cfStringRef);
-		if (cfg[0]=='.') sprintf(cfg_path,"%s/.%s",app_path,cfg);
-		else sprintf(cfg_path,"%s/Contents/Resources/%s",app_path,cfg);
+		if (cfg[0]=='.') snprintf(cfg_path,1024,"%s/.%s",app_path,cfg);
+		else snprintf(cfg_path,1024,"%s/Contents/Resources/%s",app_path,cfg);
 	}
 	//printf("%s %s\n",cfg,cfg_path);
 	TiXmlDocument document( cfg_path );

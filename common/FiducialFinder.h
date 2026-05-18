@@ -59,7 +59,7 @@ public:
 		CFStringGetCString( cfStringRef, path, 1024, kCFStringEncodingASCII);	
 		CFRelease( mainBundleURL);
 		CFRelease( cfStringRef);
-		sprintf(full_path,"%s/Contents/Resources/calibration.grid",path);
+		snprintf(full_path,1024,"%s/Contents/Resources/calibration.grid",path);
 		grid_config = full_path;
 #else
 		grid_config = "./calibration.grid";

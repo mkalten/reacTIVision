@@ -28,7 +28,7 @@ FileCamera::FileCamera(const char* cfg): CameraEngine(cfg)
 	
 	cam_buffer = NULL;
 
-	sprintf(cameraName,"FileCamera");
+	snprintf(cameraName,256,"FileCamera");
 
 	running=false;
 }

@@ -80,7 +80,7 @@ bool PS3EyeCamera::findCamera() {
         }
         
         eye = devices.at(config.device);
-        sprintf(cameraName, "PS3Eye");
+        snprintf(cameraName,256,"PS3Eye");
     } else {
         fprintf (stderr, "no PS3Eye cameras found\n");
     }

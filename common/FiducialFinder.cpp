@@ -163,17 +163,17 @@ void FiducialFinder::drawGUI(SDL_Surface *display) {
 	switch (currentSetting) {
 		case INV_NONE: return;
 		case INV_XPOS: {
-			sprintf(displayText,"invert X-axis %d",message_server->getInvertX());
-			settingValue = message_server->getInvertX();		
+			snprintf(displayText,64,"invert X-axis %d",message_server->getInvertX());
+			settingValue = message_server->getInvertX();
 			break;
 		}
 		case INV_YPOS: {
-			sprintf(displayText,"invert Y-axis %d",message_server->getInvertY());
+			snprintf(displayText,64,"invert Y-axis %d",message_server->getInvertY());
 			settingValue = message_server->getInvertY();
 			break;
 		}
 		case INV_ANGLE: {
-			sprintf(displayText,"invert angle %d",message_server->getInvertA());
+			snprintf(displayText,64,"invert angle %d",message_server->getInvertA());
 			settingValue = message_server->getInvertA();
 			break;
 		}			
@@ -321,8 +321,8 @@ void FiducialFinder::drawObject(int id, int xpos, int ypos, SDL_Surface *display
 {
 	if (msg_listener->getDisplayMode()==SDLinterface::NO_DISPLAY) return;
 	char id_str[8];
-	if(id>=0) sprintf(id_str,"%d",id);
-	else sprintf(id_str,"F");
+	if(id>=0) snprintf(id_str,8,"%d",id);
+	else snprintf(id_str,8,"F");
 	FontTool::drawText(xpos,ypos,id_str,display);
 	
 	int pixel = 0;

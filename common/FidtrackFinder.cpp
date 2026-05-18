@@ -260,11 +260,11 @@ void FidtrackFinder::drawGUI(SDL_Surface *display) {
 			}
 		}
 		
-		sprintf(displayText,"finger size %d",average_finger_size);
+		snprintf(displayText,64,"finger size %d",average_finger_size);
 		settingValue = average_finger_size;
 		maxValue = 64;
 	} else if (setFingerSensitivity) {
-		sprintf(displayText,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
+		snprintf(displayText,64,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
 		settingValue = (int)floor(finger_sensitivity*100+0.5f);
 		maxValue = 200;
 	} else return;

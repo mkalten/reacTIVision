@@ -56,12 +56,12 @@ void printUsage() {
 void readSettings(reactivision_settings *config) {
 
 	config->port = 3333;
-	sprintf(config->host,"localhost");
-	sprintf(config->source,"reacTIVision");
-	sprintf(config->tree_config,"none");
-	sprintf(config->grid_config,"none");
-	sprintf(config->midi_config,"none");
-	sprintf(config->camera_config,"none");
+	snprintf(config->host,1024,"localhost");
+	snprintf(config->source,1024,"reacTIVision");
+	snprintf(config->tree_config,1024,"none");
+	snprintf(config->grid_config,1024,"none");
+	snprintf(config->midi_config,1024,"none");
+	snprintf(config->camera_config,1024,"none");
 	config->invert_x = false;
 	config->invert_y = false;
 	config->invert_a = false;
@@ -87,7 +87,7 @@ void readSettings(reactivision_settings *config) {
 	CFStringGetCString( cfStringRef, app_path, 1024, kCFStringEncodingASCII);
 	CFRelease( mainBundleURL);
 	CFRelease( cfStringRef);
-	sprintf(config->file,"%s/Contents/Resources/reacTIVision.xml",app_path);
+	snprintf(config->file,1024,"%s/Contents/Resources/reacTIVision.xml",app_path);
 #elif !defined WIN32
 
     char home_path[1024];
@@ -118,22 +118,22 @@ void readSettings(reactivision_settings *config) {
 	TiXmlElement* tuio_element = config_root.FirstChild("tuio").Element();
 	if( tuio_element!=NULL )
 	{
-		if(tuio_element->Attribute("host")!=NULL) sprintf(config->host,"%s",tuio_element->Attribute("host"));
+		if(tuio_element->Attribute("host")!=NULL) snprintf(config->host,1024,"%s",tuio_element->Attribute("host"));
 		if(tuio_element->Attribute("port")!=NULL) config->port = atoi(tuio_element->Attribute("port"));
-		if(tuio_element->Attribute("source")!=NULL) sprintf(config->source,"%s",tuio_element->Attribute("source"));
+		if(tuio_element->Attribute("source")!=NULL) snprintf(config->source,1024,"%s",tuio_element->Attribute("source"));
 	}
 
 	TiXmlElement* camera_element = config_root.FirstChild("camera").Element();
 	if( camera_element!=NULL )
 	{
-		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
+		if(camera_element->Attribute("config")!=NULL) snprintf(config->camera_config,1024,"%s",camera_element->Attribute("config"));
 	}
 
 	TiXmlElement* midi_element = config_root.FirstChild("midi").Element();
 	if( midi_element!=NULL )
 	{
 		if(midi_element->Attribute("config")!=NULL) {
-			sprintf(config->midi_config,"%s",midi_element->Attribute("config"));
+			snprintf(config->midi_config,1024,"%s",midi_element->Attribute("config"));
 			config->midi=true;
 		}
 	}
@@ -200,7 +200,7 @@ void readSettings(reactivision_settings *config) {
 			if ( strcmp( fiducial_element->Attribute("engine"), "amoeba" ) == 0 ) config->amoeba = true;
 			else if ( strcmp( fiducial_element->Attribute("engine"), "classic" ) == 0 ) { config->classic = true; config->amoeba = false; }
 		}
-		if(fiducial_element->Attribute("tree")!=NULL) sprintf(config->tree_config,"%s",fiducial_element->Attribute("tree"));
+		if(fiducial_element->Attribute("tree")!=NULL) snprintf(config->tree_config,1024,"%s",fiducial_element->Attribute("tree"));
 	}
 
 	TiXmlElement* calibration_element = config_root.FirstChild("calibration").Element();
@@ -211,7 +211,7 @@ void readSettings(reactivision_settings *config) {
 			if (strstr(calibration_element->Attribute("invert"),"y")!=NULL) config->invert_y = true;
 			if (strstr(calibration_element->Attribute("invert"),"a")!=NULL) config->invert_a = true;
 		}
-		if(calibration_element->Attribute("grid")!=NULL) sprintf(config->grid_config,"%s",calibration_element->Attribute("grid"));
+		if(calibration_element->Attribute("grid")!=NULL) snprintf(config->grid_config,1024,"%s",calibration_element->Attribute("grid"));
 	}
 
 }
@@ -238,7 +238,7 @@ void writeSettings(reactivision_settings *config) {
 		if(tuio_element->Attribute("host")!=NULL) tuio_element->SetAttribute("host",config->host);
 		if(tuio_element->Attribute("source")!=NULL) tuio_element->SetAttribute("source",config->source);
 		if(tuio_element->Attribute("port")!=NULL) {
-			sprintf(config_value,"%d",config->port);
+			snprintf(config_value,64,"%d",config->port);
 			tuio_element->SetAttribute("port",config_value);
 		}
 	}
@@ -259,11 +259,11 @@ void writeSettings(reactivision_settings *config) {
 	if( finger_element!=NULL )
 	{
 		if(finger_element->Attribute("size")!=NULL) {
-			sprintf(config_value,"%d",config->finger_size);
+			snprintf(config_value,64,"%d",config->finger_size);
 			finger_element->SetAttribute("size",config_value);
 		}
 		if(finger_element->Attribute("sensitivity")!=NULL) {
-			sprintf(config_value,"%d",config->finger_sensitivity);
+			snprintf(config_value,64,"%d",config->finger_sensitivity);
 			finger_element->SetAttribute("sensitivity",config_value);
 		}
 	}
@@ -291,11 +291,11 @@ void writeSettings(reactivision_settings *config) {
     if( threshold_element!=NULL )
     {
         if(threshold_element->Attribute("gradient")!=NULL) {
-            sprintf(config_value,"%d",config->gradient_gate);
+            snprintf(config_value,64,"%d",config->gradient_gate);
             threshold_element->SetAttribute("gradient",config_value);
         }
         if(threshold_element->Attribute("tile")!=NULL) {
-            sprintf(config_value,"%d",config->tile_size);
+            snprintf(config_value,64,"%d",config->tile_size);
             threshold_element->SetAttribute("tile",config_value);
         }
     }
@@ -314,7 +314,7 @@ void writeSettings(reactivision_settings *config) {
 	TiXmlElement* calibration_element = config_root.FirstChild("calibration").Element();
 	if( calibration_element!=NULL )
 	{
-		sprintf(config_value," ");
+		snprintf(config_value,64," ");
 		if(calibration_element->Attribute("invert")!=NULL)  {
 			if (config->invert_x) strcat(config_value,"x");
 			if (config->invert_y) strcat(config_value,"y");
@@ -369,7 +369,7 @@ void teardownCamera(CameraEngine *camera)
 int main(int argc, char* argv[]) {
 
 	reactivision_settings config;
-	sprintf(config.file,"none");
+	snprintf(config.file,1024,"none");
 
 	const char *app_name = "reacTIVision";
 	const char *version_no = "1.5.2";
@@ -383,7 +383,7 @@ int main(int argc, char* argv[]) {
 			printUsage();
 			return 0;
 		} else if( strcmp( argv[1], "-c" ) == 0 ) {
-			if (argc==3) sprintf(config.file,"%s",argv[2]);
+			if (argc==3) snprintf(config.file,1024,"%s",argv[2]);
 			else {
 				printUsage();
 				return 0;

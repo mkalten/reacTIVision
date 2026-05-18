@@ -62,9 +62,9 @@ void SDLinterface::saveBuffer(unsigned char* buffer) {
 
 	char fileName[256];
 #ifdef WIN32
-	sprintf(fileName,".\\recording\\%s%ld.pgm",zero,framenumber_);
+	snprintf(fileName,256,".\\recording\\%s%ld.pgm",zero,framenumber_);
 #else
-	sprintf(fileName,"./recording/%s%ld.pgm",zero,framenumber_);
+	snprintf(fileName,256,"./recording/%s%ld.pgm",zero,framenumber_);
 #endif
 	std::cout << fileName << std::endl;
 	FILE*  imagefile=fopen(fileName, "w");
@@ -283,7 +283,7 @@ void SDLinterface::frameStatistics(long cameraTime, long processingTime, long to
     
     if ((fullscreen_) && (!calibrate_)) {
         char caption[24] = "";
-        sprintf(caption,"%d FPS",current_fps);
+        snprintf(caption,24,"%d FPS",current_fps);
         FontTool::drawText(width_-(FontTool::getTextWidth(caption)+FontTool::getFontHeight()),FontTool::getFontHeight(),caption,displayImage_);
     }
     
@@ -292,7 +292,7 @@ void SDLinterface::frameStatistics(long cameraTime, long processingTime, long to
 		
 		if (!calibrate_) {
             char caption[24] = "";
-            sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+            snprintf(caption,24,"%s - %d FPS",app_name_.c_str(),current_fps);
             SDL_SetWindowTitle( window_, caption);
 		}
 
@@ -417,7 +417,7 @@ void SDLinterface::process_events()
 					if (recording_) {
 						recording_ = false;
 						char caption[24] = "";
-						sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+						snprintf(caption,24,"%s - %d FPS",app_name_.c_str(),current_fps);
 						SDL_SetWindowTitle( window_, caption);
 					} else {
 						struct stat info;
@@ -453,7 +453,7 @@ void SDLinterface::process_events()
 				if (pause_) {
 					pause_=false;
 					char caption[24] = "";
-					sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+					snprintf(caption,24,"%s - %d FPS",app_name_.c_str(),current_fps);
 					SDL_SetWindowTitle( window_, caption);
 					
 				} else {
@@ -468,7 +468,7 @@ void SDLinterface::process_events()
 				if (calibrate_) {
 					calibrate_=false;
 					char caption[24] = "";
-					sprintf(caption,"%s - %d FPS",app_name_.c_str(),current_fps);
+					snprintf(caption,24,"%s - %d FPS",app_name_.c_str(),current_fps);
                     //if (!fullscreen_) SDL_SetWindowFullscreen(window_, 0);
                     SDL_SetWindowTitle( window_, caption);
 				} else {

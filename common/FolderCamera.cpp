@@ -27,7 +27,7 @@ FolderCamera::FolderCamera(const char* cfg): CameraEngine(cfg)
 	cameraID = -1;
 	
 	cam_buffer = NULL;
-	sprintf(cameraName,"FolderCamera");
+	snprintf(cameraName,256,"FolderCamera");
 
 	running=false;
 }
@@ -72,7 +72,7 @@ bool FolderCamera::initCamera() {
 	if (dp != NULL) {
 		while ((ep = readdir (dp))) {
 			 if (strstr(ep->d_name,".pgm")!=NULL) {
-				sprintf(file_name,"%s/%s",config.folder,ep->d_name);
+				snprintf(file_name,256,"%s/%s",config.folder,ep->d_name);
 				image_list.push_back(file_name);
 			  }
 		}
