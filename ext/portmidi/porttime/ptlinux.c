@@ -31,11 +31,14 @@ CHANGE LOG
 #include "porttime.h"
 #include "time.h"
 #include "sys/resource.h"
-#include "sys/timeb.h"
 #include "pthread.h"
 
 #define TRUE 1
 #define FALSE 0
+
+#ifndef CLOCK_MONOTONIC_RAW
+#define CLOCK_MONOTONIC_RAW CLOCK_MONOTONIC
+#endif
 
 static int time_started_flag = FALSE;
 static struct timespec time_offset = {0, 0};
@@ -83,14 +86,14 @@ PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
     clock_gettime(CLOCK_MONOTONIC_RAW, &time_offset);
     if (callback) {
         int res;
-        pt_callback_parameters *parms = (pt_callback_parameters *) 
+        pt_callback_parameters *parms = (pt_callback_parameters *)
             malloc(sizeof(pt_callback_parameters));
         if (!parms) return ptInsufficientMemory;
         parms->id = pt_callback_proc_id;
         parms->resolution = resolution;
         parms->callback = callback;
         parms->userData = userData;
-        res = pthread_create(&pt_thread_pid, NULL, 
+        res = pthread_create(&pt_thread_pid, NULL,
                              Pt_CallbackProc, parms);
         if (res != 0) return ptHostError;
         pt_thread_created = TRUE;
@@ -100,7 +103,7 @@ PtError Pt_Start(int resolution, PtCallback *callback, void *userData)
 }
 
 
-PtError Pt_Stop()
+PtError Pt_Stop(void)
 {
     /* printf("Pt_Stop called\n"); */
     pt_callback_proc_id++;
@@ -113,13 +116,13 @@ PtError Pt_Stop()
 }
 
 
-int Pt_Started()
+int Pt_Started(void)
 {
     return time_started_flag;
 }
 
 
-PtTimestamp Pt_Time()
+PtTimestamp Pt_Time(void)
 {
     long seconds, ms;
     struct timespec now;

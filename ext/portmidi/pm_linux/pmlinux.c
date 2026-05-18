@@ -14,7 +14,6 @@
 #include "portmidi.h"
 #include "pmutil.h"
 #include "pminternal.h"
-#include "finddefault.h"
 
 #ifdef PMALSA
   #include "pmlinuxalsa.h"
@@ -28,10 +27,7 @@
 #error One of PMALSA or PMNULL must be defined
 #endif
 
-PmDeviceID pm_default_input_device_id = -1;
-PmDeviceID pm_default_output_device_id = -1;
-
-void pm_init()
+void pm_init(void)
 {
     /* Note: it is not an error for PMALSA to fail to initialize. 
      * It may be a design error that the client cannot query what subsystems
@@ -44,15 +40,6 @@ void pm_init()
 #ifdef PMNULL
         pm_linuxnull_init();
 #endif
-    // this is set when we return to Pm_Initialize, but we need it
-    // now in order to (successfully) call Pm_CountDevices()
-    pm_initialized = TRUE;      
-    pm_default_input_device_id = find_default_device(
-        "/PortMidi/PM_RECOMMENDED_INPUT_DEVICE", TRUE,
-        pm_default_input_device_id);
-    pm_default_output_device_id = find_default_device(
-        "/PortMidi/PM_RECOMMENDED_OUTPUT_DEVICE", FALSE,
-        pm_default_output_device_id);
 }
 
 void pm_term(void)
@@ -65,12 +52,12 @@ void pm_term(void)
     #endif
 }
 
-PmDeviceID Pm_GetDefaultInputDeviceID() { 
+PmDeviceID Pm_GetDefaultInputDeviceID(void) { 
     Pm_Initialize();
     return pm_default_input_device_id; 
 }
 
-PmDeviceID Pm_GetDefaultOutputDeviceID() { 
+PmDeviceID Pm_GetDefaultOutputDeviceID(void) { 
     Pm_Initialize();
     return pm_default_output_device_id; 
 }
