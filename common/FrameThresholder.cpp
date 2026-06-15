@@ -17,7 +17,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "FrameThresholder.h"
-#include "VisionEngine.h"
 
 // the thread function
 #ifdef WIN32
@@ -43,7 +42,10 @@ static void* threshold_thread_function( void *obj )
 			continue;
 		}
 #else
-		pthread_cond_wait(&data->cond, &data->mutex);
+		pthread_mutex_lock(&data->mutex);
+		while (!data->process && !data->done)
+			pthread_cond_wait(&data->cond, &data->mutex);
+		pthread_mutex_unlock(&data->mutex);
 #endif
 		if (data->done) return(0);
 
@@ -100,11 +102,14 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 	if (initialized) {
 
 		for (int i=0;i<thread_count;i++) {
-			tdata[i].done = true;
 #ifdef WIN32
+			tdata[i].done = true;
 			SetEvent(tdata[i].ghWriteEvent);
 #else
+			pthread_mutex_lock(&tdata[i].mutex);
+			tdata[i].done = true;
 			pthread_cond_signal(&tdata[i].cond);
+			pthread_mutex_unlock(&tdata[i].mutex);
 #endif
 			while(tdata[i].process) usleep(10);
 
@@ -210,8 +215,6 @@ bool FrameThresholder::init(int w, int h, int sb, int db) {
 
 void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 
-	//unsigned long start_time = VisionEngine::currentMicroSeconds();
-
 	if (calibrate) {
 
 		unsigned int sum = 0;
@@ -251,11 +254,14 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 			tdata[i].map = NULL;
 		}
 
-		tdata[i].process = true;
 #ifdef WIN32
+		tdata[i].process = true;
 		SetEvent(tdata[i].ghWriteEvent);
 #else
+		pthread_mutex_lock(&tdata[i].mutex);
+		tdata[i].process = true;
 		pthread_cond_signal(&tdata[i].cond);
+		pthread_mutex_unlock(&tdata[i].mutex);
 #endif
 	}
 
@@ -264,11 +270,6 @@ void FrameThresholder::process(unsigned char *src, unsigned char *dest) {
 	}
 
 	if (setGradient || setTilesize) displayControl();
-
-	//float frm_latency = (VisionEngine::currentMicroSeconds() - start_time)/1000.0f;
-	//if (frm_latency<min_latency) min_latency = frm_latency;
-	//if (frm_latency>max_latency) max_latency = frm_latency;
-	//std::cout << "threshold latency: " << min_latency << " " << frm_latency << " " << max_latency << std::endl;
 }
 
 bool FrameThresholder::setFlag(unsigned char flag, bool value, bool lock) {

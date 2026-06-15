@@ -83,11 +83,14 @@ public:
 		if (initialized) {
 			
 			for (int i=0;i<thread_count;i++) {
-				tdata[i].done = true;
 #ifdef WIN32
+				tdata[i].done = true;
 				SetEvent(tdata[i].ghWriteEvent);
 #else
+				pthread_mutex_lock(&tdata[i].mutex);
+				tdata[i].done = true;
 				pthread_cond_signal(&tdata[i].cond);
+				pthread_mutex_unlock(&tdata[i].mutex);
 #endif
 				while(tdata[i].process) usleep(10);
 				terminate_tiled_bernsen_thresholder( thresholder[i] );
@@ -110,7 +113,7 @@ public:
 	int getGradientGate() { return gradient; };
 	int getTileSize() { return tile_size; };
 	bool getEqualizerState() { return equalize; };
-	
+
 private:
 	TiledBernsenThresholder **thresholder;
 	short gradient;
