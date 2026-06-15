@@ -32,7 +32,7 @@ use default locations or specify an absolute path -->
  ... also allows to enable the frame equalizer at startup -->
     <image display="dest" fullscreen="false" equalize="false" />
 <!-- threshold: type="br" (Bradley-Roth) or "tb" (Tiled Bernsen, default) ... gradient, size, threads -->
-    <threshold type="br" gradient="15" size="16" threads="max" />
+    <threshold type="br" gradient="16" size="16" contrast="32" threads="max" />
 <!-- the calibration file ... X,Y and angle inversion -->
     <calibration file="default.grid" invert=" " />
 

@@ -52,6 +52,7 @@ struct application_settings {
 	bool object_blobs;
 	int threshold_gradient;
 	int threshold_size;
+	int threshold_contrast;
 	int thread_count;
 	char threshold_type[4];
 	int display_mode;

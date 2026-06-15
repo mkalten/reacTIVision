@@ -58,7 +58,7 @@ static void* threshold_br_thread_function( void *obj )
 		bradley_roth_threshold( data->thresholder, data->dest, data->src,
 		                        data->width, data->padded_height, data->strip_height,
 		                        data->src_row_offset,
-		                        data->window_size, data->bias );
+		                        data->window_size, data->bias, data->min_contrast );
 
 		data->process = false;
 	}
@@ -170,8 +170,9 @@ void FrameThresholderBR::process(unsigned char *src, unsigned char *dest) {
 		tdata[i].padded_height  = ph;
 		tdata[i].src_row_offset = top_halo;
 
-		tdata[i].window_size = window_size;
-		tdata[i].bias        = bias;
+		tdata[i].window_size   = window_size;
+		tdata[i].bias          = bias;
+		tdata[i].min_contrast  = min_contrast;
 
 		if (equalize) {
 			tdata[i].average   = average;
@@ -223,24 +224,34 @@ bool FrameThresholderBR::toggleFlag(unsigned char flag, bool lock) {
 			if (threshold_setting == 0) {
 				bias -= 0.01f;
 				if (bias < 0.0f) bias = 0.0f;
-			} else {
+			} else if (threshold_setting == 1) {
 				window_size--;
 				if (window_size < 1) window_size = 1;
+			} else {
+				min_contrast--;
+				if (min_contrast < 0) min_contrast = 0;
 			}
 			break;
 		case KEY_RIGHT:
 			if (threshold_setting == 0) {
 				bias += 0.01f;
 				if (bias > 0.5f) bias = 0.5f;
-			} else {
+			} else if (threshold_setting == 1) {
 				int max_window = (padded_strip_height - height / thread_count) / 2;
 				window_size++;
 				if (window_size > max_window) window_size = max_window;
+			} else {
+				min_contrast++;
+				if (min_contrast > 255) min_contrast = 255;
 			}
 			break;
 		case KEY_UP:
+			threshold_setting--;
+			if (threshold_setting < 0) threshold_setting = 2;
+			break;
 		case KEY_DOWN:
-			threshold_setting = 1 - threshold_setting;
+			threshold_setting++;
+			if (threshold_setting > 2) threshold_setting = 0;
 			break;
 		}
 	} else if (flag == KEY_E) {
@@ -263,9 +274,12 @@ void FrameThresholderBR::displayControl() {
 	if (threshold_setting == 0) {
 		snprintf(displayText, 64, "gradient %.2f", bias);
 		ui->displayControl(displayText, 0, 100, (int)(bias * 200.0f));
-	} else {
+	} else if (threshold_setting == 1) {
 		int max_window = (padded_strip_height - height / thread_count) / 2;
 		snprintf(displayText, 64, "window size %d", window_size);
 		ui->displayControl(displayText, 1, max_window, window_size);
+	} else {
+		snprintf(displayText, 64, "min contrast %d", min_contrast);
+		ui->displayControl(displayText, 0, 255, min_contrast);
 	}
 }

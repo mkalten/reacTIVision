@@ -51,6 +51,7 @@ typedef struct threshold_br_data {
 	int bytes;
 	int window_size;
 	float bias;
+	int min_contrast;
 	unsigned char *map;         /* equalizer map, points into unpadded region */
 	int map_width;              /* width for equalizer row stride */
 	int average;
@@ -61,7 +62,7 @@ typedef struct threshold_br_data {
 class FrameThresholderBR: public FrameProcessor
 {
 public:
-	FrameThresholderBR(int window, float bias_val, int t) {
+	FrameThresholderBR(int window, float bias_val, int mc, int t) {
 		initialized = false;
 
 		window_size = window;
@@ -70,6 +71,9 @@ public:
 		threshold_setting = 0;
 
 		bias = bias_val;
+		min_contrast = mc;
+		if (min_contrast < 0) min_contrast = 0;
+		else if (min_contrast > 255) min_contrast = 255;
 
 		thread_count = t;
 		if (thread_count < 1) thread_count = 1;
@@ -110,6 +114,7 @@ public:
 
 	float getBias() { return bias; };
 	int getWindowSize() { return window_size; };
+	int getMinContrast() { return min_contrast; };
 	bool getEqualizerState() { return equalize; };
 
 private:
@@ -119,6 +124,7 @@ private:
 	bool  setThreshold;         /* threshold config mode active */
 	int   threshold_setting;    /* 0=window_size, 1=bias */
 	float bias;
+	int   min_contrast;
 	int   thread_count;
 
 	unsigned char *pointmap;

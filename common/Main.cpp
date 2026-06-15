@@ -92,6 +92,7 @@ void readSettings(application_settings *config) {
 	config->cursor_blobs = false;
 	config->threshold_gradient = 32;
 	config->threshold_size = 10;
+	config->threshold_contrast = 20;
 	config->thread_count = 1;
 	snprintf(config->threshold_type, 4, "br");
 	config->display_mode = 2;
@@ -220,6 +221,12 @@ void readSettings(application_settings *config) {
 			if (strcmp(threshold_element->Attribute("size"), "max" ) == 0) config->threshold_size=INT_MAX;
 			else if (strcmp(threshold_element->Attribute("size"), "min" ) == 0) config->threshold_size=2;
 			else  config->threshold_size = atoi(threshold_element->Attribute("size"));
+		}
+
+		if(threshold_element->Attribute("contrast")!=NULL) {
+			config->threshold_contrast = atoi(threshold_element->Attribute("contrast"));
+			if (config->threshold_contrast < 0) config->threshold_contrast = 0;
+			else if (config->threshold_contrast > 255) config->threshold_contrast = 255;
 		}
 
         if(threshold_element->Attribute("threads")!=NULL) {
@@ -387,6 +394,10 @@ void writeSettings(application_settings *config) {
 			snprintf(config_value,64,"%d",config->threshold_size);
 			threshold_element->SetAttribute("size",config_value);
 		}
+		if(threshold_element->Attribute("contrast")!=NULL) {
+			snprintf(config_value,64,"%d",config->threshold_contrast);
+			threshold_element->SetAttribute("contrast",config_value);
+		}
 	}
 	
 	tinyxml2::XMLElement* fiducial_element = config_root.FirstChildElement("fiducial").ToElement();
@@ -502,7 +513,7 @@ int main(int argc, char* argv[]) {
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 
 	if (strcmp(config.threshold_type, "br") == 0)
-		thresholder = new FrameThresholderBR(config.threshold_size, config.threshold_gradient / 100.0f, config.thread_count);
+		thresholder = new FrameThresholderBR(config.threshold_size, config.threshold_gradient / 100.0f, config.threshold_contrast, config.thread_count);
 	else
 		thresholder = new FrameThresholder(config.threshold_gradient, config.threshold_size, config.thread_count);
 	if (config.background) thresholder->toggleFlag(KEY_SPACE,false);
@@ -531,6 +542,7 @@ int main(int argc, char* argv[]) {
 	if (strcmp(config.threshold_type, "br") == 0) {
 		config.threshold_gradient = (int)(100*((FrameThresholderBR*)thresholder)->getBias());
 		config.threshold_size     = ((FrameThresholderBR*)thresholder)->getWindowSize();
+		config.threshold_contrast = ((FrameThresholderBR*)thresholder)->getMinContrast();
 		config.background         = ((FrameThresholderBR*)thresholder)->getEqualizerState();
 	} else {
 		config.threshold_gradient = ((FrameThresholder*)thresholder)->getGradientGate();

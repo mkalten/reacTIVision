@@ -56,7 +56,7 @@ void terminate_bradley_roth_thresholder( BradleyRothThresholder *thresholder );
 void bradley_roth_threshold( BradleyRothThresholder *thresholder,
         unsigned char *dest, const unsigned char *source,
         int width, int padded_height, int strip_height, int src_row_offset,
-        int window_size, float bias );
+        int window_size, float bias, int min_contrast );
 
 #ifdef __cplusplus
 }

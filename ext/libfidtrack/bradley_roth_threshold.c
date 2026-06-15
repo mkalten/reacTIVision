@@ -75,7 +75,7 @@ static void build_integral_image( unsigned int *integral,
 void bradley_roth_threshold( BradleyRothThresholder *thresholder,
         unsigned char *dest, const unsigned char *source,
         int width, int padded_height, int strip_height, int src_row_offset,
-        int window_size, float bias )
+        int window_size, float bias, int min_contrast )
 {
     int x, y;
     int w1 = width + 1;
@@ -132,7 +132,7 @@ void bradley_roth_threshold( BradleyRothThresholder *thresholder,
             unsigned int sum   = row_y1[x1] - row_y1[x0] - row_y0[x1] + row_y0[x0];
             unsigned int v     = src_row[x];
             /* D: branchless — (unsigned)(-(cond)) gives 0xFF..FF or 0 */
-            dst_row[x] = (unsigned char)(-(v * count > (sum * (unsigned int)rhs_scale >> 10)));
+            dst_row[x] = (unsigned char)(-((v * count > (sum * (unsigned int)rhs_scale >> 10)) & (sum > (unsigned int)min_contrast * count)));
         }
 
         if( iy >= iy_top_end && iy < iy_bot_beg ){
@@ -143,8 +143,9 @@ void bradley_roth_threshold( BradleyRothThresholder *thresholder,
                 unsigned int sum       = row_y1[x1] - row_y1[x0] - row_y0[x1] + row_y0[x0];
                 unsigned int v         = src_row[x];
                 unsigned int threshold = ((sum * (unsigned int)rhs_scale) >> 10) * inv_count_full >> 20;
+                unsigned int mean_approx = (sum * inv_count_full) >> 20;
                 /* D: branchless */
-                dst_row[x] = (unsigned char)(-(v > threshold));
+                dst_row[x] = (unsigned char)(-((v > threshold) & (mean_approx >= (unsigned int)min_contrast)));
             }
         } else {
             /* top/bottom halo: count_y fixed per row, precompute reciprocal */
@@ -156,8 +157,9 @@ void bradley_roth_threshold( BradleyRothThresholder *thresholder,
                 unsigned int sum       = row_y1[x1] - row_y1[x0] - row_y0[x1] + row_y0[x0];
                 unsigned int v         = src_row[x];
                 unsigned int threshold = ((sum * (unsigned int)rhs_scale) >> 10) * inv_count_mid >> 20;
+                unsigned int mean_approx = (sum * inv_count_mid) >> 20;
                 /* D: branchless */
-                dst_row[x] = (unsigned char)(-(v > threshold));
+                dst_row[x] = (unsigned char)(-((v > threshold) & (mean_approx >= (unsigned int)min_contrast)));
             }
         }
 
@@ -168,7 +170,7 @@ void bradley_roth_threshold( BradleyRothThresholder *thresholder,
             unsigned int count = (unsigned int)(x1 - x0) * (unsigned int)count_y;
             unsigned int sum   = row_y1[x1] - row_y1[x0] - row_y0[x1] + row_y0[x0];
             unsigned int v     = src_row[x];
-            dst_row[x] = (unsigned char)(-(v * count > (sum * (unsigned int)rhs_scale >> 10)));
+            dst_row[x] = (unsigned char)(-((v * count > (sum * (unsigned int)rhs_scale >> 10)) & (sum > (unsigned int)min_contrast * count)));
         }
     }
 }
