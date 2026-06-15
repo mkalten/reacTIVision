@@ -11,8 +11,9 @@ reacTIVision 1.6
 * improved angle and position resolution of fiducial tracking
 * optional 1EUR filter to clean  position and angle jitter
 * (beta) Yamaarashi 20bit fiducials (one million IDs)
+* added new adaptive Bradley Roth Thresholder 
 * integrated the TUIO 1.1 library
-  allows alternative UDP, TCP, Web and Flash transport
+  allows alternative UDP, TCP and WebSocket transport
 * completely removed SDL dependencies for all non-GUI classes
 * removed the classic fiducials and legacy amoeba tree
 * removed the alternative MIDI functionality
@@ -24,7 +25,10 @@ reacTIVision 1.5.2
 * native PS3Eye camera support on Windows
 * add TUIO source name configuration option
 * allow .reacTIVision config in home directory on Linux
+* repaired MacOSX application and script signature
 * add list_devices batch file on Windows
+* updated external Portvideo and SDL frameworks
+* Support for universal ARM and Intel binaries on Mac
 
 reacTIVision 1.5.1
 —————————————————-

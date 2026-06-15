@@ -50,9 +50,10 @@ struct application_settings {
 	int min_blob_size;
 	bool cursor_blobs;
 	bool object_blobs;
-	int gradient_gate;
-    int tile_size;
-    int thread_count;
+	int threshold_gradient;
+	int threshold_size;
+	int thread_count;
+	char threshold_type[4];
 	int display_mode;
 };
 

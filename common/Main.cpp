@@ -31,6 +31,7 @@
 #include "VisionEngine.h"
 
 //#include "FrameEqualizer.h"
+#include "FrameThresholderBR.h"
 #include "FrameThresholder.h"
 #include "FidtrackFinder.h"
 #include "CalibrationEngine.h"
@@ -89,9 +90,10 @@ void readSettings(application_settings *config) {
 	config->min_blob_size = 0;
 	config->object_blobs = false;
 	config->cursor_blobs = false;
-	config->gradient_gate = 32;
-	config->tile_size = 10;
+	config->threshold_gradient = 32;
+	config->threshold_size = 10;
 	config->thread_count = 1;
+	snprintf(config->threshold_type, 4, "br");
 	config->display_mode = 2;
 	
 	if (strcmp( config->file, "none" ) == 0) {
@@ -205,21 +207,24 @@ void readSettings(application_settings *config) {
 	tinyxml2::XMLElement* threshold_element = config_root.FirstChildElement("threshold").ToElement();
 	if( threshold_element!=NULL )
 	{
+		if(threshold_element->Attribute("type")!=NULL)
+			snprintf(config->threshold_type, 4, "%s", threshold_element->Attribute("type"));
+
 		if(threshold_element->Attribute("gradient")!=NULL) {
-			if (strcmp(threshold_element->Attribute("gradient"), "max" ) == 0) config->gradient_gate=64;
-			else if (strcmp(threshold_element->Attribute("gradient"), "min" ) == 0) config->gradient_gate=0;
-			else config->gradient_gate = atoi(threshold_element->Attribute("gradient"));
+			if (strcmp(threshold_element->Attribute("gradient"), "max" ) == 0) config->threshold_gradient=64;
+			else if (strcmp(threshold_element->Attribute("gradient"), "min" ) == 0) config->threshold_gradient=0;
+			else config->threshold_gradient = atoi(threshold_element->Attribute("gradient"));
 		}
 
-		if(threshold_element->Attribute("tile")!=NULL) {
-			if (strcmp(threshold_element->Attribute("tile"), "max" ) == 0) config->tile_size=INT_MAX;
-			else if (strcmp(threshold_element->Attribute("tile"), "min" ) == 0) config->tile_size=2;
-			else  config->tile_size = atoi(threshold_element->Attribute("tile"));
+		if(threshold_element->Attribute("size")!=NULL) {
+			if (strcmp(threshold_element->Attribute("size"), "max" ) == 0) config->threshold_size=INT_MAX;
+			else if (strcmp(threshold_element->Attribute("size"), "min" ) == 0) config->threshold_size=2;
+			else  config->threshold_size = atoi(threshold_element->Attribute("size"));
 		}
 
-		if(threshold_element->Attribute("threads")!=NULL) {
-			if (strcmp(threshold_element->Attribute("threads"), "max" ) == 0) config->thread_count=SDL_GetCPUCount();
-			else if (strcmp(threshold_element->Attribute("threads"), "min" ) == 0) config->thread_count=1;
+        if(threshold_element->Attribute("threads")!=NULL) {
+            if (strcmp(threshold_element->Attribute("threads"), "max" ) == 0) { config->thread_count=SDL_GetCPUCount();
+        } else if (strcmp(threshold_element->Attribute("threads"), "min" ) == 0) config->thread_count=1;
 			else {
 				config->thread_count = atoi(threshold_element->Attribute("threads"));
 				if(config->thread_count<1) config->thread_count = 1;
@@ -375,12 +380,12 @@ void writeSettings(application_settings *config) {
 	if( threshold_element!=NULL )
 	{
 		if(threshold_element->Attribute("gradient")!=NULL) {
-			snprintf(config_value,64,"%d",config->gradient_gate);
+			snprintf(config_value,64,"%d",config->threshold_gradient);
 			threshold_element->SetAttribute("gradient",config_value);
 		}
-		if(threshold_element->Attribute("tile")!=NULL) {
-			snprintf(config_value,64,"%d",config->tile_size);
-			threshold_element->SetAttribute("tile",config_value);
+		if(threshold_element->Attribute("size")!=NULL) {
+			snprintf(config_value,64,"%d",config->threshold_size);
+			threshold_element->SetAttribute("size",config_value);
 		}
 	}
 	
@@ -496,7 +501,10 @@ int main(int argc, char* argv[]) {
 	server->setSourceName(config.tuio_source);
 	server->setInversion(config.invert_x, config.invert_y, config.invert_a);
 
-	thresholder = new FrameThresholder(config.gradient_gate, config.tile_size, config.thread_count);
+	if (strcmp(config.threshold_type, "br") == 0)
+		thresholder = new FrameThresholderBR(config.threshold_size, config.threshold_gradient / 100.0f, config.thread_count);
+	else
+		thresholder = new FrameThresholder(config.threshold_gradient, config.threshold_size, config.thread_count);
 	if (config.background) thresholder->toggleFlag(KEY_SPACE,false);
 	engine->addFrameProcessor(thresholder);
 
@@ -507,9 +515,10 @@ int main(int argc, char* argv[]) {
 	engine->addFrameProcessor(calibrator);
 
 	engine->start();
-
+    
 	engine->removeFrameProcessor(calibrator);
-	delete calibrator;
+    engine->removeFrameProcessor(fiducialfinder);
+    engine->removeFrameProcessor(thresholder);
 
 	config.finger_size = ((FidtrackFinder*)fiducialfinder)->getFingerSize();
 	config.finger_sensitivity = ((FidtrackFinder*)fiducialfinder)->getFingerSensitivity();
@@ -518,22 +527,27 @@ int main(int argc, char* argv[]) {
 	config.cursor_blobs = ((FidtrackFinder*)fiducialfinder)->getFingerBlob();
 	config.yamaarashi = ((FidtrackFinder*)fiducialfinder)->getYamaarashi();
 	config.yama_flip = ((FidtrackFinder*)fiducialfinder)->getYamaFlip();
-
-	engine->removeFrameProcessor(fiducialfinder);
-	delete fiducialfinder;
-
-	config.gradient_gate = ((FrameThresholder*)thresholder)->getGradientGate();
-	config.tile_size = ((FrameThresholder*)thresholder)->getTileSize();
-	config.background = ((FrameThresholder*)thresholder)->getEqualizerState();
-	engine->removeFrameProcessor(thresholder);
-	delete thresholder;
+    
+	if (strcmp(config.threshold_type, "br") == 0) {
+		config.threshold_gradient = (int)(100*((FrameThresholderBR*)thresholder)->getBias());
+		config.threshold_size     = ((FrameThresholderBR*)thresholder)->getWindowSize();
+		config.background         = ((FrameThresholderBR*)thresholder)->getEqualizerState();
+	} else {
+		config.threshold_gradient = ((FrameThresholder*)thresholder)->getGradientGate();
+		config.threshold_size     = ((FrameThresholder*)thresholder)->getTileSize();
+		config.background         = ((FrameThresholder*)thresholder)->getEqualizerState();
+	}
 
 	config.invert_x = server->getInvertXpos();
 	config.invert_y = server->getInvertYpos();
 	config.invert_a = server->getInvertAngle();
 
+    delete thresholder;
+    delete fiducialfinder;
+    delete calibrator;
+    
+    delete server;
 	delete engine;
-	delete server;
 
 	writeSettings(&config);
 	return 0;

@@ -31,8 +31,8 @@ use default locations or specify an absolute path -->
 <!-- the default display options at startup: dest, source, none
  ... also allows to enable the frame equalizer at startup -->
     <image display="dest" fullscreen="false" equalize="false" />
-<!-- the threshold gradient and tile size ... maximum threads for multithreading -->
-    <threshold gradient="32" tile="10" threads="max" />
+<!-- threshold: type="br" (Bradley-Roth) or "tb" (Tiled Bernsen, default) ... gradient, size, threads -->
+    <threshold type="br" gradient="15" size="16" threads="max" />
 <!-- the calibration file ... X,Y and angle inversion -->
     <calibration file="default.grid" invert=" " />
 
