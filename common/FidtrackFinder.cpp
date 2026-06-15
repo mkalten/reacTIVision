@@ -415,17 +415,41 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	//unsigned int checksum = 0;
 	bool check[] = {false, false,false,false};
 	unsigned char bitpos = 0;
-	double t,td,ta,tx,ty,cx,cy;
+	//double t,td,ta,tx,ty,cx,cy;
+    double td;
 	
 	double apos;
 	int pixel,px,py;
+
+	// Detect ellipse (both horizontal and vertical)
+	float aspect_ratio = bw / bh;
+	bool is_ellipse = (aspect_ratio > 1.1f) || (aspect_ratio < 0.9f);
 	
 	for (int i=0;i<6;i++) {
 		
 		apos = angle - M_PI_2;
+		// Use parametric ellipse equation to find distance at angle apos
+		// accounting for ellipse rotation ba
+		// For ellipse with semi-axes (bw, bh) rotated by ba:
+		// The radial distance r at angle φ from center is:
+		// r = (bw * bh) / sqrt((bh*cos(φ-ba))^2 + (bw*sin(φ-ba))^2)
+				
+		double angle_diff = apos - ba;
+		double cos_diff = cos(angle_diff);
+		double sin_diff = sin(angle_diff);
+
+		if (is_ellipse) {
+			// Radial distance to ellipse perimeter at this angle
+			double ellipse_r = (bw * bh) / sqrt((bh * cos_diff) * (bh * cos_diff) + 
+													(bw * sin_diff) * (bw * sin_diff));
+			td = ellipse_r * 1.5f;
+		} else {
+			td = bh * 1.5f; // circular case
+		}
+
 		for (int p=0;p<4;p++) {
-			
-			t = bw/bh;
+
+			/*t = bw/bh;
 			if (t>1.1) {
 				// correct elliptic blob distortion
 				ta = ba-apos;
@@ -434,7 +458,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 				cx = tx-bx;
 				cy = ty-by;
 				td = sqrt(cx*cx+cy*cy)*1.5f;
-			} else td = bh*1.5f; // more or less round
+			} else td = bh*1.5f; // more or less round*/
 			
 			px = (int)floor((bx + cos(apos)*td) + 0.5f);
 			py = (int)floor((by + sin(apos)*td) + 0.5f);
