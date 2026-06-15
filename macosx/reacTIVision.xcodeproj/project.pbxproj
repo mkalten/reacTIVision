@@ -60,6 +60,8 @@
 		B29CCC101B17685700C106A6 /* WebSockSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B29CCC011B17685700C106A6 /* WebSockSender.cpp */; };
 		B2AEE8EC0DE5D15C00D51856 /* reacTIVision.xml in Resources */ = {isa = PBXBuildFile; fileRef = B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */; };
 		B2B391302FBA5F1B0041C7C5 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B2B3912F2FBA5F1B0041C7C5 /* InfoPlist.xcstrings */; };
+		B2B9EDED2FE07A9000A8A0FB /* bradley_roth_threshold.c in Sources */ = {isa = PBXBuildFile; fileRef = B2B9EDEC2FE07A9000A8A0FB /* bradley_roth_threshold.c */; };
+		B2B9EDF02FE07AA900A8A0FB /* FrameThresholderBR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2B9EDEF2FE07AA900A8A0FB /* FrameThresholderBR.cpp */; };
 		B2CA5D43291D455E0051EC1B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D42291D455E0051EC1B /* AVFoundation.framework */; };
 		B2CA5D45291D456B0051EC1B /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D44291D456B0051EC1B /* CoreFoundation.framework */; };
 		B2CA5D47291D45750051EC1B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2CA5D46291D45750051EC1B /* CoreMedia.framework */; };
@@ -204,6 +206,10 @@
 		B2A8A0C919ECF6EE00D8D4FA /* Main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Main.h; path = ../common/Main.h; sourceTree = "<group>"; };
 		B2AEE8EB0DE5D15C00D51856 /* reacTIVision.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = reacTIVision.xml; sourceTree = SOURCE_ROOT; };
 		B2B3912F2FBA5F1B0041C7C5 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		B2B9EDEB2FE07A9000A8A0FB /* bradley_roth_threshold.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = bradley_roth_threshold.h; path = ../ext/libfidtrack/bradley_roth_threshold.h; sourceTree = SOURCE_ROOT; };
+		B2B9EDEC2FE07A9000A8A0FB /* bradley_roth_threshold.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = bradley_roth_threshold.c; path = ../ext/libfidtrack/bradley_roth_threshold.c; sourceTree = SOURCE_ROOT; };
+		B2B9EDEE2FE07AA900A8A0FB /* FrameThresholderBR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FrameThresholderBR.h; path = ../common/FrameThresholderBR.h; sourceTree = SOURCE_ROOT; };
+		B2B9EDEF2FE07AA900A8A0FB /* FrameThresholderBR.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; name = FrameThresholderBR.cpp; path = ../common/FrameThresholderBR.cpp; sourceTree = SOURCE_ROOT; };
 		B2CA5D42291D455E0051EC1B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B2CA5D44291D456B0051EC1B /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		B2CA5D46291D45750051EC1B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -263,6 +269,8 @@
 				B2023CCE1C137745002D4291 /* BlobObject.h */,
 				B29CCBD71B17680400C106A6 /* BlobMatrix.cpp */,
 				B29CCBD81B17680400C106A6 /* BlobMatrix.h */,
+				B2B9EDEE2FE07AA900A8A0FB /* FrameThresholderBR.h */,
+				B2B9EDEF2FE07AA900A8A0FB /* FrameThresholderBR.cpp */,
 				B214E66C0959DA6F00A347C1 /* FrameThresholder.cpp */,
 				B214E66D0959DA6F00A347C1 /* FrameThresholder.h */,
 				B2505B710ACC635B007C21BB /* CalibrationEngine.cpp */,
@@ -361,6 +369,8 @@
 				B260492C08E9BF620095D4C8 /* segment.h */,
 				B260492F08E9BF620095D4C8 /* tiled_bernsen_threshold.c */,
 				B260493008E9BF620095D4C8 /* tiled_bernsen_threshold.h */,
+				B2B9EDEB2FE07A9000A8A0FB /* bradley_roth_threshold.h */,
+				B2B9EDEC2FE07A9000A8A0FB /* bradley_roth_threshold.c */,
 				B260493108E9BF620095D4C8 /* topologysearch.c */,
 				B260493208E9BF620095D4C8 /* topologysearch.h */,
 				B260493308E9BF620095D4C8 /* treeidmap.cpp */,
@@ -565,6 +575,7 @@
 				B297D3CE097536E2004AB0FE /* UdpSocket.cpp in Sources */,
 				B2985D261B1ED49700A3172B /* ConsoleInterface.cpp in Sources */,
 				B297D3CF097536E2004AB0FE /* OscOutboundPacketStream.cpp in Sources */,
+				B2B9EDF02FE07AA900A8A0FB /* FrameThresholderBR.cpp in Sources */,
 				B297D3D0097536E2004AB0FE /* OscPrintReceivedElements.cpp in Sources */,
 				B297D3D1097536E2004AB0FE /* OscReceivedElements.cpp in Sources */,
 				B225847D1C6CC2920030E390 /* OneEuroFilter.cpp in Sources */,
@@ -576,6 +587,7 @@
 				B29CCC061B17685700C106A6 /* TuioBlob.cpp in Sources */,
 				B2F024E10975394D00538C36 /* Resources.c in Sources */,
 				B29CCC051B17685700C106A6 /* TcpSender.cpp in Sources */,
+				B2B9EDED2FE07A9000A8A0FB /* bradley_roth_threshold.c in Sources */,
 				B29CCBE11B17680400C106A6 /* BlobMatrix.cpp in Sources */,
 				B2884A790A2CF0E800AFF79A /* CalibrationGrid.cpp in Sources */,
 				B2505B730ACC635B007C21BB /* CalibrationEngine.cpp in Sources */,
@@ -656,7 +668,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_X86_VECTOR_INSTRUCTIONS = avx;
+				CLANG_X86_VECTOR_INSTRUCTIONS = sse4.1;
 				CODE_SIGN_ENTITLEMENTS = reacTIVision.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
@@ -689,7 +701,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 1.6.0;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DNDEBUG";
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"-ffast-math",
+				);
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = org.tuio.reactivision;

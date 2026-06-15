@@ -4,9 +4,13 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Resources/Assets.car</key>
+		<data>
+		uBhe0XjnXBA4XMTS5u4qKsmyZM4=
+		</data>
 		<key>Resources/Scripts/main.scpt</key>
 		<data>
-		iUW+8yVrhd+1BUTOzTMR0ZRGDmY=
+		R3+zpJ95+fcygusHAqqwdfA+NsE=
 		</data>
 		<key>Resources/applet.icns</key>
 		<data>
@@ -18,20 +22,31 @@
 		</data>
 		<key>Resources/description.rtfd/TXT.rtf</key>
 		<data>
-		n/X9p2bMC8UsbIQeCclfr2IlAS8=
+		4Fhvc556js6jsUFdrS+3PmvbvyA=
 		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
+		<key>Resources/Assets.car</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			uBhe0XjnXBA4XMTS5u4qKsmyZM4=
+			</data>
+			<key>hash2</key>
+			<data>
+			S/k6TV+XN+bgfA6DzUHnZAsF7xUhwE8Ag9JpyS1R9wo=
+			</data>
+		</dict>
 		<key>Resources/Scripts/main.scpt</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			iUW+8yVrhd+1BUTOzTMR0ZRGDmY=
+			R3+zpJ95+fcygusHAqqwdfA+NsE=
 			</data>
 			<key>hash2</key>
 			<data>
-			1axUAh5Zirop7PAvyzTmyWZEd3L/L9Jhv6h4KMzv3vI=
+			GIHcHlNQuLZjdD1G9HrMI9OqTtZx09C8LrZO9F49+XI=
 			</data>
 		</dict>
 		<key>Resources/applet.icns</key>
@@ -60,11 +75,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			n/X9p2bMC8UsbIQeCclfr2IlAS8=
+			4Fhvc556js6jsUFdrS+3PmvbvyA=
 			</data>
 			<key>hash2</key>
 			<data>
-			K8IxUdXWmiFCYgm2lc9jFlhlPDhX1gGst1jP7NT/6Vw=
+			XS5feNHX8oj9uBzB/U3XbyTzQ1RUlW/RHkrD632m7qw=
 			</data>
 		</dict>
 	</dict>
