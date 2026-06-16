@@ -10,8 +10,8 @@ reacTIVision 1.6
 * improved precision and robustness of finger tracking
 * improved angle and position resolution of fiducial tracking
 * optional 1EUR filter to clean  position and angle jitter
-* (beta) Yamaarashi 20bit fiducials (one million IDs)
-* added new adaptive Bradley Roth Thresholder 
+* new Yamaarashi 16bit fiducials (65535 IDs)
+* new adaptive Bradley Roth thresholder 
 * integrated the TUIO 1.1 library
   allows alternative UDP, TCP and WebSocket transport
 * completely removed SDL dependencies for all non-GUI classes

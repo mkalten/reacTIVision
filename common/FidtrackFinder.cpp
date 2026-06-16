@@ -402,13 +402,13 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 */
 
 	unsigned int value = 0;
-	//unsigned int checksum = 0;
-	bool check[] = {false, false,false,false};
+	unsigned int checksum = 0;
 	unsigned char bitpos = 0;
+	unsigned char data_bit_index = 0;
 	//double t,td,ta,tx,ty,cx,cy;
     double td;
 
-	// CRC-4-ITU: polynomial 0x13 (x^4 + x + 1)
+	// CRC-8: polynomial 0x07 (x^8 + x^2 + x + 1)
 	unsigned int crc = 0;
 	
 	double apos;
@@ -424,14 +424,23 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 
 		for (int p=0;p<4;p++) {
 
+			// Elliptic distortion correction: when the fiducial is viewed at an
+			// angle (or otherwise scaled non-uniformly), the symbol's bounding
+			// region becomes an ellipse with semi-axes bw and bh oriented at ba.
+			// The probe distance td must follow the ellipse radius along the
+			// current sampling direction apos, otherwise samples land off-target.
 			if (is_ellipse) {
+				// angle_diff: sampling direction relative to the ellipse axis
 				double angle_diff = apos - ba;
 				double cos_diff = cos(angle_diff);
 				double sin_diff = sin(angle_diff);
+				// Polar radius of the ellipse along angle_diff:
+				// r(theta) = (a*b) / sqrt((b*cos)^2 + (a*sin)^2)
 				double ellipse_r = (bw * bh) / sqrt((bh * cos_diff) * (bh * cos_diff) +
 													 (bw * sin_diff) * (bw * sin_diff));
 				td = ellipse_r * 1.5f;
 			} else {
+				// Circular case: uniform probe distance based on the radius
 				td = bh * 1.5f;
 			}
 			
@@ -449,32 +458,32 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 			ui->drawLine(bx,by,px,py);
 #endif
 			
-			if (bitpos<20) {
+			// Per-quadrant layout: 2 data, 1 crc, 2 data, 1 crc
+			// rings 0,1,3,4 = data ; rings 2,5 = checksum
+			if (i==2 || i==5) {
+				// Checksum bit: accumulate now, compare after all data bits are read
+				if (img[pixel]==255) {
+					int crc_bit_index = 2*p + ((i==5) ? 1 : 0);
+					checksum |= (1 << crc_bit_index);
+				}
+			} else {
+				// Data bit
 				int bit = (img[pixel]==0) ? 1 : 0;
 				if (bit==1) {
-					unsigned int mask = (unsigned int)pow(2,bitpos);
+					unsigned int mask = (unsigned int)pow(2,data_bit_index);
 					value = value|mask;
 				}
 
-				// CRC-4-ITU: feed bit into MSB position
-				crc ^= (bit << 3);
-				for (int k=0;k<4;k++) {
-					if ((crc & 0x8) != 0) {
-						crc = ((crc << 1) ^ 0x3) & 0xF;  // polynomial 0x13 shifted right by 1
+				// CRC-8: feed bit into MSB position
+				crc ^= (bit << 7);
+				for (int k=0;k<8;k++) {
+					if ((crc & 0x80) != 0) {
+						crc = ((crc << 1) ^ 0x07) & 0xFF;  // polynomial 0x07
 					} else {
-						crc = (crc << 1) & 0xF;
+						crc = (crc << 1) & 0xFF;
 					}
 				}
-			} else {
-				bool cpix = false;
-				if (img[pixel]==255) cpix = true;
-
-				// Compare computed CRC bit with checksum bit
-				bool crc_bit = ((crc >> (bitpos - 20)) & 1) == 1;
-				if (cpix != crc_bit) {
-					yama->id = FUZZY_FIDUCIAL_ID;
-					break;
-				}
+				data_bit_index++;
 			}
 			
 			if (invert_yamaarashi) apos-=M_PI_2;
@@ -485,6 +494,9 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 		if (invert_yamaarashi) angle -= M_PI/12.0f;
 		else angle += M_PI/12.0f;
 	}
+
+	// Compare full CRC-8 (computed over all 16 data bits) with read checksum
+	if (checksum != crc) yama->id = FUZZY_FIDUCIAL_ID;
 	
 	if (yama->id!=FUZZY_FIDUCIAL_ID) yama->id = value;
 	

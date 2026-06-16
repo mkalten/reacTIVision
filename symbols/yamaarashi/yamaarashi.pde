@@ -3,8 +3,8 @@ import processing.pdf.*;
 
 PFont font;
 PShape fiducial;
-PShape bits[] = new PShape[20];
-PShape check[] = new PShape[4];
+PShape bits[] = new PShape[16];
+PShape check[] = new PShape[8];
 
 PGraphics pdf;
 //VideoExport video;
@@ -43,24 +43,24 @@ void setup() {
   bits[5] = fiducial.getChild("bit8");
   bits[6] = fiducial.getChild("bit14");
   bits[7] = fiducial.getChild("bit20");
-  bits[8] = fiducial.getChild("bit3");
-  bits[9] = fiducial.getChild("bit9");
-  bits[10] = fiducial.getChild("bit15");
-  bits[11] = fiducial.getChild("bit21");
-  bits[12] = fiducial.getChild("bit4");
-  bits[13] = fiducial.getChild("bit10");
-  bits[14] = fiducial.getChild("bit16");
-  bits[15] = fiducial.getChild("bit22");
-  bits[16] = fiducial.getChild("bit5");
-  bits[17] = fiducial.getChild("bit11");
-  bits[18] = fiducial.getChild("bit17");
-  bits[19] = fiducial.getChild("bit23");
+  bits[8] = fiducial.getChild("bit4");
+  bits[9] = fiducial.getChild("bit10");
+  bits[10] = fiducial.getChild("bit16");
+  bits[11] = fiducial.getChild("bit22");
+  bits[12] = fiducial.getChild("bit5");
+  bits[13] = fiducial.getChild("bit11");
+  bits[14] = fiducial.getChild("bit17");
+  bits[15] = fiducial.getChild("bit23");
   
   // checksum bits
-  check[0] = fiducial.getChild("bit6");
-  check[1] = fiducial.getChild("bit12");
-  check[2] = fiducial.getChild("bit18");
-  check[3] = fiducial.getChild("bit24");
+  check[0] = fiducial.getChild("bit3");
+  check[1] = fiducial.getChild("bit6");
+  check[2] = fiducial.getChild("bit9");
+  check[3] = fiducial.getChild("bit12");
+  check[4] = fiducial.getChild("bit15");
+  check[5] = fiducial.getChild("bit18");
+  check[6] = fiducial.getChild("bit21");
+  check[7] = fiducial.getChild("bit24");
 }
 
 void mouseClicked() {
@@ -99,34 +99,34 @@ void render() {
     println("generating ID "+id);
     cur_page_id_count++;
 
-    String id_bits = binary(id,20);
-    Boolean check_bits[] = { false, false, false, false };
+    String id_bits = binary(id,16);
+    Boolean check_bits[] = { false, false, false, false, false, false, false, false };
 
-    // CRC-4-ITU: polynomial 0x13 (x^4 + x + 1)
+    // CRC-8: polynomial 0x07 (x^8 + x^2 + x + 1)
     int crc = 0;
-    for (int i=0;i<20;i++) {
-      int bit = (id_bits.charAt(19-i) == '1') ? 1 : 0;  // MSB first
-      crc ^= (bit << 3);  // shift bit into MSB position
-      for (int k=0;k<4;k++) {
-        if ((crc & 0x8) != 0) {
-          crc = ((crc << 1) ^ 0x3) & 0xF;  // polynomial 0x13 shifted right by 1
+    for (int i=0;i<16;i++) {
+      int bit = (id_bits.charAt(15-i) == '1') ? 1 : 0;  // MSB first
+      crc ^= (bit << 7);  // shift bit into MSB position
+      for (int k=0;k<8;k++) {
+        if ((crc & 0x80) != 0) {
+          crc = ((crc << 1) ^ 0x07) & 0xFF;  // polynomial 0x07
         } else {
-          crc = (crc << 1) & 0xF;
+          crc = (crc << 1) & 0xFF;
         }
       }
     }
 
-    // Convert 4-bit CRC to check bits (bit 0 = LSB)
-    for (int i=0;i<4;i++) {
+    // Convert 8-bit CRC to check bits (bit 0 = LSB)
+    for (int i=0;i<8;i++) {
       check_bits[i] = ((crc >> i) & 1) == 1;
     }
 
-    for (int i=0;i<20;i++) {
-      if (id_bits.charAt(19-i) == '1') bits[i].setVisible(false); // black
+    for (int i=0;i<16;i++) {
+      if (id_bits.charAt(15-i) == '1') bits[i].setVisible(false); // black
       else bits[i].setVisible(true); // white
     }
 
-    for (int i=0;i<4;i++) {
+    for (int i=0;i<8;i++) {
       check[i].setVisible(check_bits[i]);
     }
     
