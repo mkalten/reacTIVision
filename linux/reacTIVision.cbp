@@ -110,8 +110,14 @@
 		<Unit filename="../common/FiducialObject.h" />
 		<Unit filename="../common/FrameThresholder.cpp" />
 		<Unit filename="../common/FrameThresholder.h" />
+		<Unit filename="../common/FrameThresholderBR.cpp" />
+		<Unit filename="../common/FrameThresholderBR.h" />
 		<Unit filename="../common/Main.cpp" />
 		<Unit filename="../common/Main.h" />
+		<Unit filename="../ext/libfidtrack/bradley_roth_threshold.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../ext/libfidtrack/bradley_roth_threshold.h" />
 		<Unit filename="../ext/libfidtrack/default_trees.h" />
 		<Unit filename="../ext/libfidtrack/dump_graph.c">
 			<Option compilerVar="CC" />
@@ -185,8 +191,6 @@
 		<Unit filename="../ext/portvideo/linux/V4Linux2Camera.h" />
 		<Unit filename="../ext/portvideo/tinyxml/tinyxml2.cpp" />
 		<Unit filename="../ext/portvideo/tinyxml/tinyxml2.h" />
-		<Unit filename="../ext/tuio/FlashSender.cpp" />
-		<Unit filename="../ext/tuio/FlashSender.h" />
 		<Unit filename="../ext/tuio/LibExport.h" />
 		<Unit filename="../ext/tuio/OneEuroFilter.cpp" />
 		<Unit filename="../ext/tuio/OneEuroFilter.h" />
@@ -216,10 +220,6 @@
 		<Unit filename="../ext/tuio/UdpSender.h" />
 		<Unit filename="../ext/tuio/WebSockSender.cpp" />
 		<Unit filename="../ext/tuio/WebSockSender.h" />
-		<Extensions>
-			<code_completion />
-			<envvars />
-			<debugger />
-		</Extensions>
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
