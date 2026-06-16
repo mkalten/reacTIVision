@@ -359,11 +359,20 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		// select fuzzy fiducials before decoding
 		if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
 			f->id = FUZZY_FIDUCIAL_ID;
-	} else if ((leaf_variation>1.0f) || (black_variation>1.0f) || (white_variation>1.0f)) {
-		// eliminate false positives
-		if ((ft->white_leaf_nodes>ft->min_leafs) || (ft->black_leaf_nodes>ft->min_leafs))
-			f->id = FUZZY_FIDUCIAL_ID;
 	} else {
+		// Check for extreme leaf node sizes (smallest <50% of avg or largest >200% of avg)
+		int extreme_black = (ft->black_leaf_nodes > 0) &&
+		                    ((ft->min_black < black_average * 0.5f) ||
+		                     (ft->max_black > black_average * 2.0f));
+		int extreme_white = (ft->white_leaf_nodes > 0) &&
+		                    ((ft->min_white < white_average * 0.5f) ||
+		                     (ft->max_white > white_average * 2.0f));
+
+		if (extreme_black || extreme_white) {
+			// eliminate false positives with extreme leaf sizes
+			if ((ft->white_leaf_nodes > ft->min_leafs) || (ft->black_leaf_nodes > ft->min_leafs))
+				f->id = FUZZY_FIDUCIAL_ID;
+		} else {
 		// decode valid fiducal candidates
 		ft->next_depth_string = 0;
 		depth_string = build_left_heavy_depth_string( ft, r );
@@ -379,6 +388,7 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 			f->id = FUZZY_FIDUCIAL_ID;
 		
 		//if (f->id != INVALID_FIDUCIAL_ID) printf("%d %s %f\n",f->id,ft->temp_coloured_depth_string,leaf_variation);
+		}
 	}
 }
 
