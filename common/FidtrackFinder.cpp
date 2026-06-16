@@ -407,6 +407,9 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	unsigned char bitpos = 0;
 	//double t,td,ta,tx,ty,cx,cy;
     double td;
+
+	// CRC-4-ITU: polynomial 0x13 (x^4 + x + 1)
+	unsigned int crc = 0;
 	
 	double apos;
 	int pixel,px,py;
@@ -447,20 +450,28 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 #endif
 			
 			if (bitpos<20) {
-				if (img[pixel]==0) {
+				int bit = (img[pixel]==0) ? 1 : 0;
+				if (bit==1) {
 					unsigned int mask = (unsigned int)pow(2,bitpos);
 					value = value|mask;
-					check[bitpos%4] = check[bitpos%4] ^ true;
-				} else check[bitpos%4] = check[bitpos%4] ^ false;
+				}
+
+				// CRC-4-ITU: feed bit into MSB position
+				crc ^= (bit << 3);
+				for (int k=0;k<4;k++) {
+					if ((crc & 0x8) != 0) {
+						crc = ((crc << 1) ^ 0x3) & 0xF;  // polynomial 0x13 shifted right by 1
+					} else {
+						crc = (crc << 1) & 0xF;
+					}
+				}
 			} else {
 				bool cpix = false;
 				if (img[pixel]==255) cpix = true;
-				/*{
-					unsigned int mask = (unsigned int)pow(2,bitpos-20);
-					checksum = checksum|mask;
-				}*/
-				
-				if (cpix!=check[bitpos-20]) {
+
+				// Compare computed CRC bit with checksum bit
+				bool crc_bit = ((crc >> (bitpos - 20)) & 1) == 1;
+				if (cpix != crc_bit) {
 					yama->id = FUZZY_FIDUCIAL_ID;
 					break;
 				}
@@ -476,13 +487,6 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	}
 	
 	if (yama->id!=FUZZY_FIDUCIAL_ID) yama->id = value;
-	
-	/*unsigned int validation = value%13;
-	if (validation==checksum) yama->id = value;
-	else {
-		yama->id = FUZZY_FIDUCIAL_ID;
-		//std::cout << "yama cs: " << value << " " << checksum << " " << validation << std::endl;
-	}*/
 	
 	if(!empty_grid) {
 		int pixel = width*(int)floor(yama->raw_y+.5f) + (int)floor(yama->raw_x+.5f);

@@ -14,7 +14,7 @@ int start_id = 0;
 int range = 300;
 int fiducial_size_mm = 46;
 
-String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2022 Martin Kaltenbrunner <martin@tuio.org>";
+String license = "reacTIVision yamaarashi symbols CC BY-NC-SA 2026 Martin Kaltenbrunner <martin@tuio.org>";
 int border = 22;
 int xpos = border;
 int ypos = border;
@@ -22,6 +22,7 @@ int fiducial_size;
  
 void setup() {
   
+  pixelDensity(1);
   size(480, 480);
   noLoop();
   
@@ -101,14 +102,32 @@ void render() {
     String id_bits = binary(id,20);
     Boolean check_bits[] = { false, false, false, false };
 
+    // CRC-4-ITU: polynomial 0x13 (x^4 + x + 1)
+    int crc = 0;
+    for (int i=0;i<20;i++) {
+      int bit = (id_bits.charAt(19-i) == '1') ? 1 : 0;  // MSB first
+      crc ^= (bit << 3);  // shift bit into MSB position
+      for (int k=0;k<4;k++) {
+        if ((crc & 0x8) != 0) {
+          crc = ((crc << 1) ^ 0x3) & 0xF;  // polynomial 0x13 shifted right by 1
+        } else {
+          crc = (crc << 1) & 0xF;
+        }
+      }
+    }
+
+    // Convert 4-bit CRC to check bits (bit 0 = LSB)
+    for (int i=0;i<4;i++) {
+      check_bits[i] = ((crc >> i) & 1) == 1;
+    }
+
     for (int i=0;i<20;i++) {
       if (id_bits.charAt(19-i) == '1') bits[i].setVisible(false); // black
       else bits[i].setVisible(true); // white
-      
-      int j = floor(i%4);
-      // XOR all five bits in each quadrant = 4bit checksum
-      check_bits[j] = check_bits[j] ^ bits[i].isVisible();
-      check[j].setVisible(!check_bits[j]);
+    }
+
+    for (int i=0;i<4;i++) {
+      check[i].setVisible(check_bits[i]);
     }
     
     pdf.shape(fiducial,xpos, ypos, fiducial_size,fiducial_size);
