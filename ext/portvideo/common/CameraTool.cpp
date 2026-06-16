@@ -345,16 +345,16 @@ CameraConfig* CameraTool::readSettings(const char* cfgfile) {
 		snprintf(cam_cfg.path,256,"%s/Contents/Resources/camera.xml",path);
 #elif defined LINUX
 		struct passwd *pw = getpwuid(getuid());
-		snprintf(path,255,"%s/.portvideo/camera.xml",pw->pw_dir);
+		snprintf(path,1024,"%s/.portvideo/camera.xml",pw->pw_dir);
 
-		snprintf(cam_cfg.path,"./camera.xml");
+		snprintf(cam_cfg.path,256,"./camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s",path);
 		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/usr/share/portvideo/camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/usr/local/share/portvideo/camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/opt/share/portvideo/camera.xml");
 		if (access (cam_cfg.path, F_OK )!=0) snprintf(cam_cfg.path,255,"%s","/opt/local/share/portvideo/camera.xml");
 #else
-		snprintf(cam_cfg.path,255,"%s","./camera.xml");
+		snprintf(cam_cfg.path,256,"%s","./camera.xml");
 #endif
 	} else snprintf(cam_cfg.path,256,"%s",cfgfile);
 	
