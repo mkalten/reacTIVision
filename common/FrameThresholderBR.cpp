@@ -96,6 +96,7 @@ bool FrameThresholderBR::init(int w, int h, int sb, int db) {
 
 	/* compute max window size from geometry, then clamp config value */
 	max_window = th / 2;
+	if (max_window > 63) max_window = 63;
 	if (max_window < 1) max_window = 1;
 	if (window_size > max_window) window_size = max_window;
 
