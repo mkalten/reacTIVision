@@ -546,7 +546,7 @@ void BlobObject::computeOrientedBoundingBox() {
 	obBox.push_back(BlobPoint(obb[maxyi].x,maxy));
 	
 	// center point
-	obBox.push_back(BlobPoint(1+ maxx - (maxx - minx)/2.0f,1+ maxy - (maxy - miny)/2.0f));
+	obBox.push_back(BlobPoint(maxx - (maxx - minx)/2.0f,maxy - (maxy - miny)/2.0f));
 	
 	// width & height
 	//float w = 1+sqrtf((obBox[0].x-obBox[1].x)*(obBox[0].x-obBox[1].x)+(obBox[0].y-obBox[1].y)*(obBox[0].y-obBox[1].y));

@@ -518,8 +518,8 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	double distance = 0.0f;
 	for (unsigned int i = 0; i < contourList.size(); i++) {
 
-		double px = contourList[i].x - bx + 1;
-		double py = contourList[i].y - by + 1;
+		double px = contourList[i].x - bx;
+		double py = contourList[i].y - by;
 		
 		double pX = px*Cr - py*Sr;
 		double pY = py*Cr + px*Sr;
@@ -546,7 +546,7 @@ float FidtrackFinder::checkFinger(BlobObject *fblob) {
 	}
 
 	//std::cout << finger_sensitivity << " " << (distance/contourList.size())/bw << std::endl;
-	return (distance/contourList.size())/bh;
+	return (distance/contourList.size())/sqrt(bw*bh);
 }
 
 void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
@@ -726,8 +726,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				}
 			}
 			
-			// add the root regions
-			if (add_blob) {
+			// add the root regions (only WHITE blobs within size limits)
+			if (add_blob && (regions[i]->colour == WHITE) &&
+			    (reg_size >= min_blob_size) && (reg_size <= max_blob_size)) {
 				BlobObject *root_blob = NULL;
 				try {
 					root_blob = new BlobObject(frameTime,regions[i],dmap);
@@ -1096,7 +1097,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			for (std::list<TuioCursor*>::iterator ocur = cursorList.begin(); ocur!=cursorList.end(); ocur++) {
 				if ((*ocur)==(*tcur)) continue;
  				TuioPoint opos = (*ocur)->predictPosition();
-				float distance = closest_fblob->getScreenDistance(cpos.getX(),cpos.getY(),width,height);
+				float distance = closest_fblob->getScreenDistance(opos.getX(),opos.getY(),width,height);
 				if (distance<closest) {
 					closest_fblob = NULL;
 					break;
@@ -1170,13 +1171,13 @@ if (detect_blobs) {
 	for (std::list<BlobObject*>::iterator bobj = rootBlobs.begin(); bobj!=rootBlobs.end(); bobj++) {
 		
 		Region *blob_region = (*bobj)->getRegion();
-		int reg_size = blob_region->size;
 		int reg_diff = abs(blob_region->width - blob_region->height);
 		int max_diff = blob_region->width;
 		if (blob_region->height < blob_region->width)
 			max_diff = blob_region->height;
 		
-		if ((blob_region->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size<=max_blob_size) && (reg_diff<max_diff) && (blob_region->adjacent_region_count<=3)) {
+		// Only check aspect ratio and adjacencies (colour and size already verified)
+		if ((reg_diff<max_diff) && (blob_region->adjacent_region_count<=3)) {
 			plainBlobs.push_back((*bobj));
 		}
 		else delete (*bobj);
@@ -1196,7 +1197,8 @@ if (detect_blobs) {
 		for (std::list<BlobObject*>::iterator pblb = plainBlobs.begin(); pblb!=plainBlobs.end(); pblb++) {
 			float distance = (*pblb)->getDistance(bpos.getX(),bpos.getY());
 			
-			if ((distance<(*tblb)->getWidth()) && (distance<=closest)) {
+			float max_dim = std::max((*tblb)->getWidth(), (*tblb)->getHeight());
+			if ((distance<max_dim) && (distance<=closest)) {
 				closest_blob = *pblb;
 				closest = distance;
 			}
@@ -1208,7 +1210,7 @@ if (detect_blobs) {
 			for (std::list<TuioBlob*>::iterator oblb = blobList.begin(); oblb!=blobList.end(); oblb++) {
 				if ((*oblb)==(*tblb)) continue;
 				TuioPoint opos = (*oblb)->predictPosition();
-				float distance = closest_blob->getDistance(bpos.getX(),bpos.getY());
+				float distance = closest_blob->getDistance(opos.getX(),opos.getY());
 				if (distance<closest) {
 					closest_blob = NULL;
 					break;
@@ -1270,6 +1272,10 @@ if (detect_blobs) {
 	// delete unused root blobs
 	for (std::list<BlobObject*>::iterator rblb = rootBlobs.begin(); rblb!=rootBlobs.end(); rblb++) {
 		delete (*rblb);
+	}
+	// delete any orphaned plain blobs
+	for (std::list<BlobObject*>::iterator pblb = plainBlobs.begin(); pblb!=plainBlobs.end(); pblb++) {
+		delete (*pblb);
 	}
 }
 	tuioManager->stopUntouchedMovingObjects();
