@@ -18,6 +18,8 @@
 
 #include "FidtrackFinder.h"
 #include <sstream>
+#include <cmath>
+#include <algorithm>
 
 using namespace TUIO;
 
@@ -363,31 +365,15 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	
 	// angles between black and white leaf nodes
 	
-	double leaf_angle_a = 0.;
 	double dx_a = white_leaf[0].x - black_leaf[0].x;
 	double dy_a = white_leaf[0].y - black_leaf[0].y;
-	
-	if( fabs(dx_a) > 0.001 ) {
-		leaf_angle_a = atan(dy_a/dx_a) - M_PI * .5;
-		if( dx_a < 0 ) leaf_angle_a =  leaf_angle_a - M_PI;
-		if( leaf_angle_a < 0 ) leaf_angle_a += 2. * M_PI;
-	} else {
-		if (dy_a>0) leaf_angle_a = 0;
-		else leaf_angle_a = M_PI;
-	}
-	
-	double leaf_angle_b = 0.;
+	double len_a = sqrt(dx_a*dx_a + dy_a*dy_a);
+	double leaf_angle_a = fmod(atan2(dy_a, dx_a) - M_PI * .5 + 4. * M_PI, 2. * M_PI);
+
 	double dx_b = white_leaf[1].x - black_leaf[1].x;
 	double dy_b = white_leaf[1].y - black_leaf[1].y;
-	
-	if( fabs(dx_b) > 0.001 ) {
-		leaf_angle_b = atan(dy_b/dx_b) - M_PI * .5;
-		if( dx_b < 0 ) leaf_angle_b =  leaf_angle_b - M_PI;
-		if( leaf_angle_b < 0 ) leaf_angle_b += 2. * M_PI;
-	} else {
-		if (dy_b>0) leaf_angle_b = 0;
-		else leaf_angle_b = M_PI;
-	}
+	double len_b = sqrt(dx_b*dx_b + dy_b*dy_b);
+	double leaf_angle_b = fmod(atan2(dy_b, dx_b) - M_PI * .5 + 4. * M_PI, 2. * M_PI);
 
 	// ironing out angle jumps from 2_M_PI to 0
 	double yama_angle = yama->angle;
@@ -395,8 +381,12 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	if (leaf_angle_b<M_PI_2 && (((yama_angle - leaf_angle_b)>M_PI) || (leaf_angle_a - leaf_angle_b)>M_PI)) leaf_angle_b+=2*M_PI;
 	if (yama_angle  <M_PI_2 && (((leaf_angle_a - yama_angle)>M_PI) || (leaf_angle_b -   yama_angle)>M_PI)) yama_angle+=2*M_PI;
 	
-	// averaging the three angles
-	double angle = (leaf_angle_a + leaf_angle_b + yama_angle)/3.0f;
+	// weighted average: leaf angles weighted by vector length, yama_angle by average leaf length
+	double w_a = len_a;
+	double w_b = len_b;
+	double w_y = (len_a + len_b) * 0.5;
+	double total_w = w_a + w_b + w_y;
+	double angle = (leaf_angle_a * w_a + leaf_angle_b * w_b + yama_angle * w_y) / total_w;
 	if (angle>=2*M_PI) angle-=2*M_PI;
 	
 	yama->angle = angle;
@@ -428,37 +418,19 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	for (int i=0;i<6;i++) {
 		
 		apos = angle - M_PI_2;
-		// Use parametric ellipse equation to find distance at angle apos
-		// accounting for ellipse rotation ba
-		// For ellipse with semi-axes (bw, bh) rotated by ba:
-		// The radial distance r at angle φ from center is:
-		// r = (bw * bh) / sqrt((bh*cos(φ-ba))^2 + (bw*sin(φ-ba))^2)
-				
-		double angle_diff = apos - ba;
-		double cos_diff = cos(angle_diff);
-		double sin_diff = sin(angle_diff);
-
-		if (is_ellipse) {
-			// Radial distance to ellipse perimeter at this angle
-			double ellipse_r = (bw * bh) / sqrt((bh * cos_diff) * (bh * cos_diff) + 
-													(bw * sin_diff) * (bw * sin_diff));
-			td = ellipse_r * 1.5f;
-		} else {
-			td = bh * 1.5f; // circular case
-		}
 
 		for (int p=0;p<4;p++) {
 
-			/*t = bw/bh;
-			if (t>1.1) {
-				// correct elliptic blob distortion
-				ta = ba-apos;
-				tx = bx + cos(ta)*bw;
-				ty = by + sin(ta)*bh;
-				cx = tx-bx;
-				cy = ty-by;
-				td = sqrt(cx*cx+cy*cy)*1.5f;
-			} else td = bh*1.5f; // more or less round*/
+			if (is_ellipse) {
+				double angle_diff = apos - ba;
+				double cos_diff = cos(angle_diff);
+				double sin_diff = sin(angle_diff);
+				double ellipse_r = (bw * bh) / sqrt((bh * cos_diff) * (bh * cos_diff) +
+													 (bw * sin_diff) * (bw * sin_diff));
+				td = ellipse_r * 1.5f;
+			} else {
+				td = bh * 1.5f;
+			}
 			
 			px = (int)floor((bx + cos(apos)*td) + 0.5f);
 			py = (int)floor((by + sin(apos)*td) + 0.5f);
