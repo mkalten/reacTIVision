@@ -160,6 +160,12 @@ namespace TUIO {
 		 * @return	the symbol ID of this TuioObject
 		 */
 		int getSymbolID() const;
+
+		/**
+		 * Sets the symbol ID of this TuioObject.
+		 * @param sym	the new symbol ID for this TuioObject
+		 */
+		void setSymbolID(int sym);
 		
 		/**
 		 * Returns the rotation angle of this TuioObject.

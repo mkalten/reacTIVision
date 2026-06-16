@@ -81,6 +81,12 @@ namespace TUIO {
 		 * @return	the Cursor ID of this TuioCursor
 		 */
 		int getCursorID() const;
+
+		/**
+		 * Sets the Cursor ID of this TuioCursor.
+		 * @param ci	the new Cursor ID for this TuioCursor
+		 */
+		void setCursorID(int ci);
 	};
 }
 #endif

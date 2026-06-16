@@ -36,3 +36,7 @@ int TuioCursor::getCursorID() const{
 	return cursor_id;
 };
 
+void TuioCursor::setCursorID(int ci) {
+	cursor_id = ci;
+}
+

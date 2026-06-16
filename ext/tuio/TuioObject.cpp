@@ -115,6 +115,10 @@ int TuioObject::getSymbolID() const{
 	return symbol_id;
 }
 
+void TuioObject::setSymbolID(int sym) {
+	symbol_id = sym;
+}
+
 float TuioObject::getAngle() const{
 	return angle;
 }

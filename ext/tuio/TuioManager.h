@@ -39,7 +39,7 @@ namespace TUIO {
 	 * ...<br/>
 	 * server->initFrame(TuioTime::getSessionTime());<br/>
 	 * TuioObject *tobj = server->addTuioObject(xpos,ypos, angle);<br/>
-	 * TuioCursor *tcur = server->addTuioObject(xpos,ypos);<br/>
+	 * TuioCursor *tcur = server->addTuioCursor(xpos,ypos);<br/>
 	 * TuioBlob *tblb = server->addTuioBlob(xpos,ypos,width,height,angle);<br/>
 	 * server->commitFrame();<br/>
 	 * ...<br/>
@@ -140,7 +140,7 @@ namespace TUIO {
 		/**
 		 * Updates the referenced TuioCursor based on the given arguments.
 		 *
-		 * @param	tcur	the TuioObject to update
+		 * @param	tcur	the TuioCursor to update
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
 		 */
