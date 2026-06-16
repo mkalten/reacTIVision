@@ -119,8 +119,9 @@ public:
 
 private:
 	BradleyRothThresholder **thresholder;
-	int padded_strip_height;    /* strip_height + 2*window_size, clamped */
+	int padded_strip_height;    /* strip_height + 2*max_window, clamped to h */
 	int   window_size;
+	int   max_window;
 	bool  setThreshold;         /* threshold config mode active */
 	int   threshold_setting;    /* 0=window_size, 1=bias */
 	float bias;

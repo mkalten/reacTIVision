@@ -94,8 +94,13 @@ bool FrameThresholderBR::init(int w, int h, int sb, int db) {
 		th = h / thread_count;
 	}
 
-	/* worst-case padded height = strip + 2*window_size (both halos present) */
-	padded_strip_height = th + 2 * window_size;
+	/* compute max window size from geometry, then clamp config value */
+	max_window = th / 2;
+	if (max_window < 1) max_window = 1;
+	if (window_size > max_window) window_size = max_window;
+
+	/* padded height covers full max halo */
+	padded_strip_height = th + 2 * max_window;
 	if (padded_strip_height > h) padded_strip_height = h;
 
 	thresholder = new BradleyRothThresholder*[thread_count];
@@ -237,7 +242,6 @@ bool FrameThresholderBR::toggleFlag(unsigned char flag, bool lock) {
 				bias += 0.01f;
 				if (bias > 0.5f) bias = 0.5f;
 			} else if (threshold_setting == 1) {
-				int max_window = (padded_strip_height - height / thread_count) / 2;
 				window_size++;
 				if (window_size > max_window) window_size = max_window;
 			} else {
@@ -275,7 +279,6 @@ void FrameThresholderBR::displayControl() {
 		snprintf(displayText, 64, "gradient %.2f", bias);
 		ui->displayControl(displayText, 0, 100, (int)(bias * 200.0f));
 	} else if (threshold_setting == 1) {
-		int max_window = (padded_strip_height - height / thread_count) / 2;
 		snprintf(displayText, 64, "window size %d", window_size);
 		ui->displayControl(displayText, 1, max_window, window_size);
 	} else {
