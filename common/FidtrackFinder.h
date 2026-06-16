@@ -113,7 +113,7 @@ public:
 	
 private:
 	Segmenter segmenter;
-	char tree_config[255];
+	char tree_config[256];
 	
 	FiducialX fiducials[ MAX_FIDUCIAL_COUNT ];
 	Region* regions[ MAX_FIDUCIAL_COUNT*4 ];
