@@ -28,10 +28,10 @@
 
 #include <stdint.h>
 
-#if defined(DEBUG)
+#if !defined(NDEBUG)
 #define debug(...) fprintf(stdout, __VA_ARGS__)
 #else
-#define debug(...) 
+#define debug(...)
 #endif
 
 
