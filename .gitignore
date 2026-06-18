@@ -33,3 +33,6 @@ linux/reacTIVision
 macosx/DerivedData
 
 .vs
+
+macosx/scripts/list_devices.app
+

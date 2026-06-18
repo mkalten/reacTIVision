@@ -1,6 +1,6 @@
 reacTIVision 1.5.2
 ------------------
-(c) 2005-2022 by Martin Kaltenbrunner <martin@tuio.org>
+(c) 2005-2026 by Martin Kaltenbrunner <martin@tuio.org>
 https://github.com/mkalten/reacTIVision
 
 reacTIVision is an open source, cross-platform computer vision
@@ -186,7 +186,7 @@ and headers are included. The project should build right away for
 32bit and 64bit targets without any additional configuration.
 
 Mac OS X:
-An Xcode project for Xcode version 3.2 or later is included.
+An Xcode project for Xcode version 12 or later is included.
 The build will require the SDL2 and VVUVCKit frameworks, in order 
 to compile properly, just unzip the included Frameworks.zip
 
