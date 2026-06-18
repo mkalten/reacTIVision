@@ -346,7 +346,10 @@ bool AVfoundationCamera::initCamera() {
                 //printf("\t\tselected: %dx%d, %dfps\n",dim.width,dim.height,frames);
                 break;
             } else { // determine closest framerate
-                if (lastRange==NULL) continue;
+                if (lastRange==NULL) {
+                    lastRange = frameRateRange;
+                    continue;
+                }
                 float lastrate = round([lastRange maxFrameRate]*100)/100.0f;
                 
                 if (((config.cam_fps<lastrate) && (config.cam_fps>framerate)) || ((config.cam_fps>lastrate) && (config.cam_fps<framerate))) {
@@ -364,7 +367,6 @@ bool AVfoundationCamera::initCamera() {
                 found = true;
                 break;
             }
-            lastRange = frameRateRange;
         }
         
         if (found) break;
