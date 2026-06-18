@@ -242,10 +242,6 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	double black_average = 0.;
 	double white_average = 0.;
 
-	double leaf_variation = 10.;
-	double black_variation = 10.;
-	double white_variation = 10.;
-
     ft->black_x_sum = 0.;
     ft->black_y_sum = 0.;
     ft->black_leaf_count = 0.;

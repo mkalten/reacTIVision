@@ -57,26 +57,26 @@ bool FileCamera::initCamera() {
 	FILE*  imagefile=fopen(config.file, "r");
 	if (imagefile==NULL) return false;
 
- 	char *result = fgets(header,32,imagefile);
-	while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+ 	fgets(header,32,imagefile);
+	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 	if (strstr(header,"P5")==NULL) return false;
 		
-	result = fgets(header,32,imagefile);
-	while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+	fgets(header,32,imagefile);
+	while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 	param = strtok(header," "); if (param) cam_width = atoi(param);
 	param = strtok(NULL," "); if (param) cam_height =  atoi(param);
 	param = strtok(NULL," "); if (param) gray = atoi(param);
 
 	if (cam_height==0) 	{ 
-		result = fgets(header,32,imagefile);
-		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+		fgets(header,32,imagefile);
+		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) cam_height = atoi(param);
 		param = strtok(NULL," "); if (param) gray = atoi(param);
 	}
 
 	if (gray==0) {
-		result = fgets(header,32,imagefile);
-		while (strstr(header,"#")!=NULL) result = fgets(header,32,imagefile);
+		fgets(header,32,imagefile);
+		while (strstr(header,"#")!=NULL) fgets(header,32,imagefile);
 		param = strtok(header," "); if (param) gray = atoi(param);
 	}
 
