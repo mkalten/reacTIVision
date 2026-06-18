@@ -403,7 +403,6 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 
 	unsigned int value = 0;
 	unsigned int checksum = 0;
-	unsigned char bitpos = 0;
 	unsigned char data_bit_index = 0;
 	//double t,td,ta,tx,ty,cx,cy;
     double td;
@@ -488,7 +487,6 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 			
 			if (invert_yamaarashi) apos-=M_PI_2;
 			else apos+=M_PI_2;
-			bitpos++;
 		}
 		
 		if (invert_yamaarashi) angle -= M_PI/12.0f;
@@ -1331,4 +1329,3 @@ void FidtrackFinder::printStatistics(TuioTime frameTime) {
 	
 	std::cout << std::endl;
 }
-

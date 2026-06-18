@@ -233,10 +233,6 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	double black_average = 0.;
 	double white_average = 0.;
 
-	double leaf_variation = 10.;
-	double black_variation = 10.;
-	double white_variation = 10.;
-
     ft->black_x_sum = 0.;
     ft->black_y_sum = 0.;
     ft->black_leaf_count = 0.;
@@ -341,17 +337,6 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	if (ft->black_leaf_nodes>0) black_average=ft->black_leaf_size/ft->black_leaf_nodes;
 	if (ft->white_leaf_nodes>0) white_average=ft->white_leaf_size/ft->white_leaf_nodes;
 	
-	if ((white_average>0) && (black_average>0)) {
-		if (black_average>white_average) leaf_variation = black_average/white_average-1;
-		else leaf_variation = white_average/black_average-1;
-		
-		if (ft->max_black>=ft->min_black) black_variation = (ft->max_black-ft->min_black)/black_average;
-		//else printf("black %f %f\n",ft->max_black,ft->min_black);
-		if (ft->max_white>=ft->min_white) white_variation = (ft->max_white-ft->min_white)/white_average;
-		//else printf("white %f %f\n",ft->max_white,ft->min_white);
-	}
-	
-	//printf("variation %f %f %f\n",leaf_variation,black_variation,white_variation);
 	f->id = INVALID_FIDUCIAL_ID; // initialize
 	
 	if ((f->x<0) || (f->y<0)) return; // this can happen
@@ -387,7 +372,6 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 		else if ((ft->white_leaf_nodes>=ft->min_leafs) || (ft->black_leaf_nodes>=ft->min_leafs))
 			f->id = FUZZY_FIDUCIAL_ID;
 		
-		//if (f->id != INVALID_FIDUCIAL_ID) printf("%d %s %f\n",f->id,ft->temp_coloured_depth_string,leaf_variation);
 		}
 	}
 }
