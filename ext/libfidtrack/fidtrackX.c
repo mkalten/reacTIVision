@@ -120,7 +120,6 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 			ft->white_leaf_size+=leaf_size;
 			if (leaf_size < ft->min_white) ft->min_white = leaf_size;
 			else if (leaf_size > ft->max_white) ft->max_white = leaf_size;
-			ft->white_leaf_size+=((r->right-r->left)+(r->bottom-r->top));
 		}
 		
 		ft->total_leaf_count +=n;
@@ -348,31 +347,27 @@ static void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 
 	if (ft->black_leaf_nodes>0) black_average=ft->black_leaf_size/ft->black_leaf_nodes;
 	if (ft->white_leaf_nodes>0) white_average=ft->white_leaf_size/ft->white_leaf_nodes;
-	
-	if ((white_average>0) && (black_average>0)) {
-		if (black_average>white_average) leaf_variation = black_average/white_average-1;
-		else leaf_variation = white_average/black_average-1;
-		
-		if (ft->max_black>=ft->min_black) black_variation = (ft->max_black-ft->min_black)/black_average;
-		//else printf("black %f %f\n",ft->max_black,ft->min_black);
-		if (ft->max_white>=ft->min_white) white_variation = (ft->max_white-ft->min_white)/white_average;
-		//else printf("white %f %f\n",ft->max_white,ft->min_white);
-	}
-    
-	if ((leaf_variation>1.0f) || (black_variation>1.0f) || (white_variation>1.0f) || (f->x<0) || (f->y<0)
-        || (r->flags & LOST_SYMBOL_FLAG)) f->id = INVALID_FIDUCIAL_ID;
-	else {
-        
-        //printf("var: %f %f %f\n",leaf_variation,black_variation,white_variation);
-        ft->next_depth_string = 0;
-        depth_string = build_left_heavy_depth_string( ft, r );
-			
-        ft->temp_coloured_depth_string[0] = (char)( r->colour ? 'w' : 'b' );
-        ft->temp_coloured_depth_string[1] = '\0';
-        strcat( ft->temp_coloured_depth_string, depth_string );
+
+	// Check for extreme leaf node sizes (smallest <50% of avg or largest >200% of avg)
+	int extreme_black = (ft->black_leaf_nodes > 0) &&
+	                    ((ft->min_black < black_average * 0.5f) ||
+	                     (ft->max_black > black_average * 2.0f));
+	int extreme_white = (ft->white_leaf_nodes > 0) &&
+	                    ((ft->min_white < white_average * 0.5f) ||
+	                     (ft->max_white > white_average * 2.0f));
+
+	if ((f->x<0) || (f->y<0) || (r->flags & LOST_SYMBOL_FLAG) || extreme_black || extreme_white) {
+		f->id = INVALID_FIDUCIAL_ID;
+	} else {
+		ft->next_depth_string = 0;
+		depth_string = build_left_heavy_depth_string( ft, r );
+
+		ft->temp_coloured_depth_string[0] = (char)( r->colour ? 'w' : 'b' );
+		ft->temp_coloured_depth_string[1] = '\0';
+		strcat( ft->temp_coloured_depth_string, depth_string );
 
 		f->id = treestring_to_id( ft->treeidmap, ft->temp_coloured_depth_string );
-    }
+	}
 }
 
 /* -------------------------------------------------------------------------- */
