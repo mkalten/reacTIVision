@@ -25,7 +25,6 @@ reacTIVision 1.5.2
 * native PS3Eye camera support on Windows
 * add TUIO source name configuration option
 * allow .reacTIVision config in home directory on Linux
-* repaired MacOSX application and script signature
 * add list_devices batch file on Windows
 * updated external Portvideo and SDL frameworks
 * Support for universal ARM and Intel binaries on Mac

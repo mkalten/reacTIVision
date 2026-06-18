@@ -33,3 +33,5 @@ ext/portvideo/linux/SportVideo
 .vs
 
 DerivedData
+
+macosx/scripts/list_devices.app 
