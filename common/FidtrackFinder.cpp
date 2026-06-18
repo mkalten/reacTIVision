@@ -443,8 +443,8 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 				td = bh * 1.5f;
 			}
 			
-			px = (int)floor((bx + cos(apos)*td) + 0.5f);
-			py = (int)floor((by + sin(apos)*td) + 0.5f);
+			px = (int)((bx + cos(apos)*td) + 0.5f);
+			py = (int)((by + sin(apos)*td) + 0.5f);
 			
 			pixel = py*width+px;
 			if ( (pixel<0) || (pixel>=width*height) ) {
@@ -499,7 +499,7 @@ void FidtrackFinder::decodeYamaarashi(FiducialX *yama, unsigned char *img, TuioT
 	if (yama->id!=FUZZY_FIDUCIAL_ID) yama->id = value;
 	
 	if(!empty_grid) {
-		int pixel = width*(int)floor(yama->raw_y+.5f) + (int)floor(yama->raw_x+.5f);
+		int pixel = width*(int)(yama->raw_y+.5f) + (int)(yama->raw_x+.5f);
 		if ((pixel>=0) && (pixel<width*height)) {
 			yama->x = dmap[ pixel ].x/(float)width;
 			yama->y = dmap[ pixel ].y/(float)height;
@@ -652,7 +652,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		if ((r->size>=min_region_size) && (r->size<=max_region_size)) {
 			
 			if(!empty_grid) {
-				int pixel = width*(int)floor(r->y+.5f) + (int)floor(r->x+.5f);
+				int pixel = width*(int)(r->y+.5f) + (int)(r->x+.5f);
 				if ((pixel>=0) && (pixel<width*height)) {
 					r->x = dmap[ pixel ].x;
 					r->y = dmap[ pixel ].y;

@@ -97,7 +97,7 @@ BlobObject::BlobObject(TuioTime ttime, Region *region, ShortPoint *dmap, bool do
 	rawYpos = obBox[4].y;
 	
 	if(dmap) {
-		int pixel = screenWidth*(int)floor(rawYpos+.5f) + (int)floor(rawXpos+.5f);
+		int pixel = screenWidth*(int)(rawYpos+.5f) + (int)(rawXpos+.5f);
 		if ((pixel>=0) || (pixel<screenWidth*screenHeight)) {
 			xpos = dmap[ pixel ].x/(float)screenWidth;
 			ypos = dmap[ pixel ].y/(float)screenHeight;

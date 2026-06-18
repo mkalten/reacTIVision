@@ -76,8 +76,8 @@ void FiducialFinder::computeGrid() {
 			GridPoint new_point =  grid.GetInterpolated(x/cell_width,y/cell_height);
 			
 			// apply the displacement
-			short dx = (short)floor(x+0.5f+new_point.x*cell_width);
-			short dy = (short)floor(y+0.5f+new_point.y*cell_height);
+			short dx = (short)(x+0.5f+new_point.x*cell_width);
+			short dy = (short)(y+0.5f+new_point.y*cell_height);
 			
 			int pixel =  dy*width+dx;
 			if ((dx>=0) && (dx<width) && (dy>=0) && (dy<height)) {

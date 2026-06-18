@@ -274,14 +274,14 @@ void compute_fiducial_statistics( FidtrackerX *ft, FiducialX *f,
 	
 	if (ft->pixelwarp) {
 		if (ft->total_leaf_count>(ft->black_leaf_count_warped+ft->white_leaf_count_warped)) { 
-			int pixel = width*(int)floor(all_y+.5f)+(int)floor(all_x+.5f);
+			int pixel = width*(int)(all_y+.5f)+(int)(all_x+.5f);
 
 			if ((pixel>=0) && (pixel<width*height)) {
 				all_x_warped = ft->pixelwarp[pixel].x;
 				all_y_warped = ft->pixelwarp[pixel].y;
 				if ((all_x_warped>0) || (all_y_warped>0)) {
 
-					pixel = width*(int)floor(black_y+.5f)+(int)floor(black_x+.5f);
+					pixel = width*(int)(black_y+.5f)+(int)(black_x+.5f);
 					if ((pixel>=0) && (pixel<width*height)) {
 						black_x_warped = ft->pixelwarp[pixel].x;
 						black_y_warped = ft->pixelwarp[pixel].y;
