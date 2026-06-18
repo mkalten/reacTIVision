@@ -27,7 +27,7 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.developer-tools</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>11.5</string>
+	<string>10.15</string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) only works with access to a camera.</string>
 	<key>NSPrincipalClass</key>
