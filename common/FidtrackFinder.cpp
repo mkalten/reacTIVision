@@ -71,9 +71,10 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 	FiducialFinder::toggleFlag(flag,lock);
 
 	if (flag==KEY_F) {
-		if (setFingerSize || setFingerSensitivity) {
+		if (setFingerSize || setFingerSensitivity || setFingerContrast) {
 			setFingerSize = false;
 			setFingerSensitivity = false;
+			setFingerContrast = false;
 			show_settings = false;
 			return false;
 		} else if(!lock) {
@@ -104,16 +105,19 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 			show_settings = true;
 			return true;
 		}
-	} else if (setFingerSize || setFingerSensitivity) {
+	} else if (setFingerSize || setFingerSensitivity || setFingerContrast) {
 		switch(flag) {
 			case KEY_LEFT:
 				if (setFingerSize) {
 					average_finger_size--;
 					if (average_finger_size<=1) average_finger_size=0;
 					if (average_finger_size==0) detect_fingers=false;
-				} else {
+				} else if (setFingerSensitivity) {
 					finger_sensitivity-=0.05f;
 					if (finger_sensitivity<0) finger_sensitivity=0;
+				} else if (setFingerContrast) {
+					finger_contrast--;
+					if (finger_contrast<0) finger_contrast=0;
 				}
 				break;
 			case KEY_RIGHT:
@@ -122,9 +126,12 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 					if (average_finger_size==1) average_finger_size=2;
 					if (average_finger_size>64) average_finger_size=64;
 					detect_fingers=true;
-				} else {
+				} else if (setFingerSensitivity) {
 					finger_sensitivity+=0.05f;
 					if (finger_sensitivity>2) finger_sensitivity=2.0f;
+				} else if (setFingerContrast) {
+					finger_contrast++;
+					if (finger_contrast>255) finger_contrast=255;
 				}
 				break;
 			case KEY_UP:
@@ -132,9 +139,12 @@ bool FidtrackFinder::toggleFlag(unsigned char flag, bool lock) {
 				if (setFingerSize) {
 					setFingerSize=false;
 					setFingerSensitivity=true;
-				} else {
-					setFingerSize=true;
+				} else if (setFingerSensitivity) {
 					setFingerSensitivity=false;
+					setFingerContrast=true;
+				} else {
+					setFingerContrast=false;
+					setFingerSize=true;
 				}
 				break;
 		}
@@ -241,6 +251,11 @@ void FidtrackFinder::displayControl() {
 		snprintf(displayText,64,"finger sensitivity %d",(int)floor(finger_sensitivity*100+0.5f));
 		settingValue = (int)floor(finger_sensitivity*100+0.5f);
 		maxValue = 200;
+	} else if (setFingerContrast) {
+		ui->drawText(17,14,"F          - exit finger configuration");
+		snprintf(displayText,64,"finger contrast %d",finger_contrast);
+		settingValue = finger_contrast;
+		maxValue = 255;
 	} else if (setYamarashi) {
 		
 		ui->drawText(17,14,"Y          - exit yamaarashi configuration");
@@ -781,16 +796,42 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 					add_blob = false;
 					break;
 				}
-			 }
+			 } if (add_blob==false) continue;
 			
 			// add the finger candidates
-			if (add_blob) {
-				BlobObject *finger_blob = NULL;
-				try {
-					finger_blob = new BlobObject(frameTime,regions[i],dmap,true);
-					fingerBlobs.push_back(finger_blob);
-				} catch (std::exception e) { if (finger_blob) delete finger_blob; }
-			}
+			BlobObject *finger_blob = NULL;
+			try {
+				finger_blob = new BlobObject(frameTime,regions[i],dmap,true);
+				
+				// Compute contrast using actual blob pixels from spanList
+				unsigned char min_val = 255;
+				unsigned char max_val = 0;
+				std::vector<BlobSpan*> spanList = finger_blob->getSpanList();
+				
+				for (unsigned int row = 0; row < spanList.size(); row += 2) {
+					BlobSpan *row_span = spanList[row];
+					while (row_span) {
+						for (int pixel_idx = row_span->start; pixel_idx <= row_span->end; pixel_idx++) {
+							if (pixel_idx >= 0 && pixel_idx < width * height) {
+								unsigned char val = src[pixel_idx];
+								if (val < min_val) min_val = val;
+								if (val > max_val) max_val = val;
+							}
+						}
+						row_span = row_span->next;
+					}
+				}
+				
+				unsigned char contrast = max_val - min_val;
+				
+				// Reject low-contrast finger blobs (likely hovering hands)
+				if (contrast < finger_contrast) {
+					delete finger_blob;
+					continue;
+				}
+				
+				fingerBlobs.push_back(finger_blob);
+			} catch (std::exception e) { if (finger_blob) delete finger_blob; }
 			
 		} else if (detect_blobs && (regions[i]->colour==WHITE) && (reg_size>=min_blob_size) && (reg_size<=max_blob_size) && (reg_diff < max_diff*2.0f)) {
 			

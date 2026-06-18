@@ -65,6 +65,7 @@ public:
 		if (config->finger_size>0) average_finger_size = config->finger_size;
 		else detect_fingers = false;
 		finger_sensitivity = config->finger_sensitivity/100.0f;
+		finger_contrast = config->finger_contrast;
 		
 		
 		max_blob_size = config->max_blob_size;
@@ -125,6 +126,7 @@ private:
 	bool detect_fingers;
 	int average_finger_size;
 	float finger_sensitivity;
+	int finger_contrast;
 	bool send_finger_blobs;
 
 	float average_fiducial_size;
@@ -142,7 +144,7 @@ private:
 	float rotation_threshold;
 	
 	bool setYamarashi, setYamaFlip;
-	bool setFingerSize, setFingerSensitivity;
+	bool setFingerSize, setFingerSensitivity, setFingerContrast;
 	bool setBlobSize, setObjectBlob, setFingerBlob;
 	bool objFilter, curFilter, blbFilter;
 	

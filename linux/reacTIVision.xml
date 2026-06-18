@@ -20,7 +20,7 @@ use default locations or specify an absolute path -->
       as well as the limitation to a maximum fiducial ID -->
     <fiducial amoeba="default" yamaarashi="true" mirror="false" max_fid="299"/>
     <!-- specifies the maximum finger size and tracking sensitivity - size zero disables fingers -->
-    <finger size="0" sensitivity="75"/>
+    <finger size="0" sensitivity="75" contrast="16"/>
     <!-- specifies the minimum blob size - size zero disables blob tracking
  ... also allows sending additional blobs for fiducials and fingers -->
     <blob max_size="0" min_size="32" cur_blob="false" obj_blob="false"/>

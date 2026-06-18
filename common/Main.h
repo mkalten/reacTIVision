@@ -46,6 +46,7 @@ struct application_settings {
     bool headless;
 	int finger_size;
 	int finger_sensitivity;
+	int finger_contrast;
 	int max_blob_size;
 	int min_blob_size;
 	bool cursor_blobs;

@@ -86,6 +86,7 @@ void readSettings(application_settings *config) {
 	config->headless = false;
 	config->finger_size = 0;
 	config->finger_sensitivity = 100;
+	config->finger_contrast = 16;
 	config->max_blob_size = 0;
 	config->min_blob_size = 0;
 	config->object_blobs = false;
@@ -184,6 +185,7 @@ void readSettings(application_settings *config) {
 	{
 		if(finger_element->Attribute("size")!=NULL) config->finger_size = atoi(finger_element->Attribute("size"));
 		if(finger_element->Attribute("sensitivity")!=NULL) config->finger_sensitivity = atoi(finger_element->Attribute("sensitivity"));
+		if(finger_element->Attribute("contrast")!=NULL) config->finger_contrast = atoi(finger_element->Attribute("contrast"));
 	}
 
 	tinyxml2::XMLElement* image_element = config_root.FirstChildElement("image").ToElement();
