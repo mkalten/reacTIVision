@@ -1133,6 +1133,7 @@ bool PS3EYECam::init(uint32_t width, uint32_t height, uint16_t desiredFrameRate,
 	sccb_reg_read(0x0b);
 	sensor_id |= sccb_reg_read(0x0b);
 	debug("Sensor ID: %04x\n", sensor_id);
+	(void)sensor_id;
 
 	/* initialize */
 	reg_w_array(ov534_reg_initdata, ARRAY_SIZE(ov534_reg_initdata));
