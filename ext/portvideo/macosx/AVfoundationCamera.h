@@ -25,7 +25,7 @@
 
 #include "CameraEngine.h"
 
-static int32_t codec_table[] = { 0, 40,  0,  24, 0, 0, 0, 0, 0, 0, 'yuvs', '2vuy', 0, 'v308', '420v', '410v', 0, 0, 0, 0, 'dmb1', 'dmb1', 'mp1v', 'mp2v', 'mp4v', 'h263', 'avc1', 'dvcp', 'dvc ', '420f', 'x420', 'xf20', 'jpeg' };
+static int32_t codec_table[] = { 0, 40,  0,  24, 0, 0, 0, 0, 0, 0, 'yuvs', '2vuy', 0, 'v308', '420v', '410v', 0, 0, 0, 0, 'dmb1', 'dmb1', 'mp1v', 'mp2v', 'mp4v', 'h263', 'avc1', 'dvcp', 'dvc ', '420f', 'x420', 'xf20', 'jpeg', '420b', '4208' };
 
 //static int32_t codec_table[] = { 0, 40,  0,  24, 0, 0, 0, 0, 0, 0, 'yuvs', '2vuy', 0, 'v308', '420v', '410v', 0, 0, 0, 0, 'dmb1', 'dmb1', 'mp1v', 'mp2v', 'mp4v', 'h263', 'avc1', 'dvcp', 'dvc ' };
 

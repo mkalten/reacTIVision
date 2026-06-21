@@ -73,7 +73,66 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         unsigned char *src = (unsigned char*)CVPixelBufferGetBaseAddress(imageBuffer);
         unsigned char *dest = buffer;
         
-        if (color) {
+        // Check for biplanar YUV formats (NV12/NV21)
+        OSType pixelFormat = CVPixelBufferGetPixelFormatType(imageBuffer);
+        bool isBiplanar = (pixelFormat == '420b' || pixelFormat == '4208');
+        
+        if (isBiplanar) {
+            // Biplanar YUV: use optimized conversion
+            size_t yPlaneBytes = CVPixelBufferGetBytesPerRowOfPlane(imageBuffer, 0);
+            unsigned char *yPlane = (unsigned char*)CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0);
+            unsigned char *uvPlane = (unsigned char*)CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 1);
+            
+            if (color) {
+                // Optimized NV12 to RGB conversion with row-by-row processing
+                for (int i=0;i<cam_height;i++) {
+                    int yRowOffset = i * yPlaneBytes;
+                    int uvRowOffset = (i/2) * yPlaneBytes;
+                    
+                    for (int j=0;j<cam_width;j++) {
+                        int y = yPlane[yRowOffset + j];
+                        int uvIdx = uvRowOffset + (j & ~1);
+                        int u = uvPlane[uvIdx];
+                        int v = uvPlane[uvIdx + 1];
+                        
+                        if (pixelFormat == '4208') { // NV21 has swapped UV
+                            int temp = u; u = v; v = temp;
+                        }
+                        
+                        // Optimized YUV to RGB conversion (avoiding branches)
+                        int c = y - 16;
+                        int d = u - 128;
+                        int e = v - 128;
+                        
+                        int r = (298 * c + 409 * e + 128) >> 8;
+                        int g = (298 * c - 100 * d - 208 * e + 128) >> 8;
+                        int b = (298 * c + 516 * d + 128) >> 8;
+                        
+                        // Clamp using min/max instead of branches
+                        r = r < 0 ? 0 : (r > 255 ? 255 : r);
+                        g = g < 0 ? 0 : (g > 255 ? 255 : g);
+                        b = b < 0 ? 0 : (b > 255 ? 255 : b);
+                        
+                        *dest++ = r;
+                        *dest++ = g;
+                        *dest++ = b;
+                    }
+                }
+            } else {
+                // For grayscale, just copy Y plane (much faster)
+                if (crop) {
+                    for (int i=0;i<frm_height;i++) {
+                        memcpy(dest, yPlane + (i+yoff)*yPlaneBytes + xoff, frm_width);
+                        dest += frm_width;
+                    }
+                } else {
+                    for (int i=0;i<cam_height;i++) {
+                        memcpy(dest, yPlane + i*yPlaneBytes, cam_width);
+                        dest += cam_width;
+                    }
+                }
+            }
+        } else if (color) {
             
             if (crop) {
                 unsigned char *src_buf = src + 3*(yoff*cam_width + xoff);
@@ -172,10 +231,15 @@ AVfoundationCamera::~AVfoundationCamera()
 
 int AVfoundationCamera::getDeviceCount() {
 	
-    NSArray *deviceTypes = @[
+    NSMutableArray *deviceTypes = [NSMutableArray arrayWithObjects:
         AVCaptureDeviceTypeBuiltInWideAngleCamera, // Built-in FaceTime Cameras
-        AVCaptureDeviceTypeExternalUnknown         // USB webcams & third-party hardware
-    ];
+        AVCaptureDeviceTypeExternalUnknown,         // USB webcams & third-party hardware
+        nil];
+    
+    // Continuity Camera only available on macOS 14+
+    if (@available(macOS 14.0, *)) {
+        [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+    }
 
     // Create the Discovery Session
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
@@ -194,11 +258,16 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
     int dev_count = getDeviceCount();
     if (dev_count==0) return cfg_list;
 	
-    // 1. Target the only valid video/muxed device types on macOS 11
-    NSArray *deviceTypes = @[
+    // 1. Target the valid video/muxed device types
+    NSMutableArray *deviceTypes = [NSMutableArray arrayWithObjects:
         AVCaptureDeviceTypeBuiltInWideAngleCamera, // Built-in FaceTime Cameras
-        AVCaptureDeviceTypeExternalUnknown         // External USB webcams & third-party cards
-    ];
+        AVCaptureDeviceTypeExternalUnknown,         // External USB webcams & third-party cards
+        nil];
+    
+    // Continuity Camera only available on macOS 14+
+    if (@available(macOS 14.0, *)) {
+        [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+    }
 
     // 2. Initialize a mutable array to collect the devices
     NSMutableArray *captureDevices = [NSMutableArray array];
@@ -242,6 +311,8 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
             int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
 			
 			if (codec == '420f') codec = '420v';
+			if (codec == '420b') codec = '420v'; // Biplanar NV12 video range
+			if (codec == '4208') codec = '420v'; // Biplanar NV12 full range
 			
 			cam_cfg.cam_format = FORMAT_UNKNOWN;
 			for (int i=FORMAT_MAX-1;i>0;i--) {
@@ -263,9 +334,19 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
             cam_cfg.cam_width = dim.width;
             cam_cfg.cam_height = dim.height;
             
+            // Use actual available frame rates with deduplication
+            NSMutableSet *addedFrameRates = [NSMutableSet set];
+            
             for (AVFrameRateRange *frameRateRange in [format videoSupportedFrameRateRanges]) {
-                cam_cfg.cam_fps = roundf([frameRateRange maxFrameRate]*10)/10.0f;
-                fmt_list.push_back(cam_cfg);
+                float maxRate = roundf([frameRateRange maxFrameRate]*10)/10.0f;
+                NSNumber *rateKey = @(maxRate);
+                
+                // Only add if we haven't already added this frame rate for this format
+                if (![addedFrameRates containsObject:rateKey]) {
+                    cam_cfg.cam_fps = maxRate;
+                    fmt_list.push_back(cam_cfg);
+                    [addedFrameRates addObject:rateKey];
+                }
             }
         }
 		std::sort(fmt_list.begin(), fmt_list.end());
@@ -308,11 +389,16 @@ bool AVfoundationCamera::initCamera() {
     int dev_count = getDeviceCount();
     if ((dev_count==0) || (cfg->device < 0) || (cfg->device>=dev_count)) return false;
 	
-    // 1. Define device types valid for macOS 11 (FaceTime cameras + external USB webcams)
-    NSArray *deviceTypes = @[
+    // 1. Define device types valid for macOS (FaceTime cameras + external USB webcams)
+    NSMutableArray *deviceTypes = [NSMutableArray arrayWithObjects:
         AVCaptureDeviceTypeBuiltInWideAngleCamera,
-        AVCaptureDeviceTypeExternalUnknown
-    ];
+        AVCaptureDeviceTypeExternalUnknown,
+        nil];
+    
+    // Continuity Camera only available on macOS 14+
+    if (@available(macOS 14.0, *)) {
+        [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+    }
 
     // 2. Initialize the array (replaces capacity count safely)
     NSMutableArray *videoDevices = [NSMutableArray array];
@@ -364,6 +450,8 @@ bool AVfoundationCamera::initCamera() {
         int cam_format=0;
         int32_t codec = CMVideoFormatDescriptionGetCodecType((CMVideoFormatDescriptionRef)[format formatDescription]);
 		if (codec == '420f') codec = '420v';
+		if (codec == '420b') codec = '420v'; // Biplanar NV12 video range
+		if (codec == '4208') codec = '420v'; // Biplanar NV12 full range
 
 		for (int i=FORMAT_MAX-1;i>0;i--) {
 
@@ -376,12 +464,31 @@ bool AVfoundationCamera::initCamera() {
         if (!cam_format) continue; // wrong format
 		else selectedFormat = format;
         
+        // Find best matching frame rate range
+        AVFrameRateRange *bestRange = NULL;
+        float bestDiff = FLT_MAX;
+        
         for (AVFrameRateRange *frameRateRange in [selectedFormat videoSupportedFrameRateRanges]) {
-            float framerate = roundf([frameRateRange maxFrameRate]*10)/10.0f;
-            if (framerate==cfg->cam_fps) { // found exact framerate
+            float minRate = [frameRateRange minFrameRate];
+            float maxRate = [frameRateRange maxFrameRate];
+            
+            // Check if requested rate is within range
+            if (cfg->cam_fps >= minRate && cfg->cam_fps <= maxRate) {
                 selectedFrameRateRange = frameRateRange;
-				break;
+                break; // Perfect match
             }
+            
+            // Otherwise track closest match
+            float diff = fabsf(maxRate - cfg->cam_fps);
+            if (diff < bestDiff) {
+                bestDiff = diff;
+                bestRange = frameRateRange;
+            }
+        }
+        
+        // If no exact match found, use closest
+        if (selectedFrameRateRange == NULL && bestRange != NULL) {
+            selectedFrameRateRange = bestRange;
         }
         
         if (selectedFrameRateRange) break;

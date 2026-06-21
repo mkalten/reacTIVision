@@ -66,6 +66,8 @@ if (c & (~255)) { if (c < 0) c = 0; else c = 255; }
 #define FORMAT_410P    15
 #define FORMAT_YVYU    16
 #define FORMAT_YUV211  17
+#define FORMAT_NV12    18
+#define FORMAT_NV21    19
 #define FORMAT_JPEG    20
 #define FORMAT_MJPEG   21
 #define FORMAT_MPEG    22
