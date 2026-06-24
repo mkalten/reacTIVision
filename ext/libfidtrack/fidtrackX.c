@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define LEAF_GATE_SIZE      0
+#define LEAF_GATE_SIZE      2
 
 static void set_depth( Region *r, short depth );
 
@@ -90,7 +90,11 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 		}
 		
 		leaf_size = ((r->right-r->left)+(r->bottom-r->top));
-		
+
+#ifdef LEAF_GATE_SIZE
+		if( leaf_size <= LEAF_GATE_SIZE ) return;
+#endif
+
 		if( r->colour == 0 ){
 			ft->black_x_sum += x * n;
 			ft->black_y_sum += y * n;
