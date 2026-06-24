@@ -49,10 +49,10 @@ bool FidtrackFinder::init(int w, int h, int sb, int db) {
 	get_black_roots = false;
 	get_white_roots = false;
 
-	//position_threshold = 1.0f/(2*width); // half a pixel
-	//rotation_threshold = M_PI/360.0f;	 // half a degree
-	position_threshold = 1.0f/(width); // one pixel
-	rotation_threshold = M_PI/180.0f;	 // one degree
+	position_threshold = 1.0f/(2*width); // half a pixel
+	rotation_threshold = M_PI/360.0f;	 // half a degree
+	//position_threshold = 1.0f/(width); // one pixel
+	//rotation_threshold = M_PI/180.0f;	 // one degree
 	
 	setYamarashi = false;
 	setYamaFlip = false;
@@ -1082,8 +1082,8 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		add_object->addAngleThreshold(rotation_threshold);
 
 		if (objFilter) {
-			add_object->addPositionFilter(5.0f,0.25f);
-			add_object->addAngleFilter(2.0f,0.25f);
+			add_object->addPositionFilter(1.0f,0.25f);
+			add_object->addAngleFilter(1.0f,0.25f);
 		}
 		tuioManager->addExternalTuioObject(add_object);
 		drawObject(add_object->getSymbolID(),add_object->getX(),add_object->getY(),add_object->getTrackingState());
@@ -1103,9 +1103,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				fid_blob->addSizeThreshold(position_threshold*2.0f);
 				
 				if (blbFilter) {
-					fid_blob->addPositionFilter(2.0f,0.25f);
-					fid_blob->addAngleFilter(2.0f,0.25f);
-					fid_blob->addSizeFilter(5.0f,0.1f);
+					fid_blob->addPositionFilter(0.5f,0.15f);
+					fid_blob->addAngleFilter(0.5f,0.15f);
+					fid_blob->addSizeFilter(0.5f,0.15f);
 				}
 			} else delete fid_blob;
 			
@@ -1198,7 +1198,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 		if(finger_match<finger_sensitivity/4.0f) {
 			TuioCursor *add_cursor = tuioManager->addTuioCursor((*fblb)->getX(),(*fblb)->getY());
 			add_cursor->addPositionThreshold(position_threshold*2.0f); //1px
-			if (curFilter) add_cursor->addPositionFilter(5.0f,0.25f);
+			if (curFilter) add_cursor->addPositionFilter(1.0f,0.25f);
 			//drawObject(FINGER_ID,add_cursor->getX(),add_cursor->getY(),0);
 			//ui->setColor(0,255,0);
 			//ui->drawEllipse((*fblb)->getX()*width,(*fblb)->getY()*height,(*fblb)->getWidth()*width,(*fblb)->getHeight()*height,(*fblb)->getAngle());
@@ -1208,9 +1208,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 				cur_blob->setSessionID(add_cursor->getSessionID());
 				
 				if (blbFilter) {
-					cur_blob->addPositionFilter(2.0f,0.25f);
-					cur_blob->addAngleFilter(2.0f,0.25f);
-					cur_blob->addSizeFilter(5.0f,0.1f);
+					cur_blob->addPositionFilter(0.5f,0.15f);
+					cur_blob->addAngleFilter(0.5f,0.15f);
+					cur_blob->addSizeFilter(0.5f,0.15f);
 				}
 			}
 			
@@ -1311,9 +1311,9 @@ if (detect_blobs) {
 			add_blob->addSizeThreshold(position_threshold*2.0f);
 			
 			if (blbFilter) {
-				add_blob->addPositionFilter(2.0f,0.25f);
-				add_blob->addAngleFilter(2.0f,0.25f);
-				add_blob->addSizeFilter(5.0f,0.1f);
+				add_blob->addPositionFilter(0.5f,0.15f);
+				add_blob->addAngleFilter(0.5f,0.15f);
+				add_blob->addSizeFilter(0.5f,0.15f);
 			}
 			tuioManager->addExternalTuioBlob(add_blob);
 			drawObject(BLOB_ID,add_blob->getX(),add_blob->getY(),0);
