@@ -37,20 +37,12 @@ static void set_depth( Region *r, short depth );
 static double calculate_angle( double dx, double dy )
 {
     double result;
-	
-    if( fabs(dx) > 0.001 ) {
-		result = atan(dy/dx) - M_PI * .5;
-		
-		if( dx < 0 )
-			result =  result - M_PI;
-		
-		if( result < 0 )
-			result += 2. * M_PI;
-	} else {
-		if (dy>0) result = 0;
-		else result = M_PI;
-	}
-	
+
+    result = atan2(dy, dx) - M_PI * .5;
+
+    if( result < 0 )
+        result += 2. * M_PI;
+
     return result;
 }
 
