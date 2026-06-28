@@ -32,7 +32,6 @@ TuioContainer::TuioContainer (TuioTime ttime, long si, float xp, float yp):TuioP
 	motion_accel = 0.0f;
 	x_accel = 0.0f;
 	y_accel = 0.0f;
-	addPositionFilter(5.0f, 0.25f);
 	TuioPoint p(currentTime,xpos,ypos);
 	path.push_back(p);
 	lastPoint = &path.back();
@@ -51,7 +50,6 @@ TuioContainer::TuioContainer (long si, float xp, float yp):TuioPoint(xp,yp)
 	motion_accel = 0.0f;
 	x_accel = 0.0f;
 	y_accel = 0.0f;
-	addPositionFilter(5.0f, 0.25f);
 	TuioPoint p(currentTime,xpos,ypos);
 	path.push_back(p);
 	lastPoint = &path.back();
@@ -70,7 +68,6 @@ TuioContainer::TuioContainer (TuioContainer *tcon):TuioPoint(tcon)
 	motion_accel = 0.0f;
 	x_accel = 0.0f;
 	y_accel = 0.0f;
-	addPositionFilter(5.0f, 0.25f);
 	
 	TuioPoint p(currentTime,xpos,ypos);
 	path.push_back(p);
@@ -248,9 +245,6 @@ TuioPoint TuioContainer::predictPosition() {
 		ny = yposFilter->filter(ny,dt);
 	}
 	
-	//std::cout << nx << " " << ny << std::endl;
-	return TuioPoint(nx,ny);
-
-	
+	return TuioPoint(nx,ny);	
 }
 
