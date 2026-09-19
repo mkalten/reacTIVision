@@ -36,7 +36,7 @@
 namespace TUIO {
 	
 	/**
-	 * The abstract TuioContainer class defines common attributes that apply to both subclasses {@link TuioObject} and {@link TuioCursor}.
+	 * The abstract TuioContainer class defines common attributes that apply to the subclasses TuioObject, TuioCursor and TuioBlob.
 	 *
 	 * @author Martin Kaltenbrunner
 	 * @version 1.1.6
@@ -45,14 +45,21 @@ namespace TUIO {
 		
 		
 	private:
-		
+		/**
+		 * A pointer to the previous TuioPoint within the path of this TuioContainer
+		 */
 		TuioPoint *lastPoint;
+		/**
+		 * Restores the lastPoint pointer to the corresponding element
+		 * of the copied path of the provided TuioContainer
+		 */
+		void updateLastPoint(const TuioContainer &tcon);
 		
 	protected:
 		/**
 		 * The unique session ID number that is assigned to each TUIO object or cursor.
 		 */ 
-		long session_id;
+		int session_id;
 		/**
 		 * The X-axis velocity value.
 		 */ 
@@ -69,7 +76,13 @@ namespace TUIO {
 		 * The motion acceleration value.
 		 */ 
 		float motion_accel;
+		/**
+		 * The X-axis acceleration value.
+		 */ 
 		float x_accel;
+		/**
+		 * The Y-axis acceleration value.
+		 */ 
 		float y_accel;
 		/**
 		 * A List of TuioPoints containing all the previous positions of the TUIO component.
@@ -104,25 +117,42 @@ namespace TUIO {
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
 		 */
-		TuioContainer (TuioTime ttime, long si, float xp, float yp);
+		TuioContainer (TuioTime ttime, int si, float xp, float yp);
 
 		/**
 		 * This constructor takes the provided Session ID, X and Y coordinate 
-		 * and assigs these values to the newly created TuioContainer.
+		 * and assigns these values to the newly created TuioContainer.
 		 *
 		 * @param	si	the Session ID to assign
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
 		 */
-		TuioContainer (long si, float xp, float yp);
+		TuioContainer (int si, float xp, float yp);
 		
 		/**
-		 * This constructor takes the atttibutes of the provided TuioContainer 
-		 * and assigs these values to the newly created TuioContainer.
+		 * This constructor takes the attributes of the provided TuioContainer 
+		 * and assigns these values to the newly created TuioContainer.
 		 *
 		 * @param	tcon	the TuioContainer to assign
 		 */
 		TuioContainer (TuioContainer *tcon);
+
+		/**
+		 * The copy constructor copies all attributes of the provided TuioContainer,
+		 * including the path and a deep copy of the optional position filters.
+		 *
+		 * @param	tcon	the TuioContainer to copy
+		 */
+		TuioContainer (const TuioContainer &tcon);
+
+		/**
+		 * The assignment operator copies all attributes of the provided TuioContainer,
+		 * including the path and a deep copy of the optional position filters.
+		 *
+		 * @param	tcon	the TuioContainer to copy
+		 * @return	a reference to this TuioContainer
+		 */
+		TuioContainer& operator=(const TuioContainer &tcon);
 		
 		/**
 		 * The destructor is doing nothing in particular. 
@@ -156,7 +186,7 @@ namespace TUIO {
 		/**
 		 * Takes a TuioTime argument and assigns it along with the provided 
 		 * X and Y coordinate to the private TuioContainer attributes.
-		 * The speed and accleration values are calculated accordingly.
+		 * The speed and acceleration values are calculated accordingly.
 		 *
 		 * @param	ttime	the TuioTime to assign
 		 * @param	xp	the X coordinate to assign
@@ -197,8 +227,8 @@ namespace TUIO {
 		virtual void update (float xp, float yp, float xs, float ys, float ma);
 		
 		/**
-		 * Takes the atttibutes of the provided TuioContainer 
-		 * and assigs these values to this TuioContainer.
+		 * Takes the attributes of the provided TuioContainer 
+		 * and assigns these values to this TuioContainer.
 		 * The TuioTime time stamp of this TuioContainer remains unchanged.
 		 *
 		 * @param	tcon	the TuioContainer to assign
@@ -206,7 +236,7 @@ namespace TUIO {
 		virtual void update (TuioContainer *tcon);
 		
 		/**
-		 * Assigns the REMOVE state to this TuioContainer and sets
+		 * Assigns the TUIO_REMOVED state to this TuioContainer and sets
 		 * its TuioTime time stamp to the provided TuioTime argument.
 		 *
 		 * @param	ttime	the TuioTime to assign
@@ -217,13 +247,13 @@ namespace TUIO {
 		 * Returns the Session ID of this TuioContainer.
 		 * @return	the Session ID of this TuioContainer
 		 */
-		virtual long getSessionID() const;
+		virtual int getSessionID() const;
 
 		/**
 		 * Sets the Session ID of this TuioContainer.
 		 * @param s_id	the new Session ID for this TuioContainer
 		 */
-		virtual void setSessionID(long s_id);
+		virtual void setSessionID(int s_id);
 		
 		/**
 		 * Returns the X velocity of this TuioContainer.
@@ -268,11 +298,17 @@ namespace TUIO {
 		virtual int getTuioState() const;	
 		
 		/**
-		 * Returns true of this TuioContainer is moving.
-		 * @return	true of this TuioContainer is moving
+		 * Returns true if this TuioContainer is moving.
+		 * @return	true if this TuioContainer is moving
 		 */
 		virtual bool isMoving() const;
 
+		/**
+		 * Returns the predicted position of this TuioContainer
+		 * extrapolated from the last position, speed and acceleration.
+		 *
+		 * @return	the predicted position of this TuioContainer
+		 */
 		virtual TuioPoint predictPosition();
 	};
 }

@@ -92,11 +92,6 @@ namespace TUIO {
 		WebSockSender(int port);	
 		
 		/**
-		 * The destructor closes the socket. 
-		 */
-		virtual ~WebSockSender() {}
-		
-		/**
 		 * This method delivers the provided OSC data
 		 *
 		 * @param *bundle  the OSC stream to deliver

@@ -966,9 +966,9 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			if (existing_object->checkIdConflict(alt_fid->id)) {
 				removeObjects.push_back(existing_object);
-				if (tuioManager->isVerbose()) printf("removed wrong ID %d (%ld)\n", existing_object->getSymbolID(),existing_object->getSessionID());
+				if (tuioManager->isVerbose()) printf("removed wrong ID %d (%d)\n", existing_object->getSymbolID(),existing_object->getSessionID());
 			} else {
-				if (tuioManager->isVerbose()) printf("corrected wrong ID from %d to %d (%ld)\n", alt_fid->id,existing_object->getSymbolID(),existing_object->getSessionID());
+				if (tuioManager->isVerbose()) printf("corrected wrong ID from %d to %d (%d)\n", alt_fid->id,existing_object->getSymbolID(),existing_object->getSessionID());
 				alt_fid->id=existing_object->getSymbolID();
 				existing_object->setTrackingState(FIDUCIAL_FUZZY);
 				

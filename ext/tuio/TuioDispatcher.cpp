@@ -111,7 +111,7 @@ void TuioDispatcher::removeAllTuioListeners() {
 	listenerList.clear();
 }
 
-TuioObject* TuioDispatcher::getTuioObject(long s_id) {
+TuioObject* TuioDispatcher::getTuioObject(int s_id) {
 	lockObjectList();
 	for (std::list<TuioObject*>::iterator iter=objectList.begin(); iter != objectList.end(); iter++) {
 		if((*iter)->getSessionID()==s_id) {
@@ -123,7 +123,7 @@ TuioObject* TuioDispatcher::getTuioObject(long s_id) {
 	return NULL;
 }
 
-TuioCursor* TuioDispatcher::getTuioCursor(long s_id) {
+TuioCursor* TuioDispatcher::getTuioCursor(int s_id) {
 	lockCursorList();
 	for (std::list<TuioCursor*>::iterator iter=cursorList.begin(); iter != cursorList.end(); iter++) {
 		if((*iter)->getSessionID()==s_id) {
@@ -135,7 +135,7 @@ TuioCursor* TuioDispatcher::getTuioCursor(long s_id) {
 	return NULL;
 }
 
-TuioBlob* TuioDispatcher::getTuioBlob(long s_id) {
+TuioBlob* TuioDispatcher::getTuioBlob(int s_id) {
 	lockBlobList();
 	for (std::list<TuioBlob*>::iterator iter=blobList.begin(); iter != blobList.end(); iter++) {
 		if((*iter)->getSessionID()==s_id) {
@@ -175,15 +175,24 @@ std::list<TuioBlob*> TuioDispatcher::getTuioBlobs() {
 }
 
 int TuioDispatcher::getTuioObjectCount() {
-	return objectList.size();
+	lockObjectList();
+	int count = objectList.size();
+	unlockObjectList();
+	return count;
 }
 
 int TuioDispatcher::getTuioCursorCount() {
-	return cursorList.size();
+	lockCursorList();
+	int count = cursorList.size();
+	unlockCursorList();
+	return count;
 }
 
 int TuioDispatcher::getTuioBlobCount() {
-	return blobList.size();
+	lockBlobList();
+	int count = blobList.size();
+	unlockBlobList();
+	return count;
 }
 
 std::list<TuioObject> TuioDispatcher::copyTuioObjects() {

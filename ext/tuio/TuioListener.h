@@ -26,17 +26,18 @@
 namespace TUIO {
 	
 	/**
-	 * <p>The TuioListener interface provides a simple callback infrastructure which is used by the {@link TuioClient} class 
+	 * <p>The TuioListener interface provides a simple callback infrastructure which is used by the TuioClient class 
 	 * to dispatch TUIO events to all registered instances of classes that implement the TuioListener interface defined here.</p> 
 	 * <p>Any class that implements the TuioListener interface is required to implement all of the callback methods defined here.
-	 * The {@link TuioClient} makes use of these interface methods in order to dispatch TUIO events to all registered TuioListener implementations.</p>
+	 * The TuioClient makes use of these interface methods in order to dispatch TUIO events to all registered TuioListener implementations.
+	 * Listeners should be registered before the TuioClient is connected.</p>
 	 * <p><code>
-	 * public class MyTuioListener implements TuioListener<br/>
-	 * ...</code><p><code>
-	 * MyTuioListener listener = new MyTuioListener();<br/>
-	 * TuioClient client = new TuioClient();<br/>
-	 * client.addTuioListener(listener);<br/>
-	 * client.start();<br/>
+	 * class MyTuioListener: public TuioListener { ... };<br/>
+	 * </code></p><p><code>
+	 * MyTuioListener listener;<br/>
+	 * TuioClient client;<br/>
+	 * client.addTuioListener(&listener);<br/>
+	 * client.connect();<br/>
 	 * </code></p>
 	 *
 	 * @author Martin Kaltenbrunner
@@ -95,7 +96,7 @@ namespace TUIO {
 		/**
 		 * This callback method is invoked by the TuioClient when a new TuioBlob is added to the session.   
 		 *
-		 * @param  tcur  the TuioBlob reference associated to the addTuioBlob event
+		 * @param  tblb  the TuioBlob reference associated to the addTuioBlob event
 		 */
 		virtual void addTuioBlob(TuioBlob *tblb)=0;
 		

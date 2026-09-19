@@ -24,7 +24,7 @@
 namespace TUIO {
 	
 	/**
-	 * The TuioBlob class encapsulates /tuio/2Dblb TUIO objects.
+	 * The TuioBlob class encapsulates /tuio/2Dblb TUIO blobs.
 	 *
 	 * @author Martin Kaltenbrunner
 	 * @version 1.1.6
@@ -61,10 +61,25 @@ namespace TUIO {
 		 */ 
 		float rotation_accel;
 		
+		/**
+		 * Optional angle threshold suppressing rotation updates below this angle
+		 */ 
 		float angleThreshold;
+		/**
+		 * Optional OneEuroFilter for the rotation angle smoothing
+		 */ 
 		OneEuroFilter *angleFilter;
+		/**
+		 * Optional size threshold suppressing width and height updates below this value
+		 */ 
 		float sizeThreshold;
+		/**
+		 * Optional OneEuroFilter for the width smoothing
+		 */ 
 		OneEuroFilter *widthFilter;
+		/**
+		 * Optional OneEuroFilter for the height smoothing
+		 */ 
 		OneEuroFilter *heightFilter;
 		
 	public:
@@ -76,6 +91,7 @@ namespace TUIO {
 		 *
 		 * @param	ttime	the TuioTime to assign
 		 * @param	si	the Session ID  to assign
+		 * @param	bi	the Blob ID  to assign
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
 		 * @param	a	the angle to assign
@@ -83,13 +99,14 @@ namespace TUIO {
 		 * @param	h	the height to assign
 		 * @param	f	the area to assign
 		 */
-		TuioBlob (TuioTime ttime, long si, int bi, float xp, float yp, float a, float w, float h, float f);
+		TuioBlob (TuioTime ttime, int si, int bi, float xp, float yp, float a, float w, float h, float f);
 
 		/**
-		 * This constructor takes the provided Session ID, X and Y coordinate 
-		 *  width, height and angle, and assigs these values to the newly created TuioBlob.
+		 * This constructor takes the provided Session ID, X and Y coordinate,
+		 * angle, width, height and area, and assigns these values to the newly created TuioBlob.
 		 *
 		 * @param	si	the Session ID  to assign
+		 * @param	bi	the Blob ID  to assign
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
 		 * @param	a	the angle to assign
@@ -97,15 +114,32 @@ namespace TUIO {
 		 * @param	h	the height to assign
 		 * @param	f	the area to assign
 		 */	
-		TuioBlob (long si, int bi, float xp, float yp, float a, float  w, float h, float f);
+		TuioBlob (int si, int bi, float xp, float yp, float a, float  w, float h, float f);
 		
 		/**
-		 * This constructor takes the atttibutes of the provided TuioBlob 
-		 * and assigs these values to the newly created TuioBlob.
+		 * This constructor takes the attributes of the provided TuioBlob 
+		 * and assigns these values to the newly created TuioBlob.
 		 *
 		 * @param	tblb	the TuioBlob to assign
 		 */
 		TuioBlob (TuioBlob *tblb);
+
+		/**
+		 * The copy constructor copies all attributes of the provided TuioBlob,
+		 * including the path and a deep copy of the optional filters.
+		 *
+		 * @param	tblb	the TuioBlob to copy
+		 */
+		TuioBlob (const TuioBlob &tblb);
+
+		/**
+		 * The assignment operator copies all attributes of the provided TuioBlob,
+		 * including the path and a deep copy of the optional filters.
+		 *
+		 * @param	tblb	the TuioBlob to copy
+		 * @return	a reference to this TuioBlob
+		 */
+		TuioBlob& operator=(const TuioBlob &tblb);
 		
 		/**
 		 * The destructor is doing nothing in particular. 
@@ -130,7 +164,7 @@ namespace TUIO {
 		
 		/**
 		 * Takes a TuioTime argument and assigns it along with the provided 
-		 * X and Y coordinate, angle, X and Y velocity, motion acceleration,
+		 * X and Y coordinate, angle, width, height, area, X and Y velocity, motion acceleration,
 		 * rotation speed and rotation acceleration to the private TuioBlob attributes.
 		 *
 		 * @param	ttime	the TuioTime to assign
@@ -149,8 +183,8 @@ namespace TUIO {
 		void update (TuioTime ttime, float xp, float yp, float a, float w, float h, float f, float xs, float ys, float rs, float ma, float ra);
 
 		/**
-		 * Assigns the provided X and Y coordinate, angle, X and Y velocity, motion acceleration
-		 * rotation velocity and rotation acceleration to the private TuioContainer attributes.
+		 * Assigns the provided X and Y coordinate, angle, width, height, area, X and Y velocity,
+		 * motion acceleration, rotation velocity and rotation acceleration to the private TuioBlob attributes.
 		 * The TuioTime time stamp remains unchanged.
 		 *
 		 * @param	xp	the X coordinate to assign
@@ -169,13 +203,15 @@ namespace TUIO {
 		
 		/**
 		 * Takes a TuioTime argument and assigns it along with the provided 
-		 * X and Y coordinate and angle to the private TuioBlob attributes.
-		 * The speed and accleration values are calculated accordingly.
+		 * X and Y coordinate, angle, width, height and area to the private TuioBlob attributes.
+		 * The speed and acceleration values are calculated accordingly.
+		 * The angle value is processed by the optional angle filter and angle threshold,
+		 * the width and height values by the optional size filter and size threshold.
 		 *
 		 * @param	ttime	the TuioTime to assign
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
-		 * @param	a	the angle coordinate to assign
+		 * @param	a	the angle to assign
 		 * @param	w	the width to assign
 		 * @param	h	the height to assign
 		 * @param	f	the area to assign
@@ -189,11 +225,11 @@ namespace TUIO {
 		void stop (TuioTime ttime);
 		
 		/**
-		 * Takes the atttibutes of the provided TuioBlob 
-		 * and assigs these values to this TuioBlob.
-		 * The TuioTime time stamp of this TuioContainer remains unchanged.
+		 * Takes the attributes of the provided TuioBlob 
+		 * and assigns these values to this TuioBlob.
+		 * The TuioTime time stamp of this TuioBlob remains unchanged.
 		 *
-		 * @param	tblb	the TuioContainer to assign
+		 * @param	tblb	the TuioBlob to assign
 		 */	
 		void update (TuioBlob *tblb);
 		
@@ -210,14 +246,18 @@ namespace TUIO {
 		float getHeight() const;
 
 		/**
-		 * Returns the width of this TuioBlob.
-		 * @return	the width of this TuioBlob
+		 * Returns the width of this TuioBlob in pixels relative to the provided screen width.
+		 *
+		 * @param	w	the screen width
+		 * @return	the width of this TuioBlob in pixels
 		 */
 		int getScreenWidth(int w) const;
 		
 		/**
-		 * Returns the height of this TuioBlob.
-		 * @return	the height of this TuioBlob
+		 * Returns the height of this TuioBlob in pixels relative to the provided screen height.
+		 *
+		 * @param	h	the screen height
+		 * @return	the height of this TuioBlob in pixels
 		 */
 		int getScreenHeight(int h) const;
 		
@@ -252,25 +292,63 @@ namespace TUIO {
 		float getRotationAccel() const;
 
 		/**
-		 * Returns true of this TuioBlob is moving.
-		 * @return	true of this TuioBlob is moving
+		 * Returns true if this TuioBlob is moving.
+		 * @return	true if this TuioBlob is moving
 		 */
 		bool isMoving() const;
 		
+		/**
+		 * Adds a rotation angle threshold to this TuioBlob. Angle updates below
+		 * the provided threshold are filtered out.
+		 *
+		 * @param	thresh	the angle threshold to apply
+		 */
 		void addAngleThreshold(float thresh);
 		
+		/**
+		 * Removes the rotation angle threshold from this TuioBlob.
+		 */
 		void removeAngleThreshold();
 		
+		/**
+		 * Adds a OneEuroFilter to the rotation angle of this TuioBlob,
+		 * smoothing the rotation updates of the update(TuioTime,float,float,float,float,float,float) method.
+		 *
+		 * @param	mcut	the minimum cutoff frequency, must be > 0
+		 * @param	beta	the cutoff slope, must be > 0
+		 */
 		void addAngleFilter(float mcut, float beta);
 		
+		/**
+		 * Removes the OneEuroFilter from the rotation angle of this TuioBlob.
+		 */
 		void removeAngleFilter();
 		
+		/**
+		 * Adds a size threshold to this TuioBlob. Width and height updates below
+		 * the provided threshold are filtered out.
+		 *
+		 * @param	thresh	the size threshold to apply
+		 */
 		void addSizeThreshold(float thresh);
 		
+		/**
+		 * Removes the size threshold from this TuioBlob.
+		 */
 		void removeSizeThreshold();
 		
+		/**
+		 * Adds a OneEuroFilter to the width and height of this TuioBlob,
+		 * smoothing the size updates of the update(TuioTime,float,float,float,float,float,float) method.
+		 *
+		 * @param	mcut	the minimum cutoff frequency, must be > 0
+		 * @param	beta	the cutoff slope, must be > 0
+		 */
 		void addSizeFilter(float mcut, float beta);
 		
+		/**
+		 * Removes the OneEuroFilter from the width and height of this TuioBlob.
+		 */
 		void removeSizeFilter();
 	};
 }

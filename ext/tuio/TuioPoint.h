@@ -28,7 +28,8 @@ namespace TUIO {
 
 	/**
 	 * The TuioPoint class on the one hand is a simple container and utility class to handle TUIO positions in general, 
-	 * on the other hand the TuioPoint is the base class for the TuioCursor and TuioObject classes.
+	 * on the other hand the TuioPoint is the base class for the TuioContainer class, and with it
+	 * for all the TuioObject, TuioCursor and TuioBlob containers.
 	 *
 	 * @author Martin Kaltenbrunner
 	 * @version 1.1.6
@@ -37,11 +38,11 @@ namespace TUIO {
 
 	protected:
 		/**
-		 * X coordinate, representated as a floating point value in a range of 0..1  
+		 * X coordinate, represented as a floating point value in a range of 0..1  
 		 */
 		float xpos;
 		/**
-		 * X coordinate, representated as a floating point value in a range of 0..1  
+		 * Y coordinate, represented as a floating point value in a range of 0..1  
 		 */
 		float ypos;
 		/**
@@ -53,14 +54,26 @@ namespace TUIO {
 		 */
 		TuioTime startTime;
 
+		/**
+		 * Optional OneEuroFilter for the X coordinate smoothing
+		 */
 		OneEuroFilter *xposFilter;
+		/**
+		 * Optional OneEuroFilter for the Y coordinate smoothing
+		 */
 		OneEuroFilter *yposFilter;
+		/**
+		 * Optional position threshold suppressing updates below this distance
+		 */
 		float posThreshold;
 
 	public:
 		/**
-		 * The default constructor takes no arguments and sets
-		 * its coordinate attributes to zero and its time stamp to the current session time.
+		 * This constructor takes two floating point coordinate arguments and sets
+		 * its coordinate attributes to these values and its time stamp to the current session time.
+		 *
+		 * @param	xp	the X coordinate to assign
+		 * @param	yp	the Y coordinate to assign
 		 */
 		TuioPoint (float xp, float yp);
 
@@ -83,6 +96,23 @@ namespace TUIO {
 		TuioPoint (TuioPoint *tpoint);
 
 		/**
+		 * The copy constructor copies all attributes of the provided TuioPoint,
+		 * including a deep copy of the optional position filters.
+		 *
+		 * @param	tpoint	the TuioPoint to copy
+		 */
+		TuioPoint (const TuioPoint &tpoint);
+
+		/**
+		 * The assignment operator copies all attributes of the provided TuioPoint,
+		 * including a deep copy of the optional position filters.
+		 *
+		 * @param	tpoint	the TuioPoint to copy
+		 * @return	a reference to this TuioPoint
+		 */
+		TuioPoint& operator=(const TuioPoint &tpoint);
+
+		/**
 		 * The destructor is doing nothing in particular.
 		 */
 		virtual ~TuioPoint(){
@@ -100,7 +130,7 @@ namespace TUIO {
 
 		/**
 		 * Takes two floating point coordinate arguments and updates its coordinate attributes 
-		 * to the coordinates of the provided TuioPoint and leaves its time stamp unchanged.
+		 * to the provided values and leaves its time stamp unchanged.
 		 *
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
@@ -109,7 +139,8 @@ namespace TUIO {
 
 		/**
 		 * Takes a TuioTime object and two floating point coordinate arguments and updates its coordinate attributes 
-		 * to the coordinates of the provided TuioPoint and its time stamp to the provided TUIO time object.
+		 * to the provided values and its time stamp to the provided TUIO time object.
+		 * The coordinate values are processed by the optional position filter and position threshold.
 		 *
 		 * @param	ttime	the TuioTime to assign
 		 * @param	xp	the X coordinate to assign
@@ -140,11 +171,14 @@ namespace TUIO {
 		float getDistance(float xp, float yp) const;
 
 		/**
-		 * Returns the distance to the provided coordinates 
+		 * Returns the distance to the provided coordinates in pixels,
+		 * relative to the provided screen width and height.
 		 *
 		 * @param	xp	the X coordinate of the distant point
 		 * @param	yp	the Y coordinate of the distant point
-		 * @return	the distance to the provided coordinates
+		 * @param	w	the screen width
+		 * @param	h	the screen height
+		 * @return	the distance to the provided coordinates in pixels
 		 */
 		float getScreenDistance(float xp, float yp, int w, int h) const;
 		/**
@@ -174,7 +208,7 @@ namespace TUIO {
 		 *
 		 * @param	xp	the X coordinate of the distant point
 		 * @param	yp	the Y coordinate of the distant point
-		 * @return	the angle in degrees to the provided TuioPoint
+		 * @return	the angle in degrees to the provided coordinates
 		 */
 		float getAngleDegrees(float xp, float yp) const;
 		/**
@@ -191,7 +225,7 @@ namespace TUIO {
 		 * @return	the X coordinate of this TuioPoint in pixels relative to the provided screen width
 		 */
 		int getScreenX(int width) const;
-		/*
+		/**
 		 * Returns the Y coordinate in pixels relative to the provided screen height. 
 		 *
 		 * @param	height	the screen height
@@ -211,12 +245,31 @@ namespace TUIO {
 		 */
 		TuioTime getStartTime() const;
 		
+		/**
+		 * Adds a position threshold to this TuioPoint. Position updates below
+		 * the provided threshold are filtered out on each axis.
+		 *
+		 * @param	thresh	the position threshold to apply
+		 */
 		void addPositionThreshold(float thresh);
 		
+		/**
+		 * Removes the position threshold from this TuioPoint.
+		 */
 		void removePositionThreshold();
 
+		/**
+		 * Adds a OneEuroFilter to the X and Y coordinate of this TuioPoint,
+		 * smoothing the position updates of the update(TuioTime,float,float) method.
+		 *
+		 * @param	mcut	the minimum cutoff frequency, must be > 0
+		 * @param	beta	the cutoff slope, must be > 0
+		 */
 		void addPositionFilter(float mcut, float beta);
 
+		/**
+		 * Removes the OneEuroFilter from the X and Y coordinate of this TuioPoint.
+		 */
 		void removePositionFilter();
 	};
 }

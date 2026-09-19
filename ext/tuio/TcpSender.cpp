@@ -19,30 +19,58 @@
 #include "TcpSender.h"
 using namespace TUIO;
 
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
+#ifdef WIN32
+#define SHUT_RDWR SD_BOTH
+#endif
+
+typedef struct {
+	TcpSender *sender;
+#ifdef WIN32
+	SOCKET socket;
+#else
+	int socket;
+#endif
+} TcpSenderClientData;
+
 #ifdef  WIN32
 static DWORD WINAPI ClientThreadFunc( LPVOID obj )
 #else
 static void* ClientThreadFunc( void* obj )
 #endif
 {
-	TcpSender *sender = static_cast<TcpSender*>(obj);
-	char buf[16];
-			
+	TcpSenderClientData *client_data = static_cast<TcpSenderClientData*>(obj);
+	TcpSender *sender = client_data->sender;
 #ifdef WIN32
-	SOCKET client = sender->tcp_client_list.back();
+	SOCKET client = client_data->socket;
 #else
-	int client = sender->tcp_client_list.back();
+	int client = client_data->socket;
 #endif
-	
-	size_t connected = 1;
-	while (connected) {
-		connected = recv(client, buf, sizeof(buf),0);
-	}
-		
+	delete client_data;
+	std::string type = sender->tuio_type();
+
+	char buf[16];
+	while (recv(client, buf, sizeof(buf),0)>0) {}
+
+#ifdef WIN32
+	WaitForSingleObject(sender->tcp_mutex,INFINITE);
 	sender->tcp_client_list.remove(client);
-	std::cout << sender->tuio_type() << " connection closed"<< std::endl;
+	if (client==sender->tcp_socket) sender->tcp_socket = 0;
 	if (sender->tcp_client_list.size()==0) sender->connected=false;
-	//std::cout << sender->tcp_client_list.size() << " clients left"<< std::endl;	
+	ReleaseMutex(sender->tcp_mutex);
+	closesocket(client);
+#else
+	pthread_mutex_lock(&sender->tcp_mutex);
+	sender->tcp_client_list.remove(client);
+	if (client==sender->tcp_socket) sender->tcp_socket = 0;
+	if (sender->tcp_client_list.size()==0) sender->connected=false;
+	pthread_mutex_unlock(&sender->tcp_mutex);
+	close(client);
+#endif
+	std::cout << type << " connection closed"<< std::endl;
 
 	return 0;
 };
@@ -64,7 +92,7 @@ static void* ServerThreadFunc( void* obj )
 #else
 		int tcp_client = -1;
 #endif
-		
+		len = sizeof(client_addr);
 		tcp_client = accept(sender->tcp_socket, (struct sockaddr*)&client_addr, &len);
 #ifdef WIN32
 		 //win32 workaround on exit
@@ -74,16 +102,37 @@ static void* ServerThreadFunc( void* obj )
 
 		if (tcp_client>0) { 
 			std::cout << sender->tuio_type() << " client connected from " << inet_ntoa(client_addr.sin_addr) << "@" << client_addr.sin_port << std::endl;
+			
+#ifdef SO_NOSIGPIPE
+			int optval = 1;
+			setsockopt(tcp_client,SOL_SOCKET,SO_NOSIGPIPE, (const void *)&optval, sizeof(int));
+#endif
+			
+#ifdef WIN32
+			WaitForSingleObject(sender->tcp_mutex,INFINITE);
 			sender->tcp_client_list.push_back(tcp_client);
+			ReleaseMutex(sender->tcp_mutex);
+#else
+			pthread_mutex_lock(&sender->tcp_mutex);
+			sender->tcp_client_list.push_back(tcp_client);
+			pthread_mutex_unlock(&sender->tcp_mutex);
+#endif
 			sender->connected=true;
 			sender->newClient(tcp_client);
 			//std::cout << sender->tcp_client_list.size() << " clients connected"<< std::endl;	
+
+			TcpSenderClientData *client_data = new TcpSenderClientData;
+			client_data->sender = sender;
+			client_data->socket = tcp_client;
+			
 #ifdef WIN32
 			DWORD ClientThreadId;
-			HANDLE client_thread = CreateThread( 0, 0, ClientThreadFunc, obj, 0, &ClientThreadId );
+			HANDLE client_thread = CreateThread( 0, 0, ClientThreadFunc, client_data, 0, &ClientThreadId );
+			if (client_thread) CloseHandle(client_thread);
 #else
 			pthread_t client_thread;
-			pthread_create(&client_thread , NULL, ClientThreadFunc,obj);
+			pthread_create(&client_thread , NULL, ClientThreadFunc,client_data);
+			pthread_detach(client_thread);
 #endif
 		} else break;
 	}
@@ -96,12 +145,25 @@ TcpSender::TcpSender()
 {
 	local = true;
 	buffer_size = MAX_TCP_SIZE;
+	port_no = 3333;
+	server_thread = 0;
+	
+#ifndef WIN32
+	pthread_mutex_init(&tcp_mutex,NULL);
+#else
+	tcp_mutex = CreateMutex(NULL,FALSE,NULL);
+#endif
 	
 	tcp_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if (tcp_socket < 0) {
 		std::cerr << "could not create " << tuio_type() << " socket" << std::endl;
 		return;
 	}
+	
+#ifdef SO_NOSIGPIPE
+	int optval = 1;
+	setsockopt(tcp_socket,SOL_SOCKET,SO_NOSIGPIPE, (const void *)&optval, sizeof(int));
+#endif
 	
 	struct sockaddr_in tcp_server;
 	memset( &tcp_server, 0, sizeof (tcp_server));
@@ -114,6 +176,12 @@ TcpSender::TcpSender()
 	
 	int ret = connect(tcp_socket,(struct sockaddr*)&tcp_server,sizeof(tcp_server));
 	if (ret<0) {
+#ifdef WIN32
+		closesocket(tcp_socket);
+#else
+		close(tcp_socket);
+#endif	
+		tcp_socket = 0;
 		std::cerr << "could not open " << tuio_type() << " connection to 127.0.0.1:3333" << std::endl;
 		return;
 	} else {
@@ -121,10 +189,14 @@ TcpSender::TcpSender()
 		tcp_client_list.push_back(tcp_socket);
 		connected = true;
 		
+		TcpSenderClientData *client_data = new TcpSenderClientData;
+		client_data->sender = this;
+		client_data->socket = tcp_socket;
+		
 #ifdef WIN32
-		HANDLE server_thread = CreateThread( 0, 0, ClientThreadFunc, this, 0, &ServerThreadId );
+		server_thread = CreateThread( 0, 0, ClientThreadFunc, client_data, 0, &ServerThreadId );
 #else
-		pthread_create(&server_thread , NULL, ClientThreadFunc,this);
+		pthread_create(&server_thread , NULL, ClientThreadFunc,client_data);
 #endif
 
 	}
@@ -138,12 +210,25 @@ TcpSender::TcpSender(const char *host, int port)
 		local = true;
 	} else local = false;
 	buffer_size = MAX_TCP_SIZE;
+	port_no = port;
+	server_thread = 0;
+	
+#ifndef WIN32
+	pthread_mutex_init(&tcp_mutex,NULL);
+#else
+	tcp_mutex = CreateMutex(NULL,FALSE,NULL);
+#endif
 	
 	tcp_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if (tcp_socket < 0) {
 		std::cerr << "could not create  " << tuio_type() << " socket" << std::endl;
 		return;
 	}
+	
+#ifdef SO_NOSIGPIPE
+	int optval = 1;
+	setsockopt(tcp_socket,SOL_SOCKET,SO_NOSIGPIPE, (const void *)&optval, sizeof(int));
+#endif
 
 	struct sockaddr_in tcp_server;
 	memset( &tcp_server, 0, sizeof (tcp_server));
@@ -176,10 +261,14 @@ TcpSender::TcpSender(const char *host, int port)
 		tcp_client_list.push_back(tcp_socket);
 		connected = true;
 		
+		TcpSenderClientData *client_data = new TcpSenderClientData;
+		client_data->sender = this;
+		client_data->socket = tcp_socket;
+		
 #ifdef WIN32
-		HANDLE server_thread = CreateThread( 0, 0, ClientThreadFunc, this, 0, &ServerThreadId );
+		server_thread = CreateThread( 0, 0, ClientThreadFunc, client_data, 0, &ServerThreadId );
 #else
-		pthread_create(&server_thread , NULL, ClientThreadFunc,this);
+		pthread_create(&server_thread , NULL, ClientThreadFunc,client_data);
 #endif
 
 	}
@@ -191,6 +280,13 @@ TcpSender::TcpSender(int port)
 	local = false;
 	buffer_size = MAX_TCP_SIZE;
 	port_no = port;
+	server_thread = 0;
+	
+#ifndef WIN32
+	pthread_mutex_init(&tcp_mutex,NULL);
+#else
+	tcp_mutex = CreateMutex(NULL,FALSE,NULL);
+#endif
 	
 	tcp_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (tcp_socket < 0) {
@@ -249,23 +345,73 @@ bool TcpSender::isConnected() {
 
 
 TcpSender::~TcpSender() {
+
+	// shut down all sockets to unblock the sender threads
+	// the client threads close their own sockets, so the main socket
+	// is only closed here if it is not owned by a client thread
 #ifdef WIN32
-
-	for (std::list<SOCKET>::iterator client = tcp_client_list.begin(); client!=tcp_client_list.end(); client++) {
-		closesocket((*client));
+	bool close_socket = false;
+	WaitForSingleObject(tcp_mutex,INFINITE);
+	for (std::list<SOCKET>::iterator client = tcp_client_list.begin(); client!=tcp_client_list.end(); client++)
+		shutdown((*client),SD_BOTH);
+	if (tcp_socket>0) {
+		close_socket = true;
+		for (std::list<SOCKET>::iterator client = tcp_client_list.begin(); client!=tcp_client_list.end(); client++) {
+			if ((*client)==tcp_socket) { close_socket = false; break; }
+		}
+		if (close_socket) shutdown(tcp_socket,SD_BOTH);
 	}
-	closesocket(tcp_socket);
-
-	if( server_thread ) CloseHandle( server_thread );
-
+	ReleaseMutex(tcp_mutex);
+	if (close_socket) closesocket(tcp_socket);
 #else
+	bool close_socket = false;
+	pthread_mutex_lock(&tcp_mutex);
+	for (std::list<int>::iterator client = tcp_client_list.begin(); client!=tcp_client_list.end(); client++)
+		shutdown((*client),SHUT_RDWR);
+	if (tcp_socket>0) {
+		close_socket = true;
 		for (std::list<int>::iterator client = tcp_client_list.begin(); client!=tcp_client_list.end(); client++) {
-		close((*client));
+			if ((*client)==tcp_socket) { close_socket = false; break; }
+		}
+		if (close_socket) shutdown(tcp_socket,SHUT_RDWR);
 	}
-	close(tcp_socket);
+	pthread_mutex_unlock(&tcp_mutex);
+	if (close_socket) close(tcp_socket);
+#endif
 	tcp_socket = 0;
-	server_thread = 0;
-#endif		
+
+	// the client threads remove their sockets from the client list when they terminate
+	if (server_thread) {
+#ifndef WIN32
+		pthread_join(server_thread,NULL);
+#else
+		WaitForSingleObject(server_thread,INFINITE);
+		CloseHandle(server_thread);
+#endif
+		server_thread = 0;
+	}
+	
+	// wait for the client threads to terminate
+	bool clients_left = true;
+	while (clients_left) {
+#ifdef WIN32
+		WaitForSingleObject(tcp_mutex,INFINITE);
+		clients_left = (tcp_client_list.size()>0);
+		ReleaseMutex(tcp_mutex);
+		if (clients_left) Sleep(1);
+#else
+		pthread_mutex_lock(&tcp_mutex);
+		clients_left = (tcp_client_list.size()>0);
+		pthread_mutex_unlock(&tcp_mutex);
+		if (clients_left) usleep(1000);
+#endif
+	}
+	
+#ifdef WIN32
+	if (tcp_mutex) CloseHandle(tcp_mutex);
+#else
+	pthread_mutex_destroy(&tcp_mutex);
+#endif
 }
 
 
@@ -285,17 +431,36 @@ bool TcpSender::sendOscPacket (osc::OutboundPacketStream *bundle) {
 
 #ifdef WIN32
 	std::list<SOCKET>::iterator client;
+	WaitForSingleObject(tcp_mutex,INFINITE);
 #else
 	std::list<int>::iterator client;
+	pthread_mutex_lock(&tcp_mutex);
 #endif
 	
+	memcpy(&data_buffer[0], &data_size, 4);
+	memcpy(&data_buffer[4], bundle->Data(), bundle->Size());
+	
 	for (client = tcp_client_list.begin(); client!=tcp_client_list.end(); client++) {
-		//send((*client), data_size, 4,0);
-		//send((*client), bundle->Data(), bundle->Size(),0);
-		memcpy(&data_buffer[0], &data_size, 4);
-		memcpy(&data_buffer[4], bundle->Data(), bundle->Size());
-		send((*client),data_buffer, 4+bundle->Size(),0);
+		
+		// keep sending until the complete packet has been written
+		int packet_size = 4+bundle->Size();
+		int sent_bytes = 0;
+		while (sent_bytes<packet_size) {
+			int bytes = send((*client),data_buffer+sent_bytes,packet_size-sent_bytes,MSG_NOSIGNAL);
+			if (bytes<=0) {
+				// shut down the socket so that the client thread removes it
+				shutdown((*client),SHUT_RDWR);
+				break;
+			}
+			sent_bytes += bytes;
+		}
 	}
+
+#ifdef WIN32
+	ReleaseMutex(tcp_mutex);
+#else
+	pthread_mutex_unlock(&tcp_mutex);
+#endif
 
 	return true;
 }

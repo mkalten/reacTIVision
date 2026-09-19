@@ -36,19 +36,20 @@ namespace TUIO {
 	/**
 	 * <p>The TuioServer class is the central TUIO protocol encoder component.
 	 * In order to encode and send TUIO messages an instance of TuioServer needs to be created. The TuioServer instance then generates TUIO messages
-	 * which are deliverered by the provided OSCSender. The shown UDPSender send OSC to UDP port 3333 on localhost or to the configured host and port.</p> 
-	 * <p>During runtime the each frame is marked with the initFrame and commitFrame methods,
-	 * while the currently present TuioObjects are managed by the server with ADD, UPDATE and REMOVE methods in analogy to the TuioClient's TuioListener interface.</p>
+	 * which are delivered by the provided OscSender. The shown UdpSender sends OSC to UDP port 3333 on localhost or to the configured host and port.</p> 
+	 * <p>During runtime each frame is marked with the initFrame and commitFrame methods,
+	 * while the currently present TuioObjects, TuioCursors and TuioBlobs are managed by the server
+	 * with ADD, UPDATE and REMOVE methods in analogy to the TuioClient's TuioListener interface.</p>
 	 *<p>See the SimpleSimulator example project for further hints on how to use the TuioServer class and its various methods.
 	 * <p><code>
-	 * OscSender *sender = new UDPSender();</br>
+	 * OscSender *sender = new UdpSender();<br/>
 	 * TuioServer *server = new TuioServer(sender);<br/>
 	 * server->setSourceName("MyTuioSource"); // optional for TUIO 1.1<br/>
 	 * ...<br/>
 	 * server->initFrame(TuioTime::getSessionTime());<br/>
-	 * TuioObject *tobj = server->addTuioObject(xpos,ypos,angle);<br/>
-	 * TuioCursor *tcur = server->addTuiCursor(xpos,ypos);<br/>
-	 * TuioBlob *tblb = server->addTuioBlob(xpos,ypos,angle,width,height, area);<br/>
+	 * TuioObject *tobj = server->addTuioObject(symbol,xpos,ypos,angle);<br/>
+	 * TuioCursor *tcur = server->addTuioCursor(xpos,ypos);<br/>
+	 * TuioBlob *tblb = server->addTuioBlob(xpos,ypos,angle,width,height,area);<br/>
 	 * server->commitFrame();<br/>
 	 * ...<br/>
 	 * server->initFrame(TuioTime::getSessionTime());<br/>
@@ -164,11 +165,6 @@ namespace TUIO {
 		void commitFrame();
 
 		/**
-		 * Commits the current frame.
-		 * Generates and sends TUIO messages of all currently active and updated TuioObjects, TuioCursors and TuioBlobs.
-		 */
-
-		/**
 		 * Defines the name of this TUIO source, which is transmitted within the /tuio/[profile] source message.
 		 *
 		 * @param	name	the desired name of this TUIO source
@@ -183,14 +179,52 @@ namespace TUIO {
 		 */
 		void setSourceName(const char *name, const char *ip);
 
+		/**
+		 * Adds an additional OscSender to this TuioServer. All generated TUIO messages
+		 * are then delivered redundantly by all registered OscSender instances.
+		 * The OscSender instance becomes owned by this TuioServer.
+		 *
+		 * @param	sender	the additional OscSender to register
+		 */
 		void addOscSender(OscSender *sender);
 
+		/**
+		 * Enables or disables the /tuio/2Dobj object profile.
+		 *
+		 * @param	flag	enable the object profile if set to true
+		 */
 		void enableObjectProfile(bool flag) { objectProfileEnabled = flag; };
+		
+		/**
+		 * Enables or disables the /tuio/2Dcur cursor profile.
+		 *
+		 * @param	flag	enable the cursor profile if set to true
+		 */
 		void enableCursorProfile(bool flag) { cursorProfileEnabled = flag; };
+		
+		/**
+		 * Enables or disables the /tuio/2Dblb blob profile.
+		 *
+		 * @param	flag	enable the blob profile if set to true
+		 */
 		void enableBlobProfile(bool flag) { blobProfileEnabled = flag; };
 
+		/**
+		 * Returns true if the /tuio/2Dobj object profile is enabled.
+		 * @return	true if the object profile is enabled
+		 */
 		bool hasObjectProfile() { return objectProfileEnabled; };
+		
+		/**
+		 * Returns true if the /tuio/2Dcur cursor profile is enabled.
+		 * @return	true if the cursor profile is enabled
+		 */
 		bool hasCursorProfile() { return cursorProfileEnabled; };
+		
+		/**
+		 * Returns true if the /tuio/2Dblb blob profile is enabled.
+		 * @return	true if the blob profile is enabled
+		 */
 		bool hasBlobProfile() { return blobProfileEnabled; };
 
 	private:
@@ -207,24 +241,24 @@ namespace TUIO {
 
 		void startObjectBundle();
 		void addObjectMessage(TuioObject *tobj);
-		void sendObjectBundle(long fseq);
+		void sendObjectBundle(int fseq);
 		void sendEmptyObjectBundle();
 
 		void startCursorBundle();
 		void addCursorMessage(TuioCursor *tcur);
-		void sendCursorBundle(long fseq);
+		void sendCursorBundle(int fseq);
 		void sendEmptyCursorBundle();
 
 		void startBlobBundle();
 		void addBlobMessage(TuioBlob *tblb);
-		void sendBlobBundle(long fseq);
+		void sendBlobBundle(int fseq);
 		void sendEmptyBlobBundle();
 
 		int update_interval;
 		bool full_update, periodic_update;
 		TuioTime objectUpdateTime, cursorUpdateTime, blobUpdateTime ;
 		bool objectProfileEnabled, cursorProfileEnabled, blobProfileEnabled;
-		char *source_name;
+		std::string source_name;
 	};
 }
 #endif /* INCLUDED_TuioServer_H */

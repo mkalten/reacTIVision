@@ -36,11 +36,12 @@
 namespace TUIO {
 	
 	/**
-	 * The TuioTime class is a simple structure that is used to reprent the time that has elapsed since the session start.
+	 * The TuioTime class is a simple structure that is used to represent the time that has elapsed since the session start.
 	 * The time is internally represented as seconds and fractions of microseconds which should be more than sufficient for gesture related timing requirements.
 	 * Therefore at the beginning of a typical TUIO session the static method initSession() will set the reference time for the session. 
-	 * Another important static method getSessionTime will return a TuioTime object representing the time elapsed since the session start.
-	 * The class also provides various addtional convience method, which allow some simple time arithmetics.
+	 * Another important static method getSessionTime() will return a TuioTime object representing the time elapsed since the session start.
+	 * The class also provides various additional convenience methods, which allow some simple time arithmetics.
+	 * Note that the comparison and assignment operators are deliberately not const-qualified to preserve binary compatibility.
 	 *
 	 * @author Martin Kaltenbrunner
 	 * @version 1.1.6
@@ -68,15 +69,15 @@ namespace TUIO {
 		
 		/**
 		 * This constructor takes the provided time represented in total Milliseconds 
-		 * and assigs this value to the newly created TuioTime.
+		 * and assigns this value to the newly created TuioTime.
 		 *
-		 * @param  msec  the total time in Millseconds
+		 * @param  msec  the total time in Milliseconds
 		 */
 		TuioTime (long msec);
 		
 		/**
 		 * This constructor takes the provided time represented in Seconds and Microseconds   
-		 * and assigs these value to the newly created TuioTime.
+		 * and assigns these values to the newly created TuioTime.
 		 *
 		 * @param  sec  the total time in seconds
 		 * @param  usec	the microseconds time component
@@ -135,7 +136,7 @@ namespace TUIO {
 		 * Takes a TuioTime argument and compares the provided TuioTime to the private Seconds and Microseconds attributes.
 		 *
 		 * @param  ttime	the TuioTime to compare
-		 * @return true if the two TuioTime have differnt Seconds or Microseconds attributes
+		 * @return true if the two TuioTime have different Seconds or Microseconds attributes
 		 */	
 		bool operator!=(TuioTime ttime);
 		
@@ -174,14 +175,14 @@ namespace TUIO {
 		static TuioTime getSessionTime();
 		
 		/**
-		 * Returns the absolut TuioTime representing the session start.
-		 * @return the absolut TuioTime representing the session start
+		 * Returns the absolute TuioTime representing the session start.
+		 * @return the absolute TuioTime representing the session start
 		 */			
 		static TuioTime getStartTime();
 		
 		/**
-		 * Returns the absolut TuioTime representing the current system time.
-		 * @return the absolut TuioTime representing the current system time
+		 * Returns the absolute TuioTime representing the current system time.
+		 * @return the absolute TuioTime representing the current system time
 		 */	
 		static TuioTime getSystemTime();
 	};

@@ -21,7 +21,7 @@
 
 using namespace TUIO;
 
-TuioObject::TuioObject (TuioTime ttime, long si, int sym, float xp, float yp, float a):TuioContainer(ttime, si, xp, yp) {
+TuioObject::TuioObject (TuioTime ttime, int si, int sym, float xp, float yp, float a):TuioContainer(ttime, si, xp, yp) {
 	symbol_id = sym;
 	angle = a;
 	rotation_speed = 0.0f;
@@ -31,7 +31,7 @@ TuioObject::TuioObject (TuioTime ttime, long si, int sym, float xp, float yp, fl
 	angleThreshold = 0.0f;
 }
 
-TuioObject::TuioObject (long si, int sym, float xp, float yp, float a):TuioContainer(si, xp, yp) {
+TuioObject::TuioObject (int si, int sym, float xp, float yp, float a):TuioContainer(si, xp, yp) {
 	symbol_id = sym;
 	angle = a;
 	rotation_speed = 0.0f;
@@ -49,6 +49,31 @@ TuioObject::TuioObject (TuioObject *tobj):TuioContainer(tobj) {
 
 	angleFilter = NULL;
 	angleThreshold = 0.0f;
+}
+
+TuioObject::TuioObject (const TuioObject &tobj):TuioContainer(tobj) {
+	symbol_id = tobj.symbol_id;
+	angle = tobj.angle;
+	rotation_speed = tobj.rotation_speed;
+	rotation_accel = tobj.rotation_accel;
+
+	angleThreshold = tobj.angleThreshold;
+	angleFilter = tobj.angleFilter ? new OneEuroFilter(*(tobj.angleFilter)) : NULL;
+}
+
+TuioObject& TuioObject::operator=(const TuioObject &tobj) {
+	if (this!=&tobj) {
+		TuioContainer::operator=(tobj);
+		symbol_id = tobj.symbol_id;
+		angle = tobj.angle;
+		rotation_speed = tobj.rotation_speed;
+		rotation_accel = tobj.rotation_accel;
+
+		angleThreshold = tobj.angleThreshold;
+		if (angleFilter) delete angleFilter;
+		angleFilter = tobj.angleFilter ? new OneEuroFilter(*(tobj.angleFilter)) : NULL;
+	}
+	return *this;
 }
 
 void TuioObject::update (TuioTime ttime, float xp, float yp, float a, float xs, float ys, float rs, float ma, float ra) {
@@ -93,8 +118,10 @@ void TuioObject::update (TuioTime ttime, float xp, float yp, float a) {
 	else if (da < -M_PI) da+=2*M_PI;
 	da = da/(2*M_PI);
 	
-	rotation_speed = (float)da/dt;
-	rotation_accel =  (rotation_speed - last_rotation_speed)/dt;
+	if (dt>0) {
+		rotation_speed = (float)da/dt;
+		rotation_accel =  (rotation_speed - last_rotation_speed)/dt;
+	}
 	
 	if ((rotation_accel!=0) && (state==TUIO_STOPPED)) state = TUIO_ROTATING;
 }

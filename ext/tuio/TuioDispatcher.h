@@ -31,7 +31,7 @@ namespace TUIO {
 	
 	/**
 	 * <p>The TuioDispatcher generates TUIO events which are broadcasted to all 
-	 * registered classes that implement the {@link TuioListener} interface.</p> 
+	 * registered classes that implement the TuioListener interface.</p> 
 	 *
 	 * @author Martin Kaltenbrunner
 	 * @version 1.1.6
@@ -79,7 +79,7 @@ namespace TUIO {
 		/**
 		* Returns the number of all currently active TuioObjects
 		*
-		* @return  the of all currently active TuioObjects
+		* @return  the number of all currently active TuioObjects
 		*/
 		int getTuioObjectCount();
 
@@ -100,7 +100,7 @@ namespace TUIO {
 		/**
 		* Returns the number of all currently active TuioCursors
 		*
-		* @return  the of all currently active TuioCursors
+		* @return  the number of all currently active TuioCursors
 		*/
 		int getTuioCursorCount();
 
@@ -121,7 +121,7 @@ namespace TUIO {
 		/**
 		* Returns the number of all currently active TuioBlobs
 		*
-		* @return  the of all currently active TuioBlobs
+		* @return  the number of all currently active TuioBlobs
 		*/
 		int getTuioBlobCount();
 
@@ -138,7 +138,7 @@ namespace TUIO {
 		 *
 		 * @return  an active TuioObject corresponding to the provided Session ID or NULL
 		 */
-		TuioObject* getTuioObject(long s_id);
+		TuioObject* getTuioObject(int s_id);
 
 		/**
 		 * Returns the TuioCursor corresponding to the provided Session ID
@@ -146,7 +146,7 @@ namespace TUIO {
 		 *
 		 * @return  an active TuioCursor corresponding to the provided Session ID or NULL
 		 */
-		TuioCursor* getTuioCursor(long s_id);
+		TuioCursor* getTuioCursor(int s_id);
 
 		/**
 		 * Returns the TuioBlob corresponding to the provided Session ID
@@ -154,7 +154,7 @@ namespace TUIO {
 		 *
 		 * @return  an active TuioBlob corresponding to the provided Session ID or NULL
 		 */
-		TuioBlob* getTuioBlob(long s_id);
+		TuioBlob* getTuioBlob(int s_id);
 		
 		/**
 		 * Locks the TuioObject list in order to avoid updates during access

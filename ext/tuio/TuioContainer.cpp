@@ -19,7 +19,7 @@
 #include "TuioContainer.h"
 using namespace TUIO;
 
-TuioContainer::TuioContainer (TuioTime ttime, long si, float xp, float yp):TuioPoint(ttime, xp,yp)
+TuioContainer::TuioContainer (TuioTime ttime, int si, float xp, float yp):TuioPoint(ttime, xp,yp)
 ,state(TUIO_ADDED)
 ,source_id(0)
 ,source_name("undefined")
@@ -37,7 +37,7 @@ TuioContainer::TuioContainer (TuioTime ttime, long si, float xp, float yp):TuioP
 	lastPoint = &path.back();
 }
 
-TuioContainer::TuioContainer (long si, float xp, float yp):TuioPoint(xp,yp)
+TuioContainer::TuioContainer (int si, float xp, float yp):TuioPoint(xp,yp)
 ,state(TUIO_ADDED)
 ,source_id(0)
 ,source_name("undefined")
@@ -74,6 +74,60 @@ TuioContainer::TuioContainer (TuioContainer *tcon):TuioPoint(tcon)
 	lastPoint = &path.back();
 }
 
+TuioContainer::TuioContainer (const TuioContainer &tcon):TuioPoint(tcon) {
+	session_id = tcon.session_id;
+	x_speed = tcon.x_speed;
+	y_speed = tcon.y_speed;
+	motion_speed = tcon.motion_speed;
+	motion_accel = tcon.motion_accel;
+	x_accel = tcon.x_accel;
+	y_accel = tcon.y_accel;
+	path = tcon.path;
+	state = tcon.state;
+	source_id = tcon.source_id;
+	source_name = tcon.source_name;
+	source_addr = tcon.source_addr;
+	lastPoint = NULL;
+	updateLastPoint(tcon);
+}
+
+TuioContainer& TuioContainer::operator=(const TuioContainer &tcon) {
+	if (this!=&tcon) {
+		TuioPoint::operator=(tcon);
+		session_id = tcon.session_id;
+		x_speed = tcon.x_speed;
+		y_speed = tcon.y_speed;
+		motion_speed = tcon.motion_speed;
+		motion_accel = tcon.motion_accel;
+		x_accel = tcon.x_accel;
+		y_accel = tcon.y_accel;
+		path = tcon.path;
+		state = tcon.state;
+		source_id = tcon.source_id;
+		source_name = tcon.source_name;
+		source_addr = tcon.source_addr;
+		lastPoint = NULL;
+		updateLastPoint(tcon);
+	}
+	return *this;
+}
+
+void TuioContainer::updateLastPoint(const TuioContainer &tcon) {
+	if (tcon.lastPoint!=NULL) {
+		std::list<TuioPoint>::const_iterator src = tcon.path.begin();
+		std::list<TuioPoint>::iterator dst = path.begin();
+		while ((src!=tcon.path.end()) && (dst!=path.end())) {
+			if (&(*src)==tcon.lastPoint) {
+				lastPoint = &(*dst);
+				break;
+			}
+			src++;
+			dst++;
+		}
+	}
+	if ((lastPoint==NULL) && !path.empty()) lastPoint = &path.back();
+}
+
 void TuioContainer::setTuioSource(int src_id, const char *src_name, const char *src_addr) {
 	source_id = src_id;
 	source_name = std::string(src_name);
@@ -105,12 +159,14 @@ void TuioContainer::update (TuioTime ttime, float xp, float yp) {
 	float last_x_speed = x_speed;
 	float last_y_speed = y_speed;
 
-	x_speed = dx/dt;
-	y_speed = dy/dt;
-	motion_speed = dist/dt;
-	motion_accel = (motion_speed - last_motion_speed)/dt;
-	x_accel = (x_speed - last_x_speed)/dt;
-	y_accel = (y_speed - last_y_speed)/dt;
+	if (dt>0) {
+		x_speed = dx/dt;
+		y_speed = dy/dt;
+		motion_speed = dist/dt;
+		motion_accel = (motion_speed - last_motion_speed)/dt;
+		x_accel = (x_speed - last_x_speed)/dt;
+		y_accel = (y_speed - last_y_speed)/dt;
+	}
 
 	TuioPoint p(currentTime,xpos,ypos);
 	path.push_back(p);
@@ -188,11 +244,11 @@ void TuioContainer::remove(TuioTime ttime) {
 	state = TUIO_REMOVED;
 }
 
-long TuioContainer::getSessionID() const{
+int TuioContainer::getSessionID() const{
 	return session_id;
 }
 
-void TuioContainer::setSessionID(long s_id) {
+void TuioContainer::setSessionID(int s_id) {
 	session_id = s_id;
 }
 

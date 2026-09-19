@@ -52,7 +52,7 @@ double OneEuroFilter::alpha(double cutoff) {
 
 double OneEuroFilter::filter(double value, TimeStamp dt) {
 	// update the sampling frequency based on timestamps
-	if (lasttime!=UndefinedTime && dt!=UndefinedTime && dt!=lasttime)
+	if (lasttime!=UndefinedTime && dt>0 && dt!=lasttime)
 		freq = 1.0 / dt;
 	lasttime = dt;
 	

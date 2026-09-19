@@ -32,28 +32,29 @@
 namespace TUIO {
 	/**
 	 * <p>The TuioManager class is the central TUIO session management component.</p> 
-	 * <p>During runtime the each frame is marked with the initFrame and commitFrame methods, 
-	 * while the currently present TuioObjects are managed by the server with ADD, UPDATE and REMOVE methods in analogy to the TuioClient's TuioListener interface.</p> 
+	 * <p>During runtime each frame is marked with the initFrame and commitFrame methods, 
+	 * while the currently present TuioObjects, TuioCursors and TuioBlobs are managed by the server
+	 * with ADD, UPDATE and REMOVE methods in analogy to the TuioClient's TuioListener interface.</p> 
 	 * <p><code>
 	 * TuioManager *manager = new TuioManager();<br/>
 	 * ...<br/>
-	 * server->initFrame(TuioTime::getSessionTime());<br/>
-	 * TuioObject *tobj = server->addTuioObject(xpos,ypos, angle);<br/>
-	 * TuioCursor *tcur = server->addTuioCursor(xpos,ypos);<br/>
-	 * TuioBlob *tblb = server->addTuioBlob(xpos,ypos,width,height,angle);<br/>
-	 * server->commitFrame();<br/>
+	 * manager->initFrame(TuioTime::getSessionTime());<br/>
+	 * TuioObject *tobj = manager->addTuioObject(symbol,xpos,ypos,angle);<br/>
+	 * TuioCursor *tcur = manager->addTuioCursor(xpos,ypos);<br/>
+	 * TuioBlob *tblb = manager->addTuioBlob(xpos,ypos,angle,width,height,area);<br/>
+	 * manager->commitFrame();<br/>
 	 * ...<br/>
-	 * server->initFrame(TuioTime::getSessionTime());<br/>
-	 * server->updateTuioObject(tobj, xpos,ypos, angle);<br/>
-	 * server->updateTuioCursor(tcur, xpos,ypos);<br/>
-	 * server->updateTuioBlob(tblb, xpos,ypos,width,height,angle);<br/>
-	 * server->commitFrame();<br/>
+	 * manager->initFrame(TuioTime::getSessionTime());<br/>
+	 * manager->updateTuioObject(tobj,xpos,ypos,angle);<br/>
+	 * manager->updateTuioCursor(tcur,xpos,ypos);<br/>
+	 * manager->updateTuioBlob(tblb,xpos,ypos,angle,width,height,area);<br/>
+	 * manager->commitFrame();<br/>
 	 * ...<br/>
-	 * server->initFrame(TuioTime::getSessionTime());<br/>
-	 * server->removeTuioObject(tobj);<br/>
-	 * server->removeTuioCursor(tcur);<br/>
-	 * server->removeTuioBlob(tblb);<br/>
-	 * server->commitFrame();<br/>
+	 * manager->initFrame(TuioTime::getSessionTime());<br/>
+	 * manager->removeTuioObject(tobj);<br/>
+	 * manager->removeTuioCursor(tcur);<br/>
+	 * manager->removeTuioBlob(tblb);<br/>
+	 * manager->commitFrame();<br/>
 	 * </code></p>
 	 *
 	 * @author Martin Kaltenbrunner
@@ -194,7 +195,7 @@ namespace TUIO {
 		/**
 		 * Updates the referenced TuioBlob based on the given arguments.
 		 *
-		 * @param	tblb	the TuioObject to update
+		 * @param	tblb	the TuioBlob to update
 		 * @param	xp	the X coordinate to assign
 		 * @param	yp	the Y coordinate to assign
 		 * @param	angle	the angle to assign
@@ -213,9 +214,9 @@ namespace TUIO {
 		void removeTuioBlob(TuioBlob *tblb);
 		
 		/**
-		 * Updates an externally managed TuioBlob 
+		 * Adds an externally managed TuioBlob to the TuioServer's internal list of active TuioBlobs
 		 *
-		 * @param	tblb	the TuioBlob to update
+		 * @param	tblb	the TuioBlob to add
 		 */
 		void addExternalTuioBlob(TuioBlob *tblb);
 		
@@ -243,7 +244,7 @@ namespace TUIO {
 		
 		/**
 		 * Commits the current frame.
-		 * Generates and sends TUIO messages of all currently active and updated TuioObjects and TuioCursors.
+		 * Generates and sends TUIO messages of all currently active and updated TuioObjects, TuioCursors and TuioBlobs.
 		 */
 		void commitFrame();
 
@@ -251,17 +252,17 @@ namespace TUIO {
 		 * Returns the next available Session ID for external use.
 		 * @return	the next available Session ID for external use
 		 */
-		long getSessionID();
+		int getSessionID();
 
 		/**
 		 * Returns the current frame ID for external use.
 		 * @return	the current frame ID for external use
 		 */
-		long getFrameID();
+		int getFrameID();
 		
 		/**
-		 * Returns the current frame ID for external use.
-		 * @return	the current frame ID for external use
+		 * Returns the current frame time for external use.
+		 * @return	the current frame time for external use
 		 */
 		TuioTime getFrameTime();
 		
@@ -312,7 +313,7 @@ namespace TUIO {
 		void removeUntouchedStoppedCursors();
 
 		/**
-		 * Removes all currently inactive TuioCursors from the TuioServer's internal list of TuioBlobs
+		 * Removes all currently inactive TuioBlobs from the TuioServer's internal list of TuioBlobs
 		 */
 		void removeUntouchedStoppedBlobs();
 		
@@ -320,6 +321,8 @@ namespace TUIO {
 		 * Returns the TuioObject closest to the provided coordinates
 		 * or NULL if there isn't any active TuioObject
 		 *
+		 * @param	xp	the X coordinate of the reference point
+		 * @param	yp	the Y coordinate of the reference point
 		 * @return  the closest TuioObject to the provided coordinates or NULL
 		 */
 		TuioObject* getClosestTuioObject(float xp, float yp);
@@ -328,6 +331,8 @@ namespace TUIO {
 		 * Returns the TuioCursor closest to the provided coordinates
 		 * or NULL if there isn't any active TuioCursor
 		 *
+		 * @param	xp	the X coordinate of the reference point
+		 * @param	yp	the Y coordinate of the reference point
 		 * @return  the closest TuioCursor corresponding to the provided coordinates or NULL
 		 */
 		TuioCursor* getClosestTuioCursor(float xp, float yp);
@@ -336,6 +341,8 @@ namespace TUIO {
 		 * Returns the TuioBlob closest to the provided coordinates
 		 * or NULL if there isn't any active TuioBlob
 		 *
+		 * @param	xp	the X coordinate of the reference point
+		 * @param	yp	the Y coordinate of the reference point
 		 * @return  the closest TuioBlob corresponding to the provided coordinates or NULL
 		 */
 		TuioBlob* getClosestTuioBlob(float xp, float yp);
@@ -345,22 +352,78 @@ namespace TUIO {
 		 * @param	verbose	print verbose messages if set to true
 		 */
 		void setVerbose(bool verbose) { this->verbose=verbose; }
+		
+		/**
+		 * Returns true if the TuioServer prints verbose TUIO event messages to the console.
+		 * @return	true if verbose messages are enabled
+		 */
 		bool isVerbose() { return verbose; }
 
+		/**
+		 * Inverts the X and Y coordinates as well as the rotation angle of all outgoing TUIO messages.
+		 *
+		 * @param	ix	invert the X coordinate if set to true
+		 * @param	iy	invert the Y coordinate if set to true
+		 * @param	ia	invert the rotation angle if set to true
+		 */
 		void setInversion(bool ix, bool iy, bool ia) { 
 			invert_x = ix; 
 			invert_y = iy; 
 			invert_a = ia; 
 		};
 
+		/**
+		 * Inverts the X coordinate of all outgoing TUIO messages.
+		 *
+		 * @param	ix	invert the X coordinate if set to true
+		 */
 		void setInvertXpos(bool ix) { invert_x = ix; };
+		
+		/**
+		 * Inverts the Y coordinate of all outgoing TUIO messages.
+		 *
+		 * @param	iy	invert the Y coordinate if set to true
+		 */
 		void setInvertYpos(bool iy) { invert_y = iy; };
+		
+		/**
+		 * Inverts the rotation angle of all outgoing TUIO messages.
+		 *
+		 * @param	ia	invert the rotation angle if set to true
+		 */
 		void setInvertAngle(bool ia) { invert_a = ia; };
+		
+		/**
+		 * Returns true if the X coordinate is currently inverted.
+		 * @return	true if the X coordinate is currently inverted
+		 */
 		bool getInvertXpos() { return invert_x; };
+		
+		/**
+		 * Returns true if the Y coordinate is currently inverted.
+		 * @return	true if the Y coordinate is currently inverted
+		 */
 		bool getInvertYpos() { return invert_y; };
+		
+		/**
+		 * Returns true if the rotation angle is currently inverted.
+		 * @return	true if the rotation angle is currently inverted
+		 */
 		bool getInvertAngle() { return invert_a; };
+		
+		/**
+		 * Removes all TuioObjects from the TuioServer's internal list of TuioObjects
+		 */
 		void resetTuioObjects();
-		void resetTuioCursors();		
+		
+		/**
+		 * Removes all TuioCursors from the TuioServer's internal list of TuioCursors
+		 */
+		void resetTuioCursors();
+		
+		/**
+		 * Removes all TuioBlobs from the TuioServer's internal list of TuioBlobs
+		 */
 		void resetTuioBlobs();		
 		
 	protected:
@@ -371,10 +434,10 @@ namespace TUIO {
 		std::list<TuioBlob*> freeBlobBuffer;
 
 		TuioTime currentFrameTime;
-		long currentFrame;
+		int currentFrame;
 		int maxCursorID;
 		int maxBlobID;
-		long sessionID;
+		int sessionID;
 
 		bool updateObject;
 		bool updateCursor;

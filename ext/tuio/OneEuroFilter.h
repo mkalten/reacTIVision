@@ -77,6 +77,29 @@ namespace TUIO {
 			lasttime = UndefinedTime;
 		}
 		
+		OneEuroFilter(const OneEuroFilter &f) {
+			freq = f.freq;
+			mincutoff = f.mincutoff;
+			beta = f.beta;
+			dcutoff = f.dcutoff;
+			x = new LowPassFilter(*(f.x));
+			dx = new LowPassFilter(*(f.dx));
+			lasttime = f.lasttime;
+		}
+		
+		OneEuroFilter& operator=(const OneEuroFilter &f) {
+			if (this!=&f) {
+				freq = f.freq;
+				mincutoff = f.mincutoff;
+				beta = f.beta;
+				dcutoff = f.dcutoff;
+				*x = *(f.x);
+				*dx = *(f.dx);
+				lasttime = f.lasttime;
+			}
+			return *this;
+		}
+		
 		~OneEuroFilter(void) {
 			delete x;
 			delete dx;

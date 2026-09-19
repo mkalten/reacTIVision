@@ -45,17 +45,18 @@ namespace TUIO {
 		UdpSender();
 		
 		/**
-		 * This constructor creates a UdpSender that sends to the provided port on the the given host
+		 * This constructor creates a UdpSender that sends to the provided port on the given host
 		 * using the default MTU size of 1500 bytes to deliver unfragmented UDP packets on a LAN
 		 *
 		 * @param  host  the receiving host name
 		 * @param  port  the outgoing UDP port number
 		 */
+		UdpSender(const char *host, int port);
 		
-		UdpSender(const char *host, int port);		
 		/**
-		 * This constructor creates a UdpSender that sends to the provided port on the the given host
-		 * the UDP packet size can be set to a value between 576 and 65536 bytes
+		 * This constructor creates a UdpSender that sends to the provided port on the given host
+		 * the UDP packet size can be set to a value between 576 and 65536 bytes,
+		 * but is limited to the MTU size of 1500 bytes for remote hosts
 		 *
 		 * @param  host  the receiving host name
 		 * @param  port  the outgoing UDP port number

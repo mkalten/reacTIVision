@@ -60,6 +60,7 @@ UdpSender::UdpSender(const char *host, int port, int size) {
 		} else local = false;
 		long unsigned int ip = GetHostByName(host);
 		socket = new UdpTransmitSocket(IpEndpointName(ip, port));
+		buffer_size = size;
 		if (buffer_size>MAX_UDP_SIZE) buffer_size = MAX_UDP_SIZE;
 		else if (buffer_size<MIN_UDP_SIZE) buffer_size = MIN_UDP_SIZE;
 		std::cout << "TUIO/UDP messages to " << host << "@" << port << std::endl;

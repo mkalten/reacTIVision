@@ -20,7 +20,7 @@
 
 using namespace TUIO;
 
-TuioBlob::TuioBlob (TuioTime ttime, long si, int bi, float xp, float yp, float a, float w, float h, float f):TuioContainer(ttime, si, xp, yp) {
+TuioBlob::TuioBlob (TuioTime ttime, int si, int bi, float xp, float yp, float a, float w, float h, float f):TuioContainer(ttime, si, xp, yp) {
 	blob_id = bi;
 	angle = a;
 	width = w;
@@ -36,7 +36,7 @@ TuioBlob::TuioBlob (TuioTime ttime, long si, int bi, float xp, float yp, float a
 	sizeThreshold = 0.0f;
 }
 
-TuioBlob::TuioBlob (long si, int bi, float xp, float yp, float a, float  w, float h, float f):TuioContainer(si, xp, yp) {
+TuioBlob::TuioBlob (int si, int bi, float xp, float yp, float a, float  w, float h, float f):TuioContainer(si, xp, yp) {
 	blob_id = bi;
 	angle = a;
 	width = w;
@@ -66,6 +66,45 @@ TuioBlob::TuioBlob (TuioBlob *tblb):TuioContainer(tblb) {
 	widthFilter = NULL;
 	heightFilter = NULL;
 	sizeThreshold = 0.0f;
+}
+
+TuioBlob::TuioBlob (const TuioBlob &tblb):TuioContainer(tblb) {
+	blob_id = tblb.blob_id;
+	angle = tblb.angle;
+	width = tblb.width;
+	height = tblb.height;
+	area = tblb.area;
+	rotation_speed = tblb.rotation_speed;
+	rotation_accel = tblb.rotation_accel;
+	
+	angleThreshold = tblb.angleThreshold;
+	angleFilter = tblb.angleFilter ? new OneEuroFilter(*(tblb.angleFilter)) : NULL;
+	sizeThreshold = tblb.sizeThreshold;
+	widthFilter = tblb.widthFilter ? new OneEuroFilter(*(tblb.widthFilter)) : NULL;
+	heightFilter = tblb.heightFilter ? new OneEuroFilter(*(tblb.heightFilter)) : NULL;
+}
+
+TuioBlob& TuioBlob::operator=(const TuioBlob &tblb) {
+	if (this!=&tblb) {
+		TuioContainer::operator=(tblb);
+		blob_id = tblb.blob_id;
+		angle = tblb.angle;
+		width = tblb.width;
+		height = tblb.height;
+		area = tblb.area;
+		rotation_speed = tblb.rotation_speed;
+		rotation_accel = tblb.rotation_accel;
+		
+		angleThreshold = tblb.angleThreshold;
+		if (angleFilter) delete angleFilter;
+		angleFilter = tblb.angleFilter ? new OneEuroFilter(*(tblb.angleFilter)) : NULL;
+		sizeThreshold = tblb.sizeThreshold;
+		if (widthFilter) delete widthFilter;
+		widthFilter = tblb.widthFilter ? new OneEuroFilter(*(tblb.widthFilter)) : NULL;
+		if (heightFilter) delete heightFilter;
+		heightFilter = tblb.heightFilter ? new OneEuroFilter(*(tblb.heightFilter)) : NULL;
+	}
+	return *this;
 }
 
 int TuioBlob::getBlobID() const{
@@ -137,8 +176,10 @@ void TuioBlob::update (TuioTime ttime, float xp, float yp, float a, float w, flo
 	
 	area = f;
 	
-	rotation_speed = (float)da/dt;
-	rotation_accel =  (rotation_speed - last_rotation_speed)/dt;
+	if (dt>0) {
+		rotation_speed = (float)da/dt;
+		rotation_accel =  (rotation_speed - last_rotation_speed)/dt;
+	}
 	
 	if ((rotation_accel!=0) && (state==TUIO_STOPPED)) state = TUIO_ROTATING;
 }

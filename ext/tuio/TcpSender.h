@@ -36,6 +36,9 @@ typedef int socklen_t;
 #endif
 
 #include <list>
+#ifndef WIN32
+#include <pthread.h>
+#endif
 #define MAX_TCP_SIZE 65536
 
 namespace TUIO {
@@ -56,7 +59,7 @@ namespace TUIO {
 		TcpSender();
 		
 		/**
-		 * This constructor creates a TcpSender that sends to the provided port on the the given host
+		 * This constructor creates a TcpSender that sends to the provided port on the given host
 		 *
 		 * @param  host  the receiving host name
 		 * @param  port  the outgoing TUIO TCP port number
@@ -65,8 +68,9 @@ namespace TUIO {
 
 		/**
 		 * This constructor creates a TcpSender that listens to the provided port
+		 * and delivers OSC data to all connected TCP clients
 		 *
-		 * @param  port	the incoming TUIO TCP port number
+		 * @param  port	the listening TUIO TCP port number
 		 */
 		TcpSender(int port);	
 		
@@ -103,9 +107,11 @@ namespace TUIO {
 #ifdef WIN32
 		SOCKET tcp_socket;
 		std::list<SOCKET> tcp_client_list;
+		HANDLE tcp_mutex;
 #else
 		int tcp_socket;
 		std::list<int> tcp_client_list;
+		pthread_mutex_t tcp_mutex;
 #endif
 		bool connected;
 		const char* tuio_type() { return "TUIO/TCP"; }
