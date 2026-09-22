@@ -57,7 +57,7 @@ int v4lfilter(const struct dirent *dir)
 
 int V4Linux2Camera::getDeviceCount() {
 
-	char v4l2_device[128];
+	char v4l2_device[NAME_MAX + 6];
 	v4l2_capability v4l2_caps;
 	memset(&v4l2_caps, 0, sizeof(v4l2_capability));
 	struct dirent **v4l2_devices;
@@ -68,7 +68,7 @@ int V4Linux2Camera::getDeviceCount() {
 	int cam_count = 0;
 
 	for (int i=0;i<dev_count;i++) {
-        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
+        	snprintf(v4l2_device, sizeof(v4l2_device), "/dev/%s", v4l2_devices[i]->d_name);
 
         	int fd = open(v4l2_device, O_RDONLY);
         	if (fd < 0) continue;
@@ -93,7 +93,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 
 	std::vector<CameraConfig> cfg_list;
 
-	char v4l2_device[128];
+	char v4l2_device[NAME_MAX + 6];
 	v4l2_capability v4l2_caps;
 	memset(&v4l2_caps, 0, sizeof(v4l2_capability));
 	struct dirent **v4l2_devices;
@@ -105,7 +105,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 		int cam_id;
 		sscanf(v4l2_devices[i]->d_name,"%*[^0-9]%d",&cam_id);
 		if ((dev_id>=0) && (dev_id!=cam_id)) continue;
-        	sprintf(v4l2_device,"/dev/%s",v4l2_devices[i]->d_name);
+        	snprintf(v4l2_device, sizeof(v4l2_device), "/dev/%s", v4l2_devices[i]->d_name);
 
         	int fd = open(v4l2_device, O_RDONLY);
         	if (fd < 0) continue;
@@ -127,7 +127,7 @@ std::vector<CameraConfig> V4Linux2Camera::getCameraConfigs(int dev_id) {
 
 			cam_cfg.driver = DRIVER_DEFAULT;
 			cam_cfg.device = cam_id;
-			sprintf(cam_cfg.name, "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
+			snprintf(cam_cfg.name, sizeof(cam_cfg.name), "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
 
             		for (int x=0;;x++) {
                 		struct v4l2_fmtdesc fmtdesc;
@@ -258,8 +258,8 @@ bool V4Linux2Camera::initCamera() {
     int dev_count = scandir ("/dev/", &v4l2_devices, v4lfilter, alphasort);
     if ((dev_count == 0) || (cfg->device<0)) return false;
 
-    char v4l2_device[128];
-    sprintf(v4l2_device,"/dev/video%d",cfg->device);
+    char v4l2_device[NAME_MAX + 6];
+    snprintf(v4l2_device, sizeof(v4l2_device), "/dev/video%d", cfg->device);
 
     dev_handle = open(v4l2_device, O_RDWR);
     if (dev_handle < 0) return false;
@@ -280,7 +280,7 @@ bool V4Linux2Camera::initCamera() {
         return false;
     }
 
-    sprintf(cfg->name, "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
+    snprintf(cfg->name, sizeof(cfg->name), "%s (%s)", v4l2_caps.card, v4l2_caps.driver);
 
     std::vector<CameraConfig> cfg_list = V4Linux2Camera::getCameraConfigs(cfg->device);
     if (cfg->cam_format==FORMAT_UNKNOWN) cfg->cam_format = cfg_list[0].cam_format;
@@ -333,6 +333,7 @@ bool V4Linux2Camera::initCamera() {
     }
 
     // try to set the desired fps
+    memset(&v4l2_parm, 0, sizeof(v4l2_parm));
     v4l2_parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     v4l2_parm.parm.capture.timeperframe.numerator = 1;
     v4l2_parm.parm.capture.timeperframe.denominator = int(cfg->cam_fps);
@@ -398,12 +399,19 @@ unsigned char* V4Linux2Camera::getFrame()  {
 
     if (dev_handle<0) return NULL;
 
+    memset(&v4l2_buf, 0, sizeof(v4l2_buf));
+    v4l2_buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v4l2_buf.memory = V4L2_MEMORY_MMAP;
+
     if (ioctl(dev_handle, VIDIOC_DQBUF, &v4l2_buf)<0) {
         running = false;
         return NULL;
     }
 
-    unsigned char *raw_buffer = (unsigned char*)buffers[v4l2_buf.index].start;
+    unsigned int buf_index = v4l2_buf.index;
+    unsigned int buf_bytesused = v4l2_buf.bytesused;
+
+    unsigned char *raw_buffer = (unsigned char*)buffers[buf_index].start;
     if (raw_buffer==NULL) return NULL;
 
     if(cfg->color) {
@@ -420,8 +428,8 @@ unsigned char* V4Linux2Camera::getFrame()  {
             crop_grayw2rgb(cfg->cam_width,raw_buffer,frm_buffer);
          else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, buf_bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, buf_bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
                 crop(cfg->cam_width, cfg->cam_height,cam_buffer,frm_buffer,3);
          }
 
@@ -438,8 +446,8 @@ unsigned char* V4Linux2Camera::getFrame()  {
             grayw2rgb(cfg->cam_width,cfg->cam_height,raw_buffer,cam_buffer);
          else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, buf_bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, buf_bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_RGB, TJFLAG_FASTDCT);
          }
 
         }
@@ -461,8 +469,8 @@ unsigned char* V4Linux2Camera::getFrame()  {
             else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
 
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, buf_bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, buf_bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
                 crop(cfg->cam_width, cfg->cam_height,cam_buffer,frm_buffer,1);
             }
         } else {
@@ -475,14 +483,19 @@ unsigned char* V4Linux2Camera::getFrame()  {
             else if ((pixelformat == V4L2_PIX_FMT_MJPEG) || (pixelformat == V4L2_PIX_FMT_JPEG)) {
 
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, buf_bytesused, &cfg->cam_width, &cfg->cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, buf_bytesused, cam_buffer, cfg->cam_width, 0, cfg->cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
             }
         }
     }
 
+    memset(&v4l2_buf, 0, sizeof(v4l2_buf));
+    v4l2_buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v4l2_buf.memory = V4L2_MEMORY_MMAP;
+    v4l2_buf.index  = buf_index;
+
     if (-1 == ioctl (dev_handle, VIDIOC_QBUF, &v4l2_buf)) {
-        printf("cannot unqueue buffer: %s\n", strerror(errno));
+        printf("cannot requeue buffer %d: %s\n", buf_index, strerror(errno));
         return NULL;
     }
 
@@ -545,6 +558,12 @@ bool V4Linux2Camera::requestBuffers() {
         /* You may need to free the buffers here. */
         printf("Error requesting buffers.\n");
         return false;
+    }
+
+    if (v4l2_reqbuffers.count > nr_of_buffers) {
+        printf("Driver allocated %d buffers, clamping to %d\n",
+               v4l2_reqbuffers.count, nr_of_buffers);
+        v4l2_reqbuffers.count = nr_of_buffers;
     }
 
     return true;
@@ -622,9 +641,11 @@ bool V4Linux2Camera::getCameraSettingAuto(int mode) {
         case EXPOSURE:
 
 	   struct v4l2_ext_control v4l2_auto_ctrl[1];
+	   memset(v4l2_auto_ctrl, 0, sizeof(v4l2_auto_ctrl));
            v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
 	   struct v4l2_ext_controls v4l2_auto_ctrls;
-	   v4l2_auto_ctrls.ctrl_class = V4L2_CTRL_CLASS_CAMERA;
+	   memset(&v4l2_auto_ctrls, 0, sizeof(v4l2_auto_ctrls));
+	   v4l2_auto_ctrls.which = V4L2_CTRL_WHICH_CUR_VAL;
 	   v4l2_auto_ctrls.count = 1;
 	   v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
 
@@ -651,12 +672,14 @@ bool V4Linux2Camera::setCameraSettingAuto(int mode, bool flag) {
         case EXPOSURE:
 
 	    struct v4l2_ext_control v4l2_auto_ctrl[1];
+	    memset(v4l2_auto_ctrl, 0, sizeof(v4l2_auto_ctrl));
             v4l2_auto_ctrl[0].id = V4L2_CID_EXPOSURE_AUTO;
             if (flag==true) v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_APERTURE_PRIORITY;
             else v4l2_auto_ctrl[0].value = V4L2_EXPOSURE_MANUAL;
 
 	    struct v4l2_ext_controls v4l2_auto_ctrls;
-	    v4l2_auto_ctrls.ctrl_class = V4L2_CTRL_CLASS_CAMERA;
+	    memset(&v4l2_auto_ctrls, 0, sizeof(v4l2_auto_ctrls));
+	    v4l2_auto_ctrls.which = V4L2_CTRL_WHICH_CUR_VAL;
 	    v4l2_auto_ctrls.count = 1;
 	    v4l2_auto_ctrls.controls = v4l2_auto_ctrl;
 
