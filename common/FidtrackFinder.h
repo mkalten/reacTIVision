@@ -104,6 +104,7 @@ public:
 	
 	int getFingerSize() { return average_finger_size; };
 	int getFingerSensitivity() { return (int)(finger_sensitivity*100); };
+	int getFingerContrast() { return finger_contrast; };
 	int getBlobSize() { return max_blob_size; };
 	bool getFingerBlob() { return send_finger_blobs; };
 	bool getFiducialBlob() { return send_fiducial_blobs; };

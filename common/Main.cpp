@@ -345,6 +345,10 @@ void writeSettings(application_settings *config) {
 			snprintf(config_value,64,"%d",config->finger_sensitivity);
 			finger_element->SetAttribute("sensitivity",config_value);
 		}
+		if(finger_element->Attribute("contrast")!=NULL) {
+			snprintf(config_value,64,"%d",config->finger_contrast);
+			finger_element->SetAttribute("contrast",config_value);
+		}
 	}
 	
 	tinyxml2::XMLElement* blob_element = config_root.FirstChildElement("blob").ToElement();
@@ -535,6 +539,7 @@ int main(int argc, char* argv[]) {
 
 	config.finger_size = ((FidtrackFinder*)fiducialfinder)->getFingerSize();
 	config.finger_sensitivity = ((FidtrackFinder*)fiducialfinder)->getFingerSensitivity();
+	config.finger_contrast = ((FidtrackFinder*)fiducialfinder)->getFingerContrast();
 	config.max_blob_size = ((FidtrackFinder*)fiducialfinder)->getBlobSize();
 	config.object_blobs = ((FidtrackFinder*)fiducialfinder)->getFiducialBlob();
 	config.cursor_blobs = ((FidtrackFinder*)fiducialfinder)->getFingerBlob();
