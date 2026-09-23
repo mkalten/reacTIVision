@@ -757,7 +757,7 @@ void FidtrackFinder::process(unsigned char *src, unsigned char *dest) {
 			
 			// add the root regions (only WHITE blobs within size limits)
 			if (add_blob && (regions[i]->colour == WHITE) &&
-			    (reg_size >= min_blob_size) && (reg_size <= max_blob_size)) {
+			    (reg_size >= min_object_size) && (reg_size <= max_object_size)) {
 				BlobObject *root_blob = NULL;
 				try {
 					root_blob = new BlobObject(frameTime,regions[i],dmap);
