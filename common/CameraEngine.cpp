@@ -138,8 +138,8 @@
 		config.frame_yoff = 0;
         config.frame_width = SETTING_MAX;
         config.frame_height = SETTING_MAX;
-		snprintf(config.file,1024,"none");
-		snprintf(config.folder,1024,"none");
+		snprintf(config.file,sizeof(config.file),"none");
+		snprintf(config.folder,sizeof(config.folder),"none");
 		config.brightness = SETTING_DEFAULT;
 		config.contrast = SETTING_DEFAULT;
 		config.gain = SETTING_DEFAULT;

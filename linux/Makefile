@@ -12,7 +12,7 @@ SDL_CFLAGS  := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 
 INCLUDES = -I../ext/oscpack -I../ext/libfidtrack -I../ext/tinyxml -I../common -I../ext/portmidi/pm_common -I../ext/portmidi/porttime
-COPTS  = -Ofast -w
+COPTS  = -Ofast -w -march=native -mtune=native
 CDEBUG = -Wall -g
 CFLAGS = $(COPTS) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DNDEBUG -DPMALSA
 #CFLAGS = $(DEBUG) $(SDL_CFLAGS) $(INCLUDES) -DLINUX -DOSC_HOST_LITTLE_ENDIAN -DPMALSA
