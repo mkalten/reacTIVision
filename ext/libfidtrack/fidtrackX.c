@@ -109,7 +109,7 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 			ft->black_leaf_nodes++;
 			ft->black_leaf_size+=leaf_size;
 			if (leaf_size < ft->min_black) ft->min_black = leaf_size;
-			else if (leaf_size > ft->max_black) ft->max_black = leaf_size;
+			if (leaf_size > ft->max_black) ft->max_black = leaf_size;
 		}else{
 			ft->white_x_sum += x * n;
 			ft->white_y_sum += y * n;
@@ -119,7 +119,7 @@ static void sum_leaf_centers( FidtrackerX *ft, Region *r, int width, int height 
 			leaf_size = ((r->right-r->left)+(r->bottom-r->top));
 			ft->white_leaf_size+=leaf_size;
 			if (leaf_size < ft->min_white) ft->min_white = leaf_size;
-			else if (leaf_size > ft->max_white) ft->max_white = leaf_size;
+			if (leaf_size > ft->max_white) ft->max_white = leaf_size;
 		}
 		
 		ft->total_leaf_count +=n;
