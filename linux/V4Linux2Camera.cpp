@@ -33,8 +33,8 @@ V4Linux2Camera::V4Linux2Camera(const char* cfg) : CameraEngine(cfg)
 V4Linux2Camera::~V4Linux2Camera(void)
 {
     if (v4l2_form.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG) tjDestroy(_jpegDecompressor);
-    if (cam_buffer) delete cam_buffer;
-    if (crop_buffer) delete crop_buffer;
+    if (cam_buffer) delete []cam_buffer;
+    if (crop_buffer) delete []crop_buffer;
 }
 
 bool V4Linux2Camera::initCamera() {
@@ -166,20 +166,27 @@ bool V4Linux2Camera::initCamera() {
     // try to set the desired dimensions
     v4l2_form.fmt.pix.width  = cam_width;
     v4l2_form.fmt.pix.height = cam_height;
-    v4l2_parm.parm.capture.timeperframe.numerator = 1;
-    v4l2_parm.parm.capture.timeperframe.denominator = int(fps);
     
     v4l2_form.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     if (-1 == ioctl (cameraID, VIDIOC_S_FMT, &v4l2_form)) {
         printf("error setting pixel format: %s\n" , strerror(errno));
         return false;
     }
+
+    memset(&v4l2_parm, 0, sizeof(v4l2_streamparm));
+    v4l2_parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v4l2_parm.parm.capture.timeperframe.numerator = 1;
+    v4l2_parm.parm.capture.timeperframe.denominator = int(fps);
+
+    if (-1 == ioctl (cameraID, VIDIOC_S_PARM, &v4l2_parm)) {
+        printf("error setting fps: %s\n", strerror(errno));
+    }
     
     // use the settings we got from the driver
     pixelformat = v4l2_form.fmt.pix.pixelformat;
     cam_width = v4l2_form.fmt.pix.width;
     cam_height = v4l2_form.fmt.pix.height;
-    fps = v4l2_parm.parm.capture.timeperframe.denominator;
+    fps = v4l2_parm.parm.capture.timeperframe.denominator/(float)v4l2_parm.parm.capture.timeperframe.numerator;
     
     if (v4l2_form.fmt.pix.pixelformat == V4L2_PIX_FMT_MJPEG) _jpegDecompressor = tjInitDecompress();
     applyCameraSettings();
@@ -423,9 +430,9 @@ bool V4Linux2Camera::startCamera() {
 unsigned char* V4Linux2Camera::getFrame()  {
     
     if (cameraID==-1) return NULL;
-    /*memset (&v4l2_buf, 0, sizeof (v4l2_buf));
-     v4l2_buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-     v4l2_buf.memory = V4L2_MEMORY_MMAP;*/
+    memset (&v4l2_buf, 0, sizeof (v4l2_buf));
+    v4l2_buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v4l2_buf.memory = V4L2_MEMORY_MMAP;
     
     if (ioctl(cameraID, VIDIOC_DQBUF, &v4l2_buf)<0) {
         //stopCamera();
@@ -433,8 +440,11 @@ unsigned char* V4Linux2Camera::getFrame()  {
         running = false;
         return NULL;
     }
+
+    unsigned int buf_index = v4l2_buf.index;
+    unsigned int buf_bytesused = v4l2_buf.bytesused;
     
-    unsigned char *raw_buffer = (unsigned char*)buffers[v4l2_buf.index].start;
+    unsigned char *raw_buffer = (unsigned char*)buffers[buf_index].start;
     if (raw_buffer==NULL) return NULL;
     
     if(colour) {
@@ -489,8 +499,8 @@ unsigned char* V4Linux2Camera::getFrame()  {
             else if (pixelformat==V4L2_PIX_FMT_MJPEG) {
                 
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, buf_bytesused, &cam_width, &cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, buf_bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
                 cropFrame(cam_buffer,crop_buffer);
             }
         } else {
@@ -502,14 +512,19 @@ unsigned char* V4Linux2Camera::getFrame()  {
             else if (pixelformat==V4L2_PIX_FMT_MJPEG)  {
 
                 int jpegSubsamp;
-                tjDecompressHeader2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, &cam_width, &cam_height, &jpegSubsamp);
-                tjDecompress2(_jpegDecompressor, raw_buffer, v4l2_buf.bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
+                tjDecompressHeader2(_jpegDecompressor, raw_buffer, buf_bytesused, &cam_width, &cam_height, &jpegSubsamp);
+                tjDecompress2(_jpegDecompressor, raw_buffer, buf_bytesused, cam_buffer, cam_width, 0, cam_height, TJPF_GRAY, TJFLAG_FASTDCT);
             }
         }
     }
 
+    memset(&v4l2_buf, 0, sizeof(v4l2_buf));
+    v4l2_buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    v4l2_buf.memory = V4L2_MEMORY_MMAP;
+    v4l2_buf.index = buf_index;
+
     if (-1 == ioctl (cameraID, VIDIOC_QBUF, &v4l2_buf)) {
-        printf("cannot unqueue buffer: %s\n", strerror(errno));
+        printf("cannot requeue buffer %d: %s\n", buf_index, strerror(errno));
         return NULL;
     }
 
@@ -572,6 +587,12 @@ bool V4Linux2Camera::requestBuffers() {
         /* You may need to free the buffers here. */
         printf("Error requesting buffers.\n");
         return false;
+    }
+
+    if (v4l2_reqbuffers.count > nr_of_buffers) {
+        printf("Driver allocated %d buffers, clamping to %d\n",
+               v4l2_reqbuffers.count, nr_of_buffers);
+        v4l2_reqbuffers.count = nr_of_buffers;
     }
     
     return true;
