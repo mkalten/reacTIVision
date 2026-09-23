@@ -165,7 +165,7 @@ std::vector<CameraConfig> videoInputCamera::getCameraConfigs(int dev_id) {
 
 		cam_cfg.driver = DRIVER_DEFAULT;
 		cam_cfg.device = cam_id;
-		sprintf(cam_cfg.name, "%s", nDeviceName);
+		snprintf(cam_cfg.name, sizeof(cam_cfg.name), "%s", nDeviceName);
 
 		int iCount = 0;
 		int iSize = 0;
@@ -374,7 +374,7 @@ HRESULT videoInputCamera::setupDevice() {
 	hr = getDevice(&pInputFilter, cfg->device, wDeviceName, nDeviceName);
 
 	if (SUCCEEDED(hr)){
-		sprintf(cfg->name,nDeviceName);
+		snprintf(cfg->name, sizeof(cfg->name), "%s", nDeviceName);
 		//printf("SETUP: %s\n", nDeviceName);
 		hr = pGraphBuilder->AddFilter(pInputFilter, wDeviceName);
 	}else{
