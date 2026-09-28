@@ -237,9 +237,11 @@ int AVfoundationCamera::getDeviceCount() {
         nil];
     
     // Continuity Camera only available on macOS 14+
-    if (@available(macOS 14.0, *)) {
-        [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
-    }
+    #if defined(MAC_OS_X_VERSION_14_0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_14_0
+        if (@available(macOS 14.0, *)) {
+            [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+        }
+    #endif
 
     // Create the Discovery Session
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
@@ -265,9 +267,12 @@ std::vector<CameraConfig> AVfoundationCamera::getCameraConfigs(int dev_id) {
         nil];
     
     // Continuity Camera only available on macOS 14+
-    if (@available(macOS 14.0, *)) {
-        [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
-    }
+    #if defined(MAC_OS_X_VERSION_14_0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_14_0
+        if (@available(macOS 14.0, *)) {
+            [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+        }
+    #endif
+
 
     // 2. Initialize a mutable array to collect the devices
     NSMutableArray *captureDevices = [NSMutableArray array];
@@ -396,9 +401,11 @@ bool AVfoundationCamera::initCamera() {
         nil];
     
     // Continuity Camera only available on macOS 14+
-    if (@available(macOS 14.0, *)) {
-        [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
-    }
+    #if defined(MAC_OS_X_VERSION_14_0) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_14_0
+        if (@available(macOS 14.0, *)) {
+            [deviceTypes addObject:AVCaptureDeviceTypeContinuityCamera];
+        }
+    #endif
 
     // 2. Initialize the array (replaces capacity count safely)
     NSMutableArray *videoDevices = [NSMutableArray array];
