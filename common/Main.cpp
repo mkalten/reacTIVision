@@ -16,12 +16,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <string.h>
-#ifdef __APPLE__
-#include <SDL2/SDL.h>
-#else
-#include "SDL.h"
-#endif
+#include <string>
+#include <thread>
 #ifdef LINUX
 #include <signal.h>
 #endif
@@ -232,12 +228,12 @@ void readSettings(application_settings *config) {
 		}
 
         if(threshold_element->Attribute("threads")!=NULL) {
-            if (strcmp(threshold_element->Attribute("threads"), "max" ) == 0) { config->thread_count=SDL_GetCPUCount();
+			if (strcmp(threshold_element->Attribute("threads"), "max" ) == 0) { config->thread_count=std::thread::hardware_concurrency();
         } else if (strcmp(threshold_element->Attribute("threads"), "min" ) == 0) config->thread_count=1;
 			else {
 				config->thread_count = atoi(threshold_element->Attribute("threads"));
 				if(config->thread_count<1) config->thread_count = 1;
-				if(config->thread_count>SDL_GetCPUCount()) config->thread_count =  SDL_GetCPUCount();
+				if(config->thread_count>std::thread::hardware_concurrency()) config->thread_count = std::thread::hardware_concurrency();
 			}
 		}
 	}
